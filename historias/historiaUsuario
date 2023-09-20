@@ -1,0 +1,23 @@
+Historia de Usuario: Registro de Usuarios
+
+Como un nuevo usuario de la aplicación,
+Quiero poder registrarme en la plataforma,
+Para poder acceder a los servicios y funcionalidades de la aplicación.
+
+Criterios de Aceptación:
+
+1-Cuando abro la aplicación, veo una opción clara y visible para registrarme como nuevo usuario.
+
+2-Al hacer clic en "Registrarse", se me redirige a una página de registro donde puedo ingresar la siguiente información:
+
+Nombre completo.
+Dirección de correo electrónico válida.
+Contraseña (debe cumplir con requisitos de seguridad, como longitud mínima y caracteres especiales).
+
+3-Después de ingresar la información requerida, puedo hacer clic en un botón de "Registrarse" para enviar mis datos.
+
+4-Si la información que ingresé es válida, la aplicación crea una cuenta de usuario en la base de datos y me muestra un mensaje de confirmación de registro exitoso.
+
+5-Si la información que ingresé no es válida (por ejemplo, si el correo electrónico ya está en uso o la contraseña no cumple con los requisitos), la aplicación me muestra un mensaje de error y me permite corregir los campos.
+
+6-Una vez registrado con éxito, puedo usar mis credenciales (correo electrónico y contraseña) para iniciar sesión en la aplicación en el futuro
