@@ -1,0 +1,28 @@
+Nombre de la Historia de Usuario: Actualización de Perfil de Usuario
+
+Descripción:
+Como usuario registrado en la plataforma, quiero poder actualizar mi perfil para mantener mi información personal actualizada.
+
+Criterios de Aceptación:
+
+    Como usuario, debo poder iniciar sesión en mi cuenta utilizando mi correo electrónico y contraseña existentes.
+
+    Una vez autenticado, debo tener acceso a una página de perfil donde pueda ver y editar mi información personal.
+
+    Debo poder editar los siguientes campos en mi perfil:
+        Nombre completo.
+        Dirección de correo electrónico (no editable).
+        Fotografía de perfil (con opción para cargar o cambiar la imagen).
+        Información de contacto (como número de teléfono y dirección).
+
+    Debo recibir una notificación de éxito después de actualizar mi perfil.
+
+Definición de Hecho:
+
+La historia de usuario se considera completa cuando:
+
+    Los usuarios pueden acceder a su perfil y ver su información personal.
+    Los usuarios pueden editar su información de perfil de manera efectiva.
+    Los cambios en el perfil se guardan correctamente.
+
+Esta historia de usuario simplificada permite a los usuarios actualizar su perfil de manera sencilla y mantener su información actualizada en la plataforma Java Spring.
