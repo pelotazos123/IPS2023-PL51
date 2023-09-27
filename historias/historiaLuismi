@@ -1,7 +1,9 @@
 1) Cuando estamos trabajando en una rama, y tenemos que ir hacia atrás a una versión de un commit
 anterior, se utiliza la el comando Team->Reset (normalmente indicando Hard Reset).
+
 2) Sincronización: En Eclipse Team-Synchronize realiza una comparación del workspace con la última
 versión, permitiendo desde la misma vista realizar diversas operaciones (comparaciones, commit, etc.)
+
 3) Cuando estamos trabajando en una rama y cambiamos a otra (p.e. para hacer un cambio de
 urgencia), si no hemos hecho un commit de los últimos cambios de la primera rama, perderemos estos
 cambios. Pero los cambios que tenemos pueden ser provisionales por lo que no deberíamos hacer un
@@ -9,18 +11,21 @@ commit. Para estas situaciones se puede crear un nuevo workspace para trabajar e
 bien seguir en el mismo workspace y hacer (Team->Stash), asignando un nombre a los cambios que
 hemos hecho. Ahora podemos cambiar de forma segura a la otra rama y volver a recuperar los cambios
 de los que no se ha hecho commit en la rama inicial (nuevamente con Team -> Stash).
+
 4) Precauciones con los finales de línea: Cuando se usan indistintamente sistemas Windows y Linux/Mac
 puede surgir problemas con los saltos de línea debido a los diferentes caracteres que usan (LF y CR los
 primeros, LF los segundos). De esta forma es posible que al hacer un merge de un fichero, aunque no
 haya habido cambios, todas las líneas parecen tener un cambio si los archivos de los que se está
 haciendo el merge tienen diferentes saltos de línea. Si esta es la situación, consultar antes la
 documentación de Git correspondiente: https://help.github.com/articles/dealing-with-line-endings/
+
 5) Los repositorios como GitHub, BitBucket o GitLab permiten una forma de trabajo adicional mediante
 el denominado Pull Request, muy utilizado en el desarrollo de proyectos Open source. Esto permite que
 trabajemos en una bifurcación del repositorio maestro (fork) y que cuando tengamos unos cambios
 para incorporar a master, en vez de hacerlo nosotros mismos, realizamos un Pull Request. Los
 administradores o personas autorizadas en el repositorio maestro podrán entonces revisar y discutir los
 cambios para en su caso incorporarlos dicho repositorio.
+
 6) Existen muchos otros comandos y variantes de los mismos. Ver documentación oficial de Git:
 https://git-scm.com/documentation. También es útil utilizar http://stackoverflow.com/ para solucionar
 problemas particulares que puedan presentarse.
