@@ -1,4 +1,4 @@
-package giis.demo.business;
+package giis.demo.ui;
 
 import java.awt.CardLayout;
 import java.awt.Color;

@@ -13,7 +13,6 @@ import javax.swing.border.EmptyBorder;
 
 import giis.demo.business.AsambleasController;
 import giis.demo.business.AsambleasModel;
-import giis.demo.business.AsambleasView;
 import giis.demo.util.Database;
 
 public class Ventanaprincipal extends JFrame {

@@ -7,6 +7,7 @@ import java.util.Calendar;
 
 import javax.swing.JOptionPane;
 
+import giis.demo.ui.AsambleasView;
 import giis.demo.util.SwingUtil;
 
 public class AsambleasController {
