@@ -17,5 +17,5 @@ create table cuotas (owner_id int, num_recibo int, price int, cuota_type varchar
 create table reservas (owner_id int, date date, instalation_code varchar2(255), foreign key(owner_id) references socios(id));
 create table instalaciones (code varchar2(255), name varchar2(255), foreign key(code) references reservas(instalation_code));
 create table recibos (number int, foreign key(number) references cuotas(num_recibo));
-create table asambleas (type varchar2(255), announcement varchar2(255), date_announcement1 date, date_announcement2 date);
+create table asambleas (type varchar2(255), announcement varchar2(255), date_announcement1 date, date_announcement2 date, orderOfDay varchar2(255));
 
