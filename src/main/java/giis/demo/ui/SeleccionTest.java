@@ -83,7 +83,6 @@ public class SeleccionTest extends JFrame {
 	}
 
 	private void muestraVentanaRockport() {
-		// TODO Auto-generated method stub
 		VentanaTestRockport vtr = new VentanaTestRockport();
 		vtr.setVisible(true);
 	}

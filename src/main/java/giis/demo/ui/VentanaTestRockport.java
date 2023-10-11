@@ -206,7 +206,7 @@ public class VentanaTestRockport extends JFrame {
 			Integer.parseInt(getTxPulsaciones().getText());
 		} catch (NumberFormatException | NullPointerException e) {
 			desactivaComponentes();
-			JOptionPane.showMessageDialog(null, "No se ha introducido nig�n dato o no son de tipo correcto");
+			JOptionPane.showMessageDialog(null, "No se ha introducido ningún dato o no son de tipo correcto");
 			return false;
 		}
 		return true;

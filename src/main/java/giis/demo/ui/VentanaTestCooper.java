@@ -96,7 +96,7 @@ public class VentanaTestCooper extends JFrame {
 			Double.parseDouble(getTxDistancia().getText());
 		} catch (NumberFormatException | NullPointerException e) {
 			desactivaComponentes();
-			JOptionPane.showMessageDialog(null, "No se ha introducido nig�n dato o no es de tipo double");
+			JOptionPane.showMessageDialog(null, "No se ha introducido ningún dato o no es de tipo double");
 			return false;
 		}
 		return true;
