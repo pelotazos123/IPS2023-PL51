@@ -13,22 +13,7 @@ import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.GridLayout;
 import javax.swing.SwingConstants;
-import java.awt.BorderLayout;
-import java.awt.Color;
-import javax.swing.JTextField;
-import javax.swing.JComboBox;
-import java.awt.GridBagLayout;
-
-import java.awt.CardLayout;
 import java.awt.EventQueue;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-
-import javax.swing.JButton;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.border.EmptyBorder;
 
 import giis.demo.business.AsambleasController;
 import giis.demo.business.AsambleasModel;
@@ -132,6 +117,10 @@ public class VentanaPrincipal extends JFrame {
 			pnPrincipalDirectivo.setLayout(null);
 			pnPrincipalDirectivo.add(getLbProvisionalDirectivo());
 			pnPrincipalDirectivo.add(getBtnAsambleas());
+			
+			JButton btnGeneracionRecibos = new JButton("Generar Recibos");
+			btnGeneracionRecibos.setBounds(86, 304, 185, 60);
+			pnPrincipalDirectivo.add(btnGeneracionRecibos);
 		}
 		return pnPrincipalDirectivo;
 	}
