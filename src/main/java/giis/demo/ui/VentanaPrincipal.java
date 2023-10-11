@@ -1,5 +1,6 @@
 package giis.demo.ui;
 
+
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
@@ -18,6 +19,22 @@ import javax.swing.JTextField;
 import javax.swing.JComboBox;
 import java.awt.GridBagLayout;
 
+import java.awt.CardLayout;
+import java.awt.EventQueue;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.border.EmptyBorder;
+
+import giis.demo.business.AsambleasController;
+import giis.demo.business.AsambleasModel;
+import giis.demo.util.Database;
+
+
 public class VentanaPrincipal extends JFrame {
 
 	/**
@@ -30,13 +47,34 @@ public class VentanaPrincipal extends JFrame {
 	private JPanel pnPrincipalDirectivo;
 	private JLabel lbProvisionalSocio;
 	private JLabel lbProvisionalDirectivo;
+
 	private JPanel pnBotones;
 	private JButton btnDirectivo;
 	private JButton btnSocio;
 	private JLabel lbBienvenida;
 	private JButton btTramitarLicencia;
 	private JButton btRenovarLicencia;
+	private JButton btnAsambleas;
 
+
+	public static void main(String[] args) {
+		
+		Database db=new Database();
+		db.createDatabase(false);
+		db.loadDatabase();
+		
+		EventQueue.invokeLater(new Runnable() {
+			@Override
+			public void run() {
+				try {
+					VentanaPrincipal vp = new VentanaPrincipal();
+					vp.setVisible(true);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		});
+	}
 
 	/**
 	 * Create the frame.
@@ -63,6 +101,32 @@ public class VentanaPrincipal extends JFrame {
 		}
 		return pnInicio;
 	}
+	private JButton getBtnDirectivo() {
+		if (btnDirectivo == null) {
+			btnDirectivo = new JButton("Directivo");
+			btnDirectivo.addActionListener(new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					((CardLayout)pn.getLayout()).show(pn,"PrincipalDirectivo");
+				}
+			});
+			btnDirectivo.setBounds(44, 125, 198, 65);
+		}
+		return btnDirectivo;
+	}
+	private JButton getBtnSocio() {
+		if (btnSocio == null) {
+			btnSocio = new JButton("Socio");
+			btnSocio.addActionListener(new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					((CardLayout)pn.getLayout()).show(pn,"PrincipalSocio");
+				}
+			});
+			btnSocio.setBounds(293, 125, 186, 65);
+		}
+		return btnSocio;
+	}
 	private JPanel getPnPrincipalSocio() {
 		if (pnPrincipalSocio == null) {
 			pnPrincipalSocio = new JPanel();
@@ -88,12 +152,12 @@ public class VentanaPrincipal extends JFrame {
 		VentanaSeleccionTest vst = new VentanaSeleccionTest();
 		vst.setVisible(true);
 	}
-
 	private JPanel getPnPrincipalDirectivo() {
 		if (pnPrincipalDirectivo == null) {
 			pnPrincipalDirectivo = new JPanel();
 			pnPrincipalDirectivo.setLayout(null);
 			pnPrincipalDirectivo.add(getLbProvisionalDirectivo());
+			pnPrincipalDirectivo.add(getBtnAsambleas());
 		}
 		return pnPrincipalDirectivo;
 	}
@@ -107,6 +171,7 @@ public class VentanaPrincipal extends JFrame {
 	private JLabel getLbProvisionalDirectivo() {
 		if (lbProvisionalDirectivo == null) {
 			lbProvisionalDirectivo = new JLabel("Pantalla principal del directivo");
+
 			lbProvisionalDirectivo.setBounds(188, 116, 223, 32);
 		}
 		return lbProvisionalDirectivo;
@@ -166,5 +231,22 @@ public class VentanaPrincipal extends JFrame {
 			btRenovarLicencia.setBounds(410, 252, 134, 54);
 		}
 		return btRenovarLicencia;
+	}
+	private JButton getBtnAsambleas() {
+		if (btnAsambleas == null) {
+			btnAsambleas = new JButton("Convocar asamblea");
+			btnAsambleas.addActionListener(new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					AsambleasView view = new AsambleasView();
+					AsambleasModel model = new AsambleasModel();
+					AsambleasController controller = new AsambleasController(model,view);
+					
+					controller.initController();
+				}
+			});
+			btnAsambleas.setBounds(48, 80, 185, 40);
+		}
+		return btnAsambleas;
 	}
 }
