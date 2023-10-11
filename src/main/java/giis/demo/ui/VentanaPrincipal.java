@@ -101,32 +101,6 @@ public class VentanaPrincipal extends JFrame {
 		}
 		return pnInicio;
 	}
-	private JButton getBtnDirectivo() {
-		if (btnDirectivo == null) {
-			btnDirectivo = new JButton("Directivo");
-			btnDirectivo.addActionListener(new ActionListener() {
-				@Override
-				public void actionPerformed(ActionEvent e) {
-					((CardLayout)pn.getLayout()).show(pn,"PrincipalDirectivo");
-				}
-			});
-			btnDirectivo.setBounds(44, 125, 198, 65);
-		}
-		return btnDirectivo;
-	}
-	private JButton getBtnSocio() {
-		if (btnSocio == null) {
-			btnSocio = new JButton("Socio");
-			btnSocio.addActionListener(new ActionListener() {
-				@Override
-				public void actionPerformed(ActionEvent e) {
-					((CardLayout)pn.getLayout()).show(pn,"PrincipalSocio");
-				}
-			});
-			btnSocio.setBounds(293, 125, 186, 65);
-		}
-		return btnSocio;
-	}
 	private JPanel getPnPrincipalSocio() {
 		if (pnPrincipalSocio == null) {
 			pnPrincipalSocio = new JPanel();
@@ -245,7 +219,7 @@ public class VentanaPrincipal extends JFrame {
 					controller.initController();
 				}
 			});
-			btnAsambleas.setBounds(48, 80, 185, 40);
+			btnAsambleas.setBounds(86, 205, 185, 60);
 		}
 		return btnAsambleas;
 	}
