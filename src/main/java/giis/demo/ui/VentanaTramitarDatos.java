@@ -14,6 +14,9 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.border.EmptyBorder;
+
+import giis.demo.model.servicio.TramitarLicencia;
+
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import javax.swing.JScrollPane;
@@ -24,6 +27,9 @@ public class VentanaTramitarDatos extends JFrame {
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
+	
+	private TramitarLicencia tramitarLicencia;
+	
 	private JPanel pnPrincipal;
 	private JPanel pnTramitarLicencia;
 	private JPanel pnSur;
@@ -94,6 +100,7 @@ public class VentanaTramitarDatos extends JFrame {
 		pnPrincipal.setLayout(new CardLayout(0, 0));
 		pnPrincipal.add(getPnTramitarLicencia(), "pnTramitarLicencia");
 		pnPrincipal.add(getPnAceptarPoliticaDatos(), "pnPoliticaDeDatos");
+		this.tramitarLicencia = new TramitarLicencia();
 	}
 	private JPanel getPnTramitarLicencia() {
 		if (pnTramitarLicencia == null) {
@@ -415,6 +422,7 @@ public class VentanaTramitarDatos extends JFrame {
 	private JButton getBtCrearLicencia_1() {
 		if (btCrearLicencia == null) {
 			btCrearLicencia = new JButton("Crear Licencia");
+			btCrearLicencia.setEnabled(false);
 			btCrearLicencia.setForeground(Color.WHITE);
 			btCrearLicencia.setBackground(new Color(50, 205, 50));
 		}
@@ -423,6 +431,11 @@ public class VentanaTramitarDatos extends JFrame {
 	private JButton getBtCancelarLicencia_1() {
 		if (btCancelarLicencia == null) {
 			btCancelarLicencia = new JButton("Cancelar");
+			btCancelarLicencia.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					dispose();
+				}
+			});
 			btCancelarLicencia.setForeground(Color.WHITE);
 			btCancelarLicencia.setBackground(Color.RED);
 		}
@@ -470,6 +483,11 @@ public class VentanaTramitarDatos extends JFrame {
 	private JButton getBtCancelarLicencia_1_1() {
 		if (btRechazarPoliticaDeDatos == null) {
 			btRechazarPoliticaDeDatos = new JButton("Rechazar");
+			btRechazarPoliticaDeDatos.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					dispose();
+				}
+			});
 			btRechazarPoliticaDeDatos.setForeground(Color.WHITE);
 			btRechazarPoliticaDeDatos.setBackground(Color.RED);
 		}
