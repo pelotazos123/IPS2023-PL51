@@ -3,6 +3,7 @@ package giis.demo.ui;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
+
 import java.awt.CardLayout;
 import javax.swing.JButton;
 import javax.swing.JLabel;
@@ -12,11 +13,6 @@ import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.GridLayout;
 import javax.swing.SwingConstants;
-import java.awt.BorderLayout;
-import java.awt.Color;
-import javax.swing.JTextField;
-import javax.swing.JComboBox;
-import java.awt.GridBagLayout;
 
 public class VentanaPrincipal extends JFrame {
 
@@ -140,6 +136,12 @@ public class VentanaPrincipal extends JFrame {
 	private JButton getBtTramitarLicencia() {
 		if (btTramitarLicencia == null) {
 			btTramitarLicencia = new JButton("Tramitar Licencia");
+			btTramitarLicencia.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					VentanaTramitarDatos frame = new VentanaTramitarDatos();
+					frame.setVisible(true);
+				}
+			});
 			btTramitarLicencia.setBounds(405, 358, 139, 52);
 		}
 		return btTramitarLicencia;
