@@ -12,11 +12,6 @@ import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.GridLayout;
 import javax.swing.SwingConstants;
-import java.awt.BorderLayout;
-import java.awt.Color;
-import javax.swing.JTextField;
-import javax.swing.JComboBox;
-import java.awt.GridBagLayout;
 
 public class VentanaPrincipal extends JFrame {
 
@@ -36,6 +31,7 @@ public class VentanaPrincipal extends JFrame {
 	private JLabel lbBienvenida;
 	private JButton btTramitarLicencia;
 	private JButton btRenovarLicencia;
+	private JButton btPagoTransferencia;
 
 
 	/**
@@ -78,8 +74,9 @@ public class VentanaPrincipal extends JFrame {
 				}
 			});
 			btTestsFisiologicos.setMnemonic('f');
-			btTestsFisiologicos.setBounds(183, 252, 145, 52);
+			btTestsFisiologicos.setBounds(156, 252, 191, 52);
 			pnPrincipalSocio.add(btTestsFisiologicos);
+			pnPrincipalSocio.add(getBtPagoTransferencia());
 		}
 		return pnPrincipalSocio;
 	}
@@ -166,5 +163,23 @@ public class VentanaPrincipal extends JFrame {
 			btRenovarLicencia.setBounds(410, 252, 134, 54);
 		}
 		return btRenovarLicencia;
+	}
+	private JButton getBtPagoTransferencia() {
+		if (btPagoTransferencia == null) {
+			btPagoTransferencia = new JButton("Pagar por transferencia");
+			btPagoTransferencia.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					muestraVentanaPagoTransf();
+				}
+			});
+			btPagoTransferencia.setMnemonic('t');
+			btPagoTransferencia.setBounds(156, 358, 191, 52);
+		}
+		return btPagoTransferencia;
+	}
+
+	private void muestraVentanaPagoTransf() {
+//		PayByTransf pbt = new PayByTransf();
+//		pbt.setVisible(true);	
 	}
 }
