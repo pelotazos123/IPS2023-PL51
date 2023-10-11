@@ -14,6 +14,8 @@ import java.awt.GridLayout;
 import javax.swing.SwingConstants;
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Component;
+
 import javax.swing.JTextField;
 import javax.swing.JComboBox;
 import java.awt.GridBagLayout;
@@ -36,6 +38,9 @@ public class VentanaPrincipal extends JFrame {
 	private JLabel lbBienvenida;
 	private JButton btTramitarLicencia;
 	private JButton btRenovarLicencia;
+	private VentanaReservas vr;
+	private JButton btnNewButton;
+	private JButton btnReservas;
 
 
 	/**
@@ -70,17 +75,31 @@ public class VentanaPrincipal extends JFrame {
 			pnPrincipalSocio.add(getLbProvisionalSocio());
 			pnPrincipalSocio.add(getBtTramitarLicencia());
 			pnPrincipalSocio.add(getBtRenovarLicencia());
+			pnPrincipalSocio.add(getBtnReservas());
+			
+			
 		}
 		return pnPrincipalSocio;
 	}
+	
+	private void openReservas() {
+		vr = new VentanaReservas();
+		vr.setModal(true);
+		vr.setLocationRelativeTo(this);
+		vr.setVisible(true);
+	}
+
 	private JPanel getPnPrincipalDirectivo() {
 		if (pnPrincipalDirectivo == null) {
 			pnPrincipalDirectivo = new JPanel();
 			pnPrincipalDirectivo.setLayout(null);
 			pnPrincipalDirectivo.add(getLbProvisionalDirectivo());
+			
 		}
 		return pnPrincipalDirectivo;
 	}
+
+
 	private JLabel getLbProvisionalSocio() {
 		if (lbProvisionalSocio == null) {
 			lbProvisionalSocio = new JLabel("Pantalla principal del socio");
@@ -112,6 +131,7 @@ public class VentanaPrincipal extends JFrame {
 			btnDirectivo.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
 					((CardLayout)pnPrincipal.getLayout()).show(pnPrincipal,"PrincipalDirectivo");
+					
 				}
 			});
 		}
@@ -150,5 +170,18 @@ public class VentanaPrincipal extends JFrame {
 			btRenovarLicencia.setBounds(410, 252, 134, 54);
 		}
 		return btRenovarLicencia;
+	}
+
+	private JButton getBtnReservas() {
+		if (btnReservas == null) {
+			btnReservas = new JButton("Reservas");
+			btnReservas.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					openReservas();
+				}
+			});
+			btnReservas.setBounds(405, 439, 139, 52);
+		}
+		return btnReservas;
 	}
 }
