@@ -1,7 +1,8 @@
 package giis.demo.util;
 
 import java.awt.EventQueue;
-import giis.demo.ui.Ventanaprincipal;
+
+import giis.demo.ui.SeleccionTest;
 
 /**
  * Punto de entrada principal que incluye botones para la ejecucion de las pantallas 
@@ -19,7 +20,7 @@ public class SwingMain {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					Ventanaprincipal frame = new Ventanaprincipal();
+					SeleccionTest frame = new SeleccionTest();
 					frame.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();
