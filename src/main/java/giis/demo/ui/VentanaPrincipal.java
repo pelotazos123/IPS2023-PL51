@@ -70,9 +70,25 @@ public class VentanaPrincipal extends JFrame {
 			pnPrincipalSocio.add(getLbProvisionalSocio());
 			pnPrincipalSocio.add(getBtTramitarLicencia());
 			pnPrincipalSocio.add(getBtRenovarLicencia());
+			
+			JButton btTestsFisiologicos = new JButton("Tests Fisiológicos");
+			btTestsFisiologicos.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					creaVentanasTest();
+				}
+			});
+			btTestsFisiologicos.setMnemonic('f');
+			btTestsFisiologicos.setBounds(183, 252, 145, 52);
+			pnPrincipalSocio.add(btTestsFisiologicos);
 		}
 		return pnPrincipalSocio;
 	}
+	
+	private void creaVentanasTest() {
+		VentanaSeleccionTest vst = new VentanaSeleccionTest();
+		vst.setVisible(true);
+	}
+
 	private JPanel getPnPrincipalDirectivo() {
 		if (pnPrincipalDirectivo == null) {
 			pnPrincipalDirectivo = new JPanel();
