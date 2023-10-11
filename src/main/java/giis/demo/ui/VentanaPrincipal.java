@@ -15,7 +15,7 @@ import giis.demo.business.AsambleasController;
 import giis.demo.business.AsambleasModel;
 import giis.demo.util.Database;
 
-public class Ventanaprincipal extends JFrame {
+public class VentanaPrincipal extends JFrame {
 
 	/**
 	 * 
@@ -42,7 +42,7 @@ public class Ventanaprincipal extends JFrame {
 			@Override
 			public void run() {
 				try {
-					Ventanaprincipal vp = new Ventanaprincipal();
+					VentanaPrincipal vp = new VentanaPrincipal();
 					vp.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -54,7 +54,7 @@ public class Ventanaprincipal extends JFrame {
 	/**
 	 * Create the frame.
 	 */
-	public Ventanaprincipal() {
+	public VentanaPrincipal() {
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 584, 381);
 		setLocationRelativeTo(null);
