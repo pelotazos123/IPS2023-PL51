@@ -1,4 +1,4 @@
-package giis.demo.business;
+package giis.demo.business.entities;
 
 public class SocioEntity {
 	

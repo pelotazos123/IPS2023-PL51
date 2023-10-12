@@ -1,22 +1,25 @@
 package giis.demo.ui;
 
 
-import javax.swing.JFrame;
-import javax.swing.JPanel;
-import javax.swing.border.EmptyBorder;
 import java.awt.CardLayout;
-import javax.swing.JButton;
-import javax.swing.JLabel;
-import java.awt.event.ActionListener;
-import java.awt.event.ActionEvent;
+import java.awt.EventQueue;
 import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.GridLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
 import javax.swing.SwingConstants;
-import java.awt.EventQueue;
+import javax.swing.border.EmptyBorder;
 
 import giis.demo.business.AsambleasController;
 import giis.demo.business.AsambleasModel;
+import giis.demo.business.RecibosController;
+import giis.demo.business.RecibosModel;
 import giis.demo.util.Database;
 
 
@@ -96,6 +99,7 @@ public class VentanaPrincipal extends JFrame {
 			
 			JButton btTestsFisiologicos = new JButton("Tests Fisiológicos");
 			btTestsFisiologicos.addActionListener(new ActionListener() {
+				@Override
 				public void actionPerformed(ActionEvent e) {
 					creaVentanasTest();
 				}
@@ -119,6 +123,16 @@ public class VentanaPrincipal extends JFrame {
 			pnPrincipalDirectivo.add(getBtnAsambleas());
 			
 			JButton btnGeneracionRecibos = new JButton("Generar Recibos");
+			btnGeneracionRecibos.addActionListener(new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					RecibosView view = new RecibosView();
+					RecibosModel model = new RecibosModel();
+					RecibosController controller = new RecibosController(model,view);
+					
+					controller.initController();
+				}
+			});
 			btnGeneracionRecibos.setBounds(86, 304, 185, 60);
 			pnPrincipalDirectivo.add(btnGeneracionRecibos);
 		}
@@ -154,6 +168,7 @@ public class VentanaPrincipal extends JFrame {
 			btnDirectivo = new JButton("Directivo");
 			btnDirectivo.setFont(new Font("Tahoma", Font.PLAIN, 30));
 			btnDirectivo.addActionListener(new ActionListener() {
+				@Override
 				public void actionPerformed(ActionEvent e) {
 					((CardLayout)pnPrincipal.getLayout()).show(pnPrincipal,"PrincipalDirectivo");
 				}
@@ -166,6 +181,7 @@ public class VentanaPrincipal extends JFrame {
 			btnSocio = new JButton("Socio");
 			btnSocio.setFont(new Font("Tahoma", Font.PLAIN, 30));
 			btnSocio.addActionListener(new ActionListener() {
+				@Override
 				public void actionPerformed(ActionEvent e) {
 					((CardLayout)pnPrincipal.getLayout()).show(pnPrincipal,"PrincipalSocio");
 				}

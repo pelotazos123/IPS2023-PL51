@@ -10,6 +10,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
+import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
 
 public class RecibosView {
@@ -55,30 +56,42 @@ public class RecibosView {
 		
 		
 	}
-	private JButton getBtnGenerarRecibos() {
+	public JButton getBtnGenerarRecibos() {
 		if (btnGenerarRecibos == null) {
 			btnGenerarRecibos = new JButton("Generar Recibos");
+			btnGenerarRecibos.setForeground(Color.WHITE);
 			btnGenerarRecibos.setBackground(new Color(0, 128, 0));
 			btnGenerarRecibos.addActionListener(new ActionListener() {
 				@Override
 				public void actionPerformed(ActionEvent e) {
 				}
 			});
-			btnGenerarRecibos.setBounds(216, 295, 148, 46);
+			btnGenerarRecibos.setBounds(217, 267, 148, 46);
 		}
 		return btnGenerarRecibos;
 	}
 	private JLabel getLblSocio() {
 		if (lblSocio == null) {
 			lblSocio = new JLabel("Socio:");
-			lblSocio.setBounds(49, 55, 64, 25);
+			lblSocio.setLabelFor(getSpSocios());
+			lblSocio.setHorizontalAlignment(SwingConstants.CENTER);
+			lblSocio.setForeground(new Color(255, 255, 255));
+			lblSocio.setOpaque(true);
+			lblSocio.setBorder(new EmptyBorder(1, 1, 1, 1));
+			lblSocio.setBackground(new Color(0, 0, 205));
+			lblSocio.setBounds(50, 27, 64, 25);
 		}
 		return lblSocio;
 	}
 	private JLabel getLblCuotas() {
 		if (lblCuotas == null) {
 			lblCuotas = new JLabel("Cuotas:");
-			lblCuotas.setBounds(320, 55, 64, 25);
+			lblCuotas.setLabelFor(getTabCuotas());
+			lblCuotas.setHorizontalAlignment(SwingConstants.CENTER);
+			lblCuotas.setForeground(new Color(255, 255, 255));
+			lblCuotas.setOpaque(true);
+			lblCuotas.setBackground(new Color(0, 0, 205));
+			lblCuotas.setBounds(321, 27, 64, 25);
 		}
 		return lblCuotas;
 	}
@@ -86,7 +99,7 @@ public class RecibosView {
 		if (spSocios == null) {
 			spSocios = new JScrollPane();
 			spSocios.setViewportBorder(new EmptyBorder(1, 1, 1, 1));
-			spSocios.setBounds(49, 91, 205, 188);
+			spSocios.setBounds(50, 63, 205, 188);
 			spSocios.setViewportView(getTabSocios());
 		}
 		return spSocios;
@@ -95,21 +108,27 @@ public class RecibosView {
 		if (spCuotas == null) {
 			spCuotas = new JScrollPane();
 			spCuotas.setViewportBorder(new EmptyBorder(1, 1, 1, 1));
-			spCuotas.setBounds(320, 91, 205, 188);
+			spCuotas.setBounds(321, 63, 205, 188);
 			spCuotas.setViewportView(getTabCuotas());
 		}
 		return spCuotas;
 	}
-	private JTable getTabSocios() {
+	public JTable getTabSocios() {
 		if (tabSocios == null) {
 			tabSocios = new JTable();
+			tabSocios.setDefaultEditor(Object.class, null);
 		}
 		return tabSocios;
 	}
-	private JTable getTabCuotas() {
+	public JTable getTabCuotas() {
 		if (tabCuotas == null) {
 			tabCuotas = new JTable();
+			tabCuotas.setDefaultEditor(Object.class, null);
 		}
 		return tabCuotas;
+	}
+
+	public JFrame getFrame() {
+		return frame;
 	}
 }
