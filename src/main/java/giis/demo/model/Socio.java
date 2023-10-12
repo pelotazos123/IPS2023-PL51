@@ -13,7 +13,7 @@ public class Socio {
 	private String numeroIban;
 	private String nombre;
 	private String apellidos;
-	private String genero;
+	private Generos genero;
 	private int edad;
 	private String altura;
 	private int peso;
@@ -36,10 +36,57 @@ public class Socio {
 		altura = (String) result[5];
 		peso = (int) result[6];
 		edad = (int) result[7];
-		genero = (String) result[8];
+		String genero = (String)result[8];
+		if(genero.equals("HOMBRE")) {
+			this.genero = Generos.HOMBRE;
+		}else if(genero.equals("MUJER")) {
+			this.genero = Generos.MUJER;
+		}else {
+			this.genero = Generos.OTRO;
+		}
 		esDirectivo = (int)result[9] == 1;
 	}
 	
+	public int getId() {
+		return id;
+	}
+
+	public String getTipoCuota() {
+		return tipoCuota;
+	}
+
+	public String getNumeroIban() {
+		return numeroIban;
+	}
+
+	public String getNombre() {
+		return nombre;
+	}
+
+	public String getApellidos() {
+		return apellidos;
+	}
+
+	public Generos getGenero() {
+		return genero;
+	}
+
+	public int getEdad() {
+		return edad;
+	}
+
+	public String getAltura() {
+		return altura;
+	}
+
+	public int getPeso() {
+		return peso;
+	}
+
+	public boolean isEsDirectivo() {
+		return esDirectivo;
+	}
+
 	@Override
 	public String toString() {
 		return "Nombre: "+nombre+", Apellidos: "+apellidos+", Edad: "+edad+", cuota tipo: "+tipoCuota+", numero iban: "+numeroIban+

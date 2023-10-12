@@ -3,7 +3,6 @@ package giis.demo.ui;
 import java.awt.BorderLayout;
 import java.awt.CardLayout;
 import java.awt.Color;
-import java.awt.EventQueue;
 import java.awt.FlowLayout;
 import java.awt.GridLayout;
 
@@ -11,15 +10,21 @@ import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.border.EmptyBorder;
 
-import giis.demo.model.servicio.TramitarLicencia;
+import giis.demo.model.Generos;
+import giis.demo.model.CrearLicencias.TiposLicencia;
+import giis.demo.model.CrearLicencias.servicio.TramitarLicencia;
+import giis.demo.util.FileUtil;
 
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import javax.swing.JScrollPane;
+import javax.swing.DefaultComboBoxModel;
+import javax.swing.JTextArea;
 
 public class VentanaTramitarDatos extends JFrame {
 
@@ -27,8 +32,11 @@ public class VentanaTramitarDatos extends JFrame {
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
+	private final static String FICHERO_POLITICA_PROTECCION_DATOS = "src/main/resources/PoliticaDeProteccionDeDatos.txt";
 	
 	private TramitarLicencia tramitarLicencia;
+	private boolean politicaAceptada;
+	
 	
 	private JPanel pnPrincipal;
 	private JPanel pnTramitarLicencia;
@@ -45,10 +53,10 @@ public class VentanaTramitarDatos extends JFrame {
 	private JTextField txApellidosSocio;
 	private JPanel pnGeneroSocio;
 	private JLabel lbGeneroSocio;
-	private JComboBox cbGeneroSocio;
+	private JComboBox<Generos> cbGeneroSocio;
 	private JPanel pnEdadSocio;
 	private JLabel lbEdadSocio;
-	private JComboBox cbEdadSocio;
+	private JComboBox<String> cbEdadSocio;
 	private JPanel pnDatosTutor;
 	private JLabel lbDatosTutor;
 	private JPanel pnNombreTutor;
@@ -59,10 +67,10 @@ public class VentanaTramitarDatos extends JFrame {
 	private JTextField txApellidosTutor;
 	private JPanel pnGeneroTutor;
 	private JLabel lbGeneroTutor;
-	private JComboBox cbGeneroTutor;
+	private JComboBox<Generos> cbGeneroTutor;
 	private JPanel pnEdadTutor;
 	private JLabel lbEdadTutor;
-	private JComboBox cbEdadTutor;
+	private JComboBox<String> cbEdadTutor;
 	private JPanel pnDatosFacturacionYLicencia;
 	private JPanel pnDireccionFacturacion;
 	private JLabel lbDireccionFacturacion;
@@ -72,7 +80,7 @@ public class VentanaTramitarDatos extends JFrame {
 	private JTextField txInfoFacturacion;
 	private JPanel pnTipoLicencia;
 	private JLabel lbTipoLicencia;
-	private JComboBox cbTipoLicencia;
+	private JComboBox<TiposLicencia> cbTipoLicencia;
 	private JPanel pnCrearYCancelarLicencia;
 	private JButton btCrearLicencia;
 	private JButton btCancelarLicencia;
@@ -84,6 +92,7 @@ public class VentanaTramitarDatos extends JFrame {
 	private JButton btAceparPoliticaDeDatos;
 	private JPanel pnLabelPoliticaDeDatos;
 	private JLabel lbPoliticaDeDatos;
+	private JTextArea txPoliticaDeDatos;
 	private JScrollPane scrPoliticaDeDatos;
 
 
@@ -101,6 +110,14 @@ public class VentanaTramitarDatos extends JFrame {
 		pnPrincipal.add(getPnTramitarLicencia(), "pnTramitarLicencia");
 		pnPrincipal.add(getPnAceptarPoliticaDatos(), "pnPoliticaDeDatos");
 		this.tramitarLicencia = new TramitarLicencia();
+		cargarDatos();
+	}
+	private void cargarDatos() {
+		getTxNombreSocio().setText(tramitarLicencia.getSocio().getNombre());
+		getTxApellidosSocio().setText(tramitarLicencia.getSocio().getApellidos());
+		getCbGeneroSocio().setSelectedItem(tramitarLicencia.getSocio().getGenero());
+		getCbEdadSocio().setSelectedIndex(tramitarLicencia.getSocio().getEdad());
+		
 	}
 	private JPanel getPnTramitarLicencia() {
 		if (pnTramitarLicencia == null) {
@@ -212,9 +229,12 @@ public class VentanaTramitarDatos extends JFrame {
 		}
 		return lbGeneroSocio;
 	}
-	private JComboBox getCbGeneroSocio() {
+	private JComboBox<Generos> getCbGeneroSocio() {
 		if (cbGeneroSocio == null) {
-			cbGeneroSocio = new JComboBox();
+			cbGeneroSocio = new JComboBox<Generos>();
+			Generos[] generos = Generos.values();
+			cbGeneroSocio.setModel(new DefaultComboBoxModel<Generos>(generos));
+			cbGeneroSocio.setBounds(146, 66, 106, 22);
 		}
 		return cbGeneroSocio;
 	}
@@ -232,9 +252,16 @@ public class VentanaTramitarDatos extends JFrame {
 		}
 		return lbEdadSocio;
 	}
-	private JComboBox getCbEdadSocio() {
+	private JComboBox<String> getCbEdadSocio() {
 		if (cbEdadSocio == null) {
-			cbEdadSocio = new JComboBox();
+			cbEdadSocio = new JComboBox<String>();
+			// crear el array de string y rellenar con bucle for
+			String[] años = new String[102];
+			for (int i = 0; i < años.length-1; i++) {
+				años[i] = ""+i;
+			}
+			cbEdadSocio.setModel(new DefaultComboBoxModel<String>(años));
+			cbEdadSocio.setBounds(146, 66, 106, 22);
 		}
 		return cbEdadSocio;
 	}
@@ -312,9 +339,12 @@ public class VentanaTramitarDatos extends JFrame {
 		}
 		return lbGeneroTutor;
 	}
-	private JComboBox getCbGeneroTutor() {
+	private JComboBox<Generos> getCbGeneroTutor() {
 		if (cbGeneroTutor == null) {
-			cbGeneroTutor = new JComboBox();
+			cbGeneroTutor = new JComboBox<Generos>();
+			Generos[] generos = Generos.values();
+			cbGeneroTutor.setModel(new DefaultComboBoxModel<Generos>(generos));
+			cbGeneroTutor.setBounds(146, 66, 106, 22);
 		}
 		return cbGeneroTutor;
 	}
@@ -332,9 +362,15 @@ public class VentanaTramitarDatos extends JFrame {
 		}
 		return lbEdadTutor;
 	}
-	private JComboBox getCbEdadTutor() {
+	private JComboBox<String> getCbEdadTutor() {
 		if (cbEdadTutor == null) {
-			cbEdadTutor = new JComboBox();
+			cbEdadTutor = new JComboBox<String>();
+			String[] años = new String[104];
+			for (int i = 0; i < años.length-1; i++) {
+				años[i] = ""+(i+18);
+			}
+			cbEdadTutor.setModel(new DefaultComboBoxModel<String>(años));
+			cbEdadTutor.setBounds(146, 66, 106, 22);
 		}
 		return cbEdadTutor;
 	}
@@ -404,9 +440,12 @@ public class VentanaTramitarDatos extends JFrame {
 		}
 		return lbTipoLicencia;
 	}
-	private JComboBox getCbTipoLicencia() {
+	private JComboBox<TiposLicencia> getCbTipoLicencia() {
 		if (cbTipoLicencia == null) {
-			cbTipoLicencia = new JComboBox();
+			cbTipoLicencia = new JComboBox<TiposLicencia>();
+			TiposLicencia[] licencias = TiposLicencia.values();
+			cbTipoLicencia.setModel(new DefaultComboBoxModel<TiposLicencia>(licencias));
+			cbTipoLicencia.setBounds(146, 66, 106, 22);
 		}
 		return cbTipoLicencia;
 	}
@@ -414,21 +453,65 @@ public class VentanaTramitarDatos extends JFrame {
 		if (pnCrearYCancelarLicencia == null) {
 			pnCrearYCancelarLicencia = new JPanel();
 			pnCrearYCancelarLicencia.setLayout(new FlowLayout(FlowLayout.RIGHT, 5, 5));
-			pnCrearYCancelarLicencia.add(getBtCancelarLicencia_1());
-			pnCrearYCancelarLicencia.add(getBtCrearLicencia_1());
+			pnCrearYCancelarLicencia.add(getBtCancelarLicencia());
+			pnCrearYCancelarLicencia.add(getBtCrearLicencia());
 		}
 		return pnCrearYCancelarLicencia;
 	}
-	private JButton getBtCrearLicencia_1() {
+	private JButton getBtCrearLicencia() {
 		if (btCrearLicencia == null) {
 			btCrearLicencia = new JButton("Crear Licencia");
+			btCrearLicencia.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					if(comprobarDatosCorrectos()) {
+						crearLicencia();
+						dispose();
+					}
+				}
+			});
 			btCrearLicencia.setEnabled(false);
 			btCrearLicencia.setForeground(Color.WHITE);
 			btCrearLicencia.setBackground(new Color(50, 205, 50));
 		}
 		return btCrearLicencia;
 	}
-	private JButton getBtCancelarLicencia_1() {
+	
+	private boolean comprobarDatosCorrectos() {
+		if(getTxNombreSocio().getText().isBlank() || getTxApellidosSocio().getText().isBlank() 
+				|| getTxDireccionFacturacion().getText().isBlank() || getTxInfoFacturacion().getText().isBlank()) {
+			JOptionPane.showMessageDialog(this,"Debe rellenar los campos Nombre, Apellidos, Dirección de facturación e Información de facturación ",
+					"Campo", JOptionPane.INFORMATION_MESSAGE);
+			return false;
+		}else if( Integer.parseInt((String) getCbEdadSocio().getSelectedItem()) < 18) {
+			if(getTxNombreTutor().getText().isBlank() || getTxApellidosTutor().getText().isBlank()) {
+				JOptionPane.showMessageDialog(this,"Debe rellenar los campos Nombre y Apellidos del tutor",
+						"Campo", JOptionPane.INFORMATION_MESSAGE);
+				return false;
+			}else {
+				return true;
+			}
+		}else {
+			return true;
+		}
+		
+	}
+	
+	private void crearLicencia() {
+		String nombreTutor = getTxNombreTutor().getText();
+		String apellidoTutor = getTxApellidosTutor().getText();
+		String edadTutor = (String) getCbEdadTutor().getSelectedItem();
+		String direccionFacturacion = getTxDireccionFacturacion().getText();
+		String infoFacturacion = getTxInfoFacturacion().getText();
+		TiposLicencia licencia = (TiposLicencia) getCbTipoLicencia().getSelectedItem();
+		if(Integer.parseInt((String) getCbEdadSocio().getSelectedItem()) < 18) {
+			tramitarLicencia.crearLicencia(nombreTutor, apellidoTutor, edadTutor, direccionFacturacion, infoFacturacion, licencia);
+		}else {
+			tramitarLicencia.crearLicencia("noTutor", "noTutor", null, direccionFacturacion, infoFacturacion, licencia);
+		}
+		
+	}
+	
+	private JButton getBtCancelarLicencia() {
 		if (btCancelarLicencia == null) {
 			btCancelarLicencia = new JButton("Cancelar");
 			btCancelarLicencia.addActionListener(new ActionListener() {
@@ -446,11 +529,11 @@ public class VentanaTramitarDatos extends JFrame {
 			pnPoliticaDeDatos = new JPanel();
 			FlowLayout flowLayout = (FlowLayout) pnPoliticaDeDatos.getLayout();
 			flowLayout.setAlignment(FlowLayout.RIGHT);
-			pnPoliticaDeDatos.add(getBtPoliticaDeDatos_1());
+			pnPoliticaDeDatos.add(getBtPoliticaDeDatos());
 		}
 		return pnPoliticaDeDatos;
 	}
-	private JButton getBtPoliticaDeDatos_1() {
+	private JButton getBtPoliticaDeDatos() {
 		if (btPoliticaDeDatos == null) {
 			btPoliticaDeDatos = new JButton("Pol\u00EDtica de protecci\u00F3n de datos");
 			btPoliticaDeDatos.addActionListener(new ActionListener() {
@@ -475,17 +558,18 @@ public class VentanaTramitarDatos extends JFrame {
 		if (pnAceptarOCancelarPoliticaDeDAtos == null) {
 			pnAceptarOCancelarPoliticaDeDAtos = new JPanel();
 			pnAceptarOCancelarPoliticaDeDAtos.setLayout(new FlowLayout(FlowLayout.RIGHT, 5, 5));
-			pnAceptarOCancelarPoliticaDeDAtos.add(getBtCancelarLicencia_1_1());
-			pnAceptarOCancelarPoliticaDeDAtos.add(getBtCrearLicencia_1_1());
+			pnAceptarOCancelarPoliticaDeDAtos.add(getBtRechazarPoliticaDeDatos());
+			pnAceptarOCancelarPoliticaDeDAtos.add(getBtAceparPoliticaDeDatos());
 		}
 		return pnAceptarOCancelarPoliticaDeDAtos;
 	}
-	private JButton getBtCancelarLicencia_1_1() {
+	private JButton getBtRechazarPoliticaDeDatos() {
 		if (btRechazarPoliticaDeDatos == null) {
 			btRechazarPoliticaDeDatos = new JButton("Rechazar");
 			btRechazarPoliticaDeDatos.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
-					dispose();
+					((CardLayout) getContentPane().getLayout()).show(getContentPane(),"pnTramitarLicencia");
+					getBtCrearLicencia().setEnabled(false);
 				}
 			});
 			btRechazarPoliticaDeDatos.setForeground(Color.WHITE);
@@ -493,9 +577,16 @@ public class VentanaTramitarDatos extends JFrame {
 		}
 		return btRechazarPoliticaDeDatos;
 	}
-	private JButton getBtCrearLicencia_1_1() {
+	private JButton getBtAceparPoliticaDeDatos() {
 		if (btAceparPoliticaDeDatos == null) {
 			btAceparPoliticaDeDatos = new JButton("Aceptar");
+			btAceparPoliticaDeDatos.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					((CardLayout) getContentPane().getLayout()).show(getContentPane(),"pnTramitarLicencia");
+					getBtCrearLicencia().setEnabled(true);
+					getBtPoliticaDeDatos().setEnabled(false);
+				}
+			});
 			btAceparPoliticaDeDatos.setForeground(Color.WHITE);
 			btAceparPoliticaDeDatos.setBackground(new Color(50, 205, 50));
 		}
@@ -516,9 +607,21 @@ public class VentanaTramitarDatos extends JFrame {
 		}
 		return lbPoliticaDeDatos;
 	}
+	private JTextArea getTxPoliticaDeDatos() {
+		if (txPoliticaDeDatos == null) {
+			txPoliticaDeDatos = new JTextArea();
+			txPoliticaDeDatos.setEditable(false);
+			txPoliticaDeDatos.setText(cargarPoliticaDeDatos());
+		}
+		return txPoliticaDeDatos;
+	}
+	private String cargarPoliticaDeDatos() {
+		return FileUtil.loadFileTickets(FICHERO_POLITICA_PROTECCION_DATOS);
+	}
 	private JScrollPane getScrPoliticaDeDatos() {
 		if (scrPoliticaDeDatos == null) {
 			scrPoliticaDeDatos = new JScrollPane();
+			scrPoliticaDeDatos.setViewportView(getTxPoliticaDeDatos());
 		}
 		return scrPoliticaDeDatos;
 	}
