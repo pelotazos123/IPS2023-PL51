@@ -59,7 +59,7 @@ public class RecibosView {
 	public JButton getBtnGenerarRecibos() {
 		if (btnGenerarRecibos == null) {
 			btnGenerarRecibos = new JButton("Generar Recibos");
-			btnGenerarRecibos.setForeground(Color.WHITE);
+			btnGenerarRecibos.setForeground(new Color(255, 255, 255));
 			btnGenerarRecibos.setBackground(new Color(0, 128, 0));
 			btnGenerarRecibos.addActionListener(new ActionListener() {
 				@Override
@@ -75,10 +75,8 @@ public class RecibosView {
 			lblSocio = new JLabel("Socio:");
 			lblSocio.setLabelFor(getSpSocios());
 			lblSocio.setHorizontalAlignment(SwingConstants.CENTER);
-			lblSocio.setForeground(new Color(255, 255, 255));
 			lblSocio.setOpaque(true);
 			lblSocio.setBorder(new EmptyBorder(1, 1, 1, 1));
-			lblSocio.setBackground(new Color(0, 0, 205));
 			lblSocio.setBounds(50, 27, 64, 25);
 		}
 		return lblSocio;
@@ -88,9 +86,7 @@ public class RecibosView {
 			lblCuotas = new JLabel("Cuotas:");
 			lblCuotas.setLabelFor(getTabCuotas());
 			lblCuotas.setHorizontalAlignment(SwingConstants.CENTER);
-			lblCuotas.setForeground(new Color(255, 255, 255));
 			lblCuotas.setOpaque(true);
-			lblCuotas.setBackground(new Color(0, 0, 205));
 			lblCuotas.setBounds(321, 27, 64, 25);
 		}
 		return lblCuotas;

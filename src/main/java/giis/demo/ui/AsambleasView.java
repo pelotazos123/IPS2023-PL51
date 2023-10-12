@@ -188,6 +188,7 @@ public class AsambleasView {
 	public JButton getBtnConvocar() {
 		if (btnConvocar == null) {
 			btnConvocar = new JButton("Convocar");
+			btnConvocar.setForeground(new Color(255, 255, 255));
 			btnConvocar.setBackground(new Color(0, 128, 0));
 			btnConvocar.setBounds(221, 282, 120, 39);
 		}
