@@ -18,4 +18,3 @@ create table reservas (owner_id int, date date, instalation_code varchar2(255), 
 create table instalaciones (code varchar2(255), name varchar2(255), foreign key(code) references reservas(instalation_code));
 create table recibos (number int, foreign key(number) references cuotas(num_recibo));
 create table asambleas (type varchar2(255), announcement varchar2(255), date_announcement1 date, date_announcement2 date);
-

@@ -1,7 +1,5 @@
 package giis.demo.model;
 
-import java.util.List;
-
 import giis.demo.util.Database;
 
 public class Socio {
@@ -44,7 +42,8 @@ public class Socio {
 	
 	@Override
 	public String toString() {
-		return "Nombre: "+nombre+" Apellidos: "+apellidos+"";
+		return "Nombre: "+nombre+", Apellidos: "+apellidos+", Edad: "+edad+", cuota tipo: "+tipoCuota+", numero iban: "+numeroIban+
+				", altura: "+altura+", peso: "+peso+", genero: "+genero+", es directivo :"+esDirectivo;
 		
 	}
 
