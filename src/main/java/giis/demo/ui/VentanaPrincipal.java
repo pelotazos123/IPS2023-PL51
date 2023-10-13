@@ -38,32 +38,17 @@ public class VentanaPrincipal extends JFrame {
 	private JButton btTramitarLicencia;
 	private JButton btRenovarLicencia;
 	private VentanaReservas vr;
+	private VentanaListaSocios vLS;
 	private JButton btnReservas;
 	private JButton btnAsambleas;
-
-	public static void main(String[] args) {
-
-		Database db = new Database();
-		db.createDatabase(false);
-		db.loadDatabase();
-
-		EventQueue.invokeLater(new Runnable() {
-			@Override
-			public void run() {
-				try {
-					VentanaPrincipal vp = new VentanaPrincipal();
-					vp.setVisible(true);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		});
-	}
+	private JButton btnListadoSocios;
+	private Database db;
 
 	/**
 	 * Create the frame.
 	 */
-	public VentanaPrincipal() {
+	public VentanaPrincipal(Database db) {
+		this.db = db;
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 870, 618);
 		pnPrincipal = new JPanel();
@@ -113,7 +98,7 @@ public class VentanaPrincipal extends JFrame {
 	}
 
 	private void openReservas() {
-		vr = new VentanaReservas();
+		vr = new VentanaReservas(db);
 		vr.setModal(true);
 		vr.setLocationRelativeTo(this);
 		vr.setVisible(true);
@@ -129,6 +114,7 @@ public class VentanaPrincipal extends JFrame {
 			JButton btnGeneracionRecibos = new JButton("Generar Recibos");
 			btnGeneracionRecibos.setBounds(86, 304, 185, 60);
 			pnPrincipalDirectivo.add(btnGeneracionRecibos);
+			pnPrincipalDirectivo.add(getBtnListadoSocios());
 		}
 		return pnPrincipalDirectivo;
 	}
@@ -243,4 +229,24 @@ public class VentanaPrincipal extends JFrame {
 		}
 		return btnAsambleas;
 	}
+	private JButton getBtnListadoSocios() {
+		if (btnListadoSocios == null) {
+			btnListadoSocios = new JButton("Ver socios");
+			btnListadoSocios.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					openListadoSocios();
+				}
+			});
+			btnListadoSocios.setBounds(465, 209, 185, 53);
+		}
+		return btnListadoSocios;
+	}
+	
+	private void openListadoSocios() {
+		vLS = new VentanaListaSocios();
+		vLS.setModal(true);
+		vLS.setLocationRelativeTo(this);
+		vLS.setVisible(true);
+	}
+	
 }
