@@ -19,6 +19,13 @@ import giis.demo.business.AsambleasController;
 import giis.demo.business.AsambleasModel;
 import giis.demo.util.Database;
 
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Component;
+
+import javax.swing.JTextField;
+import javax.swing.JComboBox;
+import java.awt.GridBagLayout;
 
 public class VentanaPrincipal extends JFrame {
 
@@ -39,7 +46,10 @@ public class VentanaPrincipal extends JFrame {
 	private JLabel lbBienvenida;
 	private JButton btTramitarLicencia;
 	private JButton btRenovarLicencia;
-	private JButton btnAsambleas;
+	private VentanaReservas vr;
+	private JButton btnNewButton;
+	private JButton btnReservas;
+  private JButton btnAsambleas;
 
 
 	public static void main(String[] args) {
@@ -93,8 +103,8 @@ public class VentanaPrincipal extends JFrame {
 			pnPrincipalSocio.add(getLbProvisionalSocio());
 			pnPrincipalSocio.add(getBtTramitarLicencia());
 			pnPrincipalSocio.add(getBtRenovarLicencia());
-			
-			JButton btTestsFisiologicos = new JButton("Tests Fisiológicos");
+      pnPrincipalSocio.add(getBtnReservas());
+      JButton btTestsFisiologicos = new JButton("Tests Fisiológicos");
 			btTestsFisiologicos.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
 					creaVentanasTest();
@@ -106,17 +116,25 @@ public class VentanaPrincipal extends JFrame {
 		}
 		return pnPrincipalSocio;
 	}
-	
+
 	private void creaVentanasTest() {
 		VentanaSeleccionTest vst = new VentanaSeleccionTest();
 		vst.setVisible(true);
 	}
+  
+  private void openReservas() {
+		vr = new VentanaReservas();
+		vr.setModal(true);
+		vr.setLocationRelativeTo(this);
+		vr.setVisible(true);
+	}
+  
 	private JPanel getPnPrincipalDirectivo() {
 		if (pnPrincipalDirectivo == null) {
 			pnPrincipalDirectivo = new JPanel();
 			pnPrincipalDirectivo.setLayout(null);
 			pnPrincipalDirectivo.add(getLbProvisionalDirectivo());
-			pnPrincipalDirectivo.add(getBtnAsambleas());
+      pnPrincipalDirectivo.add(getBtnAsambleas());
 			
 			JButton btnGeneracionRecibos = new JButton("Generar Recibos");
 			btnGeneracionRecibos.setBounds(86, 304, 185, 60);
@@ -124,6 +142,8 @@ public class VentanaPrincipal extends JFrame {
 		}
 		return pnPrincipalDirectivo;
 	}
+
+
 	private JLabel getLbProvisionalSocio() {
 		if (lbProvisionalSocio == null) {
 			lbProvisionalSocio = new JLabel("Pantalla principal del socio");
@@ -156,6 +176,7 @@ public class VentanaPrincipal extends JFrame {
 			btnDirectivo.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
 					((CardLayout)pnPrincipal.getLayout()).show(pnPrincipal,"PrincipalDirectivo");
+					
 				}
 			});
 		}
@@ -195,7 +216,19 @@ public class VentanaPrincipal extends JFrame {
 		}
 		return btRenovarLicencia;
 	}
-	private JButton getBtnAsambleas() {
+  private JButton getBtnReservas() {
+		if (btnReservas == null) {
+			btnReservas = new JButton("Reservas");
+			btnReservas.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					openReservas();
+				}
+			});
+			btnReservas.setBounds(405, 439, 139, 52);
+		}
+		return btnReservas;
+    
+    private JButton getBtnAsambleas() {
 		if (btnAsambleas == null) {
 			btnAsambleas = new JButton("Convocar asamblea");
 			btnAsambleas.addActionListener(new ActionListener() {
