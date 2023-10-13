@@ -1,6 +1,5 @@
 package giis.demo.ui;
 
-
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
@@ -18,14 +17,6 @@ import java.awt.EventQueue;
 import giis.demo.business.AsambleasController;
 import giis.demo.business.AsambleasModel;
 import giis.demo.util.Database;
-
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Component;
-
-import javax.swing.JTextField;
-import javax.swing.JComboBox;
-import java.awt.GridBagLayout;
 
 public class VentanaPrincipal extends JFrame {
 
@@ -47,17 +38,15 @@ public class VentanaPrincipal extends JFrame {
 	private JButton btTramitarLicencia;
 	private JButton btRenovarLicencia;
 	private VentanaReservas vr;
-	private JButton btnNewButton;
 	private JButton btnReservas;
-  private JButton btnAsambleas;
-
+	private JButton btnAsambleas;
 
 	public static void main(String[] args) {
-		
-		Database db=new Database();
+
+		Database db = new Database();
 		db.createDatabase(false);
 		db.loadDatabase();
-		
+
 		EventQueue.invokeLater(new Runnable() {
 			@Override
 			public void run() {
@@ -96,6 +85,7 @@ public class VentanaPrincipal extends JFrame {
 		}
 		return pnInicio;
 	}
+
 	private JPanel getPnPrincipalSocio() {
 		if (pnPrincipalSocio == null) {
 			pnPrincipalSocio = new JPanel();
@@ -103,8 +93,8 @@ public class VentanaPrincipal extends JFrame {
 			pnPrincipalSocio.add(getLbProvisionalSocio());
 			pnPrincipalSocio.add(getBtTramitarLicencia());
 			pnPrincipalSocio.add(getBtRenovarLicencia());
-      pnPrincipalSocio.add(getBtnReservas());
-      JButton btTestsFisiologicos = new JButton("Tests Fisiológicos");
+			pnPrincipalSocio.add(getBtnReservas());
+			JButton btTestsFisiologicos = new JButton("Tests Fisiológicos");
 			btTestsFisiologicos.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
 					creaVentanasTest();
@@ -121,28 +111,27 @@ public class VentanaPrincipal extends JFrame {
 		VentanaSeleccionTest vst = new VentanaSeleccionTest();
 		vst.setVisible(true);
 	}
-  
-  private void openReservas() {
+
+	private void openReservas() {
 		vr = new VentanaReservas();
 		vr.setModal(true);
 		vr.setLocationRelativeTo(this);
 		vr.setVisible(true);
 	}
-  
+
 	private JPanel getPnPrincipalDirectivo() {
 		if (pnPrincipalDirectivo == null) {
 			pnPrincipalDirectivo = new JPanel();
 			pnPrincipalDirectivo.setLayout(null);
 			pnPrincipalDirectivo.add(getLbProvisionalDirectivo());
-      pnPrincipalDirectivo.add(getBtnAsambleas());
-			
+			pnPrincipalDirectivo.add(getBtnAsambleas());
+
 			JButton btnGeneracionRecibos = new JButton("Generar Recibos");
 			btnGeneracionRecibos.setBounds(86, 304, 185, 60);
 			pnPrincipalDirectivo.add(btnGeneracionRecibos);
 		}
 		return pnPrincipalDirectivo;
 	}
-
 
 	private JLabel getLbProvisionalSocio() {
 		if (lbProvisionalSocio == null) {
@@ -151,6 +140,7 @@ public class VentanaPrincipal extends JFrame {
 		}
 		return lbProvisionalSocio;
 	}
+
 	private JLabel getLbProvisionalDirectivo() {
 		if (lbProvisionalDirectivo == null) {
 			lbProvisionalDirectivo = new JLabel("Pantalla principal del directivo");
@@ -159,6 +149,7 @@ public class VentanaPrincipal extends JFrame {
 		}
 		return lbProvisionalDirectivo;
 	}
+
 	private JPanel getPnBotones() {
 		if (pnBotones == null) {
 			pnBotones = new JPanel();
@@ -169,31 +160,34 @@ public class VentanaPrincipal extends JFrame {
 		}
 		return pnBotones;
 	}
+
 	private JButton getBtnDirectivo() {
 		if (btnDirectivo == null) {
 			btnDirectivo = new JButton("Directivo");
 			btnDirectivo.setFont(new Font("Tahoma", Font.PLAIN, 30));
 			btnDirectivo.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
-					((CardLayout)pnPrincipal.getLayout()).show(pnPrincipal,"PrincipalDirectivo");
-					
+					((CardLayout) pnPrincipal.getLayout()).show(pnPrincipal, "PrincipalDirectivo");
+
 				}
 			});
 		}
 		return btnDirectivo;
 	}
+
 	private JButton getBtnSocio() {
 		if (btnSocio == null) {
 			btnSocio = new JButton("Socio");
 			btnSocio.setFont(new Font("Tahoma", Font.PLAIN, 30));
 			btnSocio.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
-					((CardLayout)pnPrincipal.getLayout()).show(pnPrincipal,"PrincipalSocio");
+					((CardLayout) pnPrincipal.getLayout()).show(pnPrincipal, "PrincipalSocio");
 				}
 			});
 		}
 		return btnSocio;
 	}
+
 	private JLabel getLbBienvenida() {
 		if (lbBienvenida == null) {
 			lbBienvenida = new JLabel("Bienvenidos al club");
@@ -202,6 +196,7 @@ public class VentanaPrincipal extends JFrame {
 		}
 		return lbBienvenida;
 	}
+
 	private JButton getBtTramitarLicencia() {
 		if (btTramitarLicencia == null) {
 			btTramitarLicencia = new JButton("Tramitar Licencia");
@@ -209,6 +204,7 @@ public class VentanaPrincipal extends JFrame {
 		}
 		return btTramitarLicencia;
 	}
+
 	private JButton getBtRenovarLicencia() {
 		if (btRenovarLicencia == null) {
 			btRenovarLicencia = new JButton("Renovar Licencia");
@@ -216,7 +212,8 @@ public class VentanaPrincipal extends JFrame {
 		}
 		return btRenovarLicencia;
 	}
-  private JButton getBtnReservas() {
+
+	private JButton getBtnReservas() {
 		if (btnReservas == null) {
 			btnReservas = new JButton("Reservas");
 			btnReservas.addActionListener(new ActionListener() {
@@ -224,11 +221,12 @@ public class VentanaPrincipal extends JFrame {
 					openReservas();
 				}
 			});
-			btnReservas.setBounds(405, 439, 139, 52);
+			btnReservas.setBounds(183, 358, 139, 52);
 		}
 		return btnReservas;
-    
-    private JButton getBtnAsambleas() {
+	}
+
+	private JButton getBtnAsambleas() {
 		if (btnAsambleas == null) {
 			btnAsambleas = new JButton("Convocar asamblea");
 			btnAsambleas.addActionListener(new ActionListener() {
@@ -236,8 +234,8 @@ public class VentanaPrincipal extends JFrame {
 				public void actionPerformed(ActionEvent e) {
 					AsambleasView view = new AsambleasView();
 					AsambleasModel model = new AsambleasModel();
-					AsambleasController controller = new AsambleasController(model,view);
-					
+					AsambleasController controller = new AsambleasController(model, view);
+
 					controller.initController();
 				}
 			});
