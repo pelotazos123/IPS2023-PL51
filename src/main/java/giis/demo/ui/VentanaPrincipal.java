@@ -1,5 +1,6 @@
 package giis.demo.ui;
 
+
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
@@ -12,6 +13,12 @@ import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.GridLayout;
 import javax.swing.SwingConstants;
+import java.awt.EventQueue;
+
+import giis.demo.business.AsambleasController;
+import giis.demo.business.AsambleasModel;
+import giis.demo.util.Database;
+
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
@@ -32,6 +39,7 @@ public class VentanaPrincipal extends JFrame {
 	private JPanel pnPrincipalDirectivo;
 	private JLabel lbProvisionalSocio;
 	private JLabel lbProvisionalDirectivo;
+
 	private JPanel pnBotones;
 	private JButton btnDirectivo;
 	private JButton btnSocio;
@@ -41,7 +49,27 @@ public class VentanaPrincipal extends JFrame {
 	private VentanaReservas vr;
 	private JButton btnNewButton;
 	private JButton btnReservas;
+  private JButton btnAsambleas;
 
+
+	public static void main(String[] args) {
+		
+		Database db=new Database();
+		db.createDatabase(false);
+		db.loadDatabase();
+		
+		EventQueue.invokeLater(new Runnable() {
+			@Override
+			public void run() {
+				try {
+					VentanaPrincipal vp = new VentanaPrincipal();
+					vp.setVisible(true);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		});
+	}
 
 	/**
 	 * Create the frame.
@@ -75,26 +103,42 @@ public class VentanaPrincipal extends JFrame {
 			pnPrincipalSocio.add(getLbProvisionalSocio());
 			pnPrincipalSocio.add(getBtTramitarLicencia());
 			pnPrincipalSocio.add(getBtRenovarLicencia());
-			pnPrincipalSocio.add(getBtnReservas());
-			
-			
+      pnPrincipalSocio.add(getBtnReservas());
+      JButton btTestsFisiologicos = new JButton("Tests Fisiológicos");
+			btTestsFisiologicos.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					creaVentanasTest();
+				}
+			});
+			btTestsFisiologicos.setMnemonic('f');
+			btTestsFisiologicos.setBounds(183, 252, 145, 52);
+			pnPrincipalSocio.add(btTestsFisiologicos);
 		}
 		return pnPrincipalSocio;
 	}
-	
-	private void openReservas() {
+
+	private void creaVentanasTest() {
+		VentanaSeleccionTest vst = new VentanaSeleccionTest();
+		vst.setVisible(true);
+	}
+  
+  private void openReservas() {
 		vr = new VentanaReservas();
 		vr.setModal(true);
 		vr.setLocationRelativeTo(this);
 		vr.setVisible(true);
 	}
-
+  
 	private JPanel getPnPrincipalDirectivo() {
 		if (pnPrincipalDirectivo == null) {
 			pnPrincipalDirectivo = new JPanel();
 			pnPrincipalDirectivo.setLayout(null);
 			pnPrincipalDirectivo.add(getLbProvisionalDirectivo());
+      pnPrincipalDirectivo.add(getBtnAsambleas());
 			
+			JButton btnGeneracionRecibos = new JButton("Generar Recibos");
+			btnGeneracionRecibos.setBounds(86, 304, 185, 60);
+			pnPrincipalDirectivo.add(btnGeneracionRecibos);
 		}
 		return pnPrincipalDirectivo;
 	}
@@ -110,6 +154,7 @@ public class VentanaPrincipal extends JFrame {
 	private JLabel getLbProvisionalDirectivo() {
 		if (lbProvisionalDirectivo == null) {
 			lbProvisionalDirectivo = new JLabel("Pantalla principal del directivo");
+
 			lbProvisionalDirectivo.setBounds(188, 116, 223, 32);
 		}
 		return lbProvisionalDirectivo;
@@ -171,8 +216,7 @@ public class VentanaPrincipal extends JFrame {
 		}
 		return btRenovarLicencia;
 	}
-
-	private JButton getBtnReservas() {
+  private JButton getBtnReservas() {
 		if (btnReservas == null) {
 			btnReservas = new JButton("Reservas");
 			btnReservas.addActionListener(new ActionListener() {
@@ -183,5 +227,22 @@ public class VentanaPrincipal extends JFrame {
 			btnReservas.setBounds(405, 439, 139, 52);
 		}
 		return btnReservas;
+    
+    private JButton getBtnAsambleas() {
+		if (btnAsambleas == null) {
+			btnAsambleas = new JButton("Convocar asamblea");
+			btnAsambleas.addActionListener(new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					AsambleasView view = new AsambleasView();
+					AsambleasModel model = new AsambleasModel();
+					AsambleasController controller = new AsambleasController(model,view);
+					
+					controller.initController();
+				}
+			});
+			btnAsambleas.setBounds(86, 205, 185, 60);
+		}
+		return btnAsambleas;
 	}
 }
