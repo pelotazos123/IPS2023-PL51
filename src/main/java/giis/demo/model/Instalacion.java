@@ -17,5 +17,10 @@ public class Instalacion {
 	public String getCode() {
 		return code;
 	}
+	
+	public String toString() {
+		String str = ""+getName()+" - " + getCode(); 
+		return str;
+	}
 
 }
