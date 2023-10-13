@@ -8,6 +8,7 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.text.SimpleDateFormat;
 
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.DefaultListModel;
@@ -15,7 +16,9 @@ import javax.swing.JDialog;
 import java.awt.BorderLayout;
 import java.util.Date;
 
+import giis.demo.business.ReservationManager;
 import giis.demo.model.Instalacion;
+import giis.demo.util.Database;
 
 import javax.swing.JList;
 import javax.swing.JOptionPane;
@@ -36,9 +39,11 @@ public class VentanaReservas extends JDialog {
 	private JComboBox<Instalacion> cbInstalaciones;
 	private DefaultListModel<String> modeloListaHoras;
 	private JButton btnReserva;
+	private ReservationManager reMan;
 	
-	public VentanaReservas() {
-		setTitle("fsdjf");
+	public VentanaReservas(Database db) {
+		reMan = new ReservationManager(db);
+		setTitle("Reservas");
 		setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 		setBounds(100, 100, 870, 618);
 		getContentPane().setLayout(new BorderLayout(0, 0));
@@ -74,6 +79,9 @@ public class VentanaReservas extends JDialog {
 	private JCalendar getCalendar() {
 		if(calendar == null) {
 			calendar = new JCalendar();
+			calendar.getDayChooser().setAlwaysFireDayProperty(false);
+			calendar.getDayChooser().setDayBordersVisible(true);
+			calendar.setWeekOfYearVisible(false);
 			calendar.addPropertyChangeListener("calendar", new PropertyChangeListener() {
 				@Override
 				public void propertyChange(PropertyChangeEvent evt) {
@@ -89,14 +97,19 @@ public class VentanaReservas extends JDialog {
 	private void reservar() {
 		int selectedVal = getList().getSelectedIndex();
 		String hora = modeloListaHoras.get(selectedVal);
-		modeloListaHoras.remove(selectedVal);
-		System.out.println("Hora seleccionada: " + hora);
 		Date selectedDate = getCalendar().getDate();
+		
 		selectedDate.setHours(Integer.parseInt(hora.split(":")[0]));
 		selectedDate.setMinutes(0);
-		selectedDate.setSeconds(0);
-		System.out.println(selectedDate.toString());
-		JOptionPane.showMessageDialog(null, "Reserva confirmada de " + getCbInstalaciones().getSelectedItem().toString() +": " + selectedDate);
+		
+		String pattern = "dd/MM/yyyy - HH:mm";
+		SimpleDateFormat formatDate = new SimpleDateFormat(pattern);
+		String dateS = formatDate.format(selectedDate);
+
+		Instalacion instalacion = ((Instalacion)getCbInstalaciones().getSelectedItem());
+		reMan.reservar(selectedDate, dateS, instalacion);
+		
+		JOptionPane.showMessageDialog(null, "Reserva confirmada de " + instalacion.toString() +": " + dateS);
 		this.dispose();
 	}
 
@@ -111,10 +124,8 @@ public class VentanaReservas extends JDialog {
 				}
 			});
 			list.setModel(modeloListaHoras);
-			if (modeloListaHoras.isEmpty()) {
-				for (int i = 9; i <= 23; i++) {
-					modeloListaHoras.addElement(i+":00");
-				}
+			for (int i = 9; i <= 23; i++) {
+				modeloListaHoras.addElement(i+":00");
 			}
 		}
 		return list;
