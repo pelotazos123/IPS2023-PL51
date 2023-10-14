@@ -3,7 +3,6 @@ package giis.demo.business;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.List;
-import java.util.Random;
 
 import giis.demo.business.entities.CuotaEntity;
 import giis.demo.business.entities.ReciboEntity;
@@ -12,6 +11,8 @@ import giis.demo.util.Database;
 
 public class RecibosModel {
 	private Database db = new Database();
+	
+	private int nRecibo = 1;
 	
 	public static final String SQL_LISTA_SOCIOS = 
 			"select * from socios";
@@ -46,7 +47,6 @@ public class RecibosModel {
 	}
 	
 	public void generateRecibo(String iban, int amount) {
-		int number = new Random().nextInt();
 		Calendar today = Calendar.getInstance();
 		today.add(Calendar.MONTH, 1);
 		today.set(Calendar.DAY_OF_MONTH, 1);
@@ -54,7 +54,7 @@ public class RecibosModel {
 		today.set(Calendar.DAY_OF_MONTH, 15);
 		String charge_date = new SimpleDateFormat("dd-MM-yyyy").format(today.getTime());
 		
-		db.executeUpdate(SQL_GENERATE_RECIBOS, iban, number,  amount, value_date, charge_date);
+		db.executeUpdate(SQL_GENERATE_RECIBOS, iban, nRecibo++,  amount, value_date, charge_date);
 	}
 	
 	public void updateCuotas(String id) {
