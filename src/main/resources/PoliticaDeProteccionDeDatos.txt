@@ -1,0 +1,51 @@
+Política de Protección de Datos
+
+1. Introducción
+
+Esta política establece los procedimientos y estándares que [Nombre de la Empresa] seguirá para proteger la privacidad y seguridad de los datos personales que recolectamos, procesamos y almacenamos. Esta política cumple con las regulaciones de protección de datos vigentes, incluyendo el Reglamento General de Protección de Datos (GDPR) y otras leyes locales de protección de datos.
+
+2. Alcance
+
+Esta política aplica a todos los empleados, contratistas, proveedores y terceros que manejen datos personales en nombre de [Nombre de la Empresa].
+
+3. Principios de Protección de Datos
+
+3.1. Consentimiento: Obtendremos el consentimiento explícito de los individuos para la recolección y procesamiento de sus datos personales.
+
+3.2. Limitación de Propósito: Solo recolectaremos datos personales para propósitos específicos y legítimos, y no los usaremos de manera incompatible con estos.
+
+3.3. Minimización de Datos: Recolectaremos solo los datos necesarios para cumplir con el propósito específico para el cual fueron recolectados.
+
+3.4. Exactitud: Mantendremos los datos precisos y actualizados, y tomaremos medidas razonables para corregir datos inexactos.
+
+3.5. Limitación del Almacenamiento: No mantendremos los datos personales más allá del tiempo necesario para el propósito para el cual fueron recolectados.
+
+3.6. Integridad y Confidencialidad: Implementaremos medidas de seguridad adecuadas para proteger los datos personales contra pérdidas, accesos no autorizados, divulgación o alteración.
+
+3.7. Responsabilidad y Responsabilidad Proactiva: Seremos responsables de cumplir con los principios de protección de datos y de demostrar el cumplimiento.
+
+4. Derechos de los Individuos
+
+Los individuos tienen derecho a:
+
+Acceder a sus datos personales
+Rectificar datos inexactos o incompletos
+Borrar sus datos personales (derecho al olvido)
+Restringir el procesamiento de sus datos
+Portabilidad de datos
+Oponerse al procesamiento de sus datos
+5. Transferencia de Datos
+
+Solo transferiremos datos personales a terceros que ofrezcan garantías suficientes de cumplir con las regulaciones de protección de datos y solo para propósitos legítimos.
+
+6. Incumplimiento de la Política
+
+El incumplimiento de esta política puede resultar en acciones disciplinarias, incluyendo terminación de empleo o término de relación contractual, según corresponda. Además, [Nombre de la Empresa] puede estar sujeta a sanciones legales y multas por incumplimiento de las leyes de protección de datos.
+
+7. Revisión de la Política
+
+Esta política será revisada y actualizada periódicamente para asegurarse de que sigue siendo relevante y cumple con las regulaciones de protección de datos vigentes.
+
+8. Contacto
+
+Para preguntas o inquietudes relacionadas con esta política, por favor comuníquese con el [Departamento de Privacidad/Responsable de Protección de Datos] a través de [información de contacto].

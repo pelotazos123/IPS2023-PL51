@@ -4,6 +4,7 @@ package giis.demo.ui;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
+
 import java.awt.CardLayout;
 import java.awt.EventQueue;
 import java.awt.FlowLayout;
@@ -31,6 +32,9 @@ public class VentanaPrincipal extends JFrame {
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
+	
+	private boolean esDirectivo;
+	
 	private JPanel pnPrincipal;
 	private JPanel pnInicio;
 	private JPanel pnPrincipalSocio;
@@ -85,7 +89,6 @@ public class VentanaPrincipal extends JFrame {
 			pnPrincipalSocio.add(getLbProvisionalSocio());
 			pnPrincipalSocio.add(getBtTramitarLicencia());
 			pnPrincipalSocio.add(getBtRenovarLicencia());
-			pnPrincipalSocio.add(getBtnReservas());
 			JButton btTestsFisiologicos = new JButton("Tests Fisiológicos");
 			btTestsFisiologicos.addActionListener(new ActionListener() {
 				@Override
@@ -173,7 +176,11 @@ public class VentanaPrincipal extends JFrame {
 				@Override
 				public void actionPerformed(ActionEvent e) {
 					((CardLayout) pnPrincipal.getLayout()).show(pnPrincipal, "PrincipalDirectivo");
-
+					pnPrincipalDirectivo.add(getBtTramitarLicencia());
+					pnPrincipalDirectivo.add(getBtRenovarLicencia());
+					pnPrincipalDirectivo.add(getBtnReservas());
+					((CardLayout)pnPrincipal.getLayout()).show(pnPrincipal,"PrincipalDirectivo");
+					esDirectivo = true;
 				}
 			});
 		}
@@ -188,6 +195,11 @@ public class VentanaPrincipal extends JFrame {
 				@Override
 				public void actionPerformed(ActionEvent e) {
 					((CardLayout) pnPrincipal.getLayout()).show(pnPrincipal, "PrincipalSocio");
+					pnPrincipalSocio.add(getBtTramitarLicencia());
+					pnPrincipalSocio.add(getBtRenovarLicencia());
+					pnPrincipalSocio.add(getBtnReservas());
+					((CardLayout)pnPrincipal.getLayout()).show(pnPrincipal,"PrincipalSocio");
+					esDirectivo = false;
 				}
 			});
 		}
@@ -206,6 +218,12 @@ public class VentanaPrincipal extends JFrame {
 	private JButton getBtTramitarLicencia() {
 		if (btTramitarLicencia == null) {
 			btTramitarLicencia = new JButton("Tramitar Licencia");
+			btTramitarLicencia.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					VentanaTramitarLicencia frame = new VentanaTramitarLicencia(esDirectivo);
+					frame.setVisible(true);
+				}
+			});
 			btTramitarLicencia.setBounds(405, 358, 139, 52);
 		}
 		return btTramitarLicencia;
@@ -215,6 +233,12 @@ public class VentanaPrincipal extends JFrame {
 		if (btRenovarLicencia == null) {
 			btRenovarLicencia = new JButton("Renovar Licencia");
 			btRenovarLicencia.setBounds(410, 252, 134, 54);
+			btRenovarLicencia.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					VentanaRenovarLicencia frame = new VentanaRenovarLicencia(esDirectivo);
+					frame.setVisible(true);
+				}
+			});
 		}
 		return btRenovarLicencia;
 	}
@@ -257,13 +281,13 @@ public class VentanaPrincipal extends JFrame {
 					openListadoSocios();
 				}
 			});
-			btnListadoSocios.setBounds(465, 209, 185, 53);
+			btnListadoSocios.setBounds(86, 399, 185, 53);
 		}
 		return btnListadoSocios;
 	}
 	
 	private void openListadoSocios() {
-		vLS = new VentanaListaSocios();
+		vLS = new VentanaListaSocios(db);
 		vLS.setModal(true);
 		vLS.setLocationRelativeTo(this);
 		vLS.setVisible(true);
