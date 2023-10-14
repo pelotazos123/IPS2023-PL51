@@ -7,20 +7,27 @@ import giis.demo.util.Database;
 
 public class TramitarLicencia {
 	
-	private final static int ID_SOCIO_PRUEBAS = 100;
+	private final static int ID_SOCIO_PRUEBAS = 105;
+	private final static int ID_SOCIO_MENOR_EDAD_PRUEBAS = 103;
+	private final static int ID_DIRECTIVO_PRUEBAS = 100;
+	
 	
 	private Database db=new Database();
 	private Socio socio;
 	private Licencia licencia;
 	
-	public TramitarLicencia() {
+	public TramitarLicencia(boolean esDirectivo) {
 		db.createDatabase(false);
 		db.loadDatabase();
-		loggearSocio();
+		loggearSocio(esDirectivo);
 	}
 	
-	public void loggearSocio() {
-		socio = new Socio(db, ID_SOCIO_PRUEBAS);
+	public void loggearSocio(boolean esDirectivo) {
+		if(esDirectivo) {
+			socio = new Socio(db, ID_DIRECTIVO_PRUEBAS);
+		}else {
+			socio = new Socio(db, ID_SOCIO_PRUEBAS);
+		}
 		System.out.println(socio.toString());
 	}
 	

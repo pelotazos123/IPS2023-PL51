@@ -20,6 +20,9 @@ public class VentanaPrincipal extends JFrame {
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
+	
+	private boolean esDirectivo;
+	
 	private JPanel pnPrincipal;
 	private JPanel pnInicio;
 	private JPanel pnPrincipalSocio;
@@ -64,8 +67,7 @@ public class VentanaPrincipal extends JFrame {
 			pnPrincipalSocio = new JPanel();
 			pnPrincipalSocio.setLayout(null);
 			pnPrincipalSocio.add(getLbProvisionalSocio());
-			pnPrincipalSocio.add(getBtTramitarLicencia());
-			pnPrincipalSocio.add(getBtRenovarLicencia());
+			
 		}
 		return pnPrincipalSocio;
 	}
@@ -107,7 +109,10 @@ public class VentanaPrincipal extends JFrame {
 			btnDirectivo.setFont(new Font("Tahoma", Font.PLAIN, 30));
 			btnDirectivo.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
+					pnPrincipalDirectivo.add(getBtTramitarLicencia());
+					pnPrincipalDirectivo.add(getBtRenovarLicencia());
 					((CardLayout)pnPrincipal.getLayout()).show(pnPrincipal,"PrincipalDirectivo");
+					esDirectivo = true;
 				}
 			});
 		}
@@ -119,7 +124,10 @@ public class VentanaPrincipal extends JFrame {
 			btnSocio.setFont(new Font("Tahoma", Font.PLAIN, 30));
 			btnSocio.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
+					pnPrincipalSocio.add(getBtTramitarLicencia());
+					pnPrincipalSocio.add(getBtRenovarLicencia());
 					((CardLayout)pnPrincipal.getLayout()).show(pnPrincipal,"PrincipalSocio");
+					esDirectivo = false;
 				}
 			});
 		}
@@ -138,7 +146,7 @@ public class VentanaPrincipal extends JFrame {
 			btTramitarLicencia = new JButton("Tramitar Licencia");
 			btTramitarLicencia.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
-					VentanaTramitarDatos frame = new VentanaTramitarDatos();
+					VentanaTramitarLicencia frame = new VentanaTramitarLicencia(esDirectivo);
 					frame.setVisible(true);
 				}
 			});
@@ -150,6 +158,12 @@ public class VentanaPrincipal extends JFrame {
 		if (btRenovarLicencia == null) {
 			btRenovarLicencia = new JButton("Renovar Licencia");
 			btRenovarLicencia.setBounds(410, 252, 134, 54);
+			btRenovarLicencia.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					VentanaRenovarLicencia frame = new VentanaRenovarLicencia(esDirectivo);
+					frame.setVisible(true);
+				}
+			});
 		}
 		return btRenovarLicencia;
 	}

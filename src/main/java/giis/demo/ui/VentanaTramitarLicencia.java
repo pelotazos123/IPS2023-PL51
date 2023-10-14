@@ -25,17 +25,17 @@ import java.awt.event.ActionEvent;
 import javax.swing.JScrollPane;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JTextArea;
+import javax.swing.border.TitledBorder;
 
-public class VentanaTramitarDatos extends JFrame {
+public class VentanaTramitarLicencia extends JFrame {
 
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-	private final static String FICHERO_POLITICA_PROTECCION_DATOS = "src/main/resources/PoliticaDeProteccionDeDatos.txt";
+	public final static String FICHERO_POLITICA_PROTECCION_DATOS = "src/main/resources/PoliticaDeProteccionDeDatos.txt";
 	
 	private TramitarLicencia tramitarLicencia;
-	private boolean politicaAceptada;
 	
 	
 	private JPanel pnPrincipal;
@@ -99,7 +99,8 @@ public class VentanaTramitarDatos extends JFrame {
 	/**
 	 * Create the frame.
 	 */
-	public VentanaTramitarDatos() {
+	public VentanaTramitarLicencia(boolean esDirectivo) {
+		setTitle("Club Deportivo");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 870, 618);
 		pnPrincipal = new JPanel();
@@ -109,7 +110,7 @@ public class VentanaTramitarDatos extends JFrame {
 		pnPrincipal.setLayout(new CardLayout(0, 0));
 		pnPrincipal.add(getPnTramitarLicencia(), "pnTramitarLicencia");
 		pnPrincipal.add(getPnAceptarPoliticaDatos(), "pnPoliticaDeDatos");
-		this.tramitarLicencia = new TramitarLicencia();
+		this.tramitarLicencia = new TramitarLicencia(esDirectivo);
 		cargarDatos();
 	}
 	private void cargarDatos() {
@@ -122,6 +123,7 @@ public class VentanaTramitarDatos extends JFrame {
 	private JPanel getPnTramitarLicencia() {
 		if (pnTramitarLicencia == null) {
 			pnTramitarLicencia = new JPanel();
+			pnTramitarLicencia.setBorder(new TitledBorder(null, "Tramitar Licencia", TitledBorder.LEADING, TitledBorder.TOP, null, null));
 			pnTramitarLicencia.setLayout(new BorderLayout(0, 0));
 			pnTramitarLicencia.add(getPnSur(), BorderLayout.SOUTH);
 			pnTramitarLicencia.add(getPnDatos(), BorderLayout.CENTER);
