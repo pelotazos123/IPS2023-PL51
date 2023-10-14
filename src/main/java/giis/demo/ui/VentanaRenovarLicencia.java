@@ -49,7 +49,6 @@ public class VentanaRenovarLicencia extends JFrame {
 	private JButton btModificarLicencia;
 	private JPanel pnDatos;
 	private JPanel pnDatosPersonales;
-	private JPanel pnDatos_1;
 
 	/**
 	 * Create the frame.
@@ -266,15 +265,7 @@ public class VentanaRenovarLicencia extends JFrame {
 		if (pnDatosPersonales == null) {
 			pnDatosPersonales = new JPanel();
 			pnDatosPersonales.setLayout(new GridLayout(0, 2, 0, 0));
-			pnDatosPersonales.add(getPnDatos_1());
 		}
 		return pnDatosPersonales;
-	}
-	private JPanel getPnDatos_1() {
-		if (pnDatos_1 == null) {
-			pnDatos_1 = new JPanel();
-			pnDatos_1.setLayout(new BorderLayout(0, 0));
-		}
-		return pnDatos_1;
 	}
 }
