@@ -30,7 +30,7 @@ public class Reserva {
 	}
 	
 	private void comprobarInsertado() {
-		Object[] result = db.executeQueryArray(SQL_CARGAR_RESERVA, owner_id).get(0);
+		Object[] result = db.executeQueryArray(SQL_CARGAR_RESERVA).get(0);
 		int id = (int) result[0];
 		String reserva = (String) result[1];
 		String instalacionId = (String) result[2];

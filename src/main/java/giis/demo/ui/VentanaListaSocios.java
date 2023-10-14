@@ -1,7 +1,6 @@
 package giis.demo.ui;
 
 import java.awt.BorderLayout;
-import java.awt.FlowLayout;
 
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
@@ -13,6 +12,11 @@ import java.awt.Dimension;
 
 import javax.swing.JLabel;
 import javax.swing.border.LineBorder;
+
+import giis.demo.business.CargaSocios;
+import giis.demo.model.Socio;
+import giis.demo.util.Database;
+
 import java.awt.Font;
 import javax.swing.JScrollPane;
 import javax.swing.JList;
@@ -32,13 +36,15 @@ public class VentanaListaSocios extends JDialog {
 	private JScrollPane scrlListaSocios;
 	private JList<String> listSocios;
 	private DefaultListModel<String> modeloListaSocios;
+	private Database db;
 
 	private final static String MOCK_SOCIO_LISTA = "Pedrito Garcia López - Cuota JOVEN - Hombre";
 	
 	/**
 	 * Create the dialog.
 	 */
-	public VentanaListaSocios() {
+	public VentanaListaSocios(Database db) {
+		this.db = db;
 		setBounds(100, 100, 870, 618);
 		getContentPane().setLayout(new BorderLayout());
 		contentPanel.setBackground(Color.WHITE);
@@ -47,6 +53,7 @@ public class VentanaListaSocios extends JDialog {
 		contentPanel.setLayout(new BorderLayout(0, 0));
 		contentPanel.add(getPnLista());
 		contentPanel.add(getBtnPanel(), BorderLayout.NORTH);
+		actualizar();
 	}
 
 	private JPanel getPnLista() {
@@ -72,9 +79,22 @@ public class VentanaListaSocios extends JDialog {
 	private JButton getBtnFiltro() {
 		if (btnFiltro == null) {
 			btnFiltro = new JButton("Filtrar");
+			btnFiltro.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					mostrarVentanaFiltros();
+				}
+			});
 		}
 		return btnFiltro;
 	}
+	
+	private void mostrarVentanaFiltros() {
+		VentanaFiltro vF = new VentanaFiltro();
+		vF.setLocationRelativeTo(this);
+		vF.setModal(true);
+		vF.setVisible(true);
+	}
+	
 	private JPanel getPnlEsteBtns() {
 		if (pnlEsteBtns == null) {
 			pnlEsteBtns = new JPanel();
@@ -101,8 +121,11 @@ public class VentanaListaSocios extends JDialog {
 	}
 	
 	private void actualizar() {
-		
-		
+		Object[] result = CargaSocios.cargarSocios(db);		
+		modeloListaSocios.removeAllElements();
+		for (int i = 0; i < result.length; i++) {
+			modeloListaSocios.addElement(((Socio)result[i]).toStringList());
+		}
 	}
 
 	private JLabel getLblText() {
@@ -127,7 +150,6 @@ public class VentanaListaSocios extends JDialog {
 			listSocios = new JList<String>();
 			modeloListaSocios = new DefaultListModel<String>();
 			listSocios.setModel(modeloListaSocios);
-			modeloListaSocios.addElement(MOCK_SOCIO_LISTA);
 		}
 		return listSocios;
 	}
