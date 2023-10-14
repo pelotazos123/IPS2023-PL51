@@ -1,5 +1,6 @@
 package giis.demo.business;
 
+import java.awt.CardLayout;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalTime;
@@ -37,7 +38,7 @@ public class AsambleasController {
 	private void addAsamblea(String type, String announcement, String date1, String date2, String orderOfDay) {
 		model.addAsamblea(type, announcement, date1, date2, orderOfDay);
 		JOptionPane.showMessageDialog(null, "Se ha convocado correctamente.", "Correcto", JOptionPane.INFORMATION_MESSAGE);
-		view.getFrame().dispose();
+		((CardLayout)view.getFrame().getContentPane().getLayout()).show(view.getFrame().getContentPane(),"EleccionAsambleas");
 	}
 	
 	private void addAsambleaOrdinaria() {
