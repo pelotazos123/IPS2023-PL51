@@ -173,7 +173,7 @@ public class VentanaPrincipal extends JFrame {
 				}
 			});
 			btPagoTransferencia.setMnemonic('t');
-			btPagoTransferencia.setBounds(156, 358, 191, 52);
+			btPagoTransferencia.setBounds(156, 433, 191, 52);
 		}
 		return btPagoTransferencia;
 	}
