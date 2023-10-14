@@ -99,16 +99,16 @@ public class PayByTransf extends JFrame {
 			btAceptar = new JButton("Aceptar");
 			btAceptar.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
-					if(file == null)
+					if(file == null) {
 						JOptionPane.showMessageDialog(null, "No se ha insertado ningún fichero");
-					else
+				} else {
 						if(CheckFichero.checkFichero(file)) {
 							JOptionPane.showMessageDialog(null, "El fichero ha sido validado");
 							cierraVentana();
 						} else {
 							JOptionPane.showMessageDialog(null, "El fichero no tiene el formato correcto");
 						}
-							
+					}
 				}
 			});
 			btAceptar.setBounds(74, 307, 129, 37);
