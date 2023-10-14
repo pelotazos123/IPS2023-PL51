@@ -10,4 +10,12 @@ insert into socios (id,name,surname,cuota_type,iban,height,weight,age,gender,dir
 	(103,'Paula','Perez','CUOTA_JOVEN','ES6000491515051234567692','1.83',78,16,'MUJER',false),
 	(104,'Cristian','Gonzalez','CUOTA_JUBILADO','ES6000491500063234560069','1.78',77,71,'HOMBRE',false),
 	(105,'Pedro','Fernandez','CUOTA_JOVEN','ES6000436501851414507715','1.75',80,23,'HOMBRE',false);
+
 	
+insert into cuotas (owner_id, cuota_type, price, state) values
+	(100, 'Joven', 100, 'Pendiente'),
+	(100, 'Adulto', 200, 'Pendiente'),
+	(102, 'Joven', 100, 'Pendiente'),
+	(103, 'Joven', 100, 'Pendiente'),
+	(103, 'Adulto', 200, 'Emitida'),
+	(103, 'Jubilado', 150, 'Pendiente');
