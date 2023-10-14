@@ -99,7 +99,8 @@ public class VentanaTramitarLicencia extends JFrame {
 	/**
 	 * Create the frame.
 	 */
-	public VentanaTramitarLicencia(boolean esDirectivo) {
+	public VentanaTramitarLicencia(TramitarLicencia tramitarLicencia) {
+		this.tramitarLicencia = tramitarLicencia;
 		setTitle("Club Deportivo");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 870, 618);
@@ -110,7 +111,6 @@ public class VentanaTramitarLicencia extends JFrame {
 		pnPrincipal.setLayout(new CardLayout(0, 0));
 		pnPrincipal.add(getPnTramitarLicencia(), "pnTramitarLicencia");
 		pnPrincipal.add(getPnAceptarPoliticaDatos(), "pnPoliticaDeDatos");
-		this.tramitarLicencia = new TramitarLicencia(esDirectivo);
 		cargarDatos();
 	}
 	private void cargarDatos() {
@@ -236,6 +236,7 @@ public class VentanaTramitarLicencia extends JFrame {
 			cbGeneroSocio = new JComboBox<Generos>();
 			Generos[] generos = Generos.values();
 			cbGeneroSocio.setModel(new DefaultComboBoxModel<Generos>(generos));
+			cbGeneroSocio.setSelectedItem(Generos.OTRO);
 			cbGeneroSocio.setBounds(146, 66, 106, 22);
 		}
 		return cbGeneroSocio;
@@ -346,6 +347,7 @@ public class VentanaTramitarLicencia extends JFrame {
 			cbGeneroTutor = new JComboBox<Generos>();
 			Generos[] generos = Generos.values();
 			cbGeneroTutor.setModel(new DefaultComboBoxModel<Generos>(generos));
+			cbGeneroTutor.setSelectedItem(Generos.OTRO);
 			cbGeneroTutor.setBounds(146, 66, 106, 22);
 		}
 		return cbGeneroTutor;
@@ -445,7 +447,7 @@ public class VentanaTramitarLicencia extends JFrame {
 	private JComboBox<TiposLicencia> getCbTipoLicencia() {
 		if (cbTipoLicencia == null) {
 			cbTipoLicencia = new JComboBox<TiposLicencia>();
-			TiposLicencia[] licencias = TiposLicencia.values();
+			TiposLicencia[] licencias = tramitarLicencia.getLicenciasDisponibles();
 			cbTipoLicencia.setModel(new DefaultComboBoxModel<TiposLicencia>(licencias));
 			cbTipoLicencia.setBounds(146, 66, 106, 22);
 		}
@@ -482,12 +484,12 @@ public class VentanaTramitarLicencia extends JFrame {
 		if(getTxNombreSocio().getText().isBlank() || getTxApellidosSocio().getText().isBlank() 
 				|| getTxDireccionFacturacion().getText().isBlank() || getTxInfoFacturacion().getText().isBlank()) {
 			JOptionPane.showMessageDialog(this,"Debe rellenar los campos Nombre, Apellidos, Dirección de facturación e Información de facturación ",
-					"Campo", JOptionPane.INFORMATION_MESSAGE);
+					"Datos no rellenados", JOptionPane.INFORMATION_MESSAGE);
 			return false;
 		}else if( Integer.parseInt((String) getCbEdadSocio().getSelectedItem()) < 18) {
 			if(getTxNombreTutor().getText().isBlank() || getTxApellidosTutor().getText().isBlank()) {
 				JOptionPane.showMessageDialog(this,"Debe rellenar los campos Nombre y Apellidos del tutor",
-						"Campo", JOptionPane.INFORMATION_MESSAGE);
+						"Datos no rellenados", JOptionPane.INFORMATION_MESSAGE);
 				return false;
 			}else {
 				return true;
@@ -499,16 +501,27 @@ public class VentanaTramitarLicencia extends JFrame {
 	}
 	
 	private void crearLicencia() {
+		String nombreSocio = getTxNombreSocio().getText();
+		String apellidoSocio = getTxApellidosSocio().getText();
+		String edadSocio = (String) getCbEdadSocio().getSelectedItem();
+		Generos generoSocio = (Generos) getCbGeneroSocio().getSelectedItem();
+		
 		String nombreTutor = getTxNombreTutor().getText();
 		String apellidoTutor = getTxApellidosTutor().getText();
 		String edadTutor = (String) getCbEdadTutor().getSelectedItem();
+		Generos generoTutor = (Generos) getCbGeneroTutor().getSelectedItem();
+		
 		String direccionFacturacion = getTxDireccionFacturacion().getText();
 		String infoFacturacion = getTxInfoFacturacion().getText();
 		TiposLicencia licencia = (TiposLicencia) getCbTipoLicencia().getSelectedItem();
 		if(Integer.parseInt((String) getCbEdadSocio().getSelectedItem()) < 18) {
-			tramitarLicencia.crearLicencia(nombreTutor, apellidoTutor, edadTutor, direccionFacturacion, infoFacturacion, licencia);
+			tramitarLicencia.crearLicencia(nombreTutor, apellidoTutor, edadTutor, generoTutor, direccionFacturacion, infoFacturacion, licencia);
+			tramitarLicencia.modificarDatosSocio(nombreSocio, apellidoSocio, generoSocio, edadSocio);
+			tramitarLicencia.guardarDatosModificadosSocio();
 		}else {
-			tramitarLicencia.crearLicencia("noTutor", "noTutor", null, direccionFacturacion, infoFacturacion, licencia);
+			tramitarLicencia.crearLicencia("noTutor", "noTutor", null, null, direccionFacturacion, infoFacturacion, licencia);
+			tramitarLicencia.modificarDatosSocio(nombreSocio, apellidoSocio, generoSocio, edadSocio);
+			tramitarLicencia.guardarDatosModificadosSocio();
 		}
 		
 	}
