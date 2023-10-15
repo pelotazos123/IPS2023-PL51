@@ -14,6 +14,7 @@ import java.awt.GridLayout;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.FlowLayout;
 import javax.swing.SwingConstants;
@@ -28,7 +29,6 @@ import javax.swing.JTextField;
 import javax.swing.JComboBox;
 import giis.demo.model.Generos;
 import giis.demo.model.CrearLicencias.Licencia;
-import giis.demo.model.CrearLicencias.TiposLicencia;
 
 public class VentanaRenovarLicencia extends JFrame {
 
@@ -118,12 +118,15 @@ public class VentanaRenovarLicencia extends JFrame {
 	 * Create the frame.
 	 */
 	public VentanaRenovarLicencia(TramitarLicencia tramitarLicencia) {
+		setMinimumSize(new Dimension(645, 440));
+		setBackground(Color.WHITE);
 		this.tramitarLicencia = tramitarLicencia;
 		setTitle("Club Deportivo");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 663, 440);
 		setLocationRelativeTo(null);
 		pnPrincipal = new JPanel();
+		pnPrincipal.setBackground(Color.WHITE);
 		pnPrincipal.setBorder(new EmptyBorder(5, 5, 5, 5));
 
 		setContentPane(pnPrincipal);
@@ -137,6 +140,7 @@ public class VentanaRenovarLicencia extends JFrame {
 	private JPanel getPnRenovarLicencia() {
 		if (pnRenovarLicencia == null) {
 			pnRenovarLicencia = new JPanel();
+			pnRenovarLicencia.setBackground(Color.WHITE);
 			pnRenovarLicencia.setBorder(new TitledBorder(null, "Renovar Licencia", TitledBorder.LEADING, TitledBorder.TOP, null, null));
 			pnRenovarLicencia.setLayout(new GridLayout(0, 1, 0, 0));
 			pnRenovarLicencia.add(getPnBotones());
@@ -147,6 +151,7 @@ public class VentanaRenovarLicencia extends JFrame {
 	private JPanel getPnBotones() {
 		if (pnBotones == null) {
 			pnBotones = new JPanel();
+			pnBotones.setBackground(Color.WHITE);
 			pnBotones.setLayout(new GridLayout(0, 1, 0, 0));
 			pnBotones.add(getPnPoliticaDeDatos());
 			pnBotones.add(getPnModificarDatosYSeleccionarLicencia());
@@ -156,6 +161,7 @@ public class VentanaRenovarLicencia extends JFrame {
 	private JPanel getPnAceptarOCancelar() {
 		if (pnAceptarOCancelar == null) {
 			pnAceptarOCancelar = new JPanel();
+			pnAceptarOCancelar.setBackground(Color.WHITE);
 			FlowLayout fl_pnAceptarOCancelar = (FlowLayout) pnAceptarOCancelar.getLayout();
 			fl_pnAceptarOCancelar.setHgap(30);
 			fl_pnAceptarOCancelar.setVgap(70);
@@ -171,6 +177,7 @@ public class VentanaRenovarLicencia extends JFrame {
 				public void actionPerformed(ActionEvent e) {
 					setBounds(100, 100, 870, 618);
 					setLocationRelativeTo(null);
+					setMinimumSize(new Dimension(1050, 477));
 					((CardLayout) getContentPane().getLayout()).show(getContentPane(),"pnPoliticaDeDatos");
 				}
 			});
@@ -182,11 +189,13 @@ public class VentanaRenovarLicencia extends JFrame {
 	private JButton getBtModificarDatos() {
 		if (btModificarDatos == null) {
 			btModificarDatos = new JButton("Modificar datos");
+			btModificarDatos.setFocusPainted(false);
 			btModificarDatos.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
 					if(licenciaSeleccionada()) {
 						setBounds(100, 100, 870, 618);
 						setLocationRelativeTo(null);
+						setMinimumSize(new Dimension(1050, 477));
 						((CardLayout) getContentPane().getLayout()).show(getContentPane(),"pnModificarDatos");
 					}
 				}
@@ -220,6 +229,7 @@ public class VentanaRenovarLicencia extends JFrame {
 	private JButton getBtRenovarLicencia() {
 		if (btRenovarLicencia == null) {
 			btRenovarLicencia = new JButton("Renovar licencia");
+			btRenovarLicencia.setFocusPainted(false);
 			btRenovarLicencia.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
 					if(licenciaSeleccionada()) {
@@ -249,6 +259,7 @@ public class VentanaRenovarLicencia extends JFrame {
 	private JPanel getPnAceptarPoliticaDatos() {
 		if (pnAceptarPoliticaDatos == null) {
 			pnAceptarPoliticaDatos = new JPanel();
+			pnAceptarPoliticaDatos.setBackground(Color.WHITE);
 			pnAceptarPoliticaDatos.setLayout(new BorderLayout(0, 0));
 			pnAceptarPoliticaDatos.add(getPnAceptarOCancelarPoliticaDeDAtos(), BorderLayout.SOUTH);
 			pnAceptarPoliticaDatos.add(getPnLabelPoliticaDeDatos(), BorderLayout.NORTH);
@@ -259,6 +270,7 @@ public class VentanaRenovarLicencia extends JFrame {
 	private JPanel getPnAceptarOCancelarPoliticaDeDAtos() {
 		if (pnAceptarOCancelarPoliticaDeDAtos == null) {
 			pnAceptarOCancelarPoliticaDeDAtos = new JPanel();
+			pnAceptarOCancelarPoliticaDeDAtos.setBackground(Color.WHITE);
 			pnAceptarOCancelarPoliticaDeDAtos.setLayout(new FlowLayout(FlowLayout.RIGHT, 5, 5));
 			pnAceptarOCancelarPoliticaDeDAtos.add(getBtRechazarPoliticaDeDatos());
 			pnAceptarOCancelarPoliticaDeDAtos.add(getBtAceparPoliticaDeDatos());
@@ -268,13 +280,15 @@ public class VentanaRenovarLicencia extends JFrame {
 	private JButton getBtRechazarPoliticaDeDatos() {
 		if (btRechazarPoliticaDeDatos == null) {
 			btRechazarPoliticaDeDatos = new JButton("Rechazar");
+			btRechazarPoliticaDeDatos.setFocusPainted(false);
 			btRechazarPoliticaDeDatos.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
+					setMinimumSize(new Dimension(645, 440));
 					((CardLayout) getContentPane().getLayout()).show(getContentPane(),"pnRenovarLicencia");
 					getBtRenovarLicencia().setEnabled(false);
 					setBounds(100, 100, 663, 440);
 					setLocationRelativeTo(null);
-					getBtPoliticaDeDatos().setEnabled(false);
+					getBtPoliticaDeDatos().setEnabled(true);
 				}
 			});
 			btRechazarPoliticaDeDatos.setForeground(Color.WHITE);
@@ -285,8 +299,10 @@ public class VentanaRenovarLicencia extends JFrame {
 	private JButton getBtAceparPoliticaDeDatos() {
 		if (btAceparPoliticaDeDatos == null) {
 			btAceparPoliticaDeDatos = new JButton("Aceptar");
+			btAceparPoliticaDeDatos.setFocusPainted(false);
 			btAceparPoliticaDeDatos.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
+					setMinimumSize(new Dimension(645, 440));
 					setBounds(100, 100, 663, 440);
 					((CardLayout) getContentPane().getLayout()).show(getContentPane(),"pnRenovarLicencia");
 					getBtRenovarLicencia().setEnabled(true);
@@ -302,6 +318,7 @@ public class VentanaRenovarLicencia extends JFrame {
 	private JPanel getPnLabelPoliticaDeDatos() {
 		if (pnLabelPoliticaDeDatos == null) {
 			pnLabelPoliticaDeDatos = new JPanel();
+			pnLabelPoliticaDeDatos.setBackground(Color.WHITE);
 			pnLabelPoliticaDeDatos.add(getLbPoliticaDeDatos());
 		}
 		return pnLabelPoliticaDeDatos;
@@ -334,6 +351,7 @@ public class VentanaRenovarLicencia extends JFrame {
 	private JPanel getPnModificarLicencia() {
 		if (pnModificarLicencia == null) {
 			pnModificarLicencia = new JPanel();
+			pnModificarLicencia.setBackground(Color.WHITE);
 			pnModificarLicencia.setBorder(new TitledBorder(null, "Tramitar Licencia", TitledBorder.LEADING, TitledBorder.TOP, null, null));
 			pnModificarLicencia.setLayout(new BorderLayout(0, 0));
 			pnModificarLicencia.add(getPnSur(), BorderLayout.SOUTH);
@@ -344,6 +362,7 @@ public class VentanaRenovarLicencia extends JFrame {
 	private JPanel getPnSur() {
 		if (pnSur == null) {
 			pnSur = new JPanel();
+			pnSur.setBackground(Color.WHITE);
 			pnSur.setLayout(new FlowLayout(FlowLayout.RIGHT, 5, 5));
 			pnSur.add(getBtCancelarModificacion());
 			pnSur.add(getBtModificarLicencia());
@@ -353,9 +372,11 @@ public class VentanaRenovarLicencia extends JFrame {
 	private JButton getBtCancelarModificacion() {
 		if (btCancelarModificacion == null) {
 			btCancelarModificacion = new JButton("Cancelar");
+			btCancelarModificacion.setFocusPainted(false);
 			btCancelarModificacion.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
 					((CardLayout) getContentPane().getLayout()).show(getContentPane(),"pnRenovarLicencia");
+					setMinimumSize(new Dimension(645, 440));
 					setBounds(100, 100, 663, 440);
 					setLocationRelativeTo(null);
 				}
@@ -368,9 +389,11 @@ public class VentanaRenovarLicencia extends JFrame {
 	private JButton getBtModificarLicencia() {
 		if (btModificarLicencia == null) {
 			btModificarLicencia = new JButton("Modificar Licencia");
+			btModificarLicencia.setFocusPainted(false);
 			btModificarLicencia.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
 					((CardLayout) getContentPane().getLayout()).show(getContentPane(),"pnRenovarLicencia");
+					setMinimumSize(new Dimension(645, 440));
 					setBounds(100, 100, 663, 440);
 					setLocationRelativeTo(null);
 					modificarDatos();
@@ -413,6 +436,7 @@ public class VentanaRenovarLicencia extends JFrame {
 	private JPanel getPnDatos() {
 		if (pnDatos == null) {
 			pnDatos = new JPanel();
+			pnDatos.setBackground(Color.WHITE);
 			pnDatos.setLayout(new BorderLayout(0, 0));
 			pnDatos.add(getPnDatosPersonales(), BorderLayout.CENTER);
 			pnDatos.add(getPnDatosFacturacionYLicencia(), BorderLayout.SOUTH);
@@ -422,6 +446,7 @@ public class VentanaRenovarLicencia extends JFrame {
 	private JPanel getPnDatosPersonales() {
 		if (pnDatosPersonales == null) {
 			pnDatosPersonales = new JPanel();
+			pnDatosPersonales.setBackground(Color.WHITE);
 			pnDatosPersonales.setLayout(new GridLayout(0, 2, 0, 0));
 			pnDatosPersonales.add(getPnDatosSocio());
 			pnDatosPersonales.add(getPnDatosTutor());
@@ -431,6 +456,7 @@ public class VentanaRenovarLicencia extends JFrame {
 	private JPanel getPnDatosSocio() {
 		if (pnDatosSocio == null) {
 			pnDatosSocio = new JPanel();
+			pnDatosSocio.setBackground(Color.WHITE);
 			pnDatosSocio.setLayout(new GridLayout(0, 1, 0, 0));
 			pnDatosSocio.add(getLbDatosSocio());
 			pnDatosSocio.add(getPnNombreSocio());
@@ -449,6 +475,7 @@ public class VentanaRenovarLicencia extends JFrame {
 	private JPanel getPnNombreSocio() {
 		if (pnNombreSocio == null) {
 			pnNombreSocio = new JPanel();
+			pnNombreSocio.setBackground(Color.WHITE);
 			pnNombreSocio.add(getLbNombreSocio());
 			pnNombreSocio.add(getTxNombreSocio());
 		}
@@ -471,6 +498,7 @@ public class VentanaRenovarLicencia extends JFrame {
 	private JPanel getPnApellidosSocio() {
 		if (pnApellidosSocio == null) {
 			pnApellidosSocio = new JPanel();
+			pnApellidosSocio.setBackground(Color.WHITE);
 			pnApellidosSocio.add(getLbApellidosSocio());
 			pnApellidosSocio.add(getTxApellidoSocio());
 		}
@@ -493,6 +521,7 @@ public class VentanaRenovarLicencia extends JFrame {
 	private JPanel getPnGeneroSocio() {
 		if (pnGeneroSocio == null) {
 			pnGeneroSocio = new JPanel();
+			pnGeneroSocio.setBackground(Color.WHITE);
 			pnGeneroSocio.add(getLbGeneroSocio());
 			pnGeneroSocio.add(getCbGeneroSocio());
 		}
@@ -516,6 +545,7 @@ public class VentanaRenovarLicencia extends JFrame {
 	private JPanel getPnEdadSocio() {
 		if (pnEdadSocio == null) {
 			pnEdadSocio = new JPanel();
+			pnEdadSocio.setBackground(Color.WHITE);
 			pnEdadSocio.add(getLbEdadSocio());
 			pnEdadSocio.add(getCbEdadSocio());
 		}
@@ -543,6 +573,7 @@ public class VentanaRenovarLicencia extends JFrame {
 	private JPanel getPnDatosTutor() {
 		if (pnDatosTutor == null) {
 			pnDatosTutor = new JPanel();
+			pnDatosTutor.setBackground(Color.WHITE);
 			pnDatosTutor.setLayout(new GridLayout(0, 1, 0, 0));
 			pnDatosTutor.add(getLbDatosTutor());
 			pnDatosTutor.add(getPnNombreTutor());
@@ -561,6 +592,7 @@ public class VentanaRenovarLicencia extends JFrame {
 	private JPanel getPnNombreTutor() {
 		if (pnNombreTutor == null) {
 			pnNombreTutor = new JPanel();
+			pnNombreTutor.setBackground(Color.WHITE);
 			pnNombreTutor.add(getLbNombreTutor());
 			pnNombreTutor.add(getTxNombreTutor());
 		}
@@ -582,6 +614,7 @@ public class VentanaRenovarLicencia extends JFrame {
 	private JPanel getPnApellidosTutor() {
 		if (pnApellidosTutor == null) {
 			pnApellidosTutor = new JPanel();
+			pnApellidosTutor.setBackground(Color.WHITE);
 			pnApellidosTutor.add(getLbApellidosTutor());
 			pnApellidosTutor.add(getTxApellidoTutor());
 		}
@@ -603,6 +636,7 @@ public class VentanaRenovarLicencia extends JFrame {
 	private JPanel getPnGeneroTutor() {
 		if (pnGeneroTutor == null) {
 			pnGeneroTutor = new JPanel();
+			pnGeneroTutor.setBackground(Color.WHITE);
 			pnGeneroTutor.add(getLbGeneroTutor());
 			pnGeneroTutor.add(getCbGeneroTutor());
 		}
@@ -626,6 +660,7 @@ public class VentanaRenovarLicencia extends JFrame {
 	private JPanel getPnEdadTutor() {
 		if (pnEdadTutor == null) {
 			pnEdadTutor = new JPanel();
+			pnEdadTutor.setBackground(Color.WHITE);
 			pnEdadTutor.add(getLbEdadTutor());
 			pnEdadTutor.add(getCbEdadTutor());
 		}
@@ -652,6 +687,7 @@ public class VentanaRenovarLicencia extends JFrame {
 	private JPanel getPnDatosFacturacionYLicencia() {
 		if (pnDatosFacturacionYLicencia == null) {
 			pnDatosFacturacionYLicencia = new JPanel();
+			pnDatosFacturacionYLicencia.setBackground(Color.WHITE);
 			pnDatosFacturacionYLicencia.setLayout(new GridLayout(1, 0, 0, 0));
 			pnDatosFacturacionYLicencia.add(getPnDireccionFacturacion());
 			pnDatosFacturacionYLicencia.add(getPnInfoFacturacion());
@@ -661,6 +697,7 @@ public class VentanaRenovarLicencia extends JFrame {
 	private JPanel getPnDireccionFacturacion() {
 		if (pnDireccionFacturacion == null) {
 			pnDireccionFacturacion = new JPanel();
+			pnDireccionFacturacion.setBackground(Color.WHITE);
 			pnDireccionFacturacion.add(getLbDireccionFacturacion());
 			pnDireccionFacturacion.add(getTxDireccionFacturacion());
 		}
@@ -682,6 +719,7 @@ public class VentanaRenovarLicencia extends JFrame {
 	private JPanel getPnInfoFacturacion() {
 		if (pnInfoFacturacion == null) {
 			pnInfoFacturacion = new JPanel();
+			pnInfoFacturacion.setBackground(Color.WHITE);
 			pnInfoFacturacion.add(getLbInfoFacturacion());
 			pnInfoFacturacion.add(getTxInfoFacturacion());
 		}
@@ -703,6 +741,7 @@ public class VentanaRenovarLicencia extends JFrame {
 	private JPanel getPnPoliticaDeDatos() {
 		if (pnPoliticaDeDatos == null) {
 			pnPoliticaDeDatos = new JPanel();
+			pnPoliticaDeDatos.setBackground(Color.WHITE);
 			FlowLayout flowLayout = (FlowLayout) pnPoliticaDeDatos.getLayout();
 			flowLayout.setVgap(22);
 			pnPoliticaDeDatos.add(getBtPoliticaDeDatos());
@@ -712,6 +751,7 @@ public class VentanaRenovarLicencia extends JFrame {
 	private JPanel getPnModificarDatosYSeleccionarLicencia() {
 		if (pnModificarDatosYSeleccionarLicencia == null) {
 			pnModificarDatosYSeleccionarLicencia = new JPanel();
+			pnModificarDatosYSeleccionarLicencia.setBackground(Color.WHITE);
 			pnModificarDatosYSeleccionarLicencia.setLayout(new GridLayout(0, 2, 0, 0));
 			pnModificarDatosYSeleccionarLicencia.add(getPnModificarDatos());
 			pnModificarDatosYSeleccionarLicencia.add(getPnSeleccionarLicencia());
@@ -721,6 +761,7 @@ public class VentanaRenovarLicencia extends JFrame {
 	private JButton getBtCancelar() {
 		if (btCancelar == null) {
 			btCancelar = new JButton("Cancelar");
+			btCancelar.setFocusPainted(false);
 			btCancelar.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
 					tramitarLicencia.restaurarSocio(tramitarLicencia.getSocio().getId());
@@ -736,6 +777,7 @@ public class VentanaRenovarLicencia extends JFrame {
 	private JPanel getPnModificarDatos() {
 		if (pnModificarDatos == null) {
 			pnModificarDatos = new JPanel();
+			pnModificarDatos.setBackground(Color.WHITE);
 			FlowLayout flowLayout = (FlowLayout) pnModificarDatos.getLayout();
 			flowLayout.setVgap(22);
 			pnModificarDatos.add(getBtModificarDatos());
@@ -745,8 +787,9 @@ public class VentanaRenovarLicencia extends JFrame {
 	private JPanel getPnSeleccionarLicencia() {
 		if (pnSeleccionarLicencia == null) {
 			pnSeleccionarLicencia = new JPanel();
+			pnSeleccionarLicencia.setBackground(Color.WHITE);
 			FlowLayout flowLayout = (FlowLayout) pnSeleccionarLicencia.getLayout();
-			flowLayout.setVgap(22);
+			flowLayout.setVgap(30);
 			pnSeleccionarLicencia.add(getLbSeleccionarLicencia());
 			pnSeleccionarLicencia.add(getCbSeleccionarLicencia());
 		}

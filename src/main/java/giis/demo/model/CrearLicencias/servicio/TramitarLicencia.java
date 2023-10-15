@@ -11,11 +11,17 @@ import java.util.ArrayList;
 
 public class TramitarLicencia {
 	
+	@SuppressWarnings("unused")
 	private final static int ID_SOCIO_SIN_LICENCIA_PRUEBAS = 105;
+	@SuppressWarnings("unused")
 	private final static int ID_SOCIO_SIN_LICENCIA_MENOR_EDAD_PRUEBAS = 103;
+	@SuppressWarnings("unused")
 	private final static int ID_SOCIO_CON_LICENCIA_PRUEBAS = 104;
+	@SuppressWarnings("unused")
 	private final static int ID_SOCIO_CON_LICENCIA_MENOR_EDAD_PRUEBAS = 106;
+	@SuppressWarnings("unused")
 	private final static int ID_SOCIO_CON_DOS_LICENCIAS_PRUEBAS = 107;
+	@SuppressWarnings("unused")
 	private final static int ID_SOCIO_CON_TRES_LICENCIAS_PRUEBAS = 108;
 	private final static int ID_DIRECTIVO_PRUEBAS = 100;
 	
@@ -34,7 +40,7 @@ public class TramitarLicencia {
 		if(esDirectivo) {
 			cargarSocio(ID_DIRECTIVO_PRUEBAS);
 		}else {
-			cargarSocio(ID_SOCIO_CON_TRES_LICENCIAS_PRUEBAS);
+			cargarSocio(ID_SOCIO_CON_LICENCIA_PRUEBAS);
 		}
 		System.out.println(socio.toString());
 	}
