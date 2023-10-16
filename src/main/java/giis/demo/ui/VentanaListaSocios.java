@@ -13,7 +13,7 @@ import java.awt.Dimension;
 import javax.swing.JLabel;
 import javax.swing.border.LineBorder;
 
-import giis.demo.business.CargaSocios;
+import giis.demo.business.SociosController;
 import giis.demo.model.Socio;
 import giis.demo.util.Database;
 
@@ -21,6 +21,7 @@ import java.awt.Font;
 import javax.swing.JScrollPane;
 import javax.swing.JList;
 import java.awt.event.ActionListener;
+import java.util.List;
 import java.awt.event.ActionEvent;
 
 public class VentanaListaSocios extends JDialog {
@@ -35,10 +36,11 @@ public class VentanaListaSocios extends JDialog {
 	private JLabel lblText;
 	private JScrollPane scrlListaSocios;
 	private JList<String> listSocios;
+	private List<Socio> listaSocios;
 	private DefaultListModel<String> modeloListaSocios;
 	private Database db;
 
-	private final static String MOCK_SOCIO_LISTA = "Pedrito Garcia López - Cuota JOVEN - Hombre";
+	private static final String NO_SOCIO_FOUND = "Ningún socio encontrado";
 	
 	/**
 	 * Create the dialog.
@@ -89,7 +91,7 @@ public class VentanaListaSocios extends JDialog {
 	}
 	
 	private void mostrarVentanaFiltros() {
-		VentanaFiltro vF = new VentanaFiltro();
+		VentanaFiltro vF = new VentanaFiltro(this);
 		vF.setLocationRelativeTo(this);
 		vF.setModal(true);
 		vF.setVisible(true);
@@ -121,11 +123,23 @@ public class VentanaListaSocios extends JDialog {
 	}
 	
 	private void actualizar() {
-		Object[] result = CargaSocios.cargarSocios(db);		
+		listaSocios = SociosController.cargarSocios(db, "", "");
+		listaSocios.stream().filter(e -> e.getTipoCuota().equals("Cuota Joven"));
 		modeloListaSocios.removeAllElements();
-		for (int i = 0; i < result.length; i++) {
-			modeloListaSocios.addElement(((Socio)result[i]).toStringList());
+		for (int i = 0; i < listaSocios.size(); i++) {
+			modeloListaSocios.addElement(listaSocios.get(i).toStringList());
 		}
+		
+	}
+	
+	protected void actualizar(String filter, String order) {
+		List<Socio> result = SociosController.cargarSocios(db, filter, order);
+		modeloListaSocios.removeAllElements();
+		for (int i = 0; i < result.size(); i++) {
+			modeloListaSocios.addElement(result.get(i).toStringList());
+		}
+		if (result.isEmpty())
+			modeloListaSocios.addElement(NO_SOCIO_FOUND);
 	}
 
 	private JLabel getLblText() {
