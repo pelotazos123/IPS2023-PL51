@@ -16,10 +16,14 @@ public class SwingMain {
 	 * Launch the application.
 	 */
 	public static void main(String[] args) {
+		Database db = new Database();
+		db.createDatabase(false);
+		db.loadDatabase();
+		
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					VentanaPrincipal frame = new VentanaPrincipal();
+					VentanaPrincipal frame = new VentanaPrincipal(db);
 					frame.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();

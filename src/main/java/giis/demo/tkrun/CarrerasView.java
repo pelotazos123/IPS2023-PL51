@@ -1,18 +1,19 @@
 package giis.demo.tkrun;
 
+import java.awt.Dimension;
+import java.awt.SystemColor;
+
+import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JFrame;
-import net.miginfocom.swing.MigLayout;
 import javax.swing.JLabel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
-import javax.swing.JButton;
-import javax.swing.JComboBox;
-
-import java.awt.Dimension;
-import java.awt.SystemColor;
 import javax.swing.UIManager;
+
+import net.miginfocom.swing.MigLayout;
 
 /**
  * Vista de la pantalla que muestra las carreras activas y permite interactuar con ellas.
