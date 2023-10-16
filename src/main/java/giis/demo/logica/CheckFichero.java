@@ -12,14 +12,10 @@ import giis.demo.util.Database;
 public class CheckFichero {
 
 	private static final String SQL_LICENCIA_PAGADO = "update licencias set state = 'PAGADO' where owner_id = ? ";
+	private static final String SQL_COMPRUEBA_PAGADO = "select state from licencias where owner_id = ? ";
 	
 	private Database db = new Database();
-	private String dni;
-	
-	public CheckFichero() {
-		db.createDatabase(false);
-		db.loadDatabase();
-	}
+	private String id;
 	
 	public boolean checkFichero(File f) {
 		boolean valido = false;
@@ -54,7 +50,12 @@ public class CheckFichero {
 	}
 
 	private void estableceLicenciaPagada() {	
-		db.executeUpdate(SQL_LICENCIA_PAGADO, dni);
+		db.executeUpdate(SQL_LICENCIA_PAGADO, id);
+		List<Object[]> resQuery = db.executeQueryArray(SQL_COMPRUEBA_PAGADO, id);
+		for(Object[] a: resQuery) {
+			System.out.println(a[0].toString());
+		}
+//		System.out.println(resQuery.get(0).toString());
 	}
 
 	private boolean validaLinea(String[] line, int numLinea) {
@@ -63,7 +64,6 @@ public class CheckFichero {
 //				String nombre = "";
 //				for(int i = 1; i < line.length; i++)
 //					nombre += line[i];
-//				//TODO: Consulta a la base de datos
 			} else 
 				return false;
 		} else if(numLinea == 1) {
@@ -71,42 +71,47 @@ public class CheckFichero {
 //				String apellidos = "";
 //				for(int i = 1; i < line.length; i++)
 //					apellidos += line[i];
-//				TODO: Consulta a la base de datos
+
 			} else 
 				return false;
 		} else if(numLinea == 2) {
 			if(line[0].equals("DNI:")) {
-				this.dni= line[1];
-//				//TODO: Consulta a la base de datos
+				
 			} else 
 				return false;
 		} else if(numLinea == 3) {
-			if(line[0].equals("IBAN") && line[1].equals("ORDENANTE:")) {
-//				String ordenante = line[2];
-//				System.out.println(ordenante);
+			if(line[0].equals("ID:")) {
+				this.id= line[1];
 //				//TODO: Consulta a la base de datos
 			} else 
 				return false;
 		} else if(numLinea == 4) {
-			if(line[0].equals("IBAN") && line[1].equals("BENEFICIARIO:")) {
-//				String beneficiario = line[2];
-//				//TODO: Consulta a la base de datos
+			if(line[0].equals("IBAN") && line[1].equals("ORDENANTE:")) {
+//				String ordenante = line[2];
+//				System.out.println(ordenante);
+
 			} else 
 				return false;
 		} else if(numLinea == 5) {
-			if(line[0].equals("Importe:")) {
-//				String importe = line[1];
-//				TODO: Consulta a la base de datos
+			if(line[0].equals("IBAN") && line[1].equals("BENEFICIARIO:")) {
+//				String beneficiario = line[2];
+
 			} else 
 				return false;
 		} else if(numLinea == 6) {
-			if(line[0].equals("Fecha:")) {
-				//TODO: Consulta a la base de datos
+			if(line[0].equals("Importe:")) {
+//				String importe = line[1];
+
 			} else 
 				return false;
 		} else if(numLinea == 7) {
+			if(line[0].equals("Fecha:")) {
+				
+			} else 
+				return false;
+		} else if(numLinea == 8) {
 			if(line[0].equals("Concepto:")) {
-				//TODO: Consulta a la base de datos
+				
 			} else 
 				return false;
 		} 

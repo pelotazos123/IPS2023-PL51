@@ -256,8 +256,8 @@ public class VentanaPrincipal extends JFrame {
   }
 
 	private void muestraVentanaPagoTransf() {
-//		PayByTransf pbt = new PayByTransf();
-//		pbt.setVisible(true);	
+		VentanaPayByTransf pbt = new VentanaPayByTransf();
+		pbt.setVisible(true);	
 	}
   
   private JButton getBtnReservas() {

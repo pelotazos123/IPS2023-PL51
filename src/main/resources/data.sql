@@ -11,7 +11,8 @@ insert into socios (id,name,surname,cuota_type,iban,height,weight,age,gender,dir
 	(104,'Cristian','Gonzalez','CUOTA_JUBILADO','ES6000491500063234560069','1.78',77,71,'HOMBRE',false),
 	(105,'Pedro','Fernandez','CUOTA_JOVEN','ES6000436501851414507715','1.75',80,23,'HOMBRE',false);
 
-	
+
+
 insert into cuotas (owner_id, cuota_type, price, state) values
 	(100, 'Joven', 100, 'Pendiente'),
 	(100, 'Adulto', 200, 'Pendiente'),
@@ -19,6 +20,10 @@ insert into cuotas (owner_id, cuota_type, price, state) values
 	(103, 'Joven', 100, 'Pendiente'),
 	(103, 'Adulto', 200, 'Emitida'),
 	(103, 'Jubilado', 150, 'Pendiente');
+
+insert into licencias (owner_id, tutor_name, tutor_age, state, price, licence_type, facturation_direction, facturation_info) values 
+	(100, null, null, 'PENDIENTE', 33.33, 'DEPORTISTA', "ESXX-XXXX-XXXX-XXXX-XXXX-XXXX", null);
+
 
 INSERT INTO reservas (owner_id, fecha, hora, instalation_code) VALUES 
 	(100, "20/10/2023", "20:00", "13410");
