@@ -71,6 +71,7 @@ public class VentanaFiltro extends JDialog {
 		}
 		return pnFiltro;
 	}
+	
 	private JPanel getPnOrden() {
 		if (pnOrden == null) {
 			pnOrden = new JPanel();
@@ -83,12 +84,14 @@ public class VentanaFiltro extends JDialog {
 		}
 		return pnOrden;
 	}
+	
 	private JLabel getLbOrden() {
 		if (lbOrden == null) {
 			lbOrden = new JLabel("Ordenar:");
 		}
 		return lbOrden;
 	}
+	
 	private JPanel getPnBtnOrden() {
 		if (pnBtnOrden == null) {
 			pnBtnOrden = new JPanel();
@@ -102,6 +105,7 @@ public class VentanaFiltro extends JDialog {
 		}
 		return pnBtnOrden;
 	}
+	
 	private JRadioButton getRdbtnAZ() {
 		if (rdbtnAZ == null) {
 			rdbtnAZ = new JRadioButton("A-Z");
@@ -110,6 +114,7 @@ public class VentanaFiltro extends JDialog {
 		}
 		return rdbtnAZ;
 	}
+	
 	private JRadioButton getRdbtZA() {
 		if (rdbtZA == null) {
 			rdbtZA = new JRadioButton("Z-A");
@@ -118,6 +123,7 @@ public class VentanaFiltro extends JDialog {
 		}
 		return rdbtZA;
 	}
+	
 	private JPanel getPnBtnFiltro() {
 		if (pnBtnFiltro == null) {
 			pnBtnFiltro = new JPanel();
@@ -132,12 +138,14 @@ public class VentanaFiltro extends JDialog {
 		}
 		return pnBtnFiltro;
 	}
+	
 	private JLabel getLblFiltro() {
 		if (lblFiltro == null) {
 			lblFiltro = new JLabel("Filtrar: ");
 		}
 		return lblFiltro;
 	}
+	
 	private JCheckBox getChkHombres() {
 		if (chkHombres == null) {
 			chkHombres = new JCheckBox("Hombres");
@@ -145,6 +153,7 @@ public class VentanaFiltro extends JDialog {
 		}
 		return chkHombres;
 	}
+	
 	private JRadioButton getRdbtIdDesc() {
 		if (rdbtIdDesc == null) {
 			rdbtIdDesc = new JRadioButton("ID ↓");
@@ -168,6 +177,7 @@ public class VentanaFiltro extends JDialog {
 		}
 		return chkCuotaAdulto;
 	}
+	
 	private JCheckBox getChkCuotaJoven() {
 		if (chkCuotaJoven == null) {
 			chkCuotaJoven = new JCheckBox("Cuota Joven");
@@ -175,6 +185,7 @@ public class VentanaFiltro extends JDialog {
 		}
 		return chkCuotaJoven;
 	}
+	
 	private JCheckBox getChkCuotaJubilado() {
 		if (chkCuotaJubilado == null) {
 			chkCuotaJubilado = new JCheckBox("Cuota Jubilado");
@@ -190,6 +201,7 @@ public class VentanaFiltro extends JDialog {
 		}
 		return scrlOrden;
 	}
+	
 	private JScrollPane getScrlFiltro() {
 		if (scrlFiltro == null) {
 			scrlFiltro = new JScrollPane();
@@ -197,6 +209,7 @@ public class VentanaFiltro extends JDialog {
 		}
 		return scrlFiltro;
 	}
+	
 	private JButton getBtnAplicar() {
 		if (btnAplicar == null) {
 			btnAplicar = new JButton("Aplicar");

@@ -16,8 +16,10 @@ import javax.swing.JDialog;
 import java.awt.BorderLayout;
 import java.util.Date;
 
+import giis.demo.business.InstalacionController;
 import giis.demo.business.ReservationController;
 import giis.demo.model.Instalacion;
+import giis.demo.model.Reserva;
 import giis.demo.util.Database;
 
 import javax.swing.JList;
@@ -41,9 +43,11 @@ public class VentanaReservas extends JDialog {
 	private JButton btnReserva;
 	private ReservationController reMan;
 	private String chosenDay;
+	private Database db;
 	
 	public VentanaReservas(Database db) {
-		reMan = new ReservationController(db);
+		this.db = db;
+		reMan = new ReservationController(this.db);
 		chosenDay = "";
 		setTitle("Reservas");
 		setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
@@ -96,11 +100,12 @@ public class VentanaReservas extends JDialog {
 	}
 	
 	private void dayPicker(PropertyChangeEvent evt) {
-		getPnSelector().setVisible(true);
 		String pattern = "dd/MM/yyyy";
 		SimpleDateFormat formatDate = new SimpleDateFormat(pattern);
 		chosenDay = formatDate.format(calendar.getDate());
+		getPnSelector().setVisible(true);
 		System.out.println(chosenDay);
+		generaHoras();
 	}
 	
 	@SuppressWarnings("deprecation")
@@ -134,27 +139,39 @@ public class VentanaReservas extends JDialog {
 				}
 			});
 			list.setModel(modeloListaHoras);
-			generaHoras();
 		}
 		return list;
 	}
 
 	private void generaHoras() {
+		modeloListaHoras.removeAllElements();
 		for (int i = 9; i <= 23; i++) {
 			modeloListaHoras.addElement(i+":00");
 		}		
+		
+		for (Reserva reserva : reMan.getReservas()) {			
+			if (reserva.getFecha().trim().equals(chosenDay)
+					&& modeloListaHoras.contains(reserva.getHora().trim())
+							&& reserva.getInstalacionId().trim().equals(((Instalacion)getCbInstalaciones().getSelectedItem()).getCode().toString())) {
+				System.out.println("Ya hay una reserva");
+				modeloListaHoras.removeElement(reserva.getHora().trim());
+			}
+		}
 	}
 	
 	private JComboBox<Instalacion> getCbInstalaciones() {
 		if (cbInstalaciones == null) {
-			Instalacion[] instalaciones = new Instalacion[5];
-			for (int i = 0; i < 5; i++) 
-				instalaciones[i] = new Instalacion("Instalacion"+i, "1341");
 			cbInstalaciones = new JComboBox<Instalacion>();
-			cbInstalaciones.setModel(new DefaultComboBoxModel<Instalacion>(instalaciones));
+			cbInstalaciones.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					generaHoras();
+				}
+			});
+			cbInstalaciones.setModel(new DefaultComboBoxModel<Instalacion>(InstalacionController.getInstalaciones(db)));
 		}
 		return cbInstalaciones;
 	}
+	
 	private JButton getBtnReserva() {
 		if (btnReserva == null) {
 			btnReserva = new JButton("Reservar");

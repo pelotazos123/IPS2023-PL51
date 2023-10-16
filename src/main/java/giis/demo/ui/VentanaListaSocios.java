@@ -68,6 +68,7 @@ public class VentanaListaSocios extends JDialog {
 		}
 		return pnLista;
 	}
+	
 	private JPanel getBtnPanel() {
 		if (btnPanel == null) {
 			btnPanel = new JPanel();
@@ -78,6 +79,7 @@ public class VentanaListaSocios extends JDialog {
 		}
 		return btnPanel;
 	}
+	
 	private JButton getBtnFiltro() {
 		if (btnFiltro == null) {
 			btnFiltro = new JButton("Filtrar");
@@ -107,6 +109,7 @@ public class VentanaListaSocios extends JDialog {
 		}
 		return pnlEsteBtns;
 	}
+	
 	private JButton getBtnActualizar() {
 		if (btnActualizar == null) {
 			btnActualizar = new JButton("↻");
@@ -150,6 +153,7 @@ public class VentanaListaSocios extends JDialog {
 		}
 		return lblText;
 	}
+	
 	private JScrollPane getScrlListaSocios() {
 		if (scrlListaSocios == null) {
 			scrlListaSocios = new JScrollPane();
@@ -158,7 +162,6 @@ public class VentanaListaSocios extends JDialog {
 		return scrlListaSocios;
 	}
 	
-	// To be changed to a model class "Socios"
 	private JList<String> getListSocios() {
 		if (listSocios == null) {
 			listSocios = new JList<String>();

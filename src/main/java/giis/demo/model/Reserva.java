@@ -32,7 +32,7 @@ public class Reserva {
 	
 	@Override
 	public String toString() {
-		return "Reserva: " + owner_id + " - " + fecha + "-" + hora + "- " + instalacionId;
+		return "Reserva: " + owner_id + " - " + fecha + " - " + hora + "- " + instalacionId;
 	}
 	
 }
