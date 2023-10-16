@@ -44,6 +44,7 @@ public class VentanaPrincipal extends JFrame {
 	private JLabel lbBienvenida;
 	private JButton btTramitarLicencia;
 	private JButton btRenovarLicencia;
+	private JButton btPagoTransferencia;
 	private VentanaReservas vr;
 	private VentanaListaSocios vLS;
 	private JButton btnReservas;
@@ -93,8 +94,9 @@ public class VentanaPrincipal extends JFrame {
 				}
 			});
 			btTestsFisiologicos.setMnemonic('f');
-			btTestsFisiologicos.setBounds(183, 252, 145, 52);
+			btTestsFisiologicos.setBounds(156, 252, 191, 52);
 			pnPrincipalSocio.add(btTestsFisiologicos);
+			pnPrincipalSocio.add(getBtPagoTransferencia());
 		}
 		return pnPrincipalSocio;
 	}
@@ -238,8 +240,27 @@ public class VentanaPrincipal extends JFrame {
 		}
 		return btRenovarLicencia;
 	}
+  
+  private JButton getBtPagoTransferencia() {
+    if (btPagoTransferencia == null) {
+      btPagoTransferencia = new JButton("Pagar por transferencia");
+      btPagoTransferencia.addActionListener(new ActionListener() {
+        public void actionPerformed(ActionEvent e) {
+          muestraVentanaPagoTransf();
+        }
+      });
+      btPagoTransferencia.setMnemonic('t');
+      btPagoTransferencia.setBounds(156, 433, 191, 52);
+    }
+    return btPagoTransferencia;
+  }
 
-	private JButton getBtnReservas() {
+	private void muestraVentanaPagoTransf() {
+//		PayByTransf pbt = new PayByTransf();
+//		pbt.setVisible(true);	
+	}
+  
+  private JButton getBtnReservas() {
 		if (btnReservas == null) {
 			btnReservas = new JButton("Reservas");
 			btnReservas.addActionListener(new ActionListener() {
@@ -288,5 +309,5 @@ public class VentanaPrincipal extends JFrame {
 		vLS.setLocationRelativeTo(this);
 		vLS.setVisible(true);
 	}
-	
+  
 }
