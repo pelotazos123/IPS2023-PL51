@@ -1,41 +1,38 @@
 package giis.demo.model;
 
-import java.util.Date;
-
-import giis.demo.util.Database;
-
 public class Reserva {
-	
+
 	private int owner_id;
-	private Date date;
-	private String reserva;
-	private String instalacionId;
+	private String fecha;
+	private String hora;
+	private String instalacionId;	
 	
-	private Database db;
-	
-	private final static String SQL_CREAR_RESERVA= "insert into reservas(owner_id, date, instalation_code) values(?, ?, ?)";
-	private final static String SQL_CARGAR_RESERVA = "select owner_id, date, instalation_code from reservas";
-	
-	public Reserva(int owner_id, Date reserva, String reservaS, Instalacion instalacion, Database db) {
+	public Reserva(int owner_id, String fecha, String hora, String instalacionId) {
 		this.owner_id = owner_id;
-		this.reserva = reservaS;
-		this.instalacionId = instalacion.getCode();
-		this.db = db;
-		createReservation();
-		comprobarInsertado();
+		this.fecha = fecha;
+		this.hora = hora;
+		this.instalacionId = instalacionId;
 	}
 	
-	private void createReservation() {
-		db.executeUpdate(SQL_CREAR_RESERVA, owner_id, reserva, instalacionId);
+	public int getOwner_id() {
+		return owner_id;
+	}
+
+	public String getFecha() {
+		return fecha;
+	}
+
+	public String getHora() {
+		return hora;
+	}
+
+	public String getInstalacionId() {
+		return instalacionId;
 	}
 	
-	private void comprobarInsertado() {
-		Object[] result = db.executeQueryArray(SQL_CARGAR_RESERVA).get(0);
-		int id = (int) result[0];
-		String reserva = (String) result[1];
-		String instalacionId = (String) result[2];
-		
-		System.out.println("\n"+"Id del socio: "+id+", reserva fecha: "+reserva+", instalacionId: "+instalacionId);
+	@Override
+	public String toString() {
+		return "Reserva: " + owner_id + " - " + fecha + " - " + hora + "- " + instalacionId;
 	}
 	
 }

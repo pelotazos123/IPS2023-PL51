@@ -19,3 +19,12 @@ insert into cuotas (owner_id, cuota_type, price, state) values
 	(103, 'Joven', 100, 'Pendiente'),
 	(103, 'Adulto', 200, 'Emitida'),
 	(103, 'Jubilado', 150, 'Pendiente');
+
+INSERT INTO reservas (owner_id, fecha, hora, instalation_code) VALUES 
+	(100, "20/10/2023", "20:00", "13410");
+
+INSERT INTO instalaciones (code, name) VALUES
+	("13410", "Pista Atletismo"),
+	("13411", "Piscina"),
+	("13412", "Cancha fútbol"),
+	("13413", "Sauna");
