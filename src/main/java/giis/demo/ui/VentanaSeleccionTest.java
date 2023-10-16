@@ -5,6 +5,7 @@ import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 import javax.swing.JButton;
 import java.awt.event.ActionListener;
+import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 
 public class VentanaSeleccionTest extends JFrame {
@@ -28,6 +29,7 @@ public class VentanaSeleccionTest extends JFrame {
 		setLocationRelativeTo(null);
 		setTitle("Selección de tipo de test");
 		setResizable(false);
+		setMinimumSize(new Dimension(300,450));
 
 		setContentPane(contentPane);
 		contentPane.setLayout(null);

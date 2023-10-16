@@ -1,4 +1,4 @@
-package giis.demo.testsFisiologicos;
+package giis.demo.logica;
 
 public class TestsFisiologicos {
 	

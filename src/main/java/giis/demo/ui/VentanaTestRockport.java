@@ -4,7 +4,7 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 
-import giis.demo.testsFisiologicos.TestsFisiologicos;
+import giis.demo.logica.TestsFisiologicos;
 
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
