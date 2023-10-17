@@ -38,6 +38,8 @@ public class AsambleasView {
 	private JTextField txtFecha;
 	private JTextField txtConv1;
 	private JTextField txtConv2;
+	private JTextField txtOrdenDia;
+	private JLabel lblOrdenDelDa;
 
 	/**
 	 * Create the application.
@@ -90,6 +92,8 @@ public class AsambleasView {
 			pnFormularioAsamblea.add(getTxtFecha());
 			pnFormularioAsamblea.add(getTxtConv1());
 			pnFormularioAsamblea.add(getTxtConv2());
+			pnFormularioAsamblea.add(getTxtOrdenDia());
+			pnFormularioAsamblea.add(getLblOrdenDelDa());
 		}
 		return pnFormularioAsamblea;
 	}
@@ -123,37 +127,36 @@ public class AsambleasView {
 	public JLabel getLblFecha() {
 		if (lblFecha == null) {
 			lblFecha = new JLabel("Fecha:");
-			lblFecha.setBounds(149, 78, 69, 24);
+			lblFecha.setBounds(149, 37, 69, 24);
 		}
 		return lblFecha;
 	}
 	public JLabel getLblConvocatoria1() {
 		if (lblConvocatoria1 == null) {
 			lblConvocatoria1 = new JLabel("Hora de 1° convocatoria:");
-			lblConvocatoria1.setBounds(149, 124, 153, 39);
+			lblConvocatoria1.setBounds(149, 83, 153, 39);
 		}
 		return lblConvocatoria1;
 	}
 	public JLabel getLblConvocatoria2() {
 		if (lblConvocatoria2 == null) {
 			lblConvocatoria2 = new JLabel("Hora de 2° convocatoria:");
-			lblConvocatoria2.setBounds(149, 185, 153, 39);
+			lblConvocatoria2.setBounds(149, 144, 153, 39);
 		}
 		return lblConvocatoria2;
 	}
-	public JButton getBtnConvocar() {
-		if (btnConvocar == null) {
-			btnConvocar = new JButton("Convocar");
-			btnConvocar.setBackground(new Color(0, 128, 0));
-			btnConvocar.setBounds(221, 282, 120, 39);
+	private JLabel getLblOrdenDelDa() {
+		if (lblOrdenDelDa == null) {
+			lblOrdenDelDa = new JLabel("Orden del día:");
+			lblOrdenDelDa.setBounds(149, 194, 153, 39);
 		}
-		return btnConvocar;
+		return lblOrdenDelDa;
 	}
 	public JTextField getTxtFecha() {
 		if (txtFecha == null) {
 			txtFecha = new JTextField();
 			txtFecha.setText(new SimpleDateFormat("dd-MM-yyyy").format(Calendar.getInstance().getTime()));
-			txtFecha.setBounds(307, 80, 86, 20);
+			txtFecha.setBounds(307, 39, 86, 20);
 			txtFecha.setColumns(10);
 		}
 		return txtFecha;
@@ -162,7 +165,7 @@ public class AsambleasView {
 		if (txtConv1 == null) {
 			txtConv1 = new JTextField();
 			txtConv1.setColumns(10);
-			txtConv1.setBounds(307, 133, 86, 20);
+			txtConv1.setBounds(307, 92, 86, 20);
 		}
 		return txtConv1;
 	}
@@ -170,9 +173,26 @@ public class AsambleasView {
 		if (txtConv2 == null) {
 			txtConv2 = new JTextField();
 			txtConv2.setColumns(10);
-			txtConv2.setBounds(307, 194, 86, 20);
+			txtConv2.setBounds(307, 153, 86, 20);
 		}
 		return txtConv2;
+	}
+	public JTextField getTxtOrdenDia() {
+		if (txtOrdenDia == null) {
+			txtOrdenDia = new JTextField();
+			txtOrdenDia.setColumns(10);
+			txtOrdenDia.setBounds(307, 203, 153, 20);
+		}
+		return txtOrdenDia;
+	}
+	public JButton getBtnConvocar() {
+		if (btnConvocar == null) {
+			btnConvocar = new JButton("Convocar");
+			btnConvocar.setForeground(new Color(255, 255, 255));
+			btnConvocar.setBackground(new Color(0, 128, 0));
+			btnConvocar.setBounds(221, 282, 120, 39);
+		}
+		return btnConvocar;
 	}
 	
 }

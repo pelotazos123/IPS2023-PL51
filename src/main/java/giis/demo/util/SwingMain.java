@@ -1,7 +1,7 @@
 package giis.demo.util;
 
 import java.awt.EventQueue;
-import giis.demo.ui.Ventanaprincipal;
+import giis.demo.ui.VentanaPrincipal;
 
 /**
  * Punto de entrada principal que incluye botones para la ejecucion de las pantallas 
@@ -16,10 +16,14 @@ public class SwingMain {
 	 * Launch the application.
 	 */
 	public static void main(String[] args) {
+		Database db = new Database();
+		db.createDatabase(false);
+		db.loadDatabase();
+		
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					Ventanaprincipal frame = new Ventanaprincipal();
+					VentanaPrincipal frame = new VentanaPrincipal(db);
 					frame.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();
