@@ -23,14 +23,15 @@ insert into cuotas (owner_id, cuota_type, price, state) values
 	(103, 'Jubilado', 150, 'Pendiente');
 
 insert into licencias (owner_id, tutor_name, tutor_surname, tutor_age, tutor_gender, state, price, licence_type, facturation_direction, facturation_info) values 
-	(100,'noTutor','noTutor',-1,null, 'PENDIENTE', 33.33, 'DEPORTISTA', "ESXX-XXXX-XXXX-XXXX-XXXX-XXXX", null),
+	(100,'noTutor','noTutor',-1,null, 'PENDIENTE', 30, 'DEPORTISTA', "ESXX-XXXX-XXXX-XXXX-XXXX-XXXX", null),
+	(101,'noTutor','noTutor',-1,null,'pagado',30,'DEPORTISTA','Aviles','Segundo A'),
+	(101,'noTutor','noTutor',-1,null,'pagado',30,'JUEZ','Aviles','Tercero B'),
+	(101,'noTutor','noTutor',-1,null,'pagado',30,'MONITOR','Aviles','Tercero B'),
 	(104,'noTutor','noTutor',-1,null,'pagado',30,'JUEZ','Vega','Bajo A'),
-	(106,'Pedro','Garcia',40,'HOMBRE','pagado',30,'DEPORTISTA','Oviedo','Segundo A'),
-	(107,'noTutor','noTutor',-1,null,'pagado',30,'DEPORTISTA','Gijon','Segundo A'),
-	(107,'noTutor','noTutor',-1,null,'pagado',30,'JUEZ','Gijon','Segundo A'),
-	(108,'noTutor','noTutor',-1,null,'pagado',30,'DEPORTISTA','Aviles','Segundo A'),
-	(108,'noTutor','noTutor',-1,null,'pagado',30,'JUEZ','Aviles','Tercero B'),
-	(108,'noTutor','noTutor',-1,null,'pagado',30,'MONITOR','Aviles','Tercero B');
+	(105,'noTutor','noTutor',-1,null,'pagado',30,'DEPORTISTA','Gijon','Segundo A'),
+	(105,'noTutor','noTutor',-1,null,'pagado',30,'JUEZ','Gijon','Segundo A'),
+	(106,'Pedro','Garcia',40,'HOMBRE','pagado',30,'DEPORTISTA','Oviedo','Segundo A');
+	
 
 
 INSERT INTO reservas (owner_id, fecha, hora, instalation_code) VALUES 

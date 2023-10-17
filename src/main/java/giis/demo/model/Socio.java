@@ -5,6 +5,7 @@ import giis.demo.util.Database;
 public class Socio {
 	
 	private final static String SQL_CARGAR_SOCIO="select id,name,surname,cuota_type,iban,height,weight,age,gender,directive from socios where id = ?" ;
+	private final static String SQL_MODIFICAR_SOCIO= "update socios set name=?, surname=?, gender=?, age=? where id = ?";
 	
 	private Database db;
 	
@@ -54,6 +55,18 @@ public class Socio {
 			this.genero = Generos.OTRO;
 		}
 		esDirectivo = (int)result[9] == 1;
+	}
+	
+	public void modificarDatos(String nombre, String apellido, Generos genero, String edad) {
+		this.nombre = nombre;
+		this.apellidos = apellido;
+		this.genero = genero;
+		this.edad = Integer.parseInt(edad);
+	}
+	
+	public void guardarDatos() {
+		db.executeUpdate(SQL_MODIFICAR_SOCIO,nombre,apellidos,genero,edad,id);
+		System.out.println("Datos Socio modificados:\n"+toString());
 	}
 	
 	public int getId() {

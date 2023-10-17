@@ -14,12 +14,14 @@ import java.awt.event.ActionListener;
 
 import javax.swing.JButton;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.SwingConstants;
 
 import giis.demo.business.AsambleasController;
 import giis.demo.business.AsambleasModel;
 import giis.demo.business.RecibosController;
 import giis.demo.business.RecibosModel;
+import giis.demo.model.CrearLicencias.servicio.TramitarLicencia;
 import giis.demo.util.Database;
 
 public class VentanaPrincipal extends JFrame {
@@ -29,7 +31,7 @@ public class VentanaPrincipal extends JFrame {
 	 */
 	private static final long serialVersionUID = 1L;
 	
-	private boolean esDirectivo;
+	private TramitarLicencia tramitarLicencia;
 	
 	private JPanel pnPrincipal;
 	private JPanel pnInicio;
@@ -67,6 +69,7 @@ public class VentanaPrincipal extends JFrame {
 		pnPrincipal.add(getPnInicio(), "inicio");
 		pnPrincipal.add(getPnPrincipalSocio(), "PrincipalSocio");
 		pnPrincipal.add(getPnPrincipalDirectivo(), "PrincipalDirectivo");
+		tramitarLicencia = new TramitarLicencia();
 	}
 
 	private JPanel getPnInicio() {
@@ -178,7 +181,7 @@ public class VentanaPrincipal extends JFrame {
 					pnPrincipalDirectivo.add(getBtRenovarLicencia());
 					pnPrincipalDirectivo.add(getBtnReservas());
 					((CardLayout)pnPrincipal.getLayout()).show(pnPrincipal,"PrincipalDirectivo");
-					esDirectivo = true;
+					tramitarLicencia.loggearSocio(true);
 				}
 			});
 		}
@@ -197,7 +200,7 @@ public class VentanaPrincipal extends JFrame {
 					pnPrincipalSocio.add(getBtRenovarLicencia());
 					pnPrincipalSocio.add(getBtnReservas());
 					((CardLayout)pnPrincipal.getLayout()).show(pnPrincipal,"PrincipalSocio");
-					esDirectivo = false;
+					tramitarLicencia.loggearSocio(false);
 				}
 			});
 		}
@@ -218,8 +221,10 @@ public class VentanaPrincipal extends JFrame {
 			btTramitarLicencia = new JButton("Tramitar Licencia");
 			btTramitarLicencia.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
-					VentanaTramitarLicencia frame = new VentanaTramitarLicencia(esDirectivo);
-					frame.setVisible(true);
+					if(comprobarSocioConAlgunaLicenciaDisponible()) {
+						VentanaTramitarLicencia frame = new VentanaTramitarLicencia(tramitarLicencia);
+						frame.setVisible(true);
+					}
 				}
 			});
 			btTramitarLicencia.setBounds(405, 358, 139, 52);
@@ -233,8 +238,10 @@ public class VentanaPrincipal extends JFrame {
 			btRenovarLicencia.setBounds(410, 252, 134, 54);
 			btRenovarLicencia.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
-					VentanaRenovarLicencia frame = new VentanaRenovarLicencia(esDirectivo);
-					frame.setVisible(true);
+					if(comprobarSocioConLicenciaPagada()) {
+						VentanaRenovarLicencia frame = new VentanaRenovarLicencia(tramitarLicencia);
+						frame.setVisible(true);
+					}
 				}
 			});
 		}
@@ -308,6 +315,26 @@ public class VentanaPrincipal extends JFrame {
 		vLS.setModal(true);
 		vLS.setLocationRelativeTo(this);
 		vLS.setVisible(true);
+	}
+	
+	private boolean comprobarSocioConLicenciaPagada() {
+		if(tramitarLicencia.socioConLicenciasPagadas()) {
+			return true;
+		}else {
+			JOptionPane.showMessageDialog(this,"No tienes ninguna licencia para renovar",
+					"Licencias", JOptionPane.INFORMATION_MESSAGE);
+			return false;
+		}
+	}
+	
+	private boolean comprobarSocioConAlgunaLicenciaDisponible() {
+		if(tramitarLicencia.socioConAlgunaLicenciaDisponible()) {
+			return true;
+		}else {
+			JOptionPane.showMessageDialog(this,"Tienes todas las licencias",
+					"Licencias", JOptionPane.INFORMATION_MESSAGE);
+			return false;
+		}
 	}
   
 }

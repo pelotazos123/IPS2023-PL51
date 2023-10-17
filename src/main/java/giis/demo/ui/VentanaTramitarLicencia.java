@@ -3,6 +3,7 @@ package giis.demo.ui;
 import java.awt.BorderLayout;
 import java.awt.CardLayout;
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.GridLayout;
 
@@ -99,18 +100,21 @@ public class VentanaTramitarLicencia extends JFrame {
 	/**
 	 * Create the frame.
 	 */
-	public VentanaTramitarLicencia(boolean esDirectivo) {
+	public VentanaTramitarLicencia(TramitarLicencia tramitarLicencia) {
+		setMinimumSize(new Dimension(1050, 477));
+		setBackground(Color.WHITE);
+		this.tramitarLicencia = tramitarLicencia;
 		setTitle("Club Deportivo");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 870, 618);
 		pnPrincipal = new JPanel();
+		pnPrincipal.setBackground(Color.WHITE);
 		pnPrincipal.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(pnPrincipal);
 		setLocationRelativeTo(null);
 		pnPrincipal.setLayout(new CardLayout(0, 0));
 		pnPrincipal.add(getPnTramitarLicencia(), "pnTramitarLicencia");
 		pnPrincipal.add(getPnAceptarPoliticaDatos(), "pnPoliticaDeDatos");
-		this.tramitarLicencia = new TramitarLicencia(esDirectivo);
 		cargarDatos();
 	}
 	private void cargarDatos() {
@@ -123,7 +127,8 @@ public class VentanaTramitarLicencia extends JFrame {
 	private JPanel getPnTramitarLicencia() {
 		if (pnTramitarLicencia == null) {
 			pnTramitarLicencia = new JPanel();
-			pnTramitarLicencia.setBorder(new TitledBorder(null, "Tramitar Licencia", TitledBorder.LEADING, TitledBorder.TOP, null, null));
+			pnTramitarLicencia.setBackground(Color.WHITE);
+			pnTramitarLicencia.setBorder(new TitledBorder(null, "Tramitar Licencia", TitledBorder.LEADING, TitledBorder.TOP, null, new Color(0, 0, 0)));
 			pnTramitarLicencia.setLayout(new BorderLayout(0, 0));
 			pnTramitarLicencia.add(getPnSur(), BorderLayout.SOUTH);
 			pnTramitarLicencia.add(getPnDatos(), BorderLayout.CENTER);
@@ -133,6 +138,7 @@ public class VentanaTramitarLicencia extends JFrame {
 	private JPanel getPnSur() {
 		if (pnSur == null) {
 			pnSur = new JPanel();
+			pnSur.setBackground(Color.WHITE);
 			pnSur.setLayout(new GridLayout(0, 2, 0, 0));
 			pnSur.add(getPnPoliticaDeDatos());
 			pnSur.add(getPnCrearYCancelarLicencia());
@@ -142,6 +148,7 @@ public class VentanaTramitarLicencia extends JFrame {
 	private JPanel getPnDatos() {
 		if (pnDatos == null) {
 			pnDatos = new JPanel();
+			pnDatos.setBackground(Color.WHITE);
 			pnDatos.setLayout(new BorderLayout(0, 0));
 			pnDatos.add(getPnDatosPersonales(), BorderLayout.CENTER);
 			pnDatos.add(getPnDatosFacturacionYLicencia(), BorderLayout.SOUTH);
@@ -151,6 +158,7 @@ public class VentanaTramitarLicencia extends JFrame {
 	private JPanel getPnDatosPersonales() {
 		if (pnDatosPersonales == null) {
 			pnDatosPersonales = new JPanel();
+			pnDatosPersonales.setBackground(Color.WHITE);
 			pnDatosPersonales.setLayout(new GridLayout(0, 2, 0, 0));
 			pnDatosPersonales.add(getPnDatosSocio());
 			pnDatosPersonales.add(getPnDatosTutor());
@@ -160,6 +168,7 @@ public class VentanaTramitarLicencia extends JFrame {
 	private JPanel getPnDatosSocio() {
 		if (pnDatosSocio == null) {
 			pnDatosSocio = new JPanel();
+			pnDatosSocio.setBackground(Color.WHITE);
 			pnDatosSocio.setLayout(new GridLayout(0, 1, 0, 0));
 			pnDatosSocio.add(getLbDatosSocio());
 			pnDatosSocio.add(getPnNombreSocio());
@@ -178,6 +187,7 @@ public class VentanaTramitarLicencia extends JFrame {
 	private JPanel getPnNombreSocio() {
 		if (pnNombreSocio == null) {
 			pnNombreSocio = new JPanel();
+			pnNombreSocio.setBackground(Color.WHITE);
 			pnNombreSocio.add(getLbNombreSocio());
 			pnNombreSocio.add(getTxNombreSocio());
 		}
@@ -199,6 +209,7 @@ public class VentanaTramitarLicencia extends JFrame {
 	private JPanel getPnApellidosSocio() {
 		if (pnApellidosSocio == null) {
 			pnApellidosSocio = new JPanel();
+			pnApellidosSocio.setBackground(Color.WHITE);
 			pnApellidosSocio.add(getLbApellidosSocio());
 			pnApellidosSocio.add(getTxApellidosSocio());
 		}
@@ -220,6 +231,7 @@ public class VentanaTramitarLicencia extends JFrame {
 	private JPanel getPnGeneroSocio() {
 		if (pnGeneroSocio == null) {
 			pnGeneroSocio = new JPanel();
+			pnGeneroSocio.setBackground(Color.WHITE);
 			pnGeneroSocio.add(getLbGeneroSocio());
 			pnGeneroSocio.add(getCbGeneroSocio());
 		}
@@ -236,6 +248,7 @@ public class VentanaTramitarLicencia extends JFrame {
 			cbGeneroSocio = new JComboBox<Generos>();
 			Generos[] generos = Generos.values();
 			cbGeneroSocio.setModel(new DefaultComboBoxModel<Generos>(generos));
+			cbGeneroSocio.setSelectedItem(Generos.OTRO);
 			cbGeneroSocio.setBounds(146, 66, 106, 22);
 		}
 		return cbGeneroSocio;
@@ -243,6 +256,7 @@ public class VentanaTramitarLicencia extends JFrame {
 	private JPanel getPnEdadSocio() {
 		if (pnEdadSocio == null) {
 			pnEdadSocio = new JPanel();
+			pnEdadSocio.setBackground(Color.WHITE);
 			pnEdadSocio.add(getLbEdadSocio());
 			pnEdadSocio.add(getCbEdadSocio());
 		}
@@ -270,6 +284,7 @@ public class VentanaTramitarLicencia extends JFrame {
 	private JPanel getPnDatosTutor() {
 		if (pnDatosTutor == null) {
 			pnDatosTutor = new JPanel();
+			pnDatosTutor.setBackground(Color.WHITE);
 			pnDatosTutor.setLayout(new GridLayout(0, 1, 0, 0));
 			pnDatosTutor.add(getLbDatosTutor());
 			pnDatosTutor.add(getPnNombreTutor());
@@ -288,6 +303,7 @@ public class VentanaTramitarLicencia extends JFrame {
 	private JPanel getPnNombreTutor() {
 		if (pnNombreTutor == null) {
 			pnNombreTutor = new JPanel();
+			pnNombreTutor.setBackground(Color.WHITE);
 			pnNombreTutor.add(getLbNombreTutor());
 			pnNombreTutor.add(getTxNombreTutor());
 		}
@@ -309,6 +325,7 @@ public class VentanaTramitarLicencia extends JFrame {
 	private JPanel getPnApellidosTutor() {
 		if (pnApellidosTutor == null) {
 			pnApellidosTutor = new JPanel();
+			pnApellidosTutor.setBackground(Color.WHITE);
 			pnApellidosTutor.add(getLbApellidosTutor());
 			pnApellidosTutor.add(getTxApellidosTutor());
 		}
@@ -330,6 +347,7 @@ public class VentanaTramitarLicencia extends JFrame {
 	private JPanel getPnGeneroTutor() {
 		if (pnGeneroTutor == null) {
 			pnGeneroTutor = new JPanel();
+			pnGeneroTutor.setBackground(Color.WHITE);
 			pnGeneroTutor.add(getLbGeneroTutor());
 			pnGeneroTutor.add(getCbGeneroTutor());
 		}
@@ -346,6 +364,7 @@ public class VentanaTramitarLicencia extends JFrame {
 			cbGeneroTutor = new JComboBox<Generos>();
 			Generos[] generos = Generos.values();
 			cbGeneroTutor.setModel(new DefaultComboBoxModel<Generos>(generos));
+			cbGeneroTutor.setSelectedItem(Generos.OTRO);
 			cbGeneroTutor.setBounds(146, 66, 106, 22);
 		}
 		return cbGeneroTutor;
@@ -353,6 +372,7 @@ public class VentanaTramitarLicencia extends JFrame {
 	private JPanel getPnEdadTutor() {
 		if (pnEdadTutor == null) {
 			pnEdadTutor = new JPanel();
+			pnEdadTutor.setBackground(Color.WHITE);
 			pnEdadTutor.add(getLbEdadTutor());
 			pnEdadTutor.add(getCbEdadTutor());
 		}
@@ -379,6 +399,7 @@ public class VentanaTramitarLicencia extends JFrame {
 	private JPanel getPnDatosFacturacionYLicencia() {
 		if (pnDatosFacturacionYLicencia == null) {
 			pnDatosFacturacionYLicencia = new JPanel();
+			pnDatosFacturacionYLicencia.setBackground(Color.WHITE);
 			pnDatosFacturacionYLicencia.setLayout(new GridLayout(1, 0, 0, 0));
 			pnDatosFacturacionYLicencia.add(getPnDireccionFacturacion());
 			pnDatosFacturacionYLicencia.add(getPnInfoFacturacion());
@@ -389,6 +410,7 @@ public class VentanaTramitarLicencia extends JFrame {
 	private JPanel getPnDireccionFacturacion() {
 		if (pnDireccionFacturacion == null) {
 			pnDireccionFacturacion = new JPanel();
+			pnDireccionFacturacion.setBackground(Color.WHITE);
 			pnDireccionFacturacion.add(getLbDireccionFacturacion());
 			pnDireccionFacturacion.add(getTxDireccionFacturacion());
 		}
@@ -410,6 +432,7 @@ public class VentanaTramitarLicencia extends JFrame {
 	private JPanel getPnInfoFacturacion() {
 		if (pnInfoFacturacion == null) {
 			pnInfoFacturacion = new JPanel();
+			pnInfoFacturacion.setBackground(Color.WHITE);
 			pnInfoFacturacion.add(getLbInfoFacturacion());
 			pnInfoFacturacion.add(getTxInfoFacturacion());
 		}
@@ -431,6 +454,7 @@ public class VentanaTramitarLicencia extends JFrame {
 	private JPanel getPnTipoLicencia() {
 		if (pnTipoLicencia == null) {
 			pnTipoLicencia = new JPanel();
+			pnTipoLicencia.setBackground(Color.WHITE);
 			pnTipoLicencia.add(getLbTipoLicencia());
 			pnTipoLicencia.add(getCbTipoLicencia());
 		}
@@ -445,7 +469,7 @@ public class VentanaTramitarLicencia extends JFrame {
 	private JComboBox<TiposLicencia> getCbTipoLicencia() {
 		if (cbTipoLicencia == null) {
 			cbTipoLicencia = new JComboBox<TiposLicencia>();
-			TiposLicencia[] licencias = TiposLicencia.values();
+			TiposLicencia[] licencias = tramitarLicencia.getLicenciasDisponibles();
 			cbTipoLicencia.setModel(new DefaultComboBoxModel<TiposLicencia>(licencias));
 			cbTipoLicencia.setBounds(146, 66, 106, 22);
 		}
@@ -454,6 +478,7 @@ public class VentanaTramitarLicencia extends JFrame {
 	private JPanel getPnCrearYCancelarLicencia() {
 		if (pnCrearYCancelarLicencia == null) {
 			pnCrearYCancelarLicencia = new JPanel();
+			pnCrearYCancelarLicencia.setBackground(Color.WHITE);
 			pnCrearYCancelarLicencia.setLayout(new FlowLayout(FlowLayout.RIGHT, 5, 5));
 			pnCrearYCancelarLicencia.add(getBtCancelarLicencia());
 			pnCrearYCancelarLicencia.add(getBtCrearLicencia());
@@ -463,6 +488,7 @@ public class VentanaTramitarLicencia extends JFrame {
 	private JButton getBtCrearLicencia() {
 		if (btCrearLicencia == null) {
 			btCrearLicencia = new JButton("Crear Licencia");
+			btCrearLicencia.setFocusPainted(false);
 			btCrearLicencia.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
 					if(comprobarDatosCorrectos()) {
@@ -481,13 +507,13 @@ public class VentanaTramitarLicencia extends JFrame {
 	private boolean comprobarDatosCorrectos() {
 		if(getTxNombreSocio().getText().isBlank() || getTxApellidosSocio().getText().isBlank() 
 				|| getTxDireccionFacturacion().getText().isBlank() || getTxInfoFacturacion().getText().isBlank()) {
-			JOptionPane.showMessageDialog(this,"Debe rellenar los campos Nombre, Apellidos, Dirección de facturación e Información de facturación ",
-					"Campo", JOptionPane.INFORMATION_MESSAGE);
+			JOptionPane.showMessageDialog(this,"Debe rellenar los campos Nombre, Apellidos, Direccion de facturacion e Informacion de facturacion ",
+					"Datos no rellenados", JOptionPane.INFORMATION_MESSAGE);
 			return false;
 		}else if( Integer.parseInt((String) getCbEdadSocio().getSelectedItem()) < 18) {
 			if(getTxNombreTutor().getText().isBlank() || getTxApellidosTutor().getText().isBlank()) {
 				JOptionPane.showMessageDialog(this,"Debe rellenar los campos Nombre y Apellidos del tutor",
-						"Campo", JOptionPane.INFORMATION_MESSAGE);
+						"Datos no rellenados", JOptionPane.INFORMATION_MESSAGE);
 				return false;
 			}else {
 				return true;
@@ -499,16 +525,27 @@ public class VentanaTramitarLicencia extends JFrame {
 	}
 	
 	private void crearLicencia() {
+		String nombreSocio = getTxNombreSocio().getText();
+		String apellidoSocio = getTxApellidosSocio().getText();
+		String edadSocio = (String) getCbEdadSocio().getSelectedItem();
+		Generos generoSocio = (Generos) getCbGeneroSocio().getSelectedItem();
+		
 		String nombreTutor = getTxNombreTutor().getText();
 		String apellidoTutor = getTxApellidosTutor().getText();
 		String edadTutor = (String) getCbEdadTutor().getSelectedItem();
+		Generos generoTutor = (Generos) getCbGeneroTutor().getSelectedItem();
+		
 		String direccionFacturacion = getTxDireccionFacturacion().getText();
 		String infoFacturacion = getTxInfoFacturacion().getText();
 		TiposLicencia licencia = (TiposLicencia) getCbTipoLicencia().getSelectedItem();
 		if(Integer.parseInt((String) getCbEdadSocio().getSelectedItem()) < 18) {
-			tramitarLicencia.crearLicencia(nombreTutor, apellidoTutor, edadTutor, direccionFacturacion, infoFacturacion, licencia);
+			tramitarLicencia.crearLicencia(nombreTutor, apellidoTutor, edadTutor, generoTutor, direccionFacturacion, infoFacturacion, licencia);
+			tramitarLicencia.modificarDatosSocio(nombreSocio, apellidoSocio, generoSocio, edadSocio);
+			tramitarLicencia.guardarDatosModificadosSocio();
 		}else {
-			tramitarLicencia.crearLicencia("noTutor", "noTutor", null, direccionFacturacion, infoFacturacion, licencia);
+			tramitarLicencia.crearLicencia("noTutor", "noTutor", null, null, direccionFacturacion, infoFacturacion, licencia);
+			tramitarLicencia.modificarDatosSocio(nombreSocio, apellidoSocio, generoSocio, edadSocio);
+			tramitarLicencia.guardarDatosModificadosSocio();
 		}
 		
 	}
@@ -516,6 +553,7 @@ public class VentanaTramitarLicencia extends JFrame {
 	private JButton getBtCancelarLicencia() {
 		if (btCancelarLicencia == null) {
 			btCancelarLicencia = new JButton("Cancelar");
+			btCancelarLicencia.setFocusPainted(false);
 			btCancelarLicencia.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
 					dispose();
@@ -529,6 +567,7 @@ public class VentanaTramitarLicencia extends JFrame {
 	private JPanel getPnPoliticaDeDatos() {
 		if (pnPoliticaDeDatos == null) {
 			pnPoliticaDeDatos = new JPanel();
+			pnPoliticaDeDatos.setBackground(Color.WHITE);
 			FlowLayout flowLayout = (FlowLayout) pnPoliticaDeDatos.getLayout();
 			flowLayout.setAlignment(FlowLayout.RIGHT);
 			pnPoliticaDeDatos.add(getBtPoliticaDeDatos());
@@ -538,6 +577,7 @@ public class VentanaTramitarLicencia extends JFrame {
 	private JButton getBtPoliticaDeDatos() {
 		if (btPoliticaDeDatos == null) {
 			btPoliticaDeDatos = new JButton("Pol\u00EDtica de protecci\u00F3n de datos");
+			btPoliticaDeDatos.setFocusPainted(false);
 			btPoliticaDeDatos.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
 					((CardLayout) getContentPane().getLayout()).show(getContentPane(),"pnPoliticaDeDatos");
@@ -549,6 +589,7 @@ public class VentanaTramitarLicencia extends JFrame {
 	private JPanel getPnAceptarPoliticaDatos() {
 		if (pnAceptarPoliticaDatos == null) {
 			pnAceptarPoliticaDatos = new JPanel();
+			pnAceptarPoliticaDatos.setBackground(Color.WHITE);
 			pnAceptarPoliticaDatos.setLayout(new BorderLayout(0, 0));
 			pnAceptarPoliticaDatos.add(getPnAceptarOCancelarPoliticaDeDAtos(), BorderLayout.SOUTH);
 			pnAceptarPoliticaDatos.add(getPnLabelPoliticaDeDatos(), BorderLayout.NORTH);
@@ -559,6 +600,7 @@ public class VentanaTramitarLicencia extends JFrame {
 	private JPanel getPnAceptarOCancelarPoliticaDeDAtos() {
 		if (pnAceptarOCancelarPoliticaDeDAtos == null) {
 			pnAceptarOCancelarPoliticaDeDAtos = new JPanel();
+			pnAceptarOCancelarPoliticaDeDAtos.setBackground(Color.WHITE);
 			pnAceptarOCancelarPoliticaDeDAtos.setLayout(new FlowLayout(FlowLayout.RIGHT, 5, 5));
 			pnAceptarOCancelarPoliticaDeDAtos.add(getBtRechazarPoliticaDeDatos());
 			pnAceptarOCancelarPoliticaDeDAtos.add(getBtAceparPoliticaDeDatos());
@@ -568,6 +610,7 @@ public class VentanaTramitarLicencia extends JFrame {
 	private JButton getBtRechazarPoliticaDeDatos() {
 		if (btRechazarPoliticaDeDatos == null) {
 			btRechazarPoliticaDeDatos = new JButton("Rechazar");
+			btRechazarPoliticaDeDatos.setFocusPainted(false);
 			btRechazarPoliticaDeDatos.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
 					((CardLayout) getContentPane().getLayout()).show(getContentPane(),"pnTramitarLicencia");
@@ -582,6 +625,7 @@ public class VentanaTramitarLicencia extends JFrame {
 	private JButton getBtAceparPoliticaDeDatos() {
 		if (btAceparPoliticaDeDatos == null) {
 			btAceparPoliticaDeDatos = new JButton("Aceptar");
+			btAceparPoliticaDeDatos.setFocusPainted(false);
 			btAceparPoliticaDeDatos.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
 					((CardLayout) getContentPane().getLayout()).show(getContentPane(),"pnTramitarLicencia");
@@ -597,6 +641,7 @@ public class VentanaTramitarLicencia extends JFrame {
 	private JPanel getPnLabelPoliticaDeDatos() {
 		if (pnLabelPoliticaDeDatos == null) {
 			pnLabelPoliticaDeDatos = new JPanel();
+			pnLabelPoliticaDeDatos.setBackground(Color.WHITE);
 			FlowLayout flowLayout = (FlowLayout) pnLabelPoliticaDeDatos.getLayout();
 			flowLayout.setAlignment(FlowLayout.LEFT);
 			pnLabelPoliticaDeDatos.add(getLbPoliticaDeDatos());
@@ -605,7 +650,7 @@ public class VentanaTramitarLicencia extends JFrame {
 	}
 	private JLabel getLbPoliticaDeDatos() {
 		if (lbPoliticaDeDatos == null) {
-			lbPoliticaDeDatos = new JLabel("Política de protección de datos");
+			lbPoliticaDeDatos = new JLabel("PolÃ­tica de protecciÃ³n de datos");
 		}
 		return lbPoliticaDeDatos;
 	}
