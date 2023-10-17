@@ -12,8 +12,6 @@ insert into socios (id,name,surname,cuota_type,iban,height,weight,age,gender,dir
 	(105,'Pedro','Fernandez','CUOTA_JOVEN','ES6000436501851414507715','1.75',80,23,'HOMBRE',false),
 	(106,'Adrian','Garcia','CUOTA_JOVEN','ES6340491500088834566478','1.54',57,14,'HOMBRE',false);
 
-
-
 insert into cuotas (owner_id, cuota_type, price, state) values
 	(100, 'Joven', 100, 'Pendiente'),
 	(100, 'Adulto', 200, 'Pendiente'),
@@ -32,10 +30,11 @@ insert into licencias (owner_id, tutor_name, tutor_surname, tutor_age, tutor_gen
 	(105,'noTutor','noTutor',-1,null,'pagado',30,'JUEZ','Gijon','Segundo A'),
 	(106,'Pedro','Garcia',40,'HOMBRE','pagado',30,'DEPORTISTA','Oviedo','Segundo A');
 	
-
-
 INSERT INTO reservas (owner_id, fecha, hora, instalation_code) VALUES 
-	(100, "20/10/2023", "20:00", "13410");
+	(100, "20/10/2023", "20:00", "13410"),
+	(100, "22/10/2023", "20:00", "13412"),
+	(100, "24/10/2023", "20:00", "13411"),
+	(100, "21/10/2023", "20:00", "13413");
 
 INSERT INTO instalaciones (code, name) VALUES
 	("13410", "Pista Atletismo"),
