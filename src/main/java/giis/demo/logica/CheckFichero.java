@@ -13,6 +13,9 @@ public class CheckFichero {
 
 	private static final String SQL_LICENCIA_PAGADO = "update licencias set state = 'PAGADO' where owner_id = ? ";
 	private static final String SQL_COMPRUEBA_PAGADO = "select state from licencias where owner_id = ? ";
+
+//	private static final Double IMPORTE = 0.0;
+//	private static final String IBAN_BENEFICIARIO = "ES";
 	
 	private Database db = new Database();
 	private String id;
@@ -95,13 +98,15 @@ public class CheckFichero {
 		} else if(numLinea == 5) {
 			if(line[0].equals("IBAN") && line[1].equals("BENEFICIARIO:")) {
 //				String beneficiario = line[2];
-
+//				if(beneficiario != IBAN_BENEFICIARIO)
+//					return false;
 			} else 
 				return false;
 		} else if(numLinea == 6) {
 			if(line[0].equals("Importe:")) {
-//				String importe = line[1];
-
+//				double importe = Double.parseDouble(line[1]);
+//				if(importe != IMPORTE) 
+//					return false;
 			} else 
 				return false;
 		} else if(numLinea == 7) {
