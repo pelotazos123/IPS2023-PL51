@@ -318,6 +318,8 @@ public class VentanaRenovarLicencia extends JFrame {
 	private JPanel getPnLabelPoliticaDeDatos() {
 		if (pnLabelPoliticaDeDatos == null) {
 			pnLabelPoliticaDeDatos = new JPanel();
+			FlowLayout flowLayout = (FlowLayout) pnLabelPoliticaDeDatos.getLayout();
+			flowLayout.setAlignment(FlowLayout.LEFT);
 			pnLabelPoliticaDeDatos.setBackground(Color.WHITE);
 			pnLabelPoliticaDeDatos.add(getLbPoliticaDeDatos());
 		}

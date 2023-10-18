@@ -650,7 +650,7 @@ public class VentanaTramitarLicencia extends JFrame {
 	}
 	private JLabel getLbPoliticaDeDatos() {
 		if (lbPoliticaDeDatos == null) {
-			lbPoliticaDeDatos = new JLabel("PolÃ­tica de protecciÃ³n de datos");
+			lbPoliticaDeDatos = new JLabel("Politica de proteccion de datos");
 		}
 		return lbPoliticaDeDatos;
 	}

@@ -31,16 +31,17 @@ public class TramitarLicencia {
 	private Licencia licenciaSeleccionada;
 	private List<Licencia> licenciasDelSocio = new ArrayList<Licencia>();
 	
-	public TramitarLicencia() {
-		db.createDatabase(false);
-		db.loadDatabase();
+	public TramitarLicencia(Database db) {
+		this.db = db;
+//		db.createDatabase(false);
+//		db.loadDatabase();
 	}
 	
 	public void loggearSocio(boolean esDirectivo) {
 		if(esDirectivo) {
 			cargarSocio(ID_DIRECTIVO_PRUEBAS);
 		}else {
-			cargarSocio(ID_SOCIO_SIN_LICENCIA_PRUEBAS);
+			cargarSocio(ID_SOCIO_CON_DOS_LICENCIAS_PRUEBAS);
 		}
 		System.out.println(socio.toString());
 	}

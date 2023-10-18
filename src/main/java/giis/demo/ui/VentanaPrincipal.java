@@ -70,7 +70,7 @@ public class VentanaPrincipal extends JFrame {
 		pnPrincipal.add(getPnInicio(), "inicio");
 		pnPrincipal.add(getPnPrincipalSocio(), "PrincipalSocio");
 		pnPrincipal.add(getPnPrincipalDirectivo(), "PrincipalDirectivo");
-		tramitarLicencia = new TramitarLicencia();
+		tramitarLicencia = new TramitarLicencia(db);
 	}
 
 	private JPanel getPnInicio() {
