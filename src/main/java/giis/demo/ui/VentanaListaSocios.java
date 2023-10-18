@@ -2,7 +2,6 @@ package giis.demo.ui;
 
 import java.awt.BorderLayout;
 
-import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JPanel;
@@ -14,15 +13,13 @@ import javax.swing.JLabel;
 import javax.swing.border.LineBorder;
 
 import giis.demo.business.SociosController;
-import giis.demo.model.Socio;
 import giis.demo.util.Database;
 
 import java.awt.Font;
 import javax.swing.JScrollPane;
-import javax.swing.JList;
 import java.awt.event.ActionListener;
-import java.util.List;
 import java.awt.event.ActionEvent;
+import javax.swing.JTable;
 
 public class VentanaListaSocios extends JDialog {
 
@@ -35,12 +32,11 @@ public class VentanaListaSocios extends JDialog {
 	private JButton btnActualizar;
 	private JLabel lblText;
 	private JScrollPane scrlListaSocios;
-	private JList<String> listSocios;
-	private List<Socio> listaSocios;
-	private DefaultListModel<String> modeloListaSocios;
 	private Database db;
 
 	private static final String NO_SOCIO_FOUND = "Ningún socio encontrado";
+	private JTable tableSocios;
+	private JLabel lblNoSocios;
 	
 	/**
 	 * Create the dialog.
@@ -56,7 +52,7 @@ public class VentanaListaSocios extends JDialog {
 		contentPanel.setLayout(new BorderLayout(0, 0));
 		contentPanel.add(getPnLista());
 		contentPanel.add(getBtnPanel(), BorderLayout.NORTH);
-		actualizar();
+		actualizar("");
 	}
 
 	private JPanel getPnLista() {
@@ -64,8 +60,9 @@ public class VentanaListaSocios extends JDialog {
 			pnLista = new JPanel();
 			pnLista.setBackground(Color.WHITE);
 			pnLista.setBorder(new LineBorder(new Color(0, 0, 0), 3));
-			pnLista.add(getScrlListaSocios());
-			pnLista.add(getListSocios());
+			pnLista.setLayout(new BorderLayout(0, 0));
+			pnLista.add(getScrlListaSocios(), BorderLayout.CENTER);
+			pnLista.add(getLblNoSocios(), BorderLayout.NORTH);
 		}
 		return pnLista;
 	}
@@ -116,7 +113,7 @@ public class VentanaListaSocios extends JDialog {
 			btnActualizar = new JButton("↻");
 			btnActualizar.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
-					actualizar();
+					actualizar("");
 				}
 			});
 			btnActualizar.setBackground(Color.WHITE);
@@ -126,24 +123,14 @@ public class VentanaListaSocios extends JDialog {
 		return btnActualizar;
 	}
 	
-	private void actualizar() {
-		listaSocios = SociosController.cargarSocios(db, "", "");
-		listaSocios.stream().filter(e -> e.getTipoCuota().equals("Cuota Joven"));
-		modeloListaSocios.removeAllElements();
-		for (int i = 0; i < listaSocios.size(); i++) {
-			modeloListaSocios.addElement(listaSocios.get(i).toStringList());
+	protected void actualizar(String filter) {
+		tableSocios.setModel(SociosController.setTableModel(db, filter));
+		if (tableSocios.getModel().getRowCount() <= 0) {
+			tableSocios.setVisible(false);
+			lblNoSocios.setVisible(true);
+		} else {
+			lblNoSocios.setVisible(false);
 		}
-		
-	}
-	
-	protected void actualizar(String filter, String order) {
-		List<Socio> result = SociosController.cargarSocios(db, filter, order);
-		modeloListaSocios.removeAllElements();
-		for (int i = 0; i < result.size(); i++) {
-			modeloListaSocios.addElement(result.get(i).toStringList());
-		}
-		if (result.isEmpty())
-			modeloListaSocios.addElement(NO_SOCIO_FOUND);
 	}
 
 	private JLabel getLblText() {
@@ -158,17 +145,26 @@ public class VentanaListaSocios extends JDialog {
 	private JScrollPane getScrlListaSocios() {
 		if (scrlListaSocios == null) {
 			scrlListaSocios = new JScrollPane();
-			scrlListaSocios.setViewportView(listSocios);
+			scrlListaSocios.setViewportView(getTableSocios());
 		}
 		return scrlListaSocios;
 	}
 	
-	private JList<String> getListSocios() {
-		if (listSocios == null) {
-			listSocios = new JList<String>();
-			modeloListaSocios = new DefaultListModel<String>();
-			listSocios.setModel(modeloListaSocios);
+	private JTable getTableSocios() {
+		if (tableSocios == null) {
+			tableSocios = new JTable();
+			tableSocios.setColumnSelectionAllowed(true);
+			tableSocios.setAutoCreateRowSorter(true);
 		}
-		return listSocios;
+		return tableSocios;
+	}
+	private JLabel getLblNoSocios() {
+		if (lblNoSocios == null) {
+			lblNoSocios = new JLabel("");
+			lblNoSocios.setFont(new Font("Tahoma", Font.PLAIN, 20));
+			lblNoSocios.setVisible(false);
+			lblNoSocios.setText(NO_SOCIO_FOUND);
+		}
+		return lblNoSocios;
 	}
 }

@@ -3,7 +3,9 @@ package giis.demo.business.entities;
 public class SocioEntity {
 	
 	private String id;
-	private String name; 
+	private String name;
+	private String surname;
+	private String email; 
 	private int cuota_type;
 	private String iban;
 	private String height;
@@ -15,6 +17,8 @@ public class SocioEntity {
 	// Getters
 	public String getId() { return id; }
 	public String getName() { return name; }
+	public String getSurname() { return surname; }
+	public String getEmail() { return email; }
 	public int getCuota_type() { return cuota_type; }
 	public String getIban() { return iban; }
 	public String getHeight() { return height; }
@@ -25,6 +29,8 @@ public class SocioEntity {
 	// Setters
 	public void setId(String id) { this.id = id; }
 	public void setName(String name) { this.name = name; }
+	public void setSurame(String surname) { this.surname = surname; }
+	public void setEmail(String email) { this.email = email; }
 	public void setCuota_type(int cuota_type) { this.cuota_type = cuota_type; }
 	public void setIban(String iban) { this.iban = iban; }
 	public void setHeight(String height) { this.height = height; }
