@@ -122,7 +122,7 @@ public class VentanaRenovarLicencia extends JFrame {
 		setBackground(Color.WHITE);
 		this.tramitarLicencia = tramitarLicencia;
 		setTitle("Club Deportivo");
-		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		setBounds(100, 100, 663, 440);
 		setLocationRelativeTo(null);
 		pnPrincipal = new JPanel();

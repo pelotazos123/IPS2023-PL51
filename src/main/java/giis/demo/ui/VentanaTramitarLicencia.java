@@ -105,7 +105,7 @@ public class VentanaTramitarLicencia extends JFrame {
 		setBackground(Color.WHITE);
 		this.tramitarLicencia = tramitarLicencia;
 		setTitle("Club Deportivo");
-		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		setBounds(100, 100, 870, 618);
 		pnPrincipal = new JPanel();
 		pnPrincipal.setBackground(Color.WHITE);
