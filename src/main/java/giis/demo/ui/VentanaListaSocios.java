@@ -46,6 +46,7 @@ public class VentanaListaSocios extends JDialog {
 	 * Create the dialog.
 	 */
 	public VentanaListaSocios(Database db) {
+		setTitle("Gestion deportiva: Lista de socios");
 		this.db = db;
 		setBounds(100, 100, 870, 618);
 		getContentPane().setLayout(new BorderLayout());
