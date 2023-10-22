@@ -28,33 +28,56 @@ public class AsambleasController {
 	}
 	
 	public void initController() {
-		view.getBtnConvocar().addActionListener(
-				e -> SwingUtil.exceptionWrapper(() -> addAsambleaExtraordinaria()));
-		
-		view.getBtnOrdinaria().addActionListener(
+		view.getBtnConvocarOrd().addActionListener(
 				e -> SwingUtil.exceptionWrapper(() -> addAsambleaOrdinaria()));
+		
+		view.getBtnConvocarExt().addActionListener(
+				e -> SwingUtil.exceptionWrapper(() -> addAsambleaExtraordinaria()));
 	}
 	
 	private void addAsamblea(String type, String announcement, String date1, String date2, String orderOfDay) {
-		model.addAsamblea(type, announcement, date1, date2, orderOfDay);
-		JOptionPane.showMessageDialog(null, "Se ha convocado correctamente.", "Correcto", JOptionPane.INFORMATION_MESSAGE);
-		((CardLayout)view.getFrame().getContentPane().getLayout()).show(view.getFrame().getContentPane(),"EleccionAsambleas");
+		if(hasAsamblea(type, announcement)) {
+			JOptionPane.showMessageDialog(null, "Ya existe una asamblea de este tipo el mismo dia.", "Error", JOptionPane.INFORMATION_MESSAGE);
+		}
+		else if(orderOfDay.isBlank()) {
+			JOptionPane.showMessageDialog(null, "Orden del día necesaria.", "Error", JOptionPane.ERROR_MESSAGE);
+		}
+		else {
+			model.addAsamblea(type, announcement, date1, date2, orderOfDay);
+			JOptionPane.showMessageDialog(null, "Se ha convocado correctamente.", "Correcto", JOptionPane.INFORMATION_MESSAGE);
+			((CardLayout)view.getFrame().getContentPane().getLayout()).show(view.getFrame().getContentPane(),"EleccionAsambleas");
+		}
+	}
+	private boolean hasAsamblea(String type, String announcement) {
+		return model.hasAsamblea(type, announcement);
 	}
 	
 	private void addAsambleaOrdinaria() {
+		Calendar today = Calendar.getInstance();
 		Calendar date = Calendar.getInstance();
 		
-		date.add(Calendar.MONTH, 1);
-		date.set(Calendar.DAY_OF_MONTH, 1);
+		int year = Integer.parseInt(view.getCbYear().getItemAt(view.getCbYear().getSelectedIndex()));
+		int month = view.getCbMonth().getSelectedIndex();
 		
-		addAsamblea("Ordinaria", new SimpleDateFormat("dd-MM-yyyy").format(date.getTime()), "8.00", "8.30", "Convocatoria del mes");
+		date.set(Calendar.YEAR, year);
+		date.set(Calendar.MONTH, month);
+		
+		if(date.before(Calendar.getInstance())) {
+			JOptionPane.showMessageDialog(null, "Fecha incorrecta", "Error", JOptionPane.ERROR_MESSAGE);
+		}
+		else {
+			date.set(Calendar.DAY_OF_MONTH, 1);
+			if(date.get(Calendar.MONTH) == today.get(Calendar.MONTH))
+				date.add(Calendar.MONTH, 1);
+			addAsamblea("Ordinaria", new SimpleDateFormat("dd-MM-yyyy").format(date.getTime()), "8:00", "8:30", view.getTxtOrdenDiaOrd().getText());
+		}
 	}
 	
 	private void addAsambleaExtraordinaria() {
 		String date = view.getTxtFecha().getText();
 		String conv1 = view.getTxtConv1().getText();
 		String conv2 = view.getTxtConv2().getText();
-		String orderOfDay = view.getTxtOrdenDia().getText();
+		String orderOfDay = view.getTxtOrdenDiaExt().getText();
 		
 		if(comprobarFecha(date) && comprobarConvocatorias(conv1, conv2)) {
 			addAsamblea("Ordinaria", date, conv1, conv2, orderOfDay);
@@ -80,8 +103,8 @@ public class AsambleasController {
 	}
 	private boolean comprobarConvocatorias(String conv1, String conv2) {
 		if(comprobarHora(conv1) && comprobarHora(conv2)) {
-            LocalTime horaC1 = LocalTime.of(Integer.parseInt(conv1.split("\\.")[0]), Integer.parseInt(conv1.split("\\.")[1]));
-            LocalTime horaC2 = LocalTime.of(Integer.parseInt(conv2.split("\\.")[0]), Integer.parseInt(conv2.split("\\.")[1]));
+            LocalTime horaC1 = LocalTime.of(Integer.parseInt(conv1.split("\\:")[0]), Integer.parseInt(conv1.split("\\:")[1]));
+            LocalTime horaC2 = LocalTime.of(Integer.parseInt(conv2.split("\\:")[0]), Integer.parseInt(conv2.split("\\:")[1]));
             if(horaC2.isAfter(horaC1)) {
             	return true;
             }
@@ -94,10 +117,10 @@ public class AsambleasController {
 		return false;
 	}
 	private boolean comprobarHora(String hora) {
-		String[] partes = hora.split("\\.");
+		String[] partes = hora.split("\\:");
 
         if (partes.length != 2) {
-        	JOptionPane.showMessageDialog(null, "Formato de convocatorias: \"HH.mm\".", "Error", JOptionPane.ERROR_MESSAGE);
+        	JOptionPane.showMessageDialog(null, "Formato de convocatorias: \"HH:mm\".", "Error", JOptionPane.ERROR_MESSAGE);
             return false; 
         }
 
