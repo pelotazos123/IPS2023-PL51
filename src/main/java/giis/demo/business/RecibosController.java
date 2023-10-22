@@ -13,6 +13,7 @@ import java.util.List;
 import javax.swing.JOptionPane;
 import javax.swing.table.TableModel;
 
+import giis.demo.business.entities.CuotaEntity;
 import giis.demo.business.entities.SocioEntity;
 import giis.demo.ui.RecibosView;
 import giis.demo.util.SwingUtil;
@@ -55,10 +56,19 @@ public class RecibosController {
 	}
 	
 	public void getListaCuotas() {
-		String lastSelectedKey = SwingUtil.getSelectedKey(view.getTabSocios());
-		String id = lastSelectedKey;
+		List<CuotaEntity> cuotas = new ArrayList<>();
 		
-		TableModel tmodel = SwingUtil.getTableModelFromPojos(model.getListaCuotas(id), new String[] {"cuota_type", "price","state"});
+		int[] seleccionados = view.getTabSocios().getSelectedRows();
+		for(int i=0; i<seleccionados.length; i++) {
+			cuotas.addAll(model.getListaCuotas((String) view.getTabSocios().getValueAt(seleccionados[i], 0)));
+		}
+		TableModel tmodel = SwingUtil.getTableModelFromPojos(cuotas, new String[] {"cuota_type", "price","state"});
+		
+		
+//		String lastSelectedKey = SwingUtil.getSelectedKey(view.getTabSocios());
+//		String id = lastSelectedKey;
+//		TableModel tmodel = SwingUtil.getTableModelFromPojos(model.getListaCuotas(id), new String[] {"cuota_type", "price","state"});
+		
 		view.getTabCuotas().setModel(tmodel);
 	}
 	
@@ -99,6 +109,7 @@ public class RecibosController {
 			}
 			
 			if(generated) {
+				getListaCuotas();
 				saveRecibos();
 				JOptionPane.showMessageDialog(null, "Se han generado recibos.", "Recibos", JOptionPane.INFORMATION_MESSAGE);
 			}
