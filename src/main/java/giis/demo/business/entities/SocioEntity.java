@@ -29,7 +29,7 @@ public class SocioEntity {
 	// Setters
 	public void setId(String id) { this.id = id; }
 	public void setName(String name) { this.name = name; }
-	public void setSurame(String surname) { this.surname = surname; }
+	public void setSurname(String surname) { this.surname = surname; }
 	public void setEmail(String email) { this.email = email; }
 	public void setCuota_type(int cuota_type) { this.cuota_type = cuota_type; }
 	public void setIban(String iban) { this.iban = iban; }

@@ -10,10 +10,11 @@ import giis.demo.util.SwingUtil;
 
 public abstract class SociosController {
 	
-	private final static String SQL_CARGAR_TODOS_SOCIOS = "select id, name, surname, email, iban, gender, age from socios ";
+	private final static String SQL_CARGAR_TODOS_SOCIOS = "select id, name, surname, email, iban, gender, age, directive from socios ";
+	private final static String WHERE = "WHERE";
 	
 	public static TableModel setTableModel(Database db, String filter) {
-		TableModel model = SwingUtil.getTableModelFromPojos(getSociosForTabla(db, filter), new String[] {"id", "name", "surname", "email", "iban", "gender", "age"});
+		TableModel model = SwingUtil.getTableModelFromPojos(getSociosForTabla(db, filter), new String[] {"id", "name", "surname", "email", "iban", "gender", "age", "directive"});
 		return model;
 	}
 	
@@ -25,7 +26,7 @@ public abstract class SociosController {
 		String query;
 
 		if (!filter.isEmpty()) {
-			query = SQL_CARGAR_TODOS_SOCIOS + filter;
+			query = SQL_CARGAR_TODOS_SOCIOS + WHERE + filter;
 		} else {
 			query = SQL_CARGAR_TODOS_SOCIOS;
 		}
