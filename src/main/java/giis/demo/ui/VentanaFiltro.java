@@ -16,9 +16,9 @@ import javax.swing.JButton;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import javax.swing.JTextField;
-import java.awt.FlowLayout;
 import com.toedter.calendar.JDateChooser;
 import java.awt.Font;
+import javax.swing.border.LineBorder;
 
 public class VentanaFiltro extends JDialog {
 
@@ -34,7 +34,7 @@ public class VentanaFiltro extends JDialog {
 	private JPanel pnButtonsSouth;
 	private JCheckBox chkDirectivo;
 	private JPanel pnCenter;
-	private JPanel panel;
+	private JPanel pnTxtFields;
 	private JLabel lblFiltrar;
 	private JTextField txtNombre;
 	private JTextField txtApellido;
@@ -44,6 +44,9 @@ public class VentanaFiltro extends JDialog {
 	private JDateChooser dateFrom;
 	private JLabel lblFromDate;
 	private JLabel lblToDate;
+	private JCheckBox chkSub18;
+	private JCheckBox chkVeterano;
+	private JCheckBox chkSenior;
 
 	/**
 	 * Create the dialog.
@@ -55,14 +58,14 @@ public class VentanaFiltro extends JDialog {
 		getContentPane().add(getPnOrden(), BorderLayout.SOUTH);
 		getContentPane().add(getPnCenter(), BorderLayout.CENTER);
 		getContentPane().add(getLblFiltrar(), BorderLayout.NORTH);
-		setBounds(100, 100, 535, 352);
+		setBounds(100, 100, 535, 293);
 
 	}
 
 	private JPanel getPnFiltro() {
 		if (pnFiltro == null) {
 			pnFiltro = new JPanel();
-			pnFiltro.setBorder(null);
+			pnFiltro.setBorder(new LineBorder(new Color(0, 0, 0)));
 			pnFiltro.setBackground(Color.WHITE);
 			pnFiltro.setLayout(new BorderLayout(0, 0));
 			pnFiltro.add(getScrlFiltro(), BorderLayout.SOUTH);
@@ -86,10 +89,13 @@ public class VentanaFiltro extends JDialog {
 			pnBtnFiltro = new JPanel();
 			pnBtnFiltro.setBorder(null);
 			pnBtnFiltro.setBackground(Color.WHITE);
-			pnBtnFiltro.setLayout(new GridLayout(5, 1, 0, 0));
+			pnBtnFiltro.setLayout(new GridLayout(3, 1, 0, 0));
 			pnBtnFiltro.add(getChkHombres());
+			pnBtnFiltro.add(getChkSub18());
 			pnBtnFiltro.add(getChkMujeres());
+			pnBtnFiltro.add(getChkSenior());
 			pnBtnFiltro.add(getChkDirectivo());
+			pnBtnFiltro.add(getChkVeterano());
 		}
 		return pnBtnFiltro;
 	}
@@ -180,11 +186,6 @@ public class VentanaFiltro extends JDialog {
 
 	private String checkFemale() {
 		return getChkMujeres().isSelected() ? "'MUJER'" : "''";
-		
-//		if (getChkHombres().isSelected() && !getChkMujeres().isSelected()) 
-//			filter += " gender='HOMBRE' ";
-//		else if (getChkMujeres().isSelected() && !getChkHombres().isSelected())
-//			filter += " gender='MUJER' ";
 	}
 
 	private JPanel getPnButtonsSouth() {
@@ -210,36 +211,38 @@ public class VentanaFiltro extends JDialog {
 			pnCenter = new JPanel();
 			pnCenter.setLayout(new GridLayout(0, 2, 0, 0));
 			pnCenter.add(getPnFiltro());
-			pnCenter.add(getPanel());
+			pnCenter.add(getPnTxtFields());
 		}
 		return pnCenter;
 	}
-	private JPanel getPanel() {
-		if (panel == null) {
-			panel = new JPanel();
-			panel.setBackground(Color.WHITE);
-			panel.setLayout(null);
-			panel.add(getTxtNombre());
-			panel.add(getTxtApellido());
-			panel.add(getLblNombre());
-			panel.add(getDateFrom());
-			panel.add(getDateTo());
-			panel.add(getLblApellido());
-			panel.add(getLblFromDate());
-			panel.add(getLblToDate());
+	private JPanel getPnTxtFields() {
+		if (pnTxtFields == null) {
+			pnTxtFields = new JPanel();
+			pnTxtFields.setBorder(new LineBorder(new Color(0, 0, 0)));
+			pnTxtFields.setBackground(Color.WHITE);
+			pnTxtFields.setLayout(null);
+			pnTxtFields.add(getTxtNombre());
+			pnTxtFields.add(getTxtApellido());
+			pnTxtFields.add(getLblNombre());
+			pnTxtFields.add(getDateFrom());
+			pnTxtFields.add(getDateTo());
+			pnTxtFields.add(getLblApellido());
+			pnTxtFields.add(getLblFromDate());
+			pnTxtFields.add(getLblToDate());
 		}
-		return panel;
+		return pnTxtFields;
 	}
 	private JLabel getLblFiltrar() {
 		if (lblFiltrar == null) {
 			lblFiltrar = new JLabel("    Filtrar:");
+			lblFiltrar.setFont(new Font("Tahoma", Font.BOLD, 15));
 		}
 		return lblFiltrar;
 	}
 	private JTextField getTxtNombre() {
 		if (txtNombre == null) {
 			txtNombre = new JTextField();
-			txtNombre.setBounds(110, 11, 115, 20);
+			txtNombre.setBounds(110, 26, 115, 20);
 			txtNombre.setColumns(10);
 		}
 		return txtNombre;
@@ -247,7 +250,7 @@ public class VentanaFiltro extends JDialog {
 	private JTextField getTxtApellido() {
 		if (txtApellido == null) {
 			txtApellido = new JTextField();
-			txtApellido.setBounds(110, 42, 115, 20);
+			txtApellido.setBounds(110, 63, 115, 20);
 			txtApellido.setColumns(10);
 		}
 		return txtApellido;
@@ -256,7 +259,7 @@ public class VentanaFiltro extends JDialog {
 		if (lblNombre == null) {
 			lblNombre = new JLabel("Nombre: ");
 			lblNombre.setFont(new Font("Tahoma", Font.PLAIN, 13));
-			lblNombre.setBounds(24, 14, 76, 14);
+			lblNombre.setBounds(24, 28, 76, 14);
 			lblNombre.setLabelFor(getTxtNombre());
 		}
 		return lblNombre;
@@ -265,7 +268,7 @@ public class VentanaFiltro extends JDialog {
 		if (lblApellido == null) {
 			lblApellido = new JLabel("Apellidos: ");
 			lblApellido.setFont(new Font("Tahoma", Font.PLAIN, 13));
-			lblApellido.setBounds(24, 44, 76, 14);
+			lblApellido.setBounds(24, 65, 76, 14);
 			lblApellido.setLabelFor(getTxtApellido());
 		}
 		return lblApellido;
@@ -274,7 +277,7 @@ public class VentanaFiltro extends JDialog {
 		if (dateTo == null) {
 			dateTo = new JDateChooser();
 			dateTo.setDateFormatString("dd/MM/yy");
-			dateTo.setBounds(110, 120, 115, 20);
+			dateTo.setBounds(110, 165, 115, 20);
 		}
 		return dateTo;
 	}
@@ -282,7 +285,7 @@ public class VentanaFiltro extends JDialog {
 		if (dateFrom == null) {
 			dateFrom = new JDateChooser();
 			dateFrom.setDateFormatString("dd/MM/yy");
-			dateFrom.setBounds(110, 84, 115, 20);
+			dateFrom.setBounds(110, 128, 115, 20);
 		}
 		return dateFrom;
 	}
@@ -290,7 +293,7 @@ public class VentanaFiltro extends JDialog {
 		if (lblFromDate == null) {
 			lblFromDate = new JLabel("Desde: ");
 			lblFromDate.setFont(new Font("Tahoma", Font.PLAIN, 13));
-			lblFromDate.setBounds(24, 84, 44, 14);
+			lblFromDate.setBounds(24, 128, 44, 14);
 			lblFromDate.setLabelFor(getDateFrom());
 		}
 		return lblFromDate;
@@ -299,9 +302,33 @@ public class VentanaFiltro extends JDialog {
 		if (lblToDate == null) {
 			lblToDate = new JLabel("Hasta: ");
 			lblToDate.setFont(new Font("Tahoma", Font.PLAIN, 13));
-			lblToDate.setBounds(24, 120, 44, 14);
+			lblToDate.setBounds(24, 171, 44, 14);
 			lblToDate.setLabelFor(getDateTo());
 		}
 		return lblToDate;
+	}
+	private JCheckBox getChkSub18() {
+		if (chkSub18 == null) {
+			chkSub18 = new JCheckBox("Sub18");
+			chkSub18.setFont(new Font("Tahoma", Font.PLAIN, 13));
+			chkSub18.setBackground(Color.WHITE);
+		}
+		return chkSub18;
+	}
+	private JCheckBox getChkVeterano() {
+		if (chkVeterano == null) {
+			chkVeterano = new JCheckBox("Veterano");
+			chkVeterano.setFont(new Font("Tahoma", Font.PLAIN, 13));
+			chkVeterano.setBackground(Color.WHITE);
+		}
+		return chkVeterano;
+	}
+	private JCheckBox getChkSenior() {
+		if (chkSenior == null) {
+			chkSenior = new JCheckBox("Senior");
+			chkSenior.setFont(new Font("Tahoma", Font.PLAIN, 13));
+			chkSenior.setBackground(Color.WHITE);
+		}
+		return chkSenior;
 	}
 }

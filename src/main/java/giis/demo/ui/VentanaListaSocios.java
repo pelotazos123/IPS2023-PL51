@@ -2,7 +2,10 @@ package giis.demo.ui;
 
 import java.awt.BorderLayout;
 
+import javax.swing.DefaultCellEditor;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
 import javax.swing.JDialog;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
@@ -14,6 +17,7 @@ import javax.swing.JOptionPane;
 import javax.swing.border.LineBorder;
 
 import giis.demo.business.SociosController;
+import giis.demo.logica.JDateChooserEditor;
 import giis.demo.util.Database;
 
 import java.awt.Font;
@@ -21,6 +25,9 @@ import javax.swing.JScrollPane;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import javax.swing.JTable;
+import javax.swing.ListSelectionModel;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 
 public class VentanaListaSocios extends JDialog {
 
@@ -124,9 +131,31 @@ public class VentanaListaSocios extends JDialog {
 	
 	protected void actualizar(String filter) {
 		tableSocios.setModel(SociosController.setTableModel(db, filter));
+		settingCuotas();
+		settingDirective();
+		settingDateChooser();
+		
 		if (tableSocios.getModel().getRowCount() <= 0) {
 			JOptionPane.showMessageDialog(null, NO_SOCIO_FOUND, "ERROR", JOptionPane.WARNING_MESSAGE);
 		}
+	}
+
+	private void settingDateChooser() {
+		tableSocios.getColumnModel().getColumn(10).setCellEditor(new JDateChooserEditor(new JCheckBox()));
+	}
+
+	private void settingDirective() {
+		JCheckBox checkDir = new JCheckBox();
+		tableSocios.getColumnModel().getColumn(tableSocios.getColumnCount()-1).setCellEditor(new DefaultCellEditor(checkDir));
+	}
+
+	private void settingCuotas() {
+		JComboBox<String> cuotas = new JComboBox<String>();
+		cuotas.addItem("SUB18");
+		cuotas.addItem("SENIOR");
+		cuotas.addItem("VETERANO");
+		
+		tableSocios.getColumnModel().getColumn(5).setCellEditor(new DefaultCellEditor(cuotas));
 	}
 
 	private JLabel getLblText() {
@@ -146,12 +175,30 @@ public class VentanaListaSocios extends JDialog {
 		return scrlListaSocios;
 	}
 	
+	@SuppressWarnings("serial")
 	private JTable getTableSocios() {
 		if (tableSocios == null) {
-			tableSocios = new JTable();
+			tableSocios = new JTable() {
+				@Override // Establece que las columnas 1 y 2 no sean editables (ID de socio y DNI)
+				public boolean isCellEditable(int row, int column) {
+			        return column == 0 || column==1 ? false : true;
+			    }
+			};
+			tableSocios.addKeyListener(new KeyAdapter() {
+				@Override
+				public void keyTyped(KeyEvent e) {
+				}
+			});
+			tableSocios.setBackground(Color.WHITE);
 			tableSocios.setColumnSelectionAllowed(true);
 			tableSocios.setAutoCreateRowSorter(true);
+			tableSocios.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+			tableSocios.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
+			tableSocios.setFillsViewportHeight(true);
+			tableSocios.setColumnSelectionAllowed(true);
+			tableSocios.setRowSelectionAllowed(true);
 		}
 		return tableSocios;
 	}
+
 }
