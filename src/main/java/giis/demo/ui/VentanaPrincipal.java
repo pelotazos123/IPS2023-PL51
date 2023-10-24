@@ -1,10 +1,6 @@
 package giis.demo.ui;
 
 
-import javax.swing.JFrame;
-import javax.swing.JPanel;
-import javax.swing.border.EmptyBorder;
-
 import java.awt.CardLayout;
 import java.awt.FlowLayout;
 import java.awt.Font;
@@ -13,15 +9,20 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 import javax.swing.JButton;
+import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
+import javax.swing.JPanel;
 import javax.swing.SwingConstants;
+import javax.swing.border.EmptyBorder;
 
 import giis.demo.business.AsambleasController;
 import giis.demo.business.AsambleasModel;
 import giis.demo.business.RecibosController;
 import giis.demo.business.RecibosModel;
 import giis.demo.model.CrearLicencias.servicio.TramitarLicencia;
+import giis.demo.ui.licencias.VentanaRenovarLicencia;
+import giis.demo.ui.licencias.VentanaTramitarLicencia;
 import giis.demo.util.Database;
 
 public class VentanaPrincipal extends JFrame {
@@ -329,7 +330,8 @@ public class VentanaPrincipal extends JFrame {
 	}
 	
 	private boolean comprobarSocioConAlgunaLicenciaDisponible() {
-		if(tramitarLicencia.socioConAlgunaLicenciaDisponible()) {
+		boolean mayor = tramitarLicencia.comprobarSocioMayorEdad();
+		if(tramitarLicencia.socioConAlgunaLicenciaDisponible(mayor)) {
 			return true;
 		}else {
 			JOptionPane.showMessageDialog(this,"Tienes todas las licencias",

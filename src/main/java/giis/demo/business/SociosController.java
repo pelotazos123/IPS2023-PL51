@@ -38,8 +38,8 @@ public abstract class SociosController {
 			cuota = (String)objects[3];
 			genero = getGenre((String)objects[4]);
 			edad = (int)objects[5];
-				
-			socios.add(new Socio(id, nombre, apellidos, cuota, genero, edad));
+			//adaptar a nuevo formato de edad	
+			//socios.add(new Socio(id, nombre, apellidos, cuota, genero, edad));
 		}
 				
 		return socios;

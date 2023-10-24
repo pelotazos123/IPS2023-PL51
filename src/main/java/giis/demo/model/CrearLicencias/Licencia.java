@@ -1,5 +1,6 @@
 package giis.demo.model.CrearLicencias;
 
+import java.util.Calendar;
 import java.util.List;
 
 import giis.demo.model.Generos;
@@ -20,7 +21,7 @@ public class Licencia {
 	private int idPropietario;
 	private String nombreTutor;
 	private String apellidosTutor;
-	private int edadTutor;
+	private Calendar fechaNacimiento;
 	private Generos generoTutor;
 	private EstadosLicencia estado;
 	private int precio;
@@ -33,14 +34,14 @@ public class Licencia {
 		this.db = db;
 	}
 
-	public void crearLicencia(String nombre,String apellido, String edad, Generos genero, String direccion, String info, TiposLicencia licencia) {
+	public void crearLicencia(String nombre,String apellido, Calendar fecha, Generos genero, String direccion, String info, TiposLicencia licencia) {
 		nombreTutor = nombre;
 		apellidosTutor = apellido;
 		
-		if(edad == null) {
-			edadTutor = -1;
-		}else {
-			edadTutor = Integer.parseInt(edad);
+		fechaNacimiento = fecha;
+		String fechaTutor = "noTutor";
+		if(fecha != null) {
+			fechaTutor =""+fecha.get(Calendar.DAY_OF_MONTH)+"-"+fecha.get(Calendar.MONTH)+"-"+fecha.get(Calendar.YEAR);
 		}
 		
 		generoTutor = genero;
@@ -51,7 +52,7 @@ public class Licencia {
 		infoFacturacion = info;
 		tipoLicencia = licencia;
 		
-		db.executeUpdate(SQL_CREAR_LICENCIA, idPropietario,nombreTutor,apellidosTutor,edadTutor,generoTutor,estado,precio,tipoLicencia,direccionFacturacion,infoFacturacion);
+		db.executeUpdate(SQL_CREAR_LICENCIA, idPropietario,nombreTutor,apellidosTutor,fechaTutor,generoTutor,estado,precio,tipoLicencia,direccionFacturacion,infoFacturacion);
 		comprobarInsertado();
 	}
 	
@@ -60,7 +61,6 @@ public class Licencia {
 		idPropietario = (int) result[0];
 		nombreTutor = (String) result[1];
 		apellidosTutor = (String) result[2];
-		edadTutor = (int) result[3];
 		precio = (int) result[6];
 		direccionFacturacion = (String) result[8];
 		infoFacturacion = (String) result[9];
@@ -91,6 +91,18 @@ public class Licencia {
 		}else {
 			tipoLicencia = TiposLicencia.JUEZ;
 		}
+		
+		String edadTutor = (String) result[3];
+		if(edadTutor.equals("noTutor")) {
+			fechaNacimiento = null;
+		}else {
+			String[] str = edadTutor.split("-");
+			int dia = Integer.parseInt(str[0]);
+			int mes = Integer.parseInt(str[1]);
+			int año = Integer.parseInt(str[2]);
+			fechaNacimiento = Calendar.getInstance();
+			fechaNacimiento.set(año, mes, dia);
+		}
 	}
 	
 	private void comprobarInsertado() {
@@ -98,7 +110,22 @@ public class Licencia {
 		int id = (int) result[0];
 		String nombre = (String) result[1];
 		String apellido = (String) result[2];
-		int edad = (int) result[3];
+		String edadTutor = (String) result[3];
+		if(edadTutor.equals("noTutor")) {
+			fechaNacimiento = null;
+		}else {
+			String[] str = edadTutor.split("-");
+			int dia = Integer.parseInt(str[0]);
+			int mes = Integer.parseInt(str[1]);
+			int año = Integer.parseInt(str[2]);
+			fechaNacimiento = Calendar.getInstance();
+			fechaNacimiento.set(año, mes, dia);
+		}
+		String fechaTutor = "noTutor";
+		if(fechaNacimiento != null) {
+			fechaTutor =""+fechaNacimiento.get(Calendar.DAY_OF_MONTH)+"-"+fechaNacimiento.get(Calendar.MONTH)+"-"+fechaNacimiento.get(Calendar.YEAR);
+		}
+		
 		String genero = (String) result[4];
 		String estado = (String) result[5];
 		int precio = (int) result[6];
@@ -106,20 +133,16 @@ public class Licencia {
 		String direccion = (String) result[8];
 		String info = (String) result[9];
 		System.out.println("\n"+"Id del socio: "+id+", nombre del tutor: "+nombre+", apellidos del tutor: "+apellido+
-				", edad del tutor: "+edad+" ,genero del tutor: "+genero+", estado de la licencia: "+estado+", precio de la licencia: "+precio+", tipo de licencia: "+licencia+
+				", edad del tutor: "+fechaTutor+" ,genero del tutor: "+genero+", estado de la licencia: "+estado+", precio de la licencia: "+precio+", tipo de licencia: "+licencia+
 				", direccion de facturacion: "+direccion+", informacion de facturacion: "+info);
 	}
 	
-	public void modificarDatos(String nombre, String apellido, String edad, Generos genero, String direccion,
+	public void modificarDatos(String nombre, String apellido, Calendar fecha, Generos genero, String direccion,
 			String info) {
 		nombreTutor = nombre;
 		apellidosTutor = apellido;
 		
-		if(edad == null) {
-			edadTutor = -1;
-		}else {
-			edadTutor = Integer.parseInt(edad);
-		}
+		fechaNacimiento = fecha;
 		generoTutor = genero;
 		precio = PRECIO_LICENCIAS;
 		direccionFacturacion = direccion;
@@ -127,8 +150,12 @@ public class Licencia {
 	}
 	
 	public void guardarDatos() {
+		String fechaTutor = "noTutor";
+		if(fechaNacimiento != null) {
+			fechaTutor =""+fechaNacimiento.get(Calendar.DAY_OF_MONTH)+"-"+fechaNacimiento.get(Calendar.MONTH)+"-"+fechaNacimiento.get(Calendar.YEAR);
+		}
 		estado = EstadosLicencia.PENDIENTE;
-		db.executeUpdate(SQL_MODIFICAR_LICENCIA,nombreTutor, apellidosTutor, edadTutor, generoTutor, estado, precio, tipoLicencia, direccionFacturacion
+		db.executeUpdate(SQL_MODIFICAR_LICENCIA,nombreTutor, apellidosTutor, fechaTutor, generoTutor, estado, precio, tipoLicencia, direccionFacturacion
 				,infoFacturacion, idPropietario);
 		System.out.println("Datos Licencia modificados:\n"+getDatosLicencia());
 	}
@@ -144,8 +171,9 @@ public class Licencia {
 	}
 	
 	public String getDatosLicencia() {
+		String fecha = ""+fechaNacimiento.get(Calendar.DAY_OF_MONTH)+"-"+fechaNacimiento.get(Calendar.MONTH)+"-"+fechaNacimiento.get(Calendar.YEAR);
 		return "Id del socio: "+idPropietario+", nombre del tutor: "+nombreTutor+", apellidos del tutor: "+apellidosTutor+
-				", edad del tutor: "+edadTutor+" ,genero del tutor: "+generoTutor+", estado de la licencia: "+estado+", precio de la licencia: "
+				", edad del tutor: "+fecha+" ,genero del tutor: "+generoTutor+", estado de la licencia: "+estado+", precio de la licencia: "
 				+precio+", tipo de licencia: "+tipoLicencia+", direccion de facturacion: "+direccionFacturacion+", informacion de facturacion: "
 				+infoFacturacion;
 	}
@@ -162,8 +190,8 @@ public class Licencia {
 		return apellidosTutor;
 	}
 
-	public int getEdadTutor() {
-		return edadTutor;
+	public Calendar getFechaNacimiento() {
+		return fechaNacimiento;
 	}
 	
 	public Generos getGeneroTutor() {
