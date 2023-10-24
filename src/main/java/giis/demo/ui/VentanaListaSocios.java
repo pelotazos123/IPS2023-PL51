@@ -10,6 +10,7 @@ import java.awt.Color;
 import java.awt.Dimension;
 
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.border.LineBorder;
 
 import giis.demo.business.SociosController;
@@ -36,7 +37,6 @@ public class VentanaListaSocios extends JDialog {
 
 	private static final String NO_SOCIO_FOUND = "Ningún socio encontrado";
 	private JTable tableSocios;
-	private JLabel lblNoSocios;
 	
 	/**
 	 * Create the dialog.
@@ -62,7 +62,6 @@ public class VentanaListaSocios extends JDialog {
 			pnLista.setBorder(new LineBorder(new Color(0, 0, 0), 3));
 			pnLista.setLayout(new BorderLayout(0, 0));
 			pnLista.add(getScrlListaSocios(), BorderLayout.CENTER);
-			pnLista.add(getLblNoSocios(), BorderLayout.NORTH);
 		}
 		return pnLista;
 	}
@@ -126,10 +125,7 @@ public class VentanaListaSocios extends JDialog {
 	protected void actualizar(String filter) {
 		tableSocios.setModel(SociosController.setTableModel(db, filter));
 		if (tableSocios.getModel().getRowCount() <= 0) {
-			tableSocios.setVisible(false);
-			lblNoSocios.setVisible(true);
-		} else {
-			lblNoSocios.setVisible(false);
+			JOptionPane.showMessageDialog(null, NO_SOCIO_FOUND, "ERROR", JOptionPane.WARNING_MESSAGE);
 		}
 	}
 
@@ -157,14 +153,5 @@ public class VentanaListaSocios extends JDialog {
 			tableSocios.setAutoCreateRowSorter(true);
 		}
 		return tableSocios;
-	}
-	private JLabel getLblNoSocios() {
-		if (lblNoSocios == null) {
-			lblNoSocios = new JLabel("");
-			lblNoSocios.setFont(new Font("Tahoma", Font.PLAIN, 20));
-			lblNoSocios.setVisible(false);
-			lblNoSocios.setText(NO_SOCIO_FOUND);
-		}
-		return lblNoSocios;
 	}
 }

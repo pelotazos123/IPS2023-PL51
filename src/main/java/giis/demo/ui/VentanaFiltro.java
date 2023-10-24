@@ -18,6 +18,7 @@ import java.awt.event.ActionEvent;
 import javax.swing.JTextField;
 import java.awt.FlowLayout;
 import com.toedter.calendar.JDateChooser;
+import java.awt.Font;
 
 public class VentanaFiltro extends JDialog {
 
@@ -54,7 +55,7 @@ public class VentanaFiltro extends JDialog {
 		getContentPane().add(getPnOrden(), BorderLayout.SOUTH);
 		getContentPane().add(getPnCenter(), BorderLayout.CENTER);
 		getContentPane().add(getLblFiltrar(), BorderLayout.NORTH);
-		setBounds(100, 100, 567, 352);
+		setBounds(100, 100, 535, 352);
 
 	}
 
@@ -96,6 +97,7 @@ public class VentanaFiltro extends JDialog {
 	private JCheckBox getChkHombres() {
 		if (chkHombres == null) {
 			chkHombres = new JCheckBox("Hombres");
+			chkHombres.setFont(new Font("Tahoma", Font.PLAIN, 13));
 			chkHombres.setBackground(Color.WHITE);
 		}
 		return chkHombres;
@@ -104,6 +106,7 @@ public class VentanaFiltro extends JDialog {
 	private JCheckBox getChkMujeres() {
 		if (chkMujeres == null) {
 			chkMujeres = new JCheckBox("Mujeres");
+			chkMujeres.setFont(new Font("Tahoma", Font.PLAIN, 13));
 			chkMujeres.setBackground(Color.WHITE);
 		}
 		return chkMujeres;
@@ -112,6 +115,7 @@ public class VentanaFiltro extends JDialog {
 	private JScrollPane getScrlFiltro() {
 		if (scrlFiltro == null) {
 			scrlFiltro = new JScrollPane();
+			scrlFiltro.setBorder(null);
 			scrlFiltro.setViewportView(getPnBtnFiltro());
 		}
 		return scrlFiltro;
@@ -130,47 +134,57 @@ public class VentanaFiltro extends JDialog {
 	}
 
 	private void aplicarFiltros() {
-		String filterGender = "";
-		String filterDir = "";
-		String filter = "";
+		String name = filterName();
+		String surname = filterSurname();
 		
-		filterGender = checkGender();
+		String filterMale = checkMale();
+		String filterFemale = checkFemale();
 		
-		filterDir = checkDirective();
+		String filterDir = checkDirective();
 		
-		filter = buildFilter(filterGender, filterDir);					
+		String filter = buildFilter(filterMale, filterFemale, filterDir, name, surname);	
 		
 		vLS.actualizar(filter);
 		dispose();
 	}
 
-	private String buildFilter(String filterGender, String filterDir) {
+	private String buildFilter(String male, String female, String filterDir, String name, String surname) {
 		String filter = "";
-		if (filterGender.isEmpty() && !filterDir.isEmpty())
-			filter = filterDir;
-		else if (!filterGender.isEmpty() && !filterDir.isEmpty()) {
-			filter = filterGender + " AND " + filterDir;
-		} else if (!filterGender.isEmpty() && filterDir.isEmpty()) {
-			filter = filterGender;
-		}
-		return filter;
-	}
-
-	private String checkDirective() {
-		String filter = "";
-		if (getChkDirectivo().isSelected()) 
-				filter += " directive=true ";
 		
+		if (!getChkHombres().isSelected() && !getChkMujeres().isSelected()) {
+			male="'HOMBRE'";
+			female="'MUJER'";
+		}
+		
+		filter = String.format(" name=%s AND surname=%s AND (gender=%s OR gender=%s) AND directive=%s", name, surname, male, female, filterDir);
 		return filter;
 	}
 
-	private String checkGender() {
-		String filter = "";
-		if (getChkHombres().isSelected() && !getChkMujeres().isSelected()) 
-			filter += " gender='HOMBRE' ";
-		else if (getChkMujeres().isSelected() && !getChkHombres().isSelected())
-			filter += " gender='MUJER' ";
-		return filter;
+	private String filterName() {
+		String name = getTxtNombre().getText();
+		return !name.isEmpty() ? "'"+name+"'" : "name";
+	}
+	
+	private String filterSurname() {
+		String surname = getTxtApellido().getText();
+		return !surname.isEmpty() ? "'"+surname+"'" : "surname";
+	}
+	
+	private String checkDirective() {
+		return getChkDirectivo().isSelected() ? "true" : "directive";
+	}
+	
+	private String checkMale() {
+		return getChkHombres().isSelected() ? "'HOMBRE'" : "''";
+	}
+
+	private String checkFemale() {
+		return getChkMujeres().isSelected() ? "'MUJER'" : "''";
+		
+//		if (getChkHombres().isSelected() && !getChkMujeres().isSelected()) 
+//			filter += " gender='HOMBRE' ";
+//		else if (getChkMujeres().isSelected() && !getChkHombres().isSelected())
+//			filter += " gender='MUJER' ";
 	}
 
 	private JPanel getPnButtonsSouth() {
@@ -186,6 +200,7 @@ public class VentanaFiltro extends JDialog {
 	private JCheckBox getChkDirectivo() {
 		if (chkDirectivo == null) {
 			chkDirectivo = new JCheckBox("Directivos");
+			chkDirectivo.setFont(new Font("Tahoma", Font.PLAIN, 13));
 			chkDirectivo.setBackground(Color.WHITE);
 		}
 		return chkDirectivo;
@@ -203,7 +218,7 @@ public class VentanaFiltro extends JDialog {
 		if (panel == null) {
 			panel = new JPanel();
 			panel.setBackground(Color.WHITE);
-			panel.setLayout(new FlowLayout(FlowLayout.CENTER, 5, 5));
+			panel.setLayout(null);
 			panel.add(getTxtNombre());
 			panel.add(getTxtApellido());
 			panel.add(getLblNombre());
@@ -217,13 +232,14 @@ public class VentanaFiltro extends JDialog {
 	}
 	private JLabel getLblFiltrar() {
 		if (lblFiltrar == null) {
-			lblFiltrar = new JLabel("Filtrar:");
+			lblFiltrar = new JLabel("    Filtrar:");
 		}
 		return lblFiltrar;
 	}
 	private JTextField getTxtNombre() {
 		if (txtNombre == null) {
 			txtNombre = new JTextField();
+			txtNombre.setBounds(110, 11, 115, 20);
 			txtNombre.setColumns(10);
 		}
 		return txtNombre;
@@ -231,6 +247,7 @@ public class VentanaFiltro extends JDialog {
 	private JTextField getTxtApellido() {
 		if (txtApellido == null) {
 			txtApellido = new JTextField();
+			txtApellido.setBounds(110, 42, 115, 20);
 			txtApellido.setColumns(10);
 		}
 		return txtApellido;
@@ -238,13 +255,17 @@ public class VentanaFiltro extends JDialog {
 	private JLabel getLblNombre() {
 		if (lblNombre == null) {
 			lblNombre = new JLabel("Nombre: ");
+			lblNombre.setFont(new Font("Tahoma", Font.PLAIN, 13));
+			lblNombre.setBounds(24, 14, 76, 14);
 			lblNombre.setLabelFor(getTxtNombre());
 		}
 		return lblNombre;
 	}
 	private JLabel getLblApellido() {
 		if (lblApellido == null) {
-			lblApellido = new JLabel("Apellido: ");
+			lblApellido = new JLabel("Apellidos: ");
+			lblApellido.setFont(new Font("Tahoma", Font.PLAIN, 13));
+			lblApellido.setBounds(24, 44, 76, 14);
 			lblApellido.setLabelFor(getTxtApellido());
 		}
 		return lblApellido;
@@ -252,18 +273,24 @@ public class VentanaFiltro extends JDialog {
 	private JDateChooser getDateTo() {
 		if (dateTo == null) {
 			dateTo = new JDateChooser();
+			dateTo.setDateFormatString("dd/MM/yy");
+			dateTo.setBounds(110, 120, 115, 20);
 		}
 		return dateTo;
 	}
 	private JDateChooser getDateFrom() {
 		if (dateFrom == null) {
 			dateFrom = new JDateChooser();
+			dateFrom.setDateFormatString("dd/MM/yy");
+			dateFrom.setBounds(110, 84, 115, 20);
 		}
 		return dateFrom;
 	}
 	private JLabel getLblFromDate() {
 		if (lblFromDate == null) {
 			lblFromDate = new JLabel("Desde: ");
+			lblFromDate.setFont(new Font("Tahoma", Font.PLAIN, 13));
+			lblFromDate.setBounds(24, 84, 44, 14);
 			lblFromDate.setLabelFor(getDateFrom());
 		}
 		return lblFromDate;
@@ -271,6 +298,8 @@ public class VentanaFiltro extends JDialog {
 	private JLabel getLblToDate() {
 		if (lblToDate == null) {
 			lblToDate = new JLabel("Hasta: ");
+			lblToDate.setFont(new Font("Tahoma", Font.PLAIN, 13));
+			lblToDate.setBounds(24, 120, 44, 14);
 			lblToDate.setLabelFor(getDateTo());
 		}
 		return lblToDate;
