@@ -19,7 +19,7 @@ public abstract class SociosController {
 	
 	public static TableModel setTableModel(Database db, String filter) {
 		TableModel model = SwingUtil.getTableModelFromPojos(getSociosForTabla(db, filter), 
-				new String[] {"id", "dni", "name", "surname", "email", "cuota_type", "iban","height", "weight", "gender", "age", "directive"});
+				new String[] {"id", "dni", "name", "surname", "email", "cuota_type", "iban","height", "weight", "gender", "birth_date", "directive"});
 		
 		columns = new String[model.getColumnCount()+1];
 		columns[2] = "UPDATE socios SET name=? WHERE id=?";
@@ -30,7 +30,7 @@ public abstract class SociosController {
 		columns[7] = "UPDATE socios SET height=? WHERE id=?";
 		columns[8] = "UPDATE socios SET weight=? WHERE id=?";
 		columns[9] = "UPDATE socios SET gender=? WHERE id=?";
-		columns[10] = "UPDATE socios SET age=? WHERE id=?";
+		columns[10] = "UPDATE socios SET birth_date=? WHERE id=?";
 		columns[11] = "UPDATE socios SET directive=? WHERE id=?";
 		
 		model.addTableModelListener(new TableModelListener(){
@@ -40,7 +40,6 @@ public abstract class SociosController {
                 actualizaSocio(e, db);
             }
 		});
-		
 		return model;
 	}
 	

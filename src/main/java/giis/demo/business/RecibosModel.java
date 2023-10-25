@@ -1,7 +1,5 @@
 package giis.demo.business;
 
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
 import java.util.List;
 
 import giis.demo.business.entities.CuotaEntity;
@@ -16,6 +14,8 @@ public class RecibosModel {
 	
 	public static final String SQL_LISTA_SOCIOS = 
 			"select * from socios";
+	public static final String SQL_FIND_SOCIO = 
+			"select * from socios where id = ?";
 	public static final String SQL_LISTA_CUOTAS = 
 			"select * from cuotas where owner_id = ?";
 	public static final String SQL_LISTA_CUOTAS_PENDIENTES = 
@@ -34,6 +34,10 @@ public class RecibosModel {
 		return db.executeQueryPojo(SocioEntity.class, SQL_LISTA_SOCIOS);
 	}
 	
+	public SocioEntity getSocio(String id) {
+		return db.executeQueryPojo(SocioEntity.class, SQL_FIND_SOCIO, id).get(0);
+	}
+	
 	public List<CuotaEntity> getListaCuotas(String id) {
 		return db.executeQueryPojo(CuotaEntity.class, SQL_LISTA_CUOTAS, id);
 	}
@@ -46,14 +50,7 @@ public class RecibosModel {
 		return db.executeQueryPojo(ReciboEntity.class, SQL_LISTA_RECIBOS);
 	}
 	
-	public void generateRecibo(String iban, int amount) {
-		Calendar today = Calendar.getInstance();
-		today.add(Calendar.MONTH, 1);
-		today.set(Calendar.DAY_OF_MONTH, 1);
-		String value_date = new SimpleDateFormat("dd-MM-yyyy").format(today.getTime());
-		today.set(Calendar.DAY_OF_MONTH, 15);
-		String charge_date = new SimpleDateFormat("dd-MM-yyyy").format(today.getTime());
-		
+	public void generateRecibo(String iban, int amount, String value_date, String charge_date) {
 		db.executeUpdate(SQL_GENERATE_RECIBOS, iban, nRecibo++,  amount, value_date, charge_date);
 	}
 	
