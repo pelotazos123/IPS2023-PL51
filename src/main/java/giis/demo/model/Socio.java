@@ -7,8 +7,8 @@ import giis.demo.util.Database;
 
 public class Socio {
 	
-	private final static String SQL_CARGAR_SOCIO="select id,name,surname,cuota_type,iban,height,weight,age,gender,directive from socios where id = ?" ;
-	private final static String SQL_MODIFICAR_SOCIO= "update socios set name=?, surname=?, gender=?, age=? where id = ?";
+	private final static String SQL_CARGAR_SOCIO="select id,name,surname,cuota_type,iban,height,weight,birth_date,gender,directive from socios where id = ?" ;
+	private final static String SQL_MODIFICAR_SOCIO= "update socios set name=?, surname=?, gender=?, birth_date=? where id = ?";
 	
 	private Database db;
 	

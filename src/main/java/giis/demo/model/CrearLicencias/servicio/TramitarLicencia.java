@@ -11,6 +11,7 @@ import giis.demo.model.CrearLicencias.Licencia;
 import giis.demo.model.CrearLicencias.TiposLicencia;
 import giis.demo.util.Database;
 
+
 public class TramitarLicencia {
 	
 	@SuppressWarnings("unused")
