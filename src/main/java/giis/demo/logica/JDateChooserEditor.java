@@ -24,7 +24,7 @@ public class JDateChooserEditor extends DefaultCellEditor {
 	{
 	
 		date = new JDateChooser();
-		date.setDateFormatString("dd-MM-yyyy");
+		date.setDateFormatString("yyyy-MM-dd");
 		return date;
 	}
 	

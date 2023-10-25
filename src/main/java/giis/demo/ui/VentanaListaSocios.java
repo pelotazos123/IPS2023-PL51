@@ -134,6 +134,7 @@ public class VentanaListaSocios extends JDialog {
 		settingCuotas();
 		settingDirective();
 		settingDateChooser();
+		settingGenre();
 		
 		if (tableSocios.getModel().getRowCount() <= 0) {
 			JOptionPane.showMessageDialog(null, NO_SOCIO_FOUND, "ERROR", JOptionPane.WARNING_MESSAGE);
@@ -147,6 +148,13 @@ public class VentanaListaSocios extends JDialog {
 	private void settingDirective() {
 		JCheckBox checkDir = new JCheckBox();
 		tableSocios.getColumnModel().getColumn(tableSocios.getColumnCount()-1).setCellEditor(new DefaultCellEditor(checkDir));
+	}
+	
+	private void settingGenre() {
+		JComboBox<String> generos = new JComboBox<String>();
+		generos.addItem("HOMBRE");
+		generos.addItem("MUJER");
+		tableSocios.getColumnModel().getColumn(9).setCellEditor(new DefaultCellEditor(generos));
 	}
 
 	private void settingCuotas() {
@@ -184,11 +192,6 @@ public class VentanaListaSocios extends JDialog {
 			        return column == 0 || column==1 ? false : true;
 			    }
 			};
-			tableSocios.addKeyListener(new KeyAdapter() {
-				@Override
-				public void keyTyped(KeyEvent e) {
-				}
-			});
 			tableSocios.setBackground(Color.WHITE);
 			tableSocios.setColumnSelectionAllowed(true);
 			tableSocios.setAutoCreateRowSorter(true);

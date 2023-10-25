@@ -7,6 +7,7 @@ import javax.swing.JPanel;
 import java.awt.BorderLayout;
 
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JCheckBox;
 import java.awt.GridLayout;
 
@@ -14,6 +15,8 @@ import javax.swing.JScrollPane;
 
 import javax.swing.JButton;
 import java.awt.event.ActionListener;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.awt.event.ActionEvent;
 import javax.swing.JTextField;
 import com.toedter.calendar.JDateChooser;
@@ -148,13 +151,21 @@ public class VentanaFiltro extends JDialog {
 		
 		String filterDir = checkDirective();
 		
-		String filter = buildFilter(filterMale, filterFemale, filterDir, name, surname);	
+		String filterDateFrom = checkDateFrom();
+		String filterDateTo = checkDateTo();
 		
-		vLS.actualizar(filter);
-		dispose();
+		String filter = buildFilter(filterMale, filterFemale, filterDir, name, surname, filterDateFrom, filterDateTo);	
+		
+		if (dateFrom.getDate() != null && dateTo.getDate() != null && dateFrom.getDate().compareTo(dateTo.getDate()) > 0) {
+			JOptionPane.showMessageDialog(null, "La fecha destino no puede ser menor que la fecha origen", "ERROR", JOptionPane.ERROR_MESSAGE);
+		} else {
+			vLS.actualizar(filter);
+			dispose();			
+		}
+		
 	}
 
-	private String buildFilter(String male, String female, String filterDir, String name, String surname) {
+	private String buildFilter(String male, String female, String filterDir, String name, String surname, String filterDateFrom, String filterDateTo) {
 		String filter = "";
 		
 		if (!getChkHombres().isSelected() && !getChkMujeres().isSelected()) {
@@ -162,7 +173,8 @@ public class VentanaFiltro extends JDialog {
 			female="'MUJER'";
 		}
 		
-		filter = String.format(" name=%s AND surname=%s AND (gender=%s OR gender=%s) AND directive=%s", name, surname, male, female, filterDir);
+		filter = String.format(" name=%s AND surname=%s AND (gender=%s OR gender=%s) AND directive=%s AND (birth_date >= %s AND birth_date <= %s)",
+				name, surname, male, female, filterDir, filterDateFrom, filterDateTo);
 		return filter;
 	}
 
@@ -186,6 +198,26 @@ public class VentanaFiltro extends JDialog {
 
 	private String checkFemale() {
 		return getChkMujeres().isSelected() ? "'MUJER'" : "''";
+	}
+	
+	private String checkDateFrom() {
+		if (getDateFrom().getDate() == null)
+			return "birth_date";
+		String pattern = "yyyy-MM-dd";
+		SimpleDateFormat formatDate = new SimpleDateFormat(pattern);
+		Date dateFrom = getDateFrom().getDate();
+		String dateFormatted = formatDate.format(dateFrom);
+		return dateFormatted;
+	}
+	
+	private String checkDateTo() {
+		if (getDateTo().getDate() == null)
+			return "birth_date";
+		String pattern = "yyyy-MM-dd";
+		SimpleDateFormat formatDate = new SimpleDateFormat(pattern);
+		Date dateTo = getDateTo().getDate();
+		String dateFormatted = formatDate.format(dateTo);
+		return dateFormatted;
 	}
 
 	private JPanel getPnButtonsSouth() {
@@ -276,7 +308,7 @@ public class VentanaFiltro extends JDialog {
 	private JDateChooser getDateTo() {
 		if (dateTo == null) {
 			dateTo = new JDateChooser();
-			dateTo.setDateFormatString("dd/MM/yy");
+			dateTo.setDateFormatString("dd-MM-yyyy");
 			dateTo.setBounds(110, 165, 115, 20);
 		}
 		return dateTo;
@@ -284,7 +316,7 @@ public class VentanaFiltro extends JDialog {
 	private JDateChooser getDateFrom() {
 		if (dateFrom == null) {
 			dateFrom = new JDateChooser();
-			dateFrom.setDateFormatString("dd/MM/yy");
+			dateFrom.setDateFormatString("dd-MM-yyyy");
 			dateFrom.setBounds(110, 128, 115, 20);
 		}
 		return dateFrom;

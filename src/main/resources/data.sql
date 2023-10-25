@@ -4,7 +4,7 @@
 delete from socios;
 
 insert into socios (id,dni,name,surname,email,cuota_type,iban,height,weight,birth_date,gender,directive) values 
-	(100,'123456789A','Lucia','Suarez','lucia@gmail.com','CUOTA_JOVEN','ES6000138500051234567523','1.72',70,'2000-24-10','MUJER',true),
+	(100,'123456789A','Lucia','Suarez','lucia@gmail.com','CUOTA_JOVEN','ES6000138500051234567523','1.72',70,'2000-04-10','MUJER',true),
 	(101,'123456789B','Juan','Garcia','juan@gmail.com','CUOTA_ADULTO','ES6000491506251234567713','1.95',105,'1950-05-14','HOMBRE',true),
 	(102,'123456789C','Jose','Alonso','jose@gmail.com','CUOTA_JOVEN','ES6340491500088834566464','1.81',75,'1999-06-29','HOMBRE',false),
 	(103,'123456789D','Paula','Perez','paula@gmail.com','CUOTA_JOVEN','ES6000491515051234567692','1.83',78,'2007-01-16','MUJER',false),
