@@ -44,7 +44,7 @@ public class TramitarLicencia {
 		if(esDirectivo) {
 			cargarSocio(ID_DIRECTIVO_PRUEBAS);
 		}else {
-			cargarSocio(ID_SOCIO_SIN_LICENCIA_MENOR_EDAD_PRUEBAS);
+			cargarSocio(ID_SOCIO_CON_LICENCIA_MENOR_EDAD_PRUEBAS);
 		}
 		System.out.println(socio.toString());
 	}

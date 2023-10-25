@@ -26,7 +26,7 @@ insert into licencias (owner_id, tutor_name, tutor_surname, tutor_birth_date, tu
 	(104,'noTutor','noTutor',null,null,'pagado',30,'JUEZ','Vega','Bajo A'),
 	(105,'noTutor','noTutor',null,null,'pagado',30,'DEPORTISTA','Gijon','Segundo A'),
 	(105,'noTutor','noTutor',null,null,'pagado',30,'JUEZ','Gijon','Segundo A'),
-	(106,'Pedro','Garcia','8-6-1983-6-8','HOMBRE','pagado',30,'DEPORTISTA','Oviedo','Segundo A');
+	(106,'Pedro','Garcia','1983-6-8','HOMBRE','pagado',30,'DEPORTISTA','Oviedo','Segundo A');
 	
 INSERT INTO reservas (owner_id, fecha, hora, instalation_code) VALUES 
 	(100, "20/10/2023", "20:00", "13410"),

@@ -10,7 +10,8 @@ import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.time.LocalDate;
-import java.util.Calendar;
+import java.time.ZoneId;
+import java.util.Date;
 
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
@@ -25,6 +26,8 @@ import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.TitledBorder;
+
+import com.toedter.calendar.JDateChooser;
 
 import giis.demo.model.Generos;
 import giis.demo.model.CrearLicencias.Licencia;
@@ -85,7 +88,6 @@ public class VentanaRenovarLicencia extends JFrame {
 	private JComboBox<Generos> cbGeneroSocio;
 	private JPanel pnEdadSocio;
 	private JLabel lbEdadSocio;
-	private JComboBox<String> cbDiaSocio;
 	private JPanel pnDatosTutor;
 	private JLabel lbDatosTutor;
 	private JPanel pnNombreTutor;
@@ -99,7 +101,6 @@ public class VentanaRenovarLicencia extends JFrame {
 	private JComboBox<Generos> cbGeneroTutor;
 	private JPanel pnEdadTutor;
 	private JLabel lbEdadTutor;
-	private JComboBox<String> cbDiaTutor;
 	private JPanel pnDatosFacturacionYLicencia;
 	private JPanel pnDireccionFacturacion;
 	private JLabel lbDireccionFacturacion;
@@ -114,10 +115,8 @@ public class VentanaRenovarLicencia extends JFrame {
 	private JPanel pnSeleccionarLicencia;
 	private JLabel lbSeleccionarLicencia;
 	private JComboBox<Licencia> cbSeleccionarLicencia;
-	private JComboBox<String> cbMesSocio;
-	private JComboBox<String> cbAñoSocio;
-	private JComboBox<String> cbMesTutor;
-	private JComboBox<String> cbAñoTutor;
+	private JDateChooser dcFechaNacimientoSocio;
+	private JDateChooser dcFechaNacimientoTutor;
 
 	/**
 	 * Create the frame.
@@ -217,13 +216,8 @@ public class VentanaRenovarLicencia extends JFrame {
 		getTxNombreSocio().setText(tramitarLicencia.getSocio().getNombre());
 		getTxApellidoSocio().setText(tramitarLicencia.getSocio().getApellidos());
 		getCbGeneroSocio().setSelectedItem(tramitarLicencia.getSocio().getGenero());
-		LocalDate fecha = tramitarLicencia.getSocio().getFechaNacimiento();
-		int añoSocio = fecha.getYear();
-		int mesSocio = fecha.getMonthValue();
-		int diaSocio = fecha.getDayOfMonth();
-		getCbDiaSocio().setSelectedIndex(diaSocio-1);
-		getCbMesSocio().setSelectedIndex(mesSocio-1);
-		getCbAñoSocio().setSelectedIndex(Calendar.getInstance().get(Calendar.YEAR) - añoSocio);
+		Date fecha = Date.from(tramitarLicencia.getSocio().getFechaNacimiento().atStartOfDay().atZone(ZoneId.systemDefault()).toInstant());
+		getDcFechaNacimientoSocio().setDate(fecha);
 		comprobarEdad();
 		
 		String nombre = tramitarLicencia.getLicenciaSeleccionada().getNombreTutor().equals("noTutor")?"":tramitarLicencia.getLicenciaSeleccionada().getNombreTutor();
@@ -233,12 +227,8 @@ public class VentanaRenovarLicencia extends JFrame {
 		getCbGeneroTutor().setSelectedItem(tramitarLicencia.getLicenciaSeleccionada().getGeneroTutor());
 		LocalDate fechaTutor = tramitarLicencia.getLicenciaSeleccionada().getFechaNacimiento();
 		if(fechaTutor != null) {
-			int añoTutor = fechaTutor.getYear();
-			int mesTutor = fechaTutor.getMonthValue();
-			int diaTutor = fechaTutor.getDayOfMonth();
-			getCbDiaTutor().setSelectedIndex(diaTutor-1);
-			getCbMesTutor().setSelectedIndex(mesTutor-1);
-			getCbAñoTutor().setSelectedIndex(Calendar.getInstance().get(Calendar.YEAR) - añoTutor);
+			Date d = Date.from(fechaTutor.atStartOfDay().atZone(ZoneId.systemDefault()).toInstant());
+			getDcFechaNacimientoTutor().setDate(d);
 		}
 		getTxDireccionFacturacion().setText(tramitarLicencia.getLicenciaSeleccionada().getDireccionFacturacion());
 		getTxInfoFacturacion().setText(tramitarLicencia.getLicenciaSeleccionada().getInfoFacturacion());
@@ -431,23 +421,22 @@ public class VentanaRenovarLicencia extends JFrame {
 		apellidoSocio = getTxApellidoSocio().getText();
 		generoSocio = (Generos) getCbGeneroSocio().getSelectedItem();
 		
-		int añoSocio = Integer.parseInt( (String) getCbAñoSocio().getSelectedItem());
-		int mesSocio = Integer.parseInt((String) getCbMesSocio().getSelectedItem());
-		int diaSocio = Integer.parseInt((String) getCbDiaSocio().getSelectedItem());
-		fechaSocio = LocalDate.of(añoSocio, mesSocio, diaSocio);
 		
-		nombreTutor = getTxNombreTutor().getText();
-		apellidoTutor = getTxApellidoTutor().getText();
-		generoTutor = (Generos) getCbGeneroTutor().getSelectedItem();
-		
-		int añoTutor = Integer.parseInt( (String) getCbAñoTutor().getSelectedItem());
-		int mesTutor = Integer.parseInt((String) getCbMesTutor().getSelectedItem());
-		int diaTutor = Integer.parseInt((String) getCbDiaTutor().getSelectedItem());
-		fechaTutor = LocalDate.of(añoTutor, mesTutor, diaTutor);
+		fechaSocio = getDcFechaNacimientoSocio().getDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+		int diaSocio = fechaSocio.getDayOfMonth();
+		int mesSocio = fechaSocio.getMonthValue();
+		int añoSocio = fechaSocio.getYear();
 		
 		direccionFacturacion = getTxDireccionFacturacion().getText();
 		infoFacturacion = getTxInfoFacturacion().getText();
+		
 		if(!tramitarLicencia.comprobarMayorEdad(diaSocio, mesSocio, añoSocio)) {
+			nombreTutor = getTxNombreTutor().getText();
+			apellidoTutor = getTxApellidoTutor().getText();
+			generoTutor = (Generos) getCbGeneroTutor().getSelectedItem();
+			
+			fechaTutor = getDcFechaNacimientoTutor().getDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+			
 			tramitarLicencia.modificarDatosLicencia(nombreTutor, apellidoTutor, fechaTutor, generoTutor, direccionFacturacion, infoFacturacion);
 			tramitarLicencia.modificarDatosSocio(nombreSocio, apellidoSocio, generoSocio, fechaSocio);
 		}else {
@@ -576,9 +565,7 @@ public class VentanaRenovarLicencia extends JFrame {
 			pnEdadSocio = new JPanel();
 			pnEdadSocio.setBackground(Color.WHITE);
 			pnEdadSocio.add(getLbEdadSocio());
-			pnEdadSocio.add(getCbDiaSocio());
-			pnEdadSocio.add(getCbMesSocio());
-			pnEdadSocio.add(getCbAñoSocio());
+			pnEdadSocio.add(getDcFechaNacimientoSocio());
 		}
 		return pnEdadSocio;
 	}
@@ -587,24 +574,6 @@ public class VentanaRenovarLicencia extends JFrame {
 			lbEdadSocio = new JLabel("Edad:");
 		}
 		return lbEdadSocio;
-	}
-	private JComboBox<String> getCbDiaSocio() {
-		if (cbDiaSocio == null) {
-			cbDiaSocio = new JComboBox<String>();
-			cbDiaSocio.addActionListener(new ActionListener() {
-				public void actionPerformed(ActionEvent e) {
-					comprobarEdad();
-				}
-			});
-			// crear el array de string y rellenar con bucle for
-			String[] dias = new String[31];
-			for (int i = 0; i < dias.length; i++) {
-				dias[i] = ""+(i+1);
-			}
-			cbDiaSocio.setModel(new DefaultComboBoxModel<String>(dias));
-			cbDiaSocio.setBounds(146, 66, 106, 22);
-		}
-		return cbDiaSocio;
 	}
 	private JPanel getPnDatosTutor() {
 		if (pnDatosTutor == null) {
@@ -698,9 +667,7 @@ public class VentanaRenovarLicencia extends JFrame {
 			pnEdadTutor = new JPanel();
 			pnEdadTutor.setBackground(Color.WHITE);
 			pnEdadTutor.add(getLbEdadTutor());
-			pnEdadTutor.add(getCbDiaTutor());
-			pnEdadTutor.add(getCbMesTutor());
-			pnEdadTutor.add(getCbAñoTutor());
+			pnEdadTutor.add(getDcFechaNacimientoTutor());
 		}
 		return pnEdadTutor;
 	}
@@ -709,18 +676,6 @@ public class VentanaRenovarLicencia extends JFrame {
 			lbEdadTutor = new JLabel("Edad:");
 		}
 		return lbEdadTutor;
-	}
-	private JComboBox<String> getCbDiaTutor() {
-		if (cbDiaTutor == null) {
-			cbDiaTutor = new JComboBox<String>();
-			String[] años = new String[104];
-			for (int i = 0; i < años.length-1; i++) {
-				años[i] = ""+(i+18);
-			}
-			cbDiaTutor.setModel(new DefaultComboBoxModel<String>(años));
-			cbDiaTutor.setBounds(146, 66, 106, 22);
-		}
-		return cbDiaTutor;
 	}
 	private JPanel getPnDatosFacturacionYLicencia() {
 		if (pnDatosFacturacionYLicencia == null) {
@@ -855,126 +810,42 @@ public class VentanaRenovarLicencia extends JFrame {
 		}
 		return cbSeleccionarLicencia;
 	}
-	private JComboBox<String> getCbMesSocio() {
-		if (cbMesSocio == null) {
-			cbMesSocio = new JComboBox<String>();
-			cbMesSocio.addActionListener(new ActionListener() {
-				public void actionPerformed(ActionEvent e) {
-					comprobarMes();
-					comprobarEdad();
-				}
-			});
-			// crear el array de string y rellenar con bucle for
-			String[] meses = new String[12];
-			for (int i = 0; i < meses.length; i++) {
-				meses[i] = "" + (i + 1);
-			}
-			cbMesSocio.setModel(new DefaultComboBoxModel<String>(meses));
-			cbMesSocio.setBounds(146, 66, 106, 22);
-		}
-		return cbMesSocio;
-	}
-	private JComboBox<String> getCbAñoSocio() {
-		if (cbAñoSocio == null) {
-			cbAñoSocio = new JComboBox<String>();
-			cbAñoSocio.addActionListener(new ActionListener() {
-				public void actionPerformed(ActionEvent e) {
-					comprobarEdad();
-				}
-			});
-			// crear el array de string y rellenar con bucle for
-			String[] años = new String[100];
-			int año = Calendar.getInstance().get(Calendar.YEAR);
-			for (int i = 0; i < años.length ; i++) {
-				años[i] = ""+ (año - i);
-			}
-			cbAñoSocio.setModel(new DefaultComboBoxModel<String>(años));
-			cbAñoSocio.setBounds(146, 66, 106, 22);
-		}
-		return cbAñoSocio;
-	}
-	private JComboBox<String> getCbMesTutor() {
-		if (cbMesTutor == null) {
-			cbMesTutor = new JComboBox<String>();
-			cbMesTutor.setEnabled(false);
-			String[] meses = new String[12];
-			for (int i = 0; i < meses.length; i++) {
-				meses[i] = "" + (i + 1);
-			}
-			cbMesTutor.setModel(new DefaultComboBoxModel<String>(meses));
-			cbMesTutor.setBounds(146, 66, 106, 22);
-		}
-		return cbMesTutor;
-	}
-	private JComboBox<String> getCbAñoTutor() {
-		if (cbAñoTutor == null) {
-			cbAñoTutor = new JComboBox<String>();
-			cbAñoTutor.setEnabled(false);
-			String[] años = new String[100];
-			int año = Calendar.getInstance().get(Calendar.YEAR);
-			for (int i = 0; i < años.length ; i++) {
-				años[i] = ""+ (año - i);
-			}
-			cbAñoTutor.setModel(new DefaultComboBoxModel<String>(años));
-			cbAñoTutor.setBounds(146, 66, 106, 22);
-		}
-		return cbAñoTutor;
-	}
 	
 	private void comprobarEdad() {
-		int añoSocio = Integer.parseInt( (String) getCbAñoSocio().getSelectedItem());
-		int mesSocio = Integer.parseInt((String) getCbMesSocio().getSelectedItem());
-		int diaSocio = Integer.parseInt((String) getCbDiaSocio().getSelectedItem());
+		LocalDate fechaNacimiento = getDcFechaNacimientoSocio().getDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+		int diaSocio = fechaNacimiento.getDayOfMonth();
+		int mesSocio = fechaNacimiento.getMonthValue();
+		int añoSocio = fechaNacimiento.getYear();
 		
 		boolean mayorEdad = tramitarLicencia.comprobarMayorEdad(diaSocio, mesSocio, añoSocio);
 		
 		if(mayorEdad) {
 			//mayor de edad
-			getCbAñoTutor().setEnabled(false);
-			getCbDiaTutor().setEnabled(false);
-			getCbMesTutor().setEnabled(false);
+			getDcFechaNacimientoTutor().setEnabled(false);
 			getCbGeneroTutor().setEnabled(false);
 			getTxApellidoTutor().setEnabled(false);
 			getTxNombreTutor().setEnabled(false);
 		}else {
-			getCbAñoTutor().setEnabled(true);
-			getCbDiaTutor().setEnabled(true);
-			getCbMesTutor().setEnabled(true);
+			getDcFechaNacimientoTutor().setEnabled(true);
 			getCbGeneroTutor().setEnabled(true);
 			getTxApellidoTutor().setEnabled(true);
 			getTxNombreTutor().setEnabled(true);
 		}
 	}
 	
-	private void comprobarMes() {
-		int mes = Integer.parseInt((String) getCbMesSocio().getSelectedItem());
-		if(mes == 1 || mes == 3 || mes == 5 || mes == 7 || mes == 8 || mes == 10 || mes == 12) {
-			String[] dias = new String[31];
-			for (int i = 0; i < dias.length; i++) {
-				dias[i] = ""+(i+1);
-			}
-			cbDiaSocio.setModel(new DefaultComboBoxModel<String>(dias));
-		}else if( mes == 2) {
-			int año = Integer.parseInt( (String) getCbAñoSocio().getSelectedItem());
-			if((año % 4 == 0 && año % 100 != 0) || (año % 4 == 0 && año % 100 == 0 && año % 400 == 0)) {
-				String[] dias = new String[29];
-				for (int i = 0; i < dias.length; i++) {
-					dias[i] = ""+(i+1);
-				}
-				cbDiaSocio.setModel(new DefaultComboBoxModel<String>(dias));
-			}else {
-				String[] dias = new String[28];
-				for (int i = 0; i < dias.length; i++) {
-					dias[i] = ""+(i+1);
-				}
-				cbDiaSocio.setModel(new DefaultComboBoxModel<String>(dias));
-			}
-		}else {
-			String[] dias = new String[30];
-			for (int i = 0; i < dias.length; i++) {
-				dias[i] = ""+(i+1);
-			}
-			cbDiaSocio.setModel(new DefaultComboBoxModel<String>(dias));
+	private JDateChooser getDcFechaNacimientoSocio() {
+		if (dcFechaNacimientoSocio == null) {
+			dcFechaNacimientoSocio = new JDateChooser();
+			dcFechaNacimientoSocio.setDateFormatString("dd-MM-yyyy");
 		}
+		return dcFechaNacimientoSocio;
+	}
+	private JDateChooser getDcFechaNacimientoTutor() {
+		if (dcFechaNacimientoTutor == null) {
+			dcFechaNacimientoTutor = new JDateChooser();
+			dcFechaNacimientoTutor.setEnabled(false);
+			dcFechaNacimientoTutor.setDateFormatString("dd-MM-yyyy");
+		}
+		return dcFechaNacimientoTutor;
 	}
 }

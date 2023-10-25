@@ -39,7 +39,7 @@ public class Licencia {
 		apellidosTutor = apellido;
 		
 		fechaNacimiento = fecha;
-		String fechaTutor = "noTutor";
+		String fechaTutor = null;
 		if(fecha != null) {
 			fechaTutor =""+fecha.getYear()+"-"+fecha.getMonthValue()+"-"+fecha.getDayOfMonth();
 		}
@@ -93,13 +93,13 @@ public class Licencia {
 		}
 		
 		String edadTutor = (String) result[3];
-		if(edadTutor.equals("noTutor")) {
+		if(edadTutor == null) {
 			fechaNacimiento = null;
 		}else {
 			String[] str = edadTutor.split("-");
-			int dia = Integer.parseInt(str[0]);
+			int año = Integer.parseInt(str[0]);
 			int mes = Integer.parseInt(str[1]);
-			int año = Integer.parseInt(str[2]);
+			int dia = Integer.parseInt(str[2]);
 			fechaNacimiento = LocalDate.of(año, mes, dia);
 		}
 	}
@@ -110,18 +110,13 @@ public class Licencia {
 		String nombre = (String) result[1];
 		String apellido = (String) result[2];
 		String edadTutor = (String) result[3];
-		if(edadTutor.equals("noTutor")) {
-			fechaNacimiento = null;
-		}else {
+		String fechaTutor = null;
+		if(edadTutor != null) {
 			String[] str = edadTutor.split("-");
-			int dia = Integer.parseInt(str[0]);
+			int año = Integer.parseInt(str[0]);
 			int mes = Integer.parseInt(str[1]);
-			int año = Integer.parseInt(str[2]);
-			fechaNacimiento = LocalDate.of(año, mes, dia);
-		}
-		String fechaTutor = "noTutor";
-		if(fechaNacimiento != null) {
-			fechaTutor =""+fechaNacimiento.getYear()+"-"+fechaNacimiento.getMonthValue()+"-"+fechaNacimiento.getDayOfMonth();
+			int dia = Integer.parseInt(str[2]);
+			fechaTutor =""+año+"-"+mes+"-"+dia;
 		}
 		
 		String genero = (String) result[4];
@@ -148,7 +143,7 @@ public class Licencia {
 	}
 	
 	public void guardarDatos() {
-		String fechaTutor = "noTutor";
+		String fechaTutor = null;
 		if(fechaNacimiento != null) {
 			fechaTutor =""+fechaNacimiento.getYear()+"-"+fechaNacimiento.getMonthValue()+"-"+fechaNacimiento.getDayOfMonth();
 		}
@@ -169,9 +164,8 @@ public class Licencia {
 	}
 	
 	public String getDatosLicencia() {
-		String fecha =""+fechaNacimiento.getYear()+"-"+fechaNacimiento.getMonthValue()+"-"+fechaNacimiento.getDayOfMonth();
 		return "Id del socio: "+idPropietario+", nombre del tutor: "+nombreTutor+", apellidos del tutor: "+apellidosTutor+
-				", edad del tutor: "+fecha+" ,genero del tutor: "+generoTutor+", estado de la licencia: "+estado+", precio de la licencia: "
+				", edad del tutor: "+fechaNacimiento+" ,genero del tutor: "+generoTutor+", estado de la licencia: "+estado+", precio de la licencia: "
 				+precio+", tipo de licencia: "+tipoLicencia+", direccion de facturacion: "+direccionFacturacion+", informacion de facturacion: "
 				+infoFacturacion;
 	}
