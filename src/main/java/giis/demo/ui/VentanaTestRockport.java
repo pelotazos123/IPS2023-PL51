@@ -39,11 +39,14 @@ public class VentanaTestRockport extends JFrame {
 	private JLabel lbResultado;
 	private JTextField txResultado;
 	private JComboBox<Integer> cbEdad;
-
+	private VentanaSeleccionTest vst;
+	private TestsFisiologicos tf;
+	
 	/**
 	 * Create the frame.
+	 * @param ventanaSeleccionTest 
 	 */
-	public VentanaTestRockport() {
+	public VentanaTestRockport(VentanaSeleccionTest ventanaSeleccionTest) {
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		setBounds(100, 100, 389, 383);
 		contentPane = new JPanel();
@@ -51,6 +54,8 @@ public class VentanaTestRockport extends JFrame {
 		setLocationRelativeTo(null);
 		setTitle("Test de Rockport");
 		setResizable(false);
+		this.vst = ventanaSeleccionTest;
+		tf = new TestsFisiologicos(vst.getVp().getDb());
 		
 		setContentPane(contentPane);
 		contentPane.setLayout(null);
@@ -68,7 +73,16 @@ public class VentanaTestRockport extends JFrame {
 		contentPane.add(getLbResultado());
 		contentPane.add(getTxResultado());
 		contentPane.add(getCbEdad());
+//		cargaValores();  //TODO completar cuando haya login con el id del socio
 	}
+	
+	private void cargaValores() {
+		String[] valores = tf.cargaValores();
+		getCbEdad().setSelectedItem(Integer.parseInt(valores[0]));
+		getCbPeso().setSelectedItem(Integer.parseInt(valores[1]));
+		getCbSexo().setSelectedItem(valores[2]);
+	}
+
 	private JLabel getLbTestRockport() {
 		if (lbTestRockport == null) {
 			lbTestRockport = new JLabel("Test de Rockport");
@@ -191,7 +205,7 @@ public class VentanaTestRockport extends JFrame {
 			sexo = TestsFisiologicos.MUJER;
 		double tiempo = Double.parseDouble(getTxTiempo().getText());
 		int pulsaciones = Integer.parseInt(getTxPulsaciones().getText());
-		Double resultado = TestsFisiologicos.getTestRockport(peso, edad, sexo, tiempo, pulsaciones);
+		Double resultado = tf.getTestRockport(peso, edad, sexo, tiempo, pulsaciones);
 		getTxResultado().setText(resultado.toString() + " ml/kg/min");
 	}
 

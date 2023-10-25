@@ -106,7 +106,7 @@ public class VentanaPrincipal extends JFrame {
 	}
 
 	private void creaVentanasTest() {
-		VentanaSeleccionTest vst = new VentanaSeleccionTest();
+		VentanaSeleccionTest vst = new VentanaSeleccionTest(this);
 		vst.setVisible(true);
 	}
 
@@ -336,6 +336,10 @@ public class VentanaPrincipal extends JFrame {
 					"Licencias", JOptionPane.INFORMATION_MESSAGE);
 			return false;
 		}
+	}
+
+	public Database getDb() {
+		return db;
 	}
   
 }

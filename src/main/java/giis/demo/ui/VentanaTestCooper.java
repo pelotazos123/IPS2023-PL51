@@ -28,11 +28,14 @@ public class VentanaTestCooper extends JFrame {
 	private JLabel lbResultado;
 	private JTextField txResultado;
 	private JTextField txDistancia;
+	private VentanaSeleccionTest vst;
+	private TestsFisiologicos tf;
 
 	/**
 	 * Create the frame.
+	 * @param ventanaSeleccionTest 
 	 */
-	public VentanaTestCooper() {
+	public VentanaTestCooper(VentanaSeleccionTest ventanaSeleccionTest) {
 		setTitle("Test de Cooper");
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		setBounds(100, 100, 365, 234);
@@ -41,6 +44,8 @@ public class VentanaTestCooper extends JFrame {
 		setLocationRelativeTo(null);
 		setTitle("Test de Cooper");
 		setResizable(false);
+		vst = ventanaSeleccionTest;
+		tf = new TestsFisiologicos(vst.getVp().getDb());
 		
 		setContentPane(contentPane);
 		contentPane.setLayout(null);
@@ -83,7 +88,7 @@ public class VentanaTestCooper extends JFrame {
 	
 	private void muestraResultado() {
 		Double distance = Double.parseDouble(getTxDistancia().getText());
-		getTxResultado().setText(TestsFisiologicos.getTestCooper(distance).toString() + " ml/kg/min");
+		getTxResultado().setText(tf.getTestCooper(distance).toString() + " ml/kg/min");
 	}
 
 	private void activaComponentes() {
