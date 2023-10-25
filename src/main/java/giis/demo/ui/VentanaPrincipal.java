@@ -1,10 +1,6 @@
 package giis.demo.ui;
 
 
-import javax.swing.JFrame;
-import javax.swing.JPanel;
-import javax.swing.border.EmptyBorder;
-
 import java.awt.CardLayout;
 import java.awt.FlowLayout;
 import java.awt.Font;
@@ -13,12 +9,16 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 import javax.swing.JButton;
+import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
+import javax.swing.JPanel;
 import javax.swing.SwingConstants;
+import javax.swing.border.EmptyBorder;
 
 import giis.demo.business.AsambleasController;
 import giis.demo.business.AsambleasModel;
+import giis.demo.business.GestionRecibosController;
 import giis.demo.business.RecibosController;
 import giis.demo.business.RecibosModel;
 import giis.demo.model.CrearLicencias.servicio.TramitarLicencia;
@@ -53,6 +53,7 @@ public class VentanaPrincipal extends JFrame {
 	private JButton btnAsambleas;
 	private JButton btnListadoSocios;
 	private Database db;
+	private JButton btnGestionRecibos;
 
 	/**
 	 * Create the frame.
@@ -135,9 +136,10 @@ public class VentanaPrincipal extends JFrame {
 					controller.initController();
 				}
 			});
-			btnGeneracionRecibos.setBounds(86, 304, 185, 60);
+			btnGeneracionRecibos.setBounds(281, 205, 185, 60);
 			pnPrincipalDirectivo.add(btnGeneracionRecibos);
 			pnPrincipalDirectivo.add(getBtnListadoSocios());
+			pnPrincipalDirectivo.add(getBtnGestionRecibos());
 		}
 		return pnPrincipalDirectivo;
 	}
@@ -321,7 +323,7 @@ public class VentanaPrincipal extends JFrame {
 	private boolean comprobarSocioConLicenciaPagada() {
 		if(tramitarLicencia.socioConLicenciasPagadas()) {
 			return true;
-		}else {
+		} else {
 			JOptionPane.showMessageDialog(this,"No tienes ninguna licencia para renovar",
 					"Licencias", JOptionPane.INFORMATION_MESSAGE);
 			return false;
@@ -338,4 +340,20 @@ public class VentanaPrincipal extends JFrame {
 		}
 	}
   
+	private JButton getBtnGestionRecibos() {
+		if (btnGestionRecibos == null) {
+			btnGestionRecibos = new JButton("Gestionar Recibos");
+			btnGestionRecibos.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					GestionRecibosView view = new GestionRecibosView();
+					RecibosModel model = new RecibosModel();
+					GestionRecibosController controller = new GestionRecibosController(model,view);
+					
+					controller.initController();
+				}
+			});
+			btnGestionRecibos.setBounds(476, 205, 185, 60);
+		}
+		return btnGestionRecibos;
+	}
 }

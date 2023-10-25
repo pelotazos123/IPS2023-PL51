@@ -25,7 +25,7 @@ public class RecibosModel {
 	public static final String SQL_UPDATE_CUOTAS = 
 			"update cuotas set state = 'Emitida' where state = 'Pendiente' and owner_id = ?";
 	public static final String SQL_GENERATE_RECIBOS = 
-			"insert into recibos (owner_iban, number, amount, value_date, charge_date) values (?,?,?,?,?)";
+			"insert into recibos (owner_iban, number, amount, value_date, charge_date, type_recibo, state) values (?,?,?,?,?,?,?)";
 	public static final String SQL_GETAMOUNT = 
 			"select sum(price) from cuotas where owner_id = ? and state = 'Pendiente'";
 	
@@ -50,8 +50,8 @@ public class RecibosModel {
 		return db.executeQueryPojo(ReciboEntity.class, SQL_LISTA_RECIBOS);
 	}
 	
-	public void generateRecibo(String iban, int amount, String value_date, String charge_date) {
-		db.executeUpdate(SQL_GENERATE_RECIBOS, iban, nRecibo++,  amount, value_date, charge_date);
+	public void generateRecibo(String iban, int amount, String value_date, String charge_date, String type_recibo, String state) {
+		db.executeUpdate(SQL_GENERATE_RECIBOS, iban, nRecibo++,  amount, value_date, charge_date, type_recibo, state);
 	}
 	
 	public void updateCuotas(String id) {

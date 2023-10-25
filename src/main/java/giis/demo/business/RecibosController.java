@@ -30,7 +30,7 @@ public class RecibosController {
 	
 		this.initView();
 	}
-	
+
 	public void initController() {
 		getListaSocios();
 		
@@ -64,11 +64,6 @@ public class RecibosController {
 		}
 		TableModel tmodel = SwingUtil.getTableModelFromPojos(cuotas, new String[] {"cuota_type", "price","state"});
 		
-		
-//		String lastSelectedKey = SwingUtil.getSelectedKey(view.getTabSocios());
-//		String id = lastSelectedKey;
-//		TableModel tmodel = SwingUtil.getTableModelFromPojos(model.getListaCuotas(id), new String[] {"cuota_type", "price","state"});
-		
 		view.getTabCuotas().setModel(tmodel);
 	}
 	
@@ -100,7 +95,7 @@ public class RecibosController {
 				if(!model.getListaCuotasPendientes(socio.getId()).isEmpty()) {
 					int amount = model.getAmount(socio.getId());
 					
-					model.generateRecibo(socio.getIban(), amount, value_date, charge_date);
+					model.generateRecibo(socio.getIban(), amount, value_date, charge_date, "Domiciliado", "Pendiente");
 						
 					model.updateCuotas(socio.getId());
 						
@@ -118,7 +113,7 @@ public class RecibosController {
 		}
 	}
 	private void saveRecibos() {
-		String[] fields = {"owner_iban", "number", "amount", "value_date", "charge_date"};
+		String[] fields = {"owner_iban", "number", "amount", "value_date", "charge_date", "type_recibo", "state"};
 		String csv = Util.pojosToCsv(model.getListaRecibos(), fields);
 
 		try (BufferedWriter writer = new BufferedWriter(new FileWriter("src/main/resources/files/recibos.csv"))) {
