@@ -1,7 +1,6 @@
 package giis.demo.model;
 
-import java.util.Calendar;
-import java.util.GregorianCalendar;
+import java.time.LocalDate;
 
 import giis.demo.util.Database;
 
@@ -18,7 +17,7 @@ public class Socio {
 	private String nombre;
 	private String apellidos;
 	private Generos genero;
-	private Calendar fechaNacimiento;
+	private LocalDate fechaNacimiento;
 	private String altura;
 	private int peso;
 	private boolean esDirectivo;
@@ -29,7 +28,7 @@ public class Socio {
 		
 	}
 	
-	public Socio(int id, String nombre, String apellidos, String tipoCuota, Generos genero, Calendar fecha) {
+	public Socio(int id, String nombre, String apellidos, String tipoCuota, Generos genero, LocalDate fecha) {
 		this.id = id;
 		this.nombre = nombre;
 		this.apellidos = apellidos;
@@ -60,14 +59,14 @@ public class Socio {
 		esDirectivo = (int)result[9] == 1;
 		
 		String[] str = edad.split("-");
-		int dia = Integer.parseInt(str[0]);
+		int año = Integer.parseInt(str[0]);
 		int mes = Integer.parseInt(str[1]);
-		int año = Integer.parseInt(str[2]);
-		fechaNacimiento = new GregorianCalendar(año, mes, dia);
+		int dia = Integer.parseInt(str[2]);
+		fechaNacimiento = LocalDate.of(año, mes, dia);
 		//fechaNacimiento.set(año, mes, dia);
 	}
 	
-	public void modificarDatos(String nombre, String apellido, Generos genero, Calendar fecha) {
+	public void modificarDatos(String nombre, String apellido, Generos genero, LocalDate fecha) {
 		this.nombre = nombre;
 		this.apellidos = apellido;
 		this.genero = genero;
@@ -75,7 +74,7 @@ public class Socio {
 	}
 	
 	public void guardarDatos() {
-		String fecha = ""+fechaNacimiento.get(Calendar.DAY_OF_MONTH)+"-"+fechaNacimiento.get(Calendar.MONTH)+"-"+fechaNacimiento.get(Calendar.YEAR);
+		String fecha = ""+fechaNacimiento.getYear()+"-"+fechaNacimiento.getMonthValue()+"-"+fechaNacimiento.getDayOfMonth();
 		db.executeUpdate(SQL_MODIFICAR_SOCIO,nombre,apellidos,genero,fecha,id);
 		System.out.println("Datos Socio modificados:\n"+toString());
 	}
@@ -104,7 +103,7 @@ public class Socio {
 		return genero;
 	}
 
-	public Calendar getFechaNacimiento() {
+	public LocalDate getFechaNacimiento() {
 		return fechaNacimiento;
 	}
 
@@ -122,15 +121,14 @@ public class Socio {
 
 	@Override
 	public String toString() {
-		fechaNacimiento.getTime();
-		String fecha = ""+fechaNacimiento.get(Calendar.DAY_OF_MONTH)+"-"+fechaNacimiento.get(Calendar.MONTH)+"-"+fechaNacimiento.get(Calendar.YEAR);
+		String fecha = ""+fechaNacimiento.getYear()+"-"+fechaNacimiento.getMonthValue()+"-"+fechaNacimiento.getDayOfMonth();
 		return "Nombre: "+nombre+", Apellidos: "+apellidos+", Fecha de nacimiento: "+fecha+", cuota tipo: "+tipoCuota+", numero iban: "+numeroIban+
 				", altura: "+altura+", peso: "+peso+", genero: "+genero+", es directivo :"+esDirectivo;
 		
 	}
 	
 	public String toStringList() {
-		String fecha = ""+fechaNacimiento.get(Calendar.DAY_OF_MONTH)+"-"+fechaNacimiento.get(Calendar.MONTH)+"-"+fechaNacimiento.get(Calendar.YEAR);
+		String fecha = ""+fechaNacimiento.getYear()+"-"+fechaNacimiento.getMonthValue()+"-"+fechaNacimiento.getDayOfMonth();
 		return id + " - " + nombre +" - " + apellidos + " - " + fecha + " - " + tipoCuota + " - " + genero;
 		
 	}

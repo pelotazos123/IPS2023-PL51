@@ -1,6 +1,6 @@
 package giis.demo.model.CrearLicencias;
 
-import java.util.Calendar;
+import java.time.LocalDate;
 import java.util.List;
 
 import giis.demo.model.Generos;
@@ -10,10 +10,10 @@ public class Licencia {
 	
 	public final static int PRECIO_LICENCIAS = 30;
 	
-	private final static String SQL_CREAR_LICENCIA = "insert into licencias(owner_id, tutor_name, tutor_surname, tutor_age, tutor_gender, state, price, licence_type,"
+	private final static String SQL_CREAR_LICENCIA = "insert into licencias(owner_id, tutor_name, tutor_surname, tutor_birth_date, tutor_gender, state, price, licence_type,"
 			+ " facturation_direction,facturation_info) values(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-	private final static String SQL_CARGAR_LICENCIA = "select owner_id, tutor_name, tutor_surname, tutor_age, tutor_gender, state, price, licence_type,facturation_direction,facturation_info from licencias where owner_id = ? and licence_type = ?";
-	private final static String SQL_MODIFICAR_LICENCIA = "update licencias set tutor_name=?, tutor_surname=?, tutor_age=?, tutor_gender=?,"
+	private final static String SQL_CARGAR_LICENCIA = "select owner_id, tutor_name, tutor_surname, tutor_birth_date, tutor_gender, state, price, licence_type,facturation_direction,facturation_info from licencias where owner_id = ? and licence_type = ?";
+	private final static String SQL_MODIFICAR_LICENCIA = "update licencias set tutor_name=?, tutor_surname=?, tutor_birth_date=?, tutor_gender=?,"
 			+ "state=?, price=?, licence_type=?,facturation_direction=?,facturation_info=? where owner_id = ?";
 	
 	private Database db;
@@ -21,7 +21,7 @@ public class Licencia {
 	private int idPropietario;
 	private String nombreTutor;
 	private String apellidosTutor;
-	private Calendar fechaNacimiento;
+	private LocalDate fechaNacimiento;
 	private Generos generoTutor;
 	private EstadosLicencia estado;
 	private int precio;
@@ -34,14 +34,14 @@ public class Licencia {
 		this.db = db;
 	}
 
-	public void crearLicencia(String nombre,String apellido, Calendar fecha, Generos genero, String direccion, String info, TiposLicencia licencia) {
+	public void crearLicencia(String nombre,String apellido, LocalDate fecha, Generos genero, String direccion, String info, TiposLicencia licencia) {
 		nombreTutor = nombre;
 		apellidosTutor = apellido;
 		
 		fechaNacimiento = fecha;
 		String fechaTutor = "noTutor";
 		if(fecha != null) {
-			fechaTutor =""+fecha.get(Calendar.DAY_OF_MONTH)+"-"+fecha.get(Calendar.MONTH)+"-"+fecha.get(Calendar.YEAR);
+			fechaTutor =""+fecha.getYear()+"-"+fecha.getMonthValue()+"-"+fecha.getDayOfMonth();
 		}
 		
 		generoTutor = genero;
@@ -100,8 +100,7 @@ public class Licencia {
 			int dia = Integer.parseInt(str[0]);
 			int mes = Integer.parseInt(str[1]);
 			int año = Integer.parseInt(str[2]);
-			fechaNacimiento = Calendar.getInstance();
-			fechaNacimiento.set(año, mes, dia);
+			fechaNacimiento = LocalDate.of(año, mes, dia);
 		}
 	}
 	
@@ -118,12 +117,11 @@ public class Licencia {
 			int dia = Integer.parseInt(str[0]);
 			int mes = Integer.parseInt(str[1]);
 			int año = Integer.parseInt(str[2]);
-			fechaNacimiento = Calendar.getInstance();
-			fechaNacimiento.set(año, mes, dia);
+			fechaNacimiento = LocalDate.of(año, mes, dia);
 		}
 		String fechaTutor = "noTutor";
 		if(fechaNacimiento != null) {
-			fechaTutor =""+fechaNacimiento.get(Calendar.DAY_OF_MONTH)+"-"+fechaNacimiento.get(Calendar.MONTH)+"-"+fechaNacimiento.get(Calendar.YEAR);
+			fechaTutor =""+fechaNacimiento.getYear()+"-"+fechaNacimiento.getMonthValue()+"-"+fechaNacimiento.getDayOfMonth();
 		}
 		
 		String genero = (String) result[4];
@@ -137,7 +135,7 @@ public class Licencia {
 				", direccion de facturacion: "+direccion+", informacion de facturacion: "+info);
 	}
 	
-	public void modificarDatos(String nombre, String apellido, Calendar fecha, Generos genero, String direccion,
+	public void modificarDatos(String nombre, String apellido, LocalDate fecha, Generos genero, String direccion,
 			String info) {
 		nombreTutor = nombre;
 		apellidosTutor = apellido;
@@ -152,7 +150,7 @@ public class Licencia {
 	public void guardarDatos() {
 		String fechaTutor = "noTutor";
 		if(fechaNacimiento != null) {
-			fechaTutor =""+fechaNacimiento.get(Calendar.DAY_OF_MONTH)+"-"+fechaNacimiento.get(Calendar.MONTH)+"-"+fechaNacimiento.get(Calendar.YEAR);
+			fechaTutor =""+fechaNacimiento.getYear()+"-"+fechaNacimiento.getMonthValue()+"-"+fechaNacimiento.getDayOfMonth();
 		}
 		estado = EstadosLicencia.PENDIENTE;
 		db.executeUpdate(SQL_MODIFICAR_LICENCIA,nombreTutor, apellidosTutor, fechaTutor, generoTutor, estado, precio, tipoLicencia, direccionFacturacion
@@ -171,7 +169,7 @@ public class Licencia {
 	}
 	
 	public String getDatosLicencia() {
-		String fecha = ""+fechaNacimiento.get(Calendar.DAY_OF_MONTH)+"-"+fechaNacimiento.get(Calendar.MONTH)+"-"+fechaNacimiento.get(Calendar.YEAR);
+		String fecha =""+fechaNacimiento.getYear()+"-"+fechaNacimiento.getMonthValue()+"-"+fechaNacimiento.getDayOfMonth();
 		return "Id del socio: "+idPropietario+", nombre del tutor: "+nombreTutor+", apellidos del tutor: "+apellidosTutor+
 				", edad del tutor: "+fecha+" ,genero del tutor: "+generoTutor+", estado de la licencia: "+estado+", precio de la licencia: "
 				+precio+", tipo de licencia: "+tipoLicencia+", direccion de facturacion: "+direccionFacturacion+", informacion de facturacion: "
@@ -190,7 +188,7 @@ public class Licencia {
 		return apellidosTutor;
 	}
 
-	public Calendar getFechaNacimiento() {
+	public LocalDate getFechaNacimiento() {
 		return fechaNacimiento;
 	}
 	

@@ -1,7 +1,7 @@
 package giis.demo.model.CrearLicencias.servicio;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.List;
 
 import giis.demo.model.Generos;
@@ -44,12 +44,12 @@ public class TramitarLicencia {
 		if(esDirectivo) {
 			cargarSocio(ID_DIRECTIVO_PRUEBAS);
 		}else {
-			cargarSocio(ID_SOCIO_SIN_LICENCIA_PRUEBAS);
+			cargarSocio(ID_SOCIO_SIN_LICENCIA_MENOR_EDAD_PRUEBAS);
 		}
 		System.out.println(socio.toString());
 	}
 	
-	public void crearLicencia(String nombre,String apellido, Calendar fecha, Generos genero, String direccion, String info, TiposLicencia licencia) {
+	public void crearLicencia(String nombre,String apellido, LocalDate fecha, Generos genero, String direccion, String info, TiposLicencia licencia) {
 		licenciaSeleccionada = new Licencia(socio.getId(), db);
 		this.licenciaSeleccionada.crearLicencia( nombre,apellido, fecha, genero, direccion, info, licencia);
 		licenciasDelSocio.add(licenciaSeleccionada);
@@ -131,11 +131,11 @@ public class TramitarLicencia {
 	
 
 	
-	public void modificarDatosLicencia(String nombre,String apellido, Calendar fecha, Generos genero, String direccion, String info) {
+	public void modificarDatosLicencia(String nombre,String apellido, LocalDate fecha, Generos genero, String direccion, String info) {
 		this.licenciaSeleccionada.modificarDatos(nombre, apellido, fecha, genero, direccion, info);
 	}
 	
-	public void modificarDatosSocio(String nombre, String apellido, Generos genero, Calendar fecha) {
+	public void modificarDatosSocio(String nombre, String apellido, Generos genero, LocalDate fecha) {
 		socio.modificarDatos(nombre,apellido,genero,fecha);
 	}
 	
@@ -156,14 +156,14 @@ public class TramitarLicencia {
 	}
 
 	public boolean comprobarSocioMayorEdad() {
-		int añoSocio = socio.getFechaNacimiento().get(Calendar.YEAR);
-		int mesSocio = socio.getFechaNacimiento().get(Calendar.MONTH);
-		int diaSocio = socio.getFechaNacimiento().get(Calendar.DAY_OF_MONTH);
+		int añoSocio = socio.getFechaNacimiento().getYear();
+		int mesSocio = socio.getFechaNacimiento().getMonthValue();
+		int diaSocio = socio.getFechaNacimiento().getDayOfMonth();
 		
-		Calendar c = Calendar.getInstance();
-		int añoActual = c.get(Calendar.YEAR);
-		int mesActual = c.get(Calendar.MONTH)+1;
-		int diaActual = c.get(Calendar.DAY_OF_MONTH);
+		LocalDate d = LocalDate.now();
+		int añoActual = d.getYear();
+		int mesActual = d.getMonthValue();
+		int diaActual = d.getDayOfMonth();
 		
 		if(añoActual - añoSocio > 18) {
 			//mayor de edad
@@ -200,10 +200,10 @@ public class TramitarLicencia {
 		int mesSocio = mes;
 		int diaSocio = dia;
 		
-		Calendar c = Calendar.getInstance();
-		int añoActual = c.get(Calendar.YEAR);
-		int mesActual = c.get(Calendar.MONTH)+1;
-		int diaActual = c.get(Calendar.DAY_OF_MONTH);
+		LocalDate d = LocalDate.now();
+		int añoActual = d.getYear();
+		int mesActual = d.getMonthValue();
+		int diaActual = d.getDayOfMonth();
 		
 		if(añoActual - añoSocio > 18) {
 			//mayor de edad

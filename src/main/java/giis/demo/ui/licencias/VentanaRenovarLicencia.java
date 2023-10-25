@@ -9,6 +9,7 @@ import java.awt.Font;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.time.LocalDate;
 import java.util.Calendar;
 
 import javax.swing.DefaultComboBoxModel;
@@ -37,12 +38,12 @@ public class VentanaRenovarLicencia extends JFrame {
 	private TramitarLicencia tramitarLicencia;
 	private String nombreSocio;
 	private String apellidoSocio;
-	private Calendar fechaSocio;
+	private LocalDate fechaSocio;
 	private Generos generoSocio;
 	
 	private String nombreTutor;
 	private String apellidoTutor;
-	private Calendar fechaTutor;
+	private LocalDate fechaTutor;
 	private Generos generoTutor;
 	
 	private String direccionFacturacion;
@@ -216,10 +217,10 @@ public class VentanaRenovarLicencia extends JFrame {
 		getTxNombreSocio().setText(tramitarLicencia.getSocio().getNombre());
 		getTxApellidoSocio().setText(tramitarLicencia.getSocio().getApellidos());
 		getCbGeneroSocio().setSelectedItem(tramitarLicencia.getSocio().getGenero());
-		Calendar fecha = tramitarLicencia.getSocio().getFechaNacimiento();
-		int añoSocio = fecha.get(Calendar.YEAR);
-		int mesSocio = fecha.get(Calendar.MONTH);
-		int diaSocio = fecha.get(Calendar.DAY_OF_MONTH);
+		LocalDate fecha = tramitarLicencia.getSocio().getFechaNacimiento();
+		int añoSocio = fecha.getYear();
+		int mesSocio = fecha.getMonthValue();
+		int diaSocio = fecha.getDayOfMonth();
 		getCbDiaSocio().setSelectedIndex(diaSocio-1);
 		getCbMesSocio().setSelectedIndex(mesSocio-1);
 		getCbAñoSocio().setSelectedIndex(Calendar.getInstance().get(Calendar.YEAR) - añoSocio);
@@ -230,11 +231,11 @@ public class VentanaRenovarLicencia extends JFrame {
 		getTxNombreTutor().setText(nombre);
 		getTxApellidoTutor().setText(apellido);
 		getCbGeneroTutor().setSelectedItem(tramitarLicencia.getLicenciaSeleccionada().getGeneroTutor());
-		Calendar fechaTutor = tramitarLicencia.getLicenciaSeleccionada().getFechaNacimiento();
+		LocalDate fechaTutor = tramitarLicencia.getLicenciaSeleccionada().getFechaNacimiento();
 		if(fechaTutor != null) {
-			int añoTutor = fechaTutor.get(Calendar.YEAR);
-			int mesTutor = fechaTutor.get(Calendar.MONTH);
-			int diaTutor = fechaTutor.get(Calendar.DAY_OF_MONTH);
+			int añoTutor = fechaTutor.getYear();
+			int mesTutor = fechaTutor.getMonthValue();
+			int diaTutor = fechaTutor.getDayOfMonth();
 			getCbDiaTutor().setSelectedIndex(diaTutor-1);
 			getCbMesTutor().setSelectedIndex(mesTutor-1);
 			getCbAñoTutor().setSelectedIndex(Calendar.getInstance().get(Calendar.YEAR) - añoTutor);
@@ -433,8 +434,7 @@ public class VentanaRenovarLicencia extends JFrame {
 		int añoSocio = Integer.parseInt( (String) getCbAñoSocio().getSelectedItem());
 		int mesSocio = Integer.parseInt((String) getCbMesSocio().getSelectedItem());
 		int diaSocio = Integer.parseInt((String) getCbDiaSocio().getSelectedItem());
-		fechaSocio = Calendar.getInstance();
-		fechaSocio.set(añoSocio, mesSocio, diaSocio);
+		fechaSocio = LocalDate.of(añoSocio, mesSocio, diaSocio);
 		
 		nombreTutor = getTxNombreTutor().getText();
 		apellidoTutor = getTxApellidoTutor().getText();
@@ -443,8 +443,7 @@ public class VentanaRenovarLicencia extends JFrame {
 		int añoTutor = Integer.parseInt( (String) getCbAñoTutor().getSelectedItem());
 		int mesTutor = Integer.parseInt((String) getCbMesTutor().getSelectedItem());
 		int diaTutor = Integer.parseInt((String) getCbDiaTutor().getSelectedItem());
-		fechaTutor = Calendar.getInstance();
-		fechaTutor.set(añoTutor, mesTutor, diaTutor);
+		fechaTutor = LocalDate.of(añoTutor, mesTutor, diaTutor);
 		
 		direccionFacturacion = getTxDireccionFacturacion().getText();
 		infoFacturacion = getTxInfoFacturacion().getText();
