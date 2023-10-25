@@ -8,6 +8,7 @@ import giis.demo.model.CrearLicencias.TiposLicencia;
 import giis.demo.util.Database;
 import java.util.List;
 import java.util.ArrayList;
+import java.util.Date;
 
 public class TramitarLicencia {
 	
