@@ -173,7 +173,8 @@ public class VentanaFiltro extends JDialog {
 			female="'MUJER'";
 		}
 		
-		filter = String.format(" name=%s AND surname=%s AND (gender=%s OR gender=%s) AND directive=%s AND (birth_date >= %s AND birth_date <= %s)",
+		filter = String.format(" name=%s AND surname=%s AND (gender=%s OR gender=%s) AND directive=%s AND date(birth_date) BETWEEN"
+																	+ " date(%s) AND date(%s)",
 				name, surname, male, female, filterDir, filterDateFrom, filterDateTo);
 		return filter;
 	}
@@ -206,7 +207,7 @@ public class VentanaFiltro extends JDialog {
 		String pattern = "yyyy-MM-dd";
 		SimpleDateFormat formatDate = new SimpleDateFormat(pattern);
 		Date dateFrom = getDateFrom().getDate();
-		String dateFormatted = formatDate.format(dateFrom);
+		String dateFormatted = "'"+formatDate.format(dateFrom)+"'";
 		return dateFormatted;
 	}
 	
@@ -216,7 +217,7 @@ public class VentanaFiltro extends JDialog {
 		String pattern = "yyyy-MM-dd";
 		SimpleDateFormat formatDate = new SimpleDateFormat(pattern);
 		Date dateTo = getDateTo().getDate();
-		String dateFormatted = formatDate.format(dateTo);
+		String dateFormatted = "'"+formatDate.format(dateTo)+"'";
 		return dateFormatted;
 	}
 
@@ -308,7 +309,7 @@ public class VentanaFiltro extends JDialog {
 	private JDateChooser getDateTo() {
 		if (dateTo == null) {
 			dateTo = new JDateChooser();
-			dateTo.setDateFormatString("dd-MM-yyyy");
+			dateTo.setDateFormatString("yyyy-MM-dd");
 			dateTo.setBounds(110, 165, 115, 20);
 		}
 		return dateTo;
@@ -316,7 +317,7 @@ public class VentanaFiltro extends JDialog {
 	private JDateChooser getDateFrom() {
 		if (dateFrom == null) {
 			dateFrom = new JDateChooser();
-			dateFrom.setDateFormatString("dd-MM-yyyy");
+			dateFrom.setDateFormatString("yyyy-MM-dd");
 			dateFrom.setBounds(110, 128, 115, 20);
 		}
 		return dateFrom;
