@@ -11,7 +11,7 @@ public class SocioEntity {
 	private String iban;
 	private String height;
 	private int weight;
-	private int age;
+	private String birth_date;
 	private String gender;
 	private boolean directive;
 	
@@ -25,7 +25,7 @@ public class SocioEntity {
 	public String getIban() { return iban; }
 	public String getHeight() { return height; }
 	public int getWeight() { return weight; }
-	public int getAge() { return age; }
+	public String getBirth_Date() { return birth_date; }
 	public String getGender() { return gender; }
 	public boolean isDirective() { return directive; }
 	// Setters
@@ -38,7 +38,7 @@ public class SocioEntity {
 	public void setIban(String iban) { this.iban = iban; }
 	public void setHeight(String height) { this.height = height; }
 	public void setWeight(int weight) { this.weight = weight; }
-	public void setAge(int age) { this.age = age; }
+	public void setBirth_Date(String birth_date) { this.birth_date = birth_date; }
 	public void setGender(String gender) { this.gender = gender; }
 	public void setDirective(boolean directive) { this.directive = directive; }
 	

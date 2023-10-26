@@ -1,11 +1,13 @@
 package giis.demo.model;
 
+import java.time.LocalDate;
+
 import giis.demo.util.Database;
 
 public class Socio {
 	
-	private final static String SQL_CARGAR_SOCIO="select id,name,surname,cuota_type,iban,height,weight,age,gender,directive from socios where id = ?" ;
-	private final static String SQL_MODIFICAR_SOCIO= "update socios set name=?, surname=?, gender=?, age=? where id = ?";
+	private final static String SQL_CARGAR_SOCIO="select id,name,surname,cuota_type,iban,height,weight,birth_date,gender,directive from socios where id = ?" ;
+	private final static String SQL_MODIFICAR_SOCIO= "update socios set name=?, surname=?, gender=?, birth_date=? where id = ?";
 	
 	private Database db;
 	
@@ -15,7 +17,7 @@ public class Socio {
 	private String nombre;
 	private String apellidos;
 	private Generos genero;
-	private int edad;
+	private LocalDate fechaNacimiento;
 	private String altura;
 	private int peso;
 	private boolean esDirectivo;
@@ -26,13 +28,13 @@ public class Socio {
 		
 	}
 	
-	public Socio(int id, String nombre, String apellidos, String tipoCuota, Generos genero, int edad) {
+	public Socio(int id, String nombre, String apellidos, String tipoCuota, Generos genero, LocalDate fecha) {
 		this.id = id;
 		this.nombre = nombre;
 		this.apellidos = apellidos;
 		this.genero = genero;
-		this.edad = edad;
 		this.tipoCuota = tipoCuota;
+		this.fechaNacimiento = fecha;
 	}
 
 	private void cargarDatosSocio(int id) {
@@ -45,7 +47,7 @@ public class Socio {
 		numeroIban = (String) result[4];
 		altura = (String) result[5];
 		peso = (int) result[6];
-		edad = (int) result[7];
+		String edad = (String) result[7];
 		String genero = (String)result[8];
 		if(genero.equals("HOMBRE")) {
 			this.genero = Generos.HOMBRE;
@@ -55,17 +57,25 @@ public class Socio {
 			this.genero = Generos.OTRO;
 		}
 		esDirectivo = (int)result[9] == 1;
+		
+		String[] str = edad.split("-");
+		int año = Integer.parseInt(str[0]);
+		int mes = Integer.parseInt(str[1]);
+		int dia = Integer.parseInt(str[2]);
+		fechaNacimiento = LocalDate.of(año, mes, dia);
+		//fechaNacimiento.set(año, mes, dia);
 	}
 	
-	public void modificarDatos(String nombre, String apellido, Generos genero, String edad) {
+	public void modificarDatos(String nombre, String apellido, Generos genero, LocalDate fecha) {
 		this.nombre = nombre;
 		this.apellidos = apellido;
 		this.genero = genero;
-		this.edad = Integer.parseInt(edad);
+		fechaNacimiento = fecha;
 	}
 	
 	public void guardarDatos() {
-		db.executeUpdate(SQL_MODIFICAR_SOCIO,nombre,apellidos,genero,edad,id);
+		String fecha = ""+fechaNacimiento.getYear()+"-"+fechaNacimiento.getMonthValue()+"-"+fechaNacimiento.getDayOfMonth();
+		db.executeUpdate(SQL_MODIFICAR_SOCIO,nombre,apellidos,genero,fecha,id);
 		System.out.println("Datos Socio modificados:\n"+toString());
 	}
 	
@@ -93,8 +103,8 @@ public class Socio {
 		return genero;
 	}
 
-	public int getEdad() {
-		return edad;
+	public LocalDate getFechaNacimiento() {
+		return fechaNacimiento;
 	}
 
 	public String getAltura() {
@@ -111,13 +121,15 @@ public class Socio {
 
 	@Override
 	public String toString() {
-		return "Nombre: "+nombre+", Apellidos: "+apellidos+", Edad: "+edad+", cuota tipo: "+tipoCuota+", numero iban: "+numeroIban+
+		String fecha = ""+fechaNacimiento.getYear()+"-"+fechaNacimiento.getMonthValue()+"-"+fechaNacimiento.getDayOfMonth();
+		return "Nombre: "+nombre+", Apellidos: "+apellidos+", Fecha de nacimiento: "+fecha+", cuota tipo: "+tipoCuota+", numero iban: "+numeroIban+
 				", altura: "+altura+", peso: "+peso+", genero: "+genero+", es directivo :"+esDirectivo;
 		
 	}
 	
 	public String toStringList() {
-		return id + " - " + nombre +" - " + apellidos + " - " + edad + " - " + tipoCuota + " - " + genero;
+		String fecha = ""+fechaNacimiento.getYear()+"-"+fechaNacimiento.getMonthValue()+"-"+fechaNacimiento.getDayOfMonth();
+		return id + " - " + nombre +" - " + apellidos + " - " + fecha + " - " + tipoCuota + " - " + genero;
 		
 	}
 

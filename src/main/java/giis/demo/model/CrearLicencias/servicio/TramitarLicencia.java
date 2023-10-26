@@ -1,5 +1,9 @@
 package giis.demo.model.CrearLicencias.servicio;
 
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
+
 import giis.demo.model.Generos;
 import giis.demo.model.Socio;
 import giis.demo.model.CrearLicencias.EstadosLicencia;
@@ -42,14 +46,14 @@ public class TramitarLicencia {
 		if(esDirectivo) {
 			cargarSocio(ID_DIRECTIVO_PRUEBAS);
 		}else {
-			cargarSocio(ID_SOCIO_CON_DOS_LICENCIAS_PRUEBAS);
+			cargarSocio(ID_SOCIO_CON_LICENCIA_MENOR_EDAD_PRUEBAS);
 		}
 		System.out.println(socio.toString());
 	}
 	
-	public void crearLicencia(String nombre,String apellido, String edad, Generos genero, String direccion, String info, TiposLicencia licencia) {
+	public void crearLicencia(String nombre,String apellido, LocalDate fecha, Generos genero, String direccion, String info, TiposLicencia licencia) {
 		licenciaSeleccionada = new Licencia(socio.getId(), db);
-		this.licenciaSeleccionada.crearLicencia( nombre,apellido, edad, genero, direccion, info, licencia);
+		this.licenciaSeleccionada.crearLicencia( nombre,apellido, fecha, genero, direccion, info, licencia);
 		licenciasDelSocio.add(licenciaSeleccionada);
 	}
 	
@@ -63,7 +67,7 @@ public class TramitarLicencia {
 		return licenciasPagadas.toArray(new Licencia[licenciasPagadas.size()]);
 	}
 	
-	public TiposLicencia[] getLicenciasDisponibles() {
+	public TiposLicencia[] getLicenciasDisponibles(boolean mayor) {
 		List<TiposLicencia> tiposDisponibles = new ArrayList<TiposLicencia>();
 		for(int i = 0; i < TiposLicencia.values().length; i++) {
 			TiposLicencia tipo = TiposLicencia.values()[i];
@@ -76,7 +80,13 @@ public class TramitarLicencia {
 			}
 			
 			if(tipoDisponible) {
-				tiposDisponibles.add(tipo);
+				if(!mayor) {
+					if(tipo.equals(TiposLicencia.DEPORTISTA)) {
+						tiposDisponibles.add(tipo);
+					}
+				}else {
+					tiposDisponibles.add(tipo);
+				}
 			}
 		}
 		return tiposDisponibles.toArray(new TiposLicencia[tiposDisponibles.size()]);
@@ -104,8 +114,8 @@ public class TramitarLicencia {
 		}
 	}
 	
-	public boolean socioConAlgunaLicenciaDisponible() {
-		return getLicenciasDisponibles().length > 0;
+	public boolean socioConAlgunaLicenciaDisponible(boolean mayor) {
+		return getLicenciasDisponibles(mayor).length > 0;
 	}
 	
 	public boolean socioConLicenciasPagadas() {
@@ -123,12 +133,12 @@ public class TramitarLicencia {
 	
 
 	
-	public void modificarDatosLicencia(String nombre,String apellido, String edad, Generos genero, String direccion, String info) {
-		this.licenciaSeleccionada.modificarDatos(nombre, apellido, edad, genero, direccion, info);
+	public void modificarDatosLicencia(String nombre,String apellido, LocalDate fecha, Generos genero, String direccion, String info) {
+		this.licenciaSeleccionada.modificarDatos(nombre, apellido, fecha, genero, direccion, info);
 	}
 	
-	public void modificarDatosSocio(String nombre, String apellido, Generos genero, String edad) {
-		socio.modificarDatos(nombre,apellido,genero,edad);
+	public void modificarDatosSocio(String nombre, String apellido, Generos genero, LocalDate fecha) {
+		socio.modificarDatos(nombre,apellido,genero,fecha);
 	}
 	
 	public void guardarDatosModificadosLicencia() {
@@ -145,5 +155,85 @@ public class TramitarLicencia {
 	
 	public void setLicenciaSeleccionada(Licencia licencia) {
 		licenciaSeleccionada = licencia;
+	}
+
+	public boolean comprobarSocioMayorEdad() {
+		int añoSocio = socio.getFechaNacimiento().getYear();
+		int mesSocio = socio.getFechaNacimiento().getMonthValue();
+		int diaSocio = socio.getFechaNacimiento().getDayOfMonth();
+		
+		LocalDate d = LocalDate.now();
+		int añoActual = d.getYear();
+		int mesActual = d.getMonthValue();
+		int diaActual = d.getDayOfMonth();
+		
+		if(añoActual - añoSocio > 18) {
+			//mayor de edad
+			return true;
+		}else if(añoActual - añoSocio == 18) {
+			//comprobamos mes
+			if(mesSocio < mesActual) {
+				//mayor de edad
+				return true;
+			}else if(mesSocio == mesActual) {
+				//comprobamos dia
+				if(diaSocio < diaActual) {
+					//mayor de edad
+					return true;
+				}else if(diaSocio == diaActual) {
+					//mayor de edad
+					return true;
+				}else {
+					//menor de edad
+					return false;
+				}
+			}else {
+				//menor de edad
+				return false;
+			}
+		}else {
+			//menor de edad
+			return false;
+		}
+	}
+	
+	public boolean comprobarMayorEdad(int dia, int mes, int año) {
+		int añoSocio = año;
+		int mesSocio = mes;
+		int diaSocio = dia;
+		
+		LocalDate d = LocalDate.now();
+		int añoActual = d.getYear();
+		int mesActual = d.getMonthValue();
+		int diaActual = d.getDayOfMonth();
+		
+		if(añoActual - añoSocio > 18) {
+			//mayor de edad
+			return true;
+		}else if(añoActual - añoSocio == 18) {
+			//comprobamos mes
+			if(mesSocio < mesActual) {
+				//mayor de edad
+				return true;
+			}else if(mesSocio == mesActual) {
+				//comprobamos dia
+				if(diaSocio < diaActual) {
+					//mayor de edad
+					return true;
+				}else if(diaSocio == diaActual) {
+					//mayor de edad
+					return true;
+				}else {
+					//menor de edad
+					return false;
+				}
+			}else {
+				//menor de edad
+				return false;
+			}
+		}else {
+			//menor de edad
+			return false;
+		}
 	}
 }
