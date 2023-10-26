@@ -130,9 +130,8 @@ public class VentanaListaSocios extends JDialog {
 	}
 	
 	protected void actualizar(String filter) {
-		tableSocios.setModel(SociosController.setTableModel(db, filter));
+		tableSocios.setModel(SociosController.setTableModel(db, filter, tableSocios));
 		settingCuotas();
-		settingDirective();
 		settingDateChooser();
 		settingGenre();
 		
@@ -145,11 +144,6 @@ public class VentanaListaSocios extends JDialog {
 		tableSocios.getColumnModel().getColumn(10).setCellEditor(new JDateChooserEditor(new JCheckBox()));
 	}
 
-	private void settingDirective() {
-		JCheckBox checkDir = new JCheckBox();
-		tableSocios.getColumnModel().getColumn(tableSocios.getColumnCount()-1).setCellEditor(new DefaultCellEditor(checkDir));
-	}
-	
 	private void settingGenre() {
 		JComboBox<String> generos = new JComboBox<String>();
 		generos.addItem("HOMBRE");
@@ -189,8 +183,13 @@ public class VentanaListaSocios extends JDialog {
 			tableSocios = new JTable() {
 				@Override // Establece que las columnas 1 y 2 no sean editables (ID de socio y DNI)
 				public boolean isCellEditable(int row, int column) {
-			        return column == 0 || column==1 ? false : true;
-			    }
+				    return column == 0 || column==1 ? false : true;
+				}
+				@SuppressWarnings({ "unchecked", "rawtypes" })
+				@Override
+				public Class getColumnClass(int columnIndex) {
+					return (getValueAt(0, columnIndex).getClass());
+				}
 			};
 			tableSocios.setBackground(Color.WHITE);
 			tableSocios.setColumnSelectionAllowed(true);

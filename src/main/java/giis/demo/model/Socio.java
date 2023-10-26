@@ -3,6 +3,8 @@ package giis.demo.model;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 
+import com.fasterxml.jackson.core.JsonParser.NumberType;
+
 import giis.demo.util.Database;
 
 public class Socio {
@@ -19,8 +21,8 @@ public class Socio {
 	private String apellidos;
 	private Generos genero;
 	private Calendar fechaNacimiento;
-	private String altura;
-	private int peso;
+	private double altura;
+	private double peso;
 	private boolean esDirectivo;
 	
 	public Socio(Database db,int id) {
@@ -46,8 +48,8 @@ public class Socio {
 		apellidos = (String) result[2];
 		tipoCuota = (String) result[3];
 		numeroIban = (String) result[4];
-		altura = (String) result[5];
-		peso = (int) result[6];
+		altura = (double) result[5];
+		peso = (double) result[6];
 		String edad = (String) result[7];
 		String genero = (String)result[8];
 		if(genero.equals("HOMBRE")) {
@@ -65,6 +67,8 @@ public class Socio {
 		int año = Integer.parseInt(str[2]);
 		fechaNacimiento = new GregorianCalendar(año, mes, dia);
 		//fechaNacimiento.set(año, mes, dia);
+		
+		toString();
 	}
 	
 	public void modificarDatos(String nombre, String apellido, Generos genero, Calendar fecha) {
@@ -108,11 +112,11 @@ public class Socio {
 		return fechaNacimiento;
 	}
 
-	public String getAltura() {
+	public double getAltura() {
 		return altura;
 	}
 
-	public int getPeso() {
+	public double getPeso() {
 		return peso;
 	}
 

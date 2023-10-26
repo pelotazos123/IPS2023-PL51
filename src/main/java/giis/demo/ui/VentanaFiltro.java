@@ -154,7 +154,12 @@ public class VentanaFiltro extends JDialog {
 		String filterDateFrom = checkDateFrom();
 		String filterDateTo = checkDateTo();
 		
-		String filter = buildFilter(filterMale, filterFemale, filterDir, name, surname, filterDateFrom, filterDateTo);	
+		String filterSub18 = checkSub18();
+		String filterSenior = checkSenior();
+		String filterVeteran = checkVeterano();
+		
+		String filter = buildFilter(filterMale, filterFemale, filterDir, name, surname, filterDateFrom, filterDateTo,
+					filterSub18, filterVeteran, filterSenior);	
 		
 		if (dateFrom.getDate() != null && dateTo.getDate() != null && dateFrom.getDate().compareTo(dateTo.getDate()) > 0) {
 			JOptionPane.showMessageDialog(null, "La fecha destino no puede ser menor que la fecha origen", "ERROR", JOptionPane.ERROR_MESSAGE);
@@ -165,7 +170,8 @@ public class VentanaFiltro extends JDialog {
 		
 	}
 
-	private String buildFilter(String male, String female, String filterDir, String name, String surname, String filterDateFrom, String filterDateTo) {
+	private String buildFilter(String male, String female, String filterDir, String name, 
+			String surname, String filterDateFrom, String filterDateTo, String filterSub18, String filterSenior, String filterVeteran) {
 		String filter = "";
 		
 		if (!getChkHombres().isSelected() && !getChkMujeres().isSelected()) {
@@ -173,9 +179,15 @@ public class VentanaFiltro extends JDialog {
 			female="'MUJER'";
 		}
 		
-		filter = String.format(" name=%s AND surname=%s AND (gender=%s OR gender=%s) AND directive=%s AND date(birth_date) BETWEEN"
-																	+ " date(%s) AND date(%s)",
-				name, surname, male, female, filterDir, filterDateFrom, filterDateTo);
+		if (!getChkSub18().isSelected() && !getChkSenior().isSelected() && !getChkVeterano().isSelected()) {
+			filterSub18="cuota_type";
+			filterSenior="cuota_type";
+			filterVeteran="cuota_type";
+		}
+		
+		filter = String.format(" name=%s AND surname=%s AND (gender=%s OR gender=%s) AND directive=%s AND (cuota_type=%s OR cuota_type=%s OR cuota_type=%s) "
+				+ "AND date(birth_date) BETWEEN date(%s) AND date(%s)",	
+					name, surname, male, female, filterDir, filterSub18, filterSenior, filterVeteran, filterDateFrom, filterDateTo);
 		return filter;
 	}
 
@@ -199,6 +211,18 @@ public class VentanaFiltro extends JDialog {
 
 	private String checkFemale() {
 		return getChkMujeres().isSelected() ? "'MUJER'" : "''";
+	}
+	
+	private String checkSub18() {
+		return getChkSub18().isSelected() ? "'SUB18'" : "''";
+	}
+	
+	private String checkSenior() {
+		return getChkSenior().isSelected() ? "'SENIOR'" : "''";
+	}
+	
+	private String checkVeterano() {
+		return getChkVeterano().isSelected() ? "'VETERANO'" : "''";
 	}
 	
 	private String checkDateFrom() {
