@@ -1,6 +1,8 @@
 package giis.demo.logica;
 
 import java.awt.Component;
+import java.awt.event.FocusAdapter;
+import java.awt.event.FocusEvent;
 
 import javax.swing.DefaultCellEditor;
 import javax.swing.JCheckBox;
@@ -8,6 +10,7 @@ import javax.swing.JTable;
 import javax.swing.JTextField;
 
 import com.toedter.calendar.JDateChooser;
+import com.toedter.calendar.JTextFieldDateEditor;
 
 public class JDateChooserEditor extends DefaultCellEditor {
 
@@ -24,7 +27,13 @@ public class JDateChooserEditor extends DefaultCellEditor {
 	{
 	
 		date = new JDateChooser();
-		date.setDateFormatString("dd-MM-yyyy");
+		date.setDateFormatString("yyyy-MM-dd");
+		date.getDateEditor().getUiComponent().addFocusListener(new FocusAdapter()    {
+	        @Override
+	        public void focusGained(FocusEvent evt) {
+	        	((JTextFieldDateEditor)evt.getSource()).selectAll();
+	        }
+	    });
 		return date;
 	}
 	
@@ -33,12 +42,12 @@ public class JDateChooserEditor extends DefaultCellEditor {
 		return new String(((JTextField)date.getDateEditor().getUiComponent()).getText());
 	}
 	
-	public boolean stopCellEditing()
-	{
-		return super.stopCellEditing();
-	}
-	
-	protected void fireEditingStopped() {
-		super.fireEditingStopped();
-	}
+//	public boolean stopCellEditing()
+//	{
+//		return super.stopCellEditing();
+//	}
+//	
+//	protected void fireEditingStopped() {
+//		super.fireEditingStopped();
+//	}
 }
