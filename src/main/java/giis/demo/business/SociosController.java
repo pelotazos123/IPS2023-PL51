@@ -64,7 +64,29 @@ public abstract class SociosController {
 	private static List<SocioEntity> getSociosForTabla(Database db, String filter){
 		return db.executeQueryPojo(SocioEntity.class, buildQuery(filter));
 	}
+	
+	private static void actualizaSocio(TableModelEvent e, Database db) {
+		if (e.getType() == TableModelEvent.UPDATE) {
+			TableModel modelo = ((TableModel) e.getSource());
+	        int fila = e.getFirstRow();
+	        int columna = e.getColumn();
 
+	        String dato=String.valueOf(modelo.getValueAt(fila,columna));	
+	        String id_user = String.valueOf(modelo.getValueAt(fila, 0));
+	        System.out.println(dato + "aver");
+	        
+	        String update = columns[columna];
+	        
+	        System.out.println(update);
+	        
+	        db.executeUpdate(update, dato, id_user);
+		}	
+	}
+	
+	private static List<SocioEntity> getSociosForTabla(Database db, String filter){
+		return db.executeQueryPojo(SocioEntity.class, buildQuery(filter));
+	}
+  
 	private static String buildQuery(String filter) {
 		String query;
 
