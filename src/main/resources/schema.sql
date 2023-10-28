@@ -11,8 +11,8 @@ drop table instalaciones;
 drop table asambleas;
 drop table recibos;
 
-create table socios (id int, dni varchar2(255), name varchar2(255),surname varchar2(255), email varchar2(255), cuota_type varchar2(255), iban varchar2(255), height varchar2(255), weight int, birth_date date, gender varchar2(255), directive bool);
-create table licencias (owner_id int, tutor_name varchar2(255),tutor_surname varchar2(255), tutor_birth_date date, tutor_gender varchar2(255), state varchar2(255), price int, licence_type varchar2(255), facturation_direction varchar2(255),facturation_info varchar2(255), foreign key(owner_id) references socios(id));
+create table socios (id int, dni varchar2(255), name varchar2(255),surname varchar2(255), email varchar2(255), telf int, cuota_type varchar2(255), iban varchar2(255), height varchar2(255), weight int, birth_date date, gender varchar2(255), directive bool);
+create table licencias (owner_id int,tutor_dni varchar2(255), tutor_name varchar2(255),tutor_surname varchar2(255), tutor_email varchar2(255), tutor_telf int, tutor_birth_date date, tutor_gender varchar2(255), state varchar2(255), price int, licence_type varchar2(255), facturation_direction varchar2(255),facturation_info varchar2(255), foreign key(owner_id) references socios(id));
 create table cuotas (owner_id int, cuota_type varchar2(255), price int, state int, foreign key(owner_id) references socios(id));
 create table reservas (owner_id int, fecha varchar, hora varchar, instalation_code varchar2(255), foreign key(owner_id) references socios(id));
 create table instalaciones (code varchar2(255), name varchar2(255), foreign key(code) references reservas(instalation_code));
