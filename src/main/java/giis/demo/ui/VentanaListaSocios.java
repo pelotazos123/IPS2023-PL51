@@ -26,8 +26,6 @@ import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
 
 public class VentanaListaSocios extends JDialog {
 
@@ -141,14 +139,14 @@ public class VentanaListaSocios extends JDialog {
 	}
 
 	private void settingDateChooser() {
-		tableSocios.getColumnModel().getColumn(10).setCellEditor(new JDateChooserEditor(new JCheckBox()));
+		tableSocios.getColumnModel().getColumn(9).setCellEditor(new JDateChooserEditor(new JCheckBox()));
 	}
 
 	private void settingGenre() {
 		JComboBox<String> generos = new JComboBox<String>();
 		generos.addItem("HOMBRE");
 		generos.addItem("MUJER");
-		tableSocios.getColumnModel().getColumn(9).setCellEditor(new DefaultCellEditor(generos));
+		tableSocios.getColumnModel().getColumn(8).setCellEditor(new DefaultCellEditor(generos));
 	}
 
 	private void settingCuotas() {
@@ -157,7 +155,7 @@ public class VentanaListaSocios extends JDialog {
 		cuotas.addItem("SENIOR");
 		cuotas.addItem("VETERANO");
 		
-		tableSocios.getColumnModel().getColumn(5).setCellEditor(new DefaultCellEditor(cuotas));
+		tableSocios.getColumnModel().getColumn(6).setCellEditor(new DefaultCellEditor(cuotas));
 	}
 
 	private JLabel getLblText() {

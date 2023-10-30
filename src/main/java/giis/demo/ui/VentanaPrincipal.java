@@ -223,7 +223,10 @@ public class VentanaPrincipal extends JFrame {
 			btTramitarLicencia = new JButton("Tramitar Licencia");
 			btTramitarLicencia.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
-					if(comprobarSocioConAlgunaLicenciaDisponible()) {
+					if(tramitarLicencia.esDirectivo()) {
+						VentanaTramitarLicencia frame = new VentanaTramitarLicencia(tramitarLicencia);
+						frame.setVisible(true);
+					}else if(comprobarSocioConAlgunaLicenciaDisponible()) {
 						VentanaTramitarLicencia frame = new VentanaTramitarLicencia(tramitarLicencia);
 						frame.setVisible(true);
 					}
@@ -240,7 +243,10 @@ public class VentanaPrincipal extends JFrame {
 			btRenovarLicencia.setBounds(410, 252, 134, 54);
 			btRenovarLicencia.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
-					if(comprobarSocioConLicenciaPagada()) {
+					if(tramitarLicencia.esDirectivo()) {
+						VentanaRenovarLicencia frame = new VentanaRenovarLicencia(tramitarLicencia);
+						frame.setVisible(true);
+					}else if(comprobarSocioConLicenciaPagada()) {
 						VentanaRenovarLicencia frame = new VentanaRenovarLicencia(tramitarLicencia);
 						frame.setVisible(true);
 					}

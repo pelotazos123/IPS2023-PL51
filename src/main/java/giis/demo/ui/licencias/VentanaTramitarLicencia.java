@@ -8,6 +8,8 @@ import java.awt.FlowLayout;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.Date;
@@ -41,6 +43,7 @@ public class VentanaTramitarLicencia extends JFrame {
 	public final static String FICHERO_POLITICA_PROTECCION_DATOS = "src/main/resources/PoliticaDeProteccionDeDatos.txt";
 	
 	private TramitarLicencia tramitarLicencia;
+	private boolean esDirectivo;
 	
 	
 	private JPanel pnPrincipal;
@@ -99,6 +102,24 @@ public class VentanaTramitarLicencia extends JFrame {
 	private JScrollPane scrPoliticaDeDatos;
 	private JDateChooser dcFechaNacimientoSocio;
 	private JDateChooser dcFechaNacimientoTutor;
+	private JPanel pnTelfSocio;
+	private JLabel lbTelfSocio;
+	private JTextField txTelfSocio;
+	private JPanel pnTelfTutor;
+	private JLabel lbTelfTutor;
+	private JTextField txTelfTutor;
+	private JPanel pnCorreoSocio;
+	private JLabel lbCorreoSocio;
+	private JTextField txCorreoSocio;
+	private JPanel pnCorreoTutor;
+	private JLabel lbCorreoTutor;
+	private JTextField txCorreoTutor;
+	private JPanel pnDniSocio;
+	private JLabel lbDniSocio;
+	private JTextField txDniSocio;
+	private JPanel pnDniTutor;
+	private JLabel lbDniTutor;
+	private JTextField txDniTutor;
 
 
 	/**
@@ -122,13 +143,23 @@ public class VentanaTramitarLicencia extends JFrame {
 		cargarDatos();
 	}
 	private void cargarDatos() {
-		getTxNombreSocio().setText(tramitarLicencia.getSocio().getNombre());
-		getTxApellidosSocio().setText(tramitarLicencia.getSocio().getApellidos());
-		getCbGeneroSocio().setSelectedItem(tramitarLicencia.getSocio().getGenero());
-		Date fecha = Date.from(tramitarLicencia.getSocio().getFechaNacimiento().atStartOfDay().atZone(ZoneId.systemDefault()).toInstant());
-		getDcFechaNacimientoSocio().setDate(fecha);
-		comprobarEdad();
-		
+		esDirectivo = tramitarLicencia.esDirectivo();
+		if(!esDirectivo) {
+			getTxNombreSocio().setText(tramitarLicencia.getSocio().getNombre());
+			getTxApellidosSocio().setText(tramitarLicencia.getSocio().getApellidos());
+			getCbGeneroSocio().setSelectedItem(tramitarLicencia.getSocio().getGenero());
+			getTxDniSocio().setText(tramitarLicencia.getSocio().getDni());
+			getTxTelfSocio().setText(""+tramitarLicencia.getSocio().getTelefono());
+			getTxCorreoSocio().setText(tramitarLicencia.getSocio().getCorreo());
+			
+			
+			Date fecha = Date.from(tramitarLicencia.getSocio().getFechaNacimiento().atStartOfDay().atZone(ZoneId.systemDefault()).toInstant());
+			getDcFechaNacimientoSocio().setDate(fecha);
+			comprobarEdad();
+		}else {
+			TiposLicencia[] licencias = tramitarLicencia.getLicenciasDisponibles(true);
+			cbTipoLicencia.setModel(new DefaultComboBoxModel<TiposLicencia>(licencias));
+		}
 	}
 	private JPanel getPnTramitarLicencia() {
 		if (pnTramitarLicencia == null) {
@@ -177,10 +208,13 @@ public class VentanaTramitarLicencia extends JFrame {
 			pnDatosSocio.setBackground(Color.WHITE);
 			pnDatosSocio.setLayout(new GridLayout(0, 1, 0, 0));
 			pnDatosSocio.add(getLbDatosSocio());
+			pnDatosSocio.add(getPnDniSocio());
 			pnDatosSocio.add(getPnNombreSocio());
 			pnDatosSocio.add(getPnApellidosSocio());
 			pnDatosSocio.add(getPnGeneroSocio());
 			pnDatosSocio.add(getPnEdadSocio());
+			pnDatosSocio.add(getPnTelfSocio());
+			pnDatosSocio.add(getPnCorreoSocio());
 		}
 		return pnDatosSocio;
 	}
@@ -280,10 +314,13 @@ public class VentanaTramitarLicencia extends JFrame {
 			pnDatosTutor.setBackground(Color.WHITE);
 			pnDatosTutor.setLayout(new GridLayout(0, 1, 0, 0));
 			pnDatosTutor.add(getLbDatosTutor());
+			pnDatosTutor.add(getPnDniTutor());
 			pnDatosTutor.add(getPnNombreTutor());
 			pnDatosTutor.add(getPnApellidosTutor());
 			pnDatosTutor.add(getPnGeneroTutor());
 			pnDatosTutor.add(getPnEdadTutor());
+			pnDatosTutor.add(getPnTelfTutor());
+			pnDatosTutor.add(getPnCorreoTutor());
 		}
 		return pnDatosTutor;
 	}
@@ -487,38 +524,50 @@ public class VentanaTramitarLicencia extends JFrame {
 	}
 	
 	private boolean comprobarDatosCorrectos() {
-		LocalDate fechaSocio = getDcFechaNacimientoSocio().getDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
-		int diaSocio = fechaSocio.getDayOfMonth();
-		int mesSocio = fechaSocio.getMonthValue();
-		int añoSocio = fechaSocio.getYear();
-		
-		if(getTxNombreSocio().getText().isBlank() || getTxApellidosSocio().getText().isBlank() 
-				|| getTxDireccionFacturacion().getText().isBlank() || getTxInfoFacturacion().getText().isBlank()) {
-			JOptionPane.showMessageDialog(this,"Debe rellenar los campos Nombre, Apellidos, Direccion de facturacion e Informacion de facturacion ",
+		if(getDcFechaNacimientoSocio().getDate() == null) {
+			JOptionPane.showMessageDialog(this,"Debe seleccionar su fecha de nacimiento",
 					"Datos no rellenados", JOptionPane.INFORMATION_MESSAGE);
 			return false;
-		}else if(!tramitarLicencia.comprobarMayorEdad(diaSocio, mesSocio, añoSocio)) {
-			if(getTxNombreTutor().getText().isBlank() || getTxApellidosTutor().getText().isBlank()) {
-				JOptionPane.showMessageDialog(this,"Debe rellenar los campos Nombre y Apellidos del tutor",
+		}else {
+			LocalDate fechaSocio = getDcFechaNacimientoSocio().getDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+			int diaSocio = fechaSocio.getDayOfMonth();
+			int mesSocio = fechaSocio.getMonthValue();
+			int añoSocio = fechaSocio.getYear();
+			
+			if(getTxNombreSocio().getText().isBlank() || getTxApellidosSocio().getText().isBlank() 
+					|| getTxDireccionFacturacion().getText().isBlank() || getTxInfoFacturacion().getText().isBlank() 
+					|| getTxDniSocio().getText().isBlank() || getTxCorreoSocio().getText().isBlank() || getTxTelfSocio().getText().isBlank()) {
+				JOptionPane.showMessageDialog(this,"Debe rellenar los campos Nombre, Apellidos, Direccion de facturacion e Informacion de facturacion ",
 						"Datos no rellenados", JOptionPane.INFORMATION_MESSAGE);
 				return false;
-			}else if(!comprobarTutorMayorEdad()) {
-				JOptionPane.showMessageDialog(this,"El tutor debe ser mayor de edad",
-						"Datos no rellenados", JOptionPane.INFORMATION_MESSAGE);
-				return false;
+			}else if(!tramitarLicencia.comprobarMayorEdad(diaSocio, mesSocio, añoSocio)) {
+				if(getTxNombreTutor().getText().isBlank() || getTxApellidosTutor().getText().isBlank()
+						|| getTxTelfTutor().getText().isBlank() || getTxCorreoTutor().getText().isBlank()
+						|| getTxDniTutor().getText().isBlank()) {
+					JOptionPane.showMessageDialog(this,"Debe rellenar los campos Nombre y Apellidos del tutor",
+							"Datos no rellenados", JOptionPane.INFORMATION_MESSAGE);
+					return false;
+				}else if(!comprobarTutorMayorEdad()) {
+					JOptionPane.showMessageDialog(this,"El tutor debe ser mayor de edad",
+							"Datos no rellenados", JOptionPane.INFORMATION_MESSAGE);
+					return false;
+				}else {
+					return true;
+				}
 			}else {
 				return true;
 			}
-		}else {
-			return true;
 		}
-		
 	}
 	
 	private void crearLicencia() {
+		String dniSocio = getTxDniSocio().getText();
 		String nombreSocio = getTxNombreSocio().getText();
 		String apellidoSocio = getTxApellidosSocio().getText();
 		Generos generoSocio = (Generos) getCbGeneroSocio().getSelectedItem();
+		int telfSocio = Integer.parseInt(getTxTelfSocio().getText());
+		String correoSocio = getTxCorreoSocio().getText();
+		
 		
 		LocalDate fechaNacimiento = getDcFechaNacimientoSocio().getDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
 		int diaSocio = fechaNacimiento.getDayOfMonth();
@@ -530,19 +579,30 @@ public class VentanaTramitarLicencia extends JFrame {
 		TiposLicencia licencia = (TiposLicencia) getCbTipoLicencia().getSelectedItem();
 		
 		if(!tramitarLicencia.comprobarMayorEdad(diaSocio, mesSocio, añoSocio)) {
+			String dniTutor = getTxDniTutor().getText();
 			String nombreTutor = getTxNombreTutor().getText();
 			String apellidoTutor = getTxApellidosTutor().getText();
 			Generos generoTutor = (Generos) getCbGeneroTutor().getSelectedItem();
+			int telfTutor = Integer.parseInt(getTxTelfTutor().getText());
+			String correoTutor = getTxCorreoTutor().getText();
 			
 			LocalDate fechaNacimientoTutor = getDcFechaNacimientoTutor().getDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
 			
-			tramitarLicencia.crearLicencia(nombreTutor, apellidoTutor, fechaNacimientoTutor, generoTutor, direccionFacturacion, infoFacturacion, licencia);
-			tramitarLicencia.modificarDatosSocio(nombreSocio, apellidoSocio, generoSocio, fechaNacimiento);
-			tramitarLicencia.guardarDatosModificadosSocio();
+			if(esDirectivo) {
+				tramitarLicencia.crearSocio(dniSocio, nombreSocio, apellidoSocio, correoSocio, telfSocio, generoSocio, fechaNacimiento);
+			}else {
+				tramitarLicencia.modificarDatosSocio(dniSocio,nombreSocio, apellidoSocio, generoSocio,telfSocio,correoSocio, fechaNacimiento);
+				tramitarLicencia.guardarDatosModificadosSocio();
+			}
+			tramitarLicencia.crearLicencia(nombreTutor, apellidoTutor,dniTutor,telfTutor,correoTutor, fechaNacimientoTutor, generoTutor, direccionFacturacion, infoFacturacion, licencia);
 		}else {
-			tramitarLicencia.crearLicencia("noTutor", "noTutor", null, null, direccionFacturacion, infoFacturacion, licencia);
-			tramitarLicencia.modificarDatosSocio(nombreSocio, apellidoSocio, generoSocio, fechaNacimiento);
-			tramitarLicencia.guardarDatosModificadosSocio();
+			if(esDirectivo) {
+				tramitarLicencia.crearSocio(dniSocio, nombreSocio, apellidoSocio, correoSocio, telfSocio, generoSocio, fechaNacimiento);
+			}else {
+				tramitarLicencia.modificarDatosSocio(dniSocio,nombreSocio, apellidoSocio, generoSocio,telfSocio,correoSocio, fechaNacimiento);
+				tramitarLicencia.guardarDatosModificadosSocio();
+			}
+			tramitarLicencia.crearLicencia("noTutor", "noTutor", "noTutor",-1,"noTutor", null, null, direccionFacturacion, infoFacturacion, licencia);
 		}
 		
 	}
@@ -671,7 +731,8 @@ public class VentanaTramitarLicencia extends JFrame {
 	}
 	
 	private void comprobarEdad() {
-		
+		if (getDcFechaNacimientoSocio().getDate() == null)
+			return;
 		LocalDate fechaNacimiento = getDcFechaNacimientoSocio().getDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
 		int diaSocio = fechaNacimiento.getDayOfMonth();
 		int mesSocio = fechaNacimiento.getMonthValue();
@@ -679,25 +740,27 @@ public class VentanaTramitarLicencia extends JFrame {
 		
 		boolean mayorEdad = tramitarLicencia.comprobarMayorEdad(diaSocio, mesSocio, añoSocio);
 		
-		if(mayorEdad) {
-			//mayor de edad
-			getDcFechaNacimientoTutor().setEnabled(false);
-			getCbGeneroTutor().setEnabled(false);
-			getTxApellidosTutor().setEnabled(false);
-			getTxNombreTutor().setEnabled(false);
-			//desbloqueamos todas las licencias
-			TiposLicencia[] licencias = tramitarLicencia.getLicenciasDisponibles(true);
-			cbTipoLicencia.setModel(new DefaultComboBoxModel<TiposLicencia>(licencias));
-		}else {
-			getDcFechaNacimientoTutor().setEnabled(true);
-			getCbGeneroTutor().setEnabled(true);
-			getTxApellidosTutor().setEnabled(true);
-			getTxNombreTutor().setEnabled(true);
-			//solo permitimos deportista
-			TiposLicencia[] licencias = tramitarLicencia.getLicenciasDisponibles(false);
-			cbTipoLicencia.setModel(new DefaultComboBoxModel<TiposLicencia>(licencias));
-		}
+		// Se pasa el booleano opuesto
+		// para deshabilitar los campos
+		// Si es true, se deshabilitan, si es false, se habilitan
+		enableTutor(!mayorEdad);
 	}
+	
+	private void enableTutor(boolean option) {
+		// Si option es false -> se deshabilita el tutor
+		// Si es true -> se habilita
+		getDcFechaNacimientoTutor().setEnabled(option);
+		getCbGeneroTutor().setEnabled(option);
+		getTxApellidosTutor().setEnabled(option);
+		getTxNombreTutor().setEnabled(option);
+		getTxTelfTutor().setEnabled(option);
+		getTxCorreoTutor().setEnabled(option);
+		getTxDniTutor().setEnabled(option);
+		
+		//solo permitimos deportista si es menor de edad (siempre el valor opuesto de option)
+		TiposLicencia[] licencias = tramitarLicencia.getLicenciasDisponibles(!option);
+		cbTipoLicencia.setModel(new DefaultComboBoxModel<TiposLicencia>(licencias));
+	}	
 	
 	private boolean comprobarTutorMayorEdad() {
 		LocalDate fechaNacimiento = getDcFechaNacimientoTutor().getDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
@@ -711,7 +774,13 @@ public class VentanaTramitarLicencia extends JFrame {
 	private JDateChooser getDcFechaNacimientoSocio() {
 		if (dcFechaNacimientoSocio == null) {
 			dcFechaNacimientoSocio = new JDateChooser();
-			dcFechaNacimientoSocio.setDateFormatString("dd-MM-yyyy");
+			dcFechaNacimientoSocio.getDateEditor().addPropertyChangeListener(new PropertyChangeListener() {
+				@Override
+				public void propertyChange(PropertyChangeEvent evt) {
+					comprobarEdad();
+				}
+			});
+			dcFechaNacimientoSocio.setDateFormatString("yyyy-MM-dd");
 		}
 		return dcFechaNacimientoSocio;
 	}
@@ -719,8 +788,145 @@ public class VentanaTramitarLicencia extends JFrame {
 		if (dcFechaNacimientoTutor == null) {
 			dcFechaNacimientoTutor = new JDateChooser();
 			dcFechaNacimientoTutor.setEnabled(false);
-			dcFechaNacimientoTutor.setDateFormatString("dd-MM-yyyy");
+			dcFechaNacimientoTutor.setDateFormatString("yyyy-MM-dd");
 		}
 		return dcFechaNacimientoTutor;
+	}
+	private JPanel getPnTelfSocio() {
+		if (pnTelfSocio == null) {
+			pnTelfSocio = new JPanel();
+			pnTelfSocio.setBackground(Color.WHITE);
+			pnTelfSocio.add(getLbTelfSocio());
+			pnTelfSocio.add(getTxTelfSocio());
+		}
+		return pnTelfSocio;
+	}
+	private JLabel getLbTelfSocio() {
+		if (lbTelfSocio == null) {
+			lbTelfSocio = new JLabel("Telefono:");
+		}
+		return lbTelfSocio;
+	}
+	private JTextField getTxTelfSocio() {
+		if (txTelfSocio == null) {
+			txTelfSocio = new JTextField();
+			txTelfSocio.setColumns(10);
+		}
+		return txTelfSocio;
+	}
+	private JPanel getPnTelfTutor() {
+		if (pnTelfTutor == null) {
+			pnTelfTutor = new JPanel();
+			pnTelfTutor.setBackground(Color.WHITE);
+			pnTelfTutor.add(getLbTelfTutor());
+			pnTelfTutor.add(getTxTelfTutor());
+		}
+		return pnTelfTutor;
+	}
+	private JLabel getLbTelfTutor() {
+		if (lbTelfTutor == null) {
+			lbTelfTutor = new JLabel("Telefono:");
+		}
+		return lbTelfTutor;
+	}
+	private JTextField getTxTelfTutor() {
+		if (txTelfTutor == null) {
+			txTelfTutor = new JTextField();
+			txTelfTutor.setEnabled(false);
+			txTelfTutor.setColumns(10);
+		}
+		return txTelfTutor;
+	}
+	private JPanel getPnCorreoSocio() {
+		if (pnCorreoSocio == null) {
+			pnCorreoSocio = new JPanel();
+			pnCorreoSocio.setBackground(Color.WHITE);
+			pnCorreoSocio.add(getLbCorreoSocio());
+			pnCorreoSocio.add(getTxCorreoSocio());
+		}
+		return pnCorreoSocio;
+	}
+	private JLabel getLbCorreoSocio() {
+		if (lbCorreoSocio == null) {
+			lbCorreoSocio = new JLabel("Correo:");
+		}
+		return lbCorreoSocio;
+	}
+	private JTextField getTxCorreoSocio() {
+		if (txCorreoSocio == null) {
+			txCorreoSocio = new JTextField();
+			txCorreoSocio.setColumns(10);
+		}
+		return txCorreoSocio;
+	}
+	private JPanel getPnCorreoTutor() {
+		if (pnCorreoTutor == null) {
+			pnCorreoTutor = new JPanel();
+			pnCorreoTutor.setBackground(Color.WHITE);
+			pnCorreoTutor.add(getLbCorreoTutor());
+			pnCorreoTutor.add(getTxCorreoTutor());
+		}
+		return pnCorreoTutor;
+	}
+	private JLabel getLbCorreoTutor() {
+		if (lbCorreoTutor == null) {
+			lbCorreoTutor = new JLabel("Correo:");
+		}
+		return lbCorreoTutor;
+	}
+	private JTextField getTxCorreoTutor() {
+		if (txCorreoTutor == null) {
+			txCorreoTutor = new JTextField();
+			txCorreoTutor.setEnabled(false);
+			txCorreoTutor.setColumns(10);
+		}
+		return txCorreoTutor;
+	}
+	private JPanel getPnDniSocio() {
+		if (pnDniSocio == null) {
+			pnDniSocio = new JPanel();
+			pnDniSocio.setBackground(Color.WHITE);
+			pnDniSocio.add(getLbDniSocio());
+			pnDniSocio.add(getTxDniSocio());
+		}
+		return pnDniSocio;
+	}
+	private JLabel getLbDniSocio() {
+		if (lbDniSocio == null) {
+			lbDniSocio = new JLabel("Dni:");
+		}
+		return lbDniSocio;
+	}
+	private JTextField getTxDniSocio() {
+		if (txDniSocio == null) {
+			txDniSocio = new JTextField();
+			txDniSocio.setText((String) null);
+			txDniSocio.setColumns(10);
+		}
+		return txDniSocio;
+	}
+	private JPanel getPnDniTutor() {
+		if (pnDniTutor == null) {
+			pnDniTutor = new JPanel();
+			pnDniTutor.setBackground(Color.WHITE);
+			pnDniTutor.add(getLbDniTutor());
+			pnDniTutor.add(getTxDniTutor());
+		}
+		return pnDniTutor;
+	}
+	private JLabel getLbDniTutor() {
+		if (lbDniTutor == null) {
+			lbDniTutor = new JLabel("Dni:");
+		}
+		return lbDniTutor;
+	}
+	private JTextField getTxDniTutor() {
+		if (txDniTutor == null) {
+			txDniTutor = new JTextField();
+			txDniTutor.setEnabled(false);
+			txDniTutor.setText((String) null);
+			txDniTutor.setColumns(10);
+		}
+		return txDniTutor;
 	}
 }

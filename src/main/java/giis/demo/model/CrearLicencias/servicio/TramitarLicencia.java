@@ -10,9 +10,7 @@ import giis.demo.model.CrearLicencias.EstadosLicencia;
 import giis.demo.model.CrearLicencias.Licencia;
 import giis.demo.model.CrearLicencias.TiposLicencia;
 import giis.demo.util.Database;
-import java.util.List;
-import java.util.ArrayList;
-import java.util.Date;
+
 
 public class TramitarLicencia {
 	
@@ -24,36 +22,43 @@ public class TramitarLicencia {
 	private final static int ID_SOCIO_CON_LICENCIA_PRUEBAS = 104;
 	@SuppressWarnings("unused")
 	private final static int ID_SOCIO_CON_LICENCIA_MENOR_EDAD_PRUEBAS = 106;
-	@SuppressWarnings("unused")
 	private final static int ID_SOCIO_CON_DOS_LICENCIAS_PRUEBAS = 105;
 	@SuppressWarnings("unused")
 	private final static int ID_SOCIO_CON_TRES_LICENCIAS_PRUEBAS = 101;
 	private final static int ID_DIRECTIVO_PRUEBAS = 100;
 	
 	
+	private final static String SQL_OBTENER_IDS= "select id from socios";
+	
+	
 	private Database db=new Database();
+	private Socio directivo;
 	private Socio socio;
 	private Licencia licenciaSeleccionada;
 	private List<Licencia> licenciasDelSocio = new ArrayList<Licencia>();
 	
 	public TramitarLicencia(Database db) {
 		this.db = db;
-//		db.createDatabase(false);
-//		db.loadDatabase();
 	}
 	
 	public void loggearSocio(boolean esDirectivo) {
 		if(esDirectivo) {
-			cargarSocio(ID_DIRECTIVO_PRUEBAS);
+			cargarDirectivo(ID_DIRECTIVO_PRUEBAS);
+			System.out.println(directivo.toString());
 		}else {
-			cargarSocio(ID_SOCIO_CON_LICENCIA_MENOR_EDAD_PRUEBAS);
+			cargarSocio(ID_SOCIO_CON_DOS_LICENCIAS_PRUEBAS);
+			System.out.println(socio.toString());
 		}
-		System.out.println(socio.toString());
 	}
 	
-	public void crearLicencia(String nombre,String apellido, LocalDate fecha, Generos genero, String direccion, String info, TiposLicencia licencia) {
+	public void crearSocio(String dni, String nombre, String apellidos, String correo, int telf, Generos genero, LocalDate fecha) {
+		socio = new Socio(db,generarId(),dni,nombre, apellidos, correo, telf,null,-1,-1,genero,fecha);
+		socio.insertarSocio();;
+	}
+	
+	public void crearLicencia(String nombre,String apellido,String dni,int telf,String correo, LocalDate fecha, Generos genero, String direccion, String info, TiposLicencia licencia) {
 		licenciaSeleccionada = new Licencia(socio.getId(), db);
-		this.licenciaSeleccionada.crearLicencia( nombre,apellido, fecha, genero, direccion, info, licencia);
+		this.licenciaSeleccionada.crearLicencia(dni, nombre, apellido, correo, telf, fecha, genero, direccion, info, licencia);
 		licenciasDelSocio.add(licenciaSeleccionada);
 	}
 	
@@ -97,6 +102,10 @@ public class TramitarLicencia {
 		cargarLicenciasDelSocio();
 	}
 	
+	private void cargarDirectivo(int id) {
+		directivo = new Socio(db, id);
+	} 
+	
 	public void restaurarSocio(int id) {
 		socio = new Socio(db, id);
 		licenciaSeleccionada = null;
@@ -131,14 +140,22 @@ public class TramitarLicencia {
 		return socio;
 	}
 	
-
-	
-	public void modificarDatosLicencia(String nombre,String apellido, LocalDate fecha, Generos genero, String direccion, String info) {
-		this.licenciaSeleccionada.modificarDatos(nombre, apellido, fecha, genero, direccion, info);
+	public Socio getDirectivo() {
+		return directivo;
 	}
 	
-	public void modificarDatosSocio(String nombre, String apellido, Generos genero, LocalDate fecha) {
-		socio.modificarDatos(nombre,apellido,genero,fecha);
+	public boolean esDirectivo() {
+		return directivo != null;
+	}
+	
+
+	
+	public void modificarDatosLicencia(String dni, String nombre,String apellido, String correo, int telf, LocalDate fecha, Generos genero, String direccion, String info) {
+		this.licenciaSeleccionada.modificarDatos(dni, nombre, apellido, correo, telf, fecha, genero, direccion, info);
+	}
+	
+	public void modificarDatosSocio(String dni, String nombre, String apellido, Generos genero, int telfSocio, String correoSocio, LocalDate fecha) {
+		socio.modificarDatos(nombre,apellido,dni,telfSocio,correoSocio,genero,fecha);
 	}
 	
 	public void guardarDatosModificadosLicencia() {
@@ -235,5 +252,10 @@ public class TramitarLicencia {
 			//menor de edad
 			return false;
 		}
+	}
+	
+	private int generarId() {
+		List<Object[]> result = db.executeQueryArray(SQL_OBTENER_IDS);
+		return ((int) result.get(result.size()-1)[0])+1;
 	}
 }

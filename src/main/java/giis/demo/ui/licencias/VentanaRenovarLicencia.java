@@ -9,6 +9,8 @@ import java.awt.Font;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.Date;
@@ -39,13 +41,19 @@ public class VentanaRenovarLicencia extends JFrame {
 	private static final long serialVersionUID = 1L;
 	
 	private TramitarLicencia tramitarLicencia;
+	private String dniSocio;
 	private String nombreSocio;
 	private String apellidoSocio;
+	private String correoSocio;
+	private int telfSocio;
 	private LocalDate fechaSocio;
 	private Generos generoSocio;
 	
+	private String dniTutor;
 	private String nombreTutor;
 	private String apellidoTutor;
+	private String correoTutor;
+	private int telfTutor;
 	private LocalDate fechaTutor;
 	private Generos generoTutor;
 	
@@ -117,6 +125,24 @@ public class VentanaRenovarLicencia extends JFrame {
 	private JComboBox<Licencia> cbSeleccionarLicencia;
 	private JDateChooser dcFechaNacimientoSocio;
 	private JDateChooser dcFechaNacimientoTutor;
+	private JPanel pnDniSocio;
+	private JLabel lbDniSocio;
+	private JTextField txDniSocio;
+	private JPanel pnTelfSocio;
+	private JLabel lbTelfSocio;
+	private JTextField txTelfSocio;
+	private JPanel pnCorreoSocio;
+	private JLabel lbCorreoSocio;
+	private JTextField txCorreoSocio;
+	private JPanel pnDniTutor;
+	private JLabel lbDniTutor;
+	private JTextField txDniTutor;
+	private JPanel pnTelfTutor;
+	private JLabel lbTelfTutor;
+	private JTextField txTelfTutor;
+	private JPanel pnCorreoTutor;
+	private JLabel lbCorreoTutor;
+	private JTextField txCorreoTutor;
 
 	/**
 	 * Create the frame.
@@ -216,15 +242,29 @@ public class VentanaRenovarLicencia extends JFrame {
 		getTxNombreSocio().setText(tramitarLicencia.getSocio().getNombre());
 		getTxApellidoSocio().setText(tramitarLicencia.getSocio().getApellidos());
 		getCbGeneroSocio().setSelectedItem(tramitarLicencia.getSocio().getGenero());
+		getTxDniSocio().setText(tramitarLicencia.getSocio().getDni());
+		getTxTelfSocio().setText(""+tramitarLicencia.getSocio().getTelefono());
+		getTxCorreoSocio().setText(tramitarLicencia.getSocio().getCorreo());
+		
 		Date fecha = Date.from(tramitarLicencia.getSocio().getFechaNacimiento().atStartOfDay().atZone(ZoneId.systemDefault()).toInstant());
 		getDcFechaNacimientoSocio().setDate(fecha);
 		comprobarEdad();
 		
 		String nombre = tramitarLicencia.getLicenciaSeleccionada().getNombreTutor().equals("noTutor")?"":tramitarLicencia.getLicenciaSeleccionada().getNombreTutor();
 		String apellido = tramitarLicencia.getLicenciaSeleccionada().getApellidosTutor().equals("noTutor")?"":tramitarLicencia.getLicenciaSeleccionada().getApellidosTutor();
+		String correo = tramitarLicencia.getLicenciaSeleccionada().getCorreoTutor().equals("noTutor")?"":tramitarLicencia.getLicenciaSeleccionada().getCorreoTutor();
+		String dni = tramitarLicencia.getLicenciaSeleccionada().getDniTutor().equals("noTutor")?"":tramitarLicencia.getLicenciaSeleccionada().getDniTutor();
+		int telf = tramitarLicencia.getLicenciaSeleccionada().getTelefonoTutor();
+		
 		getTxNombreTutor().setText(nombre);
 		getTxApellidoTutor().setText(apellido);
+		getTxCorreoTutor().setText(correo);
+		getTxDniTutor().setText(dni);
+		if(telf != -1) {
+			getTxTelfTutor().setText(""+telf);
+		}
 		getCbGeneroTutor().setSelectedItem(tramitarLicencia.getLicenciaSeleccionada().getGeneroTutor());
+		
 		LocalDate fechaTutor = tramitarLicencia.getLicenciaSeleccionada().getFechaNacimiento();
 		if(fechaTutor != null) {
 			Date d = Date.from(fechaTutor.atStartOfDay().atZone(ZoneId.systemDefault()).toInstant());
@@ -232,7 +272,6 @@ public class VentanaRenovarLicencia extends JFrame {
 		}
 		getTxDireccionFacturacion().setText(tramitarLicencia.getLicenciaSeleccionada().getDireccionFacturacion());
 		getTxInfoFacturacion().setText(tramitarLicencia.getLicenciaSeleccionada().getInfoFacturacion());
-		
 	}
 	
 	private JButton getBtRenovarLicencia() {
@@ -420,7 +459,9 @@ public class VentanaRenovarLicencia extends JFrame {
 		nombreSocio = getTxNombreSocio().getText();
 		apellidoSocio = getTxApellidoSocio().getText();
 		generoSocio = (Generos) getCbGeneroSocio().getSelectedItem();
-		
+		dniSocio = getTxDniSocio().getText();
+		correoSocio = getTxCorreoSocio().getText();
+		telfSocio = Integer.parseInt(getTxTelfSocio().getText());
 		
 		fechaSocio = getDcFechaNacimientoSocio().getDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
 		int diaSocio = fechaSocio.getDayOfMonth();
@@ -434,14 +475,17 @@ public class VentanaRenovarLicencia extends JFrame {
 			nombreTutor = getTxNombreTutor().getText();
 			apellidoTutor = getTxApellidoTutor().getText();
 			generoTutor = (Generos) getCbGeneroTutor().getSelectedItem();
+			dniTutor = getTxDniTutor().getText();
+			correoTutor = getTxCorreoTutor().getText();
+			telfTutor = Integer.parseInt(getTxTelfTutor().getText());
 			
 			fechaTutor = getDcFechaNacimientoTutor().getDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
 			
-			tramitarLicencia.modificarDatosLicencia(nombreTutor, apellidoTutor, fechaTutor, generoTutor, direccionFacturacion, infoFacturacion);
-			tramitarLicencia.modificarDatosSocio(nombreSocio, apellidoSocio, generoSocio, fechaSocio);
+			tramitarLicencia.modificarDatosLicencia(dniTutor, nombreTutor, apellidoTutor, correoTutor, telfTutor, fechaTutor, generoTutor, direccionFacturacion, infoFacturacion);
+			tramitarLicencia.modificarDatosSocio(dniSocio,nombreSocio, apellidoSocio, generoSocio,telfSocio,correoSocio, fechaSocio);
 		}else {
-			tramitarLicencia.modificarDatosLicencia("noTutor", "noTutor", null, null, direccionFacturacion, infoFacturacion);
-			tramitarLicencia.modificarDatosSocio(nombreSocio, apellidoSocio, generoSocio, fechaSocio);
+			tramitarLicencia.modificarDatosLicencia("noTutor", "noTutor", "noTutor","noTutor",-1, null, null, direccionFacturacion, infoFacturacion);
+			tramitarLicencia.modificarDatosSocio(dniSocio,nombreSocio, apellidoSocio, generoSocio,telfSocio,correoSocio, fechaSocio);
 		}
 	}
 	
@@ -477,10 +521,13 @@ public class VentanaRenovarLicencia extends JFrame {
 			pnDatosSocio.setBackground(Color.WHITE);
 			pnDatosSocio.setLayout(new GridLayout(0, 1, 0, 0));
 			pnDatosSocio.add(getLbDatosSocio());
+			pnDatosSocio.add(getPnDniSocio());
 			pnDatosSocio.add(getPnNombreSocio());
 			pnDatosSocio.add(getPnApellidosSocio());
 			pnDatosSocio.add(getPnGeneroSocio());
 			pnDatosSocio.add(getPnEdadSocio());
+			pnDatosSocio.add(getPnTelfSocio());
+			pnDatosSocio.add(getPnCorreoSocio());
 		}
 		return pnDatosSocio;
 	}
@@ -581,10 +628,13 @@ public class VentanaRenovarLicencia extends JFrame {
 			pnDatosTutor.setBackground(Color.WHITE);
 			pnDatosTutor.setLayout(new GridLayout(0, 1, 0, 0));
 			pnDatosTutor.add(getLbDatosTutor());
+			pnDatosTutor.add(getPnDniTutor());
 			pnDatosTutor.add(getPnNombreTutor());
 			pnDatosTutor.add(getPnApellidosTutor());
 			pnDatosTutor.add(getPnGeneroTutor());
 			pnDatosTutor.add(getPnEdadTutor());
+			pnDatosTutor.add(getPnTelfTutor());
+			pnDatosTutor.add(getPnCorreoTutor());
 		}
 		return pnDatosTutor;
 	}
@@ -612,6 +662,7 @@ public class VentanaRenovarLicencia extends JFrame {
 	private JTextField getTxNombreTutor() {
 		if (txNombreTutor == null) {
 			txNombreTutor = new JTextField();
+			txNombreTutor.setEnabled(false);
 			txNombreTutor.setColumns(10);
 		}
 		return txNombreTutor;
@@ -634,6 +685,7 @@ public class VentanaRenovarLicencia extends JFrame {
 	private JTextField getTxApellidoTutor() {
 		if (txApellidoTutor == null) {
 			txApellidoTutor = new JTextField();
+			txApellidoTutor.setEnabled(false);
 			txApellidoTutor.setColumns(10);
 		}
 		return txApellidoTutor;
@@ -812,6 +864,8 @@ public class VentanaRenovarLicencia extends JFrame {
 	}
 	
 	private void comprobarEdad() {
+		if (getDcFechaNacimientoSocio().getDate() == null)
+			return;
 		LocalDate fechaNacimiento = getDcFechaNacimientoSocio().getDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
 		int diaSocio = fechaNacimiento.getDayOfMonth();
 		int mesSocio = fechaNacimiento.getMonthValue();
@@ -819,23 +873,31 @@ public class VentanaRenovarLicencia extends JFrame {
 		
 		boolean mayorEdad = tramitarLicencia.comprobarMayorEdad(diaSocio, mesSocio, añoSocio);
 		
-		if(mayorEdad) {
-			//mayor de edad
-			getDcFechaNacimientoTutor().setEnabled(false);
-			getCbGeneroTutor().setEnabled(false);
-			getTxApellidoTutor().setEnabled(false);
-			getTxNombreTutor().setEnabled(false);
-		}else {
-			getDcFechaNacimientoTutor().setEnabled(true);
-			getCbGeneroTutor().setEnabled(true);
-			getTxApellidoTutor().setEnabled(true);
-			getTxNombreTutor().setEnabled(true);
-		}
+		// Se pasa el booleano opuesto
+		// para deshabilitar los campos
+		// Si es true, se deshabilitan, si es false, se habilitan
+		enableTutor(!mayorEdad);
+	}
+	
+	private void enableTutor(boolean option) {
+		getDcFechaNacimientoTutor().setEnabled(option);
+		getCbGeneroTutor().setEnabled(option);
+		getTxApellidoTutor().setEnabled(option);
+		getTxNombreTutor().setEnabled(option);
+		getTxTelfTutor().setEnabled(option);
+		getTxCorreoTutor().setEnabled(option);
+		getTxDniTutor().setEnabled(option);
 	}
 	
 	private JDateChooser getDcFechaNacimientoSocio() {
 		if (dcFechaNacimientoSocio == null) {
 			dcFechaNacimientoSocio = new JDateChooser();
+			dcFechaNacimientoSocio.getDateEditor().addPropertyChangeListener(new PropertyChangeListener() {
+				@Override
+				public void propertyChange(PropertyChangeEvent evt) {
+					comprobarEdad();
+				}
+			});
 			dcFechaNacimientoSocio.setDateFormatString("dd-MM-yyyy");
 		}
 		return dcFechaNacimientoSocio;
@@ -847,5 +909,144 @@ public class VentanaRenovarLicencia extends JFrame {
 			dcFechaNacimientoTutor.setDateFormatString("dd-MM-yyyy");
 		}
 		return dcFechaNacimientoTutor;
+	}
+	private JPanel getPnDniSocio() {
+		if (pnDniSocio == null) {
+			pnDniSocio = new JPanel();
+			pnDniSocio.setBackground(Color.WHITE);
+			pnDniSocio.add(getLbDniSocio());
+			pnDniSocio.add(getTxDniSocio());
+		}
+		return pnDniSocio;
+	}
+	private JLabel getLbDniSocio() {
+		if (lbDniSocio == null) {
+			lbDniSocio = new JLabel("Dni:");
+		}
+		return lbDniSocio;
+	}
+	private JTextField getTxDniSocio() {
+		if (txDniSocio == null) {
+			txDniSocio = new JTextField();
+			txDniSocio.setText((String) null);
+			txDniSocio.setColumns(10);
+		}
+		return txDniSocio;
+	}
+	private JPanel getPnTelfSocio() {
+		if (pnTelfSocio == null) {
+			pnTelfSocio = new JPanel();
+			pnTelfSocio.setBackground(Color.WHITE);
+			pnTelfSocio.add(getLbTelfSocio());
+			pnTelfSocio.add(getTxTelfSocio());
+		}
+		return pnTelfSocio;
+	}
+	private JLabel getLbTelfSocio() {
+		if (lbTelfSocio == null) {
+			lbTelfSocio = new JLabel("Telefono:");
+		}
+		return lbTelfSocio;
+	}
+	private JTextField getTxTelfSocio() {
+		if (txTelfSocio == null) {
+			txTelfSocio = new JTextField();
+			txTelfSocio.setText("0");
+			txTelfSocio.setColumns(10);
+		}
+		return txTelfSocio;
+	}
+	private JPanel getPnCorreoSocio() {
+		if (pnCorreoSocio == null) {
+			pnCorreoSocio = new JPanel();
+			pnCorreoSocio.setBackground(Color.WHITE);
+			pnCorreoSocio.add(getLbCorreoSocio());
+			pnCorreoSocio.add(getTxCorreoSocio());
+		}
+		return pnCorreoSocio;
+	}
+	private JLabel getLbCorreoSocio() {
+		if (lbCorreoSocio == null) {
+			lbCorreoSocio = new JLabel("Correo:");
+		}
+		return lbCorreoSocio;
+	}
+	private JTextField getTxCorreoSocio() {
+		if (txCorreoSocio == null) {
+			txCorreoSocio = new JTextField();
+			txCorreoSocio.setText((String) null);
+			txCorreoSocio.setColumns(10);
+		}
+		return txCorreoSocio;
+	}
+	private JPanel getPnDniTutor() {
+		if (pnDniTutor == null) {
+			pnDniTutor = new JPanel();
+			pnDniTutor.setBackground(Color.WHITE);
+			pnDniTutor.add(getLbDniTutor());
+			pnDniTutor.add(getTxDniTutor());
+		}
+		return pnDniTutor;
+	}
+	private JLabel getLbDniTutor() {
+		if (lbDniTutor == null) {
+			lbDniTutor = new JLabel("Dni:");
+		}
+		return lbDniTutor;
+	}
+	private JTextField getTxDniTutor() {
+		if (txDniTutor == null) {
+			txDniTutor = new JTextField();
+			txDniTutor.setText((String) null);
+			txDniTutor.setEnabled(false);
+			txDniTutor.setColumns(10);
+		}
+		return txDniTutor;
+	}
+	private JPanel getPnTelfTutor() {
+		if (pnTelfTutor == null) {
+			pnTelfTutor = new JPanel();
+			pnTelfTutor.setBackground(Color.WHITE);
+			pnTelfTutor.add(getLbTelfTutor());
+			pnTelfTutor.add(getTxTelfTutor());
+		}
+		return pnTelfTutor;
+	}
+	private JLabel getLbTelfTutor() {
+		if (lbTelfTutor == null) {
+			lbTelfTutor = new JLabel("Telefono:");
+		}
+		return lbTelfTutor;
+	}
+	private JTextField getTxTelfTutor() {
+		if (txTelfTutor == null) {
+			txTelfTutor = new JTextField();
+			txTelfTutor.setEnabled(false);
+			txTelfTutor.setColumns(10);
+		}
+		return txTelfTutor;
+	}
+	private JPanel getPnCorreoTutor() {
+		if (pnCorreoTutor == null) {
+			pnCorreoTutor = new JPanel();
+			pnCorreoTutor.setBackground(Color.WHITE);
+			pnCorreoTutor.add(getLbCorreoTutor());
+			pnCorreoTutor.add(getTxCorreoTutor());
+		}
+		return pnCorreoTutor;
+	}
+	private JLabel getLbCorreoTutor() {
+		if (lbCorreoTutor == null) {
+			lbCorreoTutor = new JLabel("Correo:");
+		}
+		return lbCorreoTutor;
+	}
+	private JTextField getTxCorreoTutor() {
+		if (txCorreoTutor == null) {
+			txCorreoTutor = new JTextField();
+			txCorreoTutor.setEnabled(false);
+			txCorreoTutor.setColumns(10);
+		}
+		return txCorreoTutor;
 	}
 }
