@@ -95,7 +95,7 @@ public class RecibosController {
 				if(!model.getListaCuotasPendientes(socio.getId()).isEmpty()) {
 					int amount = model.getAmount(socio.getId());
 					
-					model.generateRecibo(socio.getIban(), amount, value_date, charge_date, "Domiciliado", "Pendiente");
+					model.generateRecibo(socio.getIban(), model.getLastNumber()+1, amount, value_date, charge_date, "Domiciliado", "Pendiente");
 						
 					model.updateCuotas(socio.getId());
 						
