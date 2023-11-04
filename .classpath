@@ -38,5 +38,6 @@
 		</attributes>
 	</classpathentry>
 	<classpathentry kind="lib" path="jcalendar-1.4.jar"/>
+	<classpathentry kind="lib" path="C:/Users/gabig/Desktop/3-curso-1cuatrimestre/IPS/Practicas/Sprint2/jfreechart-1.0.19/jfreechart-1.0.19/jfreechart-1.0.19-demo.jar"/>
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>
