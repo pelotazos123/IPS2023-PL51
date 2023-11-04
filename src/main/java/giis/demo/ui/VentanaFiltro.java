@@ -7,45 +7,49 @@ import javax.swing.JPanel;
 import java.awt.BorderLayout;
 
 import javax.swing.JLabel;
-import javax.swing.JRadioButton;
+import javax.swing.JOptionPane;
 import javax.swing.JCheckBox;
 import java.awt.GridLayout;
 
-import javax.swing.AbstractButton;
-import javax.swing.ButtonGroup;
-
-import giis.demo.business.SociosController;
-
 import javax.swing.JScrollPane;
+
 import javax.swing.JButton;
 import java.awt.event.ActionListener;
-import java.util.Enumeration;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.awt.event.ActionEvent;
+import javax.swing.JTextField;
+import com.toedter.calendar.JDateChooser;
+import java.awt.Font;
+import javax.swing.border.LineBorder;
 
 public class VentanaFiltro extends JDialog {
 
 	private static final long serialVersionUID = 1L;
 	private JPanel pnFiltro;
 	private JPanel pnOrden;
-	private JLabel lbOrden;
-	private JPanel pnBtnOrden;
-	private JRadioButton rdbtnAZ;
-	private JRadioButton rdbtZA;
 	private JPanel pnBtnFiltro;
-	private JLabel lblFiltro;
 	private JCheckBox chkHombres;
-	private JCheckBox chkCuotaAdulto;
-	private JCheckBox chkCuotaJoven;
-	private JCheckBox chkCuotaJubilado;
-	private final ButtonGroup btnGroupOrden = new ButtonGroup();
-	private JScrollPane scrlOrden;
 	private JScrollPane scrlFiltro;
 	private JButton btnAplicar;
 	private VentanaListaSocios vLS;
-	private JRadioButton rdbtIdAsc;
-	private JRadioButton rdbtIdDesc;
 	private JCheckBox chkMujeres;
 	private JPanel pnButtonsSouth;
+	private JCheckBox chkDirectivo;
+	private JPanel pnCenter;
+	private JPanel pnTxtFields;
+	private JLabel lblFiltrar;
+	private JTextField txtNombre;
+	private JTextField txtApellido;
+	private JLabel lblNombre;
+	private JLabel lblApellido;
+	private JDateChooser dateTo;
+	private JDateChooser dateFrom;
+	private JLabel lblFromDate;
+	private JLabel lblToDate;
+	private JCheckBox chkSub18;
+	private JCheckBox chkVeterano;
+	private JCheckBox chkSenior;
 
 	/**
 	 * Create the dialog.
@@ -54,19 +58,20 @@ public class VentanaFiltro extends JDialog {
 		this.vLS = vLS;
 		setResizable(false);
 		getContentPane().setBackground(Color.WHITE);
-		getContentPane().add(getPnFiltro(), BorderLayout.NORTH);
 		getContentPane().add(getPnOrden(), BorderLayout.SOUTH);
-		setBounds(100, 100, 310, 352);
+		getContentPane().add(getPnCenter(), BorderLayout.CENTER);
+		getContentPane().add(getLblFiltrar(), BorderLayout.NORTH);
+		setBounds(100, 100, 535, 293);
 
 	}
 
 	private JPanel getPnFiltro() {
 		if (pnFiltro == null) {
 			pnFiltro = new JPanel();
+			pnFiltro.setBorder(new LineBorder(new Color(0, 0, 0)));
 			pnFiltro.setBackground(Color.WHITE);
 			pnFiltro.setLayout(new BorderLayout(0, 0));
 			pnFiltro.add(getScrlFiltro(), BorderLayout.SOUTH);
-			pnFiltro.add(getLblFiltro(), BorderLayout.NORTH);
 			pnFiltro.add(getScrlFiltro(), BorderLayout.CENTER);
 		}
 		return pnFiltro;
@@ -77,51 +82,9 @@ public class VentanaFiltro extends JDialog {
 			pnOrden = new JPanel();
 			pnOrden.setBackground(Color.WHITE);
 			pnOrden.setLayout(new BorderLayout(0, 0));
-			pnOrden.add(getLbOrden(), BorderLayout.NORTH);
-			pnOrden.add(getScrlOrden(), BorderLayout.SOUTH);
-			pnOrden.add(getScrlOrden(), BorderLayout.CENTER);
 			pnOrden.add(getPnButtonsSouth(), BorderLayout.SOUTH);
 		}
 		return pnOrden;
-	}
-	
-	private JLabel getLbOrden() {
-		if (lbOrden == null) {
-			lbOrden = new JLabel("Ordenar:");
-		}
-		return lbOrden;
-	}
-	
-	private JPanel getPnBtnOrden() {
-		if (pnBtnOrden == null) {
-			pnBtnOrden = new JPanel();
-			pnBtnOrden.setBorder(null);
-			pnBtnOrden.setBackground(Color.WHITE);
-			pnBtnOrden.setLayout(new GridLayout(5, 1, 0, 0));
-			pnBtnOrden.add(getRdbtnAZ());
-			pnBtnOrden.add(getRdbtZA());
-			pnBtnOrden.add(getRdbtIdAsc());
-			pnBtnOrden.add(getRdbtIdDesc());
-		}
-		return pnBtnOrden;
-	}
-	
-	private JRadioButton getRdbtnAZ() {
-		if (rdbtnAZ == null) {
-			rdbtnAZ = new JRadioButton("A-Z");
-			btnGroupOrden.add(rdbtnAZ);
-			rdbtnAZ.setBackground(Color.WHITE);
-		}
-		return rdbtnAZ;
-	}
-	
-	private JRadioButton getRdbtZA() {
-		if (rdbtZA == null) {
-			rdbtZA = new JRadioButton("Z-A");
-			btnGroupOrden.add(rdbtZA);
-			rdbtZA.setBackground(Color.WHITE);
-		}
-		return rdbtZA;
 	}
 	
 	private JPanel getPnBtnFiltro() {
@@ -129,82 +92,39 @@ public class VentanaFiltro extends JDialog {
 			pnBtnFiltro = new JPanel();
 			pnBtnFiltro.setBorder(null);
 			pnBtnFiltro.setBackground(Color.WHITE);
-			pnBtnFiltro.setLayout(new GridLayout(5, 1, 0, 0));
-			pnBtnFiltro.add(getChkCuotaJoven());
-			pnBtnFiltro.add(getChkCuotaAdulto());
-			pnBtnFiltro.add(getChkCuotaJubilado());
+			pnBtnFiltro.setLayout(new GridLayout(3, 1, 0, 0));
 			pnBtnFiltro.add(getChkHombres());
+			pnBtnFiltro.add(getChkSub18());
 			pnBtnFiltro.add(getChkMujeres());
+			pnBtnFiltro.add(getChkSenior());
+			pnBtnFiltro.add(getChkDirectivo());
+			pnBtnFiltro.add(getChkVeterano());
 		}
 		return pnBtnFiltro;
-	}
-	
-	private JLabel getLblFiltro() {
-		if (lblFiltro == null) {
-			lblFiltro = new JLabel("Filtrar: ");
-		}
-		return lblFiltro;
 	}
 	
 	private JCheckBox getChkHombres() {
 		if (chkHombres == null) {
 			chkHombres = new JCheckBox("Hombres");
+			chkHombres.setFont(new Font("Tahoma", Font.PLAIN, 13));
 			chkHombres.setBackground(Color.WHITE);
 		}
 		return chkHombres;
 	}
 	
-	private JRadioButton getRdbtIdDesc() {
-		if (rdbtIdDesc == null) {
-			rdbtIdDesc = new JRadioButton("ID ↓");
-			rdbtIdDesc.setSelected(true);
-			btnGroupOrden.add(rdbtIdDesc);
-		}
-		return rdbtIdDesc;
-	}
-	
 	private JCheckBox getChkMujeres() {
 		if (chkMujeres == null) {
 			chkMujeres = new JCheckBox("Mujeres");
+			chkMujeres.setFont(new Font("Tahoma", Font.PLAIN, 13));
+			chkMujeres.setBackground(Color.WHITE);
 		}
 		return chkMujeres;
-	}
-	
-	private JCheckBox getChkCuotaAdulto() {
-		if (chkCuotaAdulto == null) {
-			chkCuotaAdulto = new JCheckBox("Cuota Adulto");
-			chkCuotaAdulto.setBackground(Color.WHITE);
-		}
-		return chkCuotaAdulto;
-	}
-	
-	private JCheckBox getChkCuotaJoven() {
-		if (chkCuotaJoven == null) {
-			chkCuotaJoven = new JCheckBox("Cuota Joven");
-			chkCuotaJoven.setBackground(Color.WHITE);
-		}
-		return chkCuotaJoven;
-	}
-	
-	private JCheckBox getChkCuotaJubilado() {
-		if (chkCuotaJubilado == null) {
-			chkCuotaJubilado = new JCheckBox("Cuota Jubilado");
-			chkCuotaJubilado.setBackground(Color.WHITE);
-		}
-		return chkCuotaJubilado;
-	}
-	
-	private JScrollPane getScrlOrden() {
-		if (scrlOrden == null) {
-			scrlOrden = new JScrollPane();
-			scrlOrden.setViewportView(getPnBtnOrden());
-		}
-		return scrlOrden;
 	}
 	
 	private JScrollPane getScrlFiltro() {
 		if (scrlFiltro == null) {
 			scrlFiltro = new JScrollPane();
+			scrlFiltro.setBorder(null);
 			scrlFiltro.setViewportView(getPnBtnFiltro());
 		}
 		return scrlFiltro;
@@ -221,80 +141,110 @@ public class VentanaFiltro extends JDialog {
 		}
 		return btnAplicar;
 	}
-	
-	private JRadioButton getRdbtIdAsc() {
-		if (rdbtIdAsc == null) {
-			rdbtIdAsc = new JRadioButton("ID ↑");
-			rdbtIdAsc.setSelected(true);
-			btnGroupOrden.add(rdbtIdAsc);
-		}
-		return rdbtIdAsc;
-	}
 
 	private void aplicarFiltros() {
-		String filterCuota = checkCuota();
-		String genero = checkGenre();
-		String order = checkOrden();
-		String filter = "";
-		filter = filterQueryBuilder(SociosController.WHERE, SociosController.AND, filterCuota, genero);
-		vLS.actualizar(filter, order);
-		dispose();
-	}
-
-	private String checkCuota() {
-		String type = "";
-		if (getChkCuotaJoven().isSelected()) {
-			type = " cuota_type='CUOTA_JOVEN' ";
-		}
-		if (getChkCuotaAdulto().isSelected()) {
-			type += type.isEmpty() ? " cuota_type='CUOTA_ADULTO' " : " or cuota_type='CUOTA_ADULTO' ";
-		}
-		if (getChkCuotaJubilado().isSelected()) {
-			type += type.isEmpty() ? " cuota_type='CUOTA_JUBILADO' " : " or cuota_type='CUOTA_JUBILADO' ";
+		String name = filterName();
+		String surname = filterSurname();
+		
+		String filterMale = checkMale();
+		String filterFemale = checkFemale();
+		
+		String filterDir = checkDirective();
+		
+		String filterDateFrom = checkDateFrom();
+		String filterDateTo = checkDateTo();
+		
+		String filterSub18 = checkSub18();
+		String filterSenior = checkSenior();
+		String filterVeteran = checkVeterano();
+		
+		String filter = buildFilter(filterMale, filterFemale, filterDir, name, surname, filterDateFrom, filterDateTo,
+					filterSub18, filterVeteran, filterSenior);	
+		
+		if (dateFrom.getDate() != null && dateTo.getDate() != null && dateFrom.getDate().compareTo(dateTo.getDate()) > 0) {
+			JOptionPane.showMessageDialog(null, "La fecha destino no puede ser menor que la fecha origen", "ERROR", JOptionPane.ERROR_MESSAGE);
+		} else {
+			vLS.actualizar(filter);
+			dispose();			
 		}
 		
-		return type;
-	}
-	
-	private String checkGenre() {
-		String genero = "";
-		if (getChkMujeres().isSelected()) {
-			genero = " gender='MUJER'";
-		} 
-		
-		if (getChkHombres().isSelected()) {
-			genero += genero.isBlank() ? " gender='HOMBRE' " : " or gender='HOMBRE'";
-		} 
-		return genero;
 	}
 
-	private String filterQueryBuilder(String where, String and, String filterCuota, String genero) {
+	private String buildFilter(String male, String female, String filterDir, String name, 
+			String surname, String filterDateFrom, String filterDateTo, String filterSub18, String filterSenior, String filterVeteran) {
 		String filter = "";
-		if (!filterCuota.isEmpty() && !genero.isEmpty()) {
-			filter = where + filterCuota + and + genero;
-		} else if (filterCuota.isEmpty() && !genero.isEmpty()){
-			filter = where + genero;
-		} else if (!filterCuota.isEmpty() && genero.isEmpty()){
-			filter = where + filterCuota;
+		
+		if (!getChkHombres().isSelected() && !getChkMujeres().isSelected()) {
+			male="'HOMBRE'";
+			female="'MUJER'";
 		}
+		
+		if (!getChkSub18().isSelected() && !getChkSenior().isSelected() && !getChkVeterano().isSelected()) {
+			filterSub18="cuota_type";
+			filterSenior="cuota_type";
+			filterVeteran="cuota_type";
+		}
+		
+		filter = String.format(" name=%s AND surname=%s AND (gender=%s OR gender=%s) AND directive=%s AND (cuota_type=%s OR cuota_type=%s OR cuota_type=%s) "
+				+ "AND date(birth_date) BETWEEN date(%s) AND date(%s)",	
+					name, surname, male, female, filterDir, filterSub18, filterSenior, filterVeteran, filterDateFrom, filterDateTo);
 		return filter;
 	}
 
-	private String checkOrden() {
-		String res = "";
-		for (Enumeration<AbstractButton> buttons = btnGroupOrden.getElements(); buttons.hasMoreElements();) {
-			AbstractButton button = buttons.nextElement();
-
-            if (button.isSelected()) {
-                res = button.getText();
-            }			
-		}
-		
-		res = SociosController.checkOrden(res);
-		
-		return res;
+	private String filterName() {
+		String name = getTxtNombre().getText();
+		return !name.isEmpty() ? "'"+name+"'" : "name";
 	}
 	
+	private String filterSurname() {
+		String surname = getTxtApellido().getText();
+		return !surname.isEmpty() ? "'"+surname+"'" : "surname";
+	}
+	
+	private String checkDirective() {
+		return getChkDirectivo().isSelected() ? "true" : "directive";
+	}
+	
+	private String checkMale() {
+		return getChkHombres().isSelected() ? "'HOMBRE'" : "''";
+	}
+
+	private String checkFemale() {
+		return getChkMujeres().isSelected() ? "'MUJER'" : "''";
+	}
+	
+	private String checkSub18() {
+		return getChkSub18().isSelected() ? "'SUB18'" : "''";
+	}
+	
+	private String checkSenior() {
+		return getChkSenior().isSelected() ? "'SENIOR'" : "''";
+	}
+	
+	private String checkVeterano() {
+		return getChkVeterano().isSelected() ? "'VETERANO'" : "''";
+	}
+	
+	private String checkDateFrom() {
+		if (getDateFrom().getDate() == null)
+			return "birth_date";
+		String pattern = "yyyy-MM-dd";
+		SimpleDateFormat formatDate = new SimpleDateFormat(pattern);
+		Date dateFrom = getDateFrom().getDate();
+		String dateFormatted = "'"+formatDate.format(dateFrom)+"'";
+		return dateFormatted;
+	}
+	
+	private String checkDateTo() {
+		if (getDateTo().getDate() == null)
+			return "birth_date";
+		String pattern = "yyyy-MM-dd";
+		SimpleDateFormat formatDate = new SimpleDateFormat(pattern);
+		Date dateTo = getDateTo().getDate();
+		String dateFormatted = "'"+formatDate.format(dateTo)+"'";
+		return dateFormatted;
+	}
+
 	private JPanel getPnButtonsSouth() {
 		if (pnButtonsSouth == null) {
 			pnButtonsSouth = new JPanel();
@@ -305,4 +255,137 @@ public class VentanaFiltro extends JDialog {
 	}
 
 
+	private JCheckBox getChkDirectivo() {
+		if (chkDirectivo == null) {
+			chkDirectivo = new JCheckBox("Directivos");
+			chkDirectivo.setFont(new Font("Tahoma", Font.PLAIN, 13));
+			chkDirectivo.setBackground(Color.WHITE);
+		}
+		return chkDirectivo;
+	}
+	private JPanel getPnCenter() {
+		if (pnCenter == null) {
+			pnCenter = new JPanel();
+			pnCenter.setLayout(new GridLayout(0, 2, 0, 0));
+			pnCenter.add(getPnFiltro());
+			pnCenter.add(getPnTxtFields());
+		}
+		return pnCenter;
+	}
+	private JPanel getPnTxtFields() {
+		if (pnTxtFields == null) {
+			pnTxtFields = new JPanel();
+			pnTxtFields.setBorder(new LineBorder(new Color(0, 0, 0)));
+			pnTxtFields.setBackground(Color.WHITE);
+			pnTxtFields.setLayout(null);
+			pnTxtFields.add(getTxtNombre());
+			pnTxtFields.add(getTxtApellido());
+			pnTxtFields.add(getLblNombre());
+			pnTxtFields.add(getDateFrom());
+			pnTxtFields.add(getDateTo());
+			pnTxtFields.add(getLblApellido());
+			pnTxtFields.add(getLblFromDate());
+			pnTxtFields.add(getLblToDate());
+		}
+		return pnTxtFields;
+	}
+	private JLabel getLblFiltrar() {
+		if (lblFiltrar == null) {
+			lblFiltrar = new JLabel("    Filtrar:");
+			lblFiltrar.setFont(new Font("Tahoma", Font.BOLD, 15));
+		}
+		return lblFiltrar;
+	}
+	private JTextField getTxtNombre() {
+		if (txtNombre == null) {
+			txtNombre = new JTextField();
+			txtNombre.setBounds(110, 26, 115, 20);
+			txtNombre.setColumns(10);
+		}
+		return txtNombre;
+	}
+	private JTextField getTxtApellido() {
+		if (txtApellido == null) {
+			txtApellido = new JTextField();
+			txtApellido.setBounds(110, 63, 115, 20);
+			txtApellido.setColumns(10);
+		}
+		return txtApellido;
+	}
+	private JLabel getLblNombre() {
+		if (lblNombre == null) {
+			lblNombre = new JLabel("Nombre: ");
+			lblNombre.setFont(new Font("Tahoma", Font.PLAIN, 13));
+			lblNombre.setBounds(24, 28, 76, 14);
+			lblNombre.setLabelFor(getTxtNombre());
+		}
+		return lblNombre;
+	}
+	private JLabel getLblApellido() {
+		if (lblApellido == null) {
+			lblApellido = new JLabel("Apellidos: ");
+			lblApellido.setFont(new Font("Tahoma", Font.PLAIN, 13));
+			lblApellido.setBounds(24, 65, 76, 14);
+			lblApellido.setLabelFor(getTxtApellido());
+		}
+		return lblApellido;
+	}
+	private JDateChooser getDateTo() {
+		if (dateTo == null) {
+			dateTo = new JDateChooser();
+			dateTo.setDateFormatString("yyyy-MM-dd");
+			dateTo.setBounds(110, 165, 115, 20);
+		}
+		return dateTo;
+	}
+	private JDateChooser getDateFrom() {
+		if (dateFrom == null) {
+			dateFrom = new JDateChooser();
+			dateFrom.setDateFormatString("yyyy-MM-dd");
+			dateFrom.setBounds(110, 128, 115, 20);
+		}
+		return dateFrom;
+	}
+	private JLabel getLblFromDate() {
+		if (lblFromDate == null) {
+			lblFromDate = new JLabel("Desde: ");
+			lblFromDate.setFont(new Font("Tahoma", Font.PLAIN, 13));
+			lblFromDate.setBounds(24, 128, 44, 14);
+			lblFromDate.setLabelFor(getDateFrom());
+		}
+		return lblFromDate;
+	}
+	private JLabel getLblToDate() {
+		if (lblToDate == null) {
+			lblToDate = new JLabel("Hasta: ");
+			lblToDate.setFont(new Font("Tahoma", Font.PLAIN, 13));
+			lblToDate.setBounds(24, 171, 44, 14);
+			lblToDate.setLabelFor(getDateTo());
+		}
+		return lblToDate;
+	}
+	private JCheckBox getChkSub18() {
+		if (chkSub18 == null) {
+			chkSub18 = new JCheckBox("Sub18");
+			chkSub18.setFont(new Font("Tahoma", Font.PLAIN, 13));
+			chkSub18.setBackground(Color.WHITE);
+		}
+		return chkSub18;
+	}
+	private JCheckBox getChkVeterano() {
+		if (chkVeterano == null) {
+			chkVeterano = new JCheckBox("Veterano");
+			chkVeterano.setFont(new Font("Tahoma", Font.PLAIN, 13));
+			chkVeterano.setBackground(Color.WHITE);
+		}
+		return chkVeterano;
+	}
+	private JCheckBox getChkSenior() {
+		if (chkSenior == null) {
+			chkSenior = new JCheckBox("Senior");
+			chkSenior.setFont(new Font("Tahoma", Font.PLAIN, 13));
+			chkSenior.setBackground(Color.WHITE);
+		}
+		return chkSenior;
+	}
 }

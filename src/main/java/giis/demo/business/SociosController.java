@@ -1,100 +1,116 @@
 package giis.demo.business;
 
-import java.util.ArrayList;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.util.List;
 
-import giis.demo.model.Generos;
-import giis.demo.model.Socio;
+import javax.swing.JOptionPane;
+import javax.swing.JTable;
+import javax.swing.event.TableModelEvent;
+import javax.swing.event.TableModelListener;
+import javax.swing.table.AbstractTableModel;
+import javax.swing.table.TableModel;
+
+import giis.demo.business.entities.SocioEntity;
 import giis.demo.util.Database;
+import giis.demo.util.SwingUtil;
 
 public abstract class SociosController {
 	
-	private final static String SQL_CARGAR_TODOS_SOCIOS = "select id, name, surname, cuota_type, gender, age from socios ";
+	private final static String SQL_CARGAR_TODOS_SOCIOS = "SELECT id, dni, name, surname, email, telf, cuota_type, iban, gender, birth_date, directive FROM socios ";
+	private final static String WHERE = "WHERE";
 	
-	public static final String WHERE = "WHERE";
-	public static final String AND = "AND";
-	public static final String OR = "OR";
+	private static String selectedValue = "";
 	
-	public static List<Socio> cargarSocios(Database db, String filter, String order) {
+	private static String[] columns;
+	
+	public static TableModel setTableModel(Database db, String filter, JTable tabla) {
+		TableModel model = SwingUtil.getTableModelFromPojos(getSociosForTabla(db, filter), 
+				new String[] {"id", "dni", "name", "surname", "email", "telf", "cuota_type", "iban", "gender", "birth_date", "directive"});
 		
-		String query = "";
+		columns = new String[model.getColumnCount()+1];
+		columns[2] = "UPDATE socios SET name=? WHERE id=?";
+		columns[3] = "UPDATE socios SET surname=? WHERE id=?";
+		columns[4] = "UPDATE socios SET email=? WHERE id=?";
+		columns[5] = "UPDATE socios SET telf=? WHERE id=?";
+		columns[6] = "UPDATE socios SET cuota_type=? WHERE id=?";
+		columns[7] = "UPDATE socios SET iban=? WHERE id=?";
+		columns[8] = "UPDATE socios SET gender=? WHERE id=?";
+		columns[9] = "UPDATE socios SET birth_date=? WHERE id=?";
+		columns[10] = "UPDATE socios SET directive=? WHERE id=?";
 		
-		query = buildFinalQuery(filter, order);
+		tabla.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				try {
+					if (tabla.getSelectedColumn() != 9 && tabla.getSelectedColumn() != 10) {
+						selectedValue = String.valueOf(tabla.getModel().getValueAt(tabla.getSelectedRow(), tabla.getSelectedColumn()));
+						System.out.println("Fila: " + tabla.getSelectedRow() + "Columna: " + tabla.getSelectedColumn());					
+					}
+				} catch (ArrayIndexOutOfBoundsException e1) {
+					System.err.println("Click detectado dentro de la tabla pero fuera de una fila válida.");
+				}
+			}
+		});
 		
-		List<Object[]> res = db.executeQueryArray(query);
-		List<Socio> socios = new ArrayList<>();
-		
-		int id = 0;
-		String nombre = "";
-		String apellidos = "";
-		String cuota = "";
-		Generos genero;
-		int edad = 0;
-		
-		for (Object[] objects : res) {
-			id = (int) objects[0];
-			nombre = (String)objects[1];
-			apellidos = (String)objects[2];
-			cuota = (String)objects[3];
-			genero = getGenre((String)objects[4]);
-			edad = (int)objects[5];
-				
-			socios.add(new Socio(id, nombre, apellidos, cuota, genero, edad));
-		}
-				
-		return socios;
-		
+		model.addTableModelListener(new TableModelListener(){
+			@Override
+            public void tableChanged(TableModelEvent e) {
+            	System.out.println(e.getColumn());
+                actualizaSocio(e, db, tabla);
+            }
+		});
+		return model;
 	}
+	
+	private static void actualizaSocio(TableModelEvent e, Database db, JTable tabla) {
+		if (e.getType() == TableModelEvent.UPDATE) {
+			AbstractTableModel modelo = ((AbstractTableModel) e.getSource());
+	        int fila = e.getFirstRow();
+	        int columna = e.getColumn();
 
-	private static String buildFinalQuery(String filter, String order) {
+	        String dato=String.valueOf(modelo.getValueAt(fila,columna));	
+	        String id_user = String.valueOf(modelo.getValueAt(fila, 0));
+	        System.out.println(dato + "??");
+	        
+	        String update = columns[columna];
+	        
+	        if (columna == 10) {
+	        	update = "UPDATE socios SET directive="+dato+" WHERE id=?";
+	        	System.out.println(update);
+	        	db.executeUpdate(update, id_user);
+	        	
+	        } else if (!dato.isEmpty()) {
+	        	db.executeUpdate(update, dato, id_user);
+	        	if (selectedValue != dato)
+	        		JOptionPane.showMessageDialog(null, "Campo actualizado correctamente.", "INFO", JOptionPane.INFORMATION_MESSAGE);
+	        	System.out.println(update);
+	        } else {
+	        	if (columna != 9) {
+	        		modelo.setValueAt(selectedValue, fila, columna);
+	        		JOptionPane.showMessageDialog(null, "No puedes dejar el campo vacío.", "ERROR", JOptionPane.ERROR_MESSAGE);	        		
+	        		return;
+	        	}	        	
+	        }
+		}	
+	}
+	
+	private static List<SocioEntity> getSociosForTabla(Database db, String filter){
+		return db.executeQueryPojo(SocioEntity.class, buildQuery(filter));
+	}
+  
+	private static String buildQuery(String filter) {
 		String query;
-
-		if (!filter.isEmpty() && !order.isEmpty()) {
-			query = SQL_CARGAR_TODOS_SOCIOS + filter + order;
-		} else if (!filter.isEmpty() && order.isEmpty()) {
-			query = SQL_CARGAR_TODOS_SOCIOS + filter;
-		} else if (filter.isEmpty() && !order.isEmpty()) {
-			query = SQL_CARGAR_TODOS_SOCIOS + order;
+		
+		if (!filter.isEmpty()) {
+			query = SQL_CARGAR_TODOS_SOCIOS + WHERE + filter;
 		} else {
 			query = SQL_CARGAR_TODOS_SOCIOS;
 		}
 		
+		System.out.println(query);
+		
 		return query;
 	}
 	
-	public static String checkOrden(String opt) {
-		switch (opt) {
-			case "A-Z":
-				opt = "ORDER BY name ASC";
-				break;
-			case "Z-A":
-				opt = "ORDER BY name DESC";
-				break;
-			case "ID ↑":
-				opt = "ORDER BY id ASC";
-				break;
-			case "ID ↓":
-				opt = "ORDER BY id DESC";
-				break;
-			case "":
-				opt = "";
-				break;
-			default:
-				break;
-		}
-		return opt;
-	}
-	
-	private static Generos getGenre(String genero) {
-		Generos generoF;
-		if(genero.equals("HOMBRE")) {
-			generoF = Generos.HOMBRE;
-		}else if(genero.equals("MUJER")) {
-			generoF = Generos.MUJER;
-		}else {
-			generoF = Generos.OTRO;
-		}
-		return generoF;
-	}
-
 }
