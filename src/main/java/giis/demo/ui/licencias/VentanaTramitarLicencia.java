@@ -14,6 +14,7 @@ import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.Date;
 
+import javax.mail.MessagingException;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
@@ -32,6 +33,7 @@ import com.toedter.calendar.JDateChooser;
 import giis.demo.model.Generos;
 import giis.demo.model.CrearLicencias.TiposLicencia;
 import giis.demo.model.CrearLicencias.servicio.TramitarLicencia;
+import giis.demo.model.loggin.GestionarLoggin;
 import giis.demo.util.FileUtil;
 
 public class VentanaTramitarLicencia extends JFrame {
@@ -43,6 +45,7 @@ public class VentanaTramitarLicencia extends JFrame {
 	public final static String FICHERO_POLITICA_PROTECCION_DATOS = "src/main/resources/PoliticaDeProteccionDeDatos.txt";
 	
 	private TramitarLicencia tramitarLicencia;
+	private GestionarLoggin loggin;
 	private boolean esDirectivo;
 	
 	
@@ -125,10 +128,11 @@ public class VentanaTramitarLicencia extends JFrame {
 	/**
 	 * Create the frame.
 	 */
-	public VentanaTramitarLicencia(TramitarLicencia tramitarLicencia) {
+	public VentanaTramitarLicencia(TramitarLicencia tramitarLicencia, GestionarLoggin loggin) {
 		setMinimumSize(new Dimension(1050, 477));
 		setBackground(Color.WHITE);
 		this.tramitarLicencia = tramitarLicencia;
+		this.loggin = loggin;
 		setTitle("Club Deportivo");
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		setBounds(100, 100, 870, 618);
@@ -590,6 +594,14 @@ public class VentanaTramitarLicencia extends JFrame {
 			
 			if(esDirectivo) {
 				tramitarLicencia.crearSocio(dniSocio, nombreSocio, apellidoSocio, correoSocio, telfSocio, generoSocio, fechaNacimiento);
+				try {
+					loggin.generarLoggin(dniSocio);
+				}catch (MessagingException e) {
+					System.err.println("Ha ocurrido un error al enviar el correo");
+					e.printStackTrace();
+					JOptionPane.showMessageDialog(this,"Error al enviar nueva contraseña a: "+loggin.getCorreoDeUsuario(dniSocio),
+							"Iniciar Sesion", JOptionPane.INFORMATION_MESSAGE);
+				}
 			}else {
 				tramitarLicencia.modificarDatosSocio(dniSocio,nombreSocio, apellidoSocio, generoSocio,telfSocio,correoSocio, fechaNacimiento);
 				tramitarLicencia.guardarDatosModificadosSocio();
@@ -598,6 +610,14 @@ public class VentanaTramitarLicencia extends JFrame {
 		}else {
 			if(esDirectivo) {
 				tramitarLicencia.crearSocio(dniSocio, nombreSocio, apellidoSocio, correoSocio, telfSocio, generoSocio, fechaNacimiento);
+				try {
+					loggin.generarLoggin(dniSocio);
+				}catch (MessagingException e) {
+					System.err.println("Ha ocurrido un error al enviar el correo");
+					JOptionPane.showMessageDialog(this,"Error al enviar nueva contraseña a: "+loggin.getCorreoDeUsuario(dniSocio),
+							"Iniciar Sesion", JOptionPane.INFORMATION_MESSAGE);
+					e.printStackTrace();
+				}
 			}else {
 				tramitarLicencia.modificarDatosSocio(dniSocio,nombreSocio, apellidoSocio, generoSocio,telfSocio,correoSocio, fechaNacimiento);
 				tramitarLicencia.guardarDatosModificadosSocio();
