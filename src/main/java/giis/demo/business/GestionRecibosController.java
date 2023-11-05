@@ -35,15 +35,15 @@ public class GestionRecibosController {
 	}
 
 	public void initController() {
-		getListaRecibos();
+		getListaRecibosDevueltos();
 
 		view.getBtnCargarRecibos().addActionListener(e -> SwingUtil.exceptionWrapper(() -> chargeRecibos()));
 
-		view.getBtnReclamar().addActionListener(e -> SwingUtil.exceptionWrapper(() -> { claimRecibos(); getListaRecibos(); saveRecibos(); } ));
+		view.getBtnReclamar().addActionListener(e -> SwingUtil.exceptionWrapper(() -> { claimRecibos(); getListaRecibosDevueltos(); saveRecibos(); } ));
 	}
 
-	private void getListaRecibos() {
-		TableModel tmodel = SwingUtil.getTableModelFromPojos(model.getListaRecibos(),
+	private void getListaRecibosDevueltos() {
+		TableModel tmodel = SwingUtil.getTableModelFromPojos(model.getListaRecibosDevueltos(),
 				new String[] { "owner_iban", "number", "amount", "value_date", "charge_date", "type_recibo", "state" });
 		
 		((DefaultTableModel)tmodel).setColumnIdentifiers(new String[] { "IBAN", "Número", "Cantidad", "Fecha de valor", "Fecha de emision", "Tipo", "Estado" });
@@ -73,7 +73,7 @@ public class GestionRecibosController {
 
 					model.generateRecibo(recibo[0], Integer.parseInt(recibo[1]), Double.parseDouble(recibo[2]), recibo[3],
 							recibo[4], recibo[5], recibo[6]);
-					getListaRecibos();
+					getListaRecibosDevueltos();
 				}
 
 			} catch (IOException e1) {

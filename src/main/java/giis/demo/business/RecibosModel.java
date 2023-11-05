@@ -20,6 +20,8 @@ public class RecibosModel {
 			"select * from cuotas where owner_id = ? and state = 'Pendiente'";
 	public static final String SQL_LISTA_RECIBOS = 
 			"select * from recibos";
+	public static final String SQL_LISTA_RECIBOS_DEVUELTOS = 
+			"select * from recibos where state = 'Devuelto'";
 	public static final String SQL_UPDATE_CUOTAS = 
 			"update cuotas set state = 'Emitida' where state = 'Pendiente' and owner_id = ?";
 	public static final String SQL_GENERATE_RECIBOS = 
@@ -50,6 +52,10 @@ public class RecibosModel {
 	
 	public List<ReciboEntity> getListaRecibos() {
 		return db.executeQueryPojo(ReciboEntity.class, SQL_LISTA_RECIBOS);
+	}
+	
+	public List<ReciboEntity> getListaRecibosDevueltos() {
+		return db.executeQueryPojo(ReciboEntity.class, SQL_LISTA_RECIBOS_DEVUELTOS);
 	}
 	
 	public void generateRecibo(String iban, int number, double amount, String value_date, String charge_date, String type_recibo, String state) {
