@@ -1,6 +1,8 @@
 package giis.demo.ui;
 
 import javax.swing.JPanel;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 
 import com.toedter.calendar.JCalendar;
 
@@ -9,15 +11,22 @@ import java.awt.Dimension;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.ZoneId;
 
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.DefaultListModel;
 import javax.swing.JDialog;
 import java.awt.BorderLayout;
-import java.util.Date;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
 import giis.demo.business.InstalacionController;
 import giis.demo.business.ReservationController;
+import giis.demo.business.SociosController;
 import giis.demo.model.Instalacion;
 import giis.demo.model.Reserva;
 import giis.demo.util.Database;
@@ -30,6 +39,17 @@ import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
+
+import javax.swing.JLabel;
+import javax.swing.JCheckBox;
+import java.awt.CardLayout;
+import javax.swing.JTextField;
+import javax.swing.SwingConstants;
+
+import java.awt.GridLayout;
+import java.awt.FlowLayout;
+import java.awt.Font;
 
 public class VentanaReservas extends JDialog {
 	
@@ -40,22 +60,52 @@ public class VentanaReservas extends JDialog {
 	private JCalendar calendar;
 	private JComboBox<Instalacion> cbInstalaciones;
 	private DefaultListModel<String> modeloListaHoras;
-	private JButton btnReserva;
+	private JButton btnSiguiente;
 	private ReservationController reMan;
 	private String chosenDay;
 	private Database db;
+	private JPanel pnNorth;
+	private JLabel lblHorasDisp;
+	private JPanel pnSouth;
+	private JCheckBox chkAmpliaHora;
+	private JPanel pnPrincipalReservas;
+	private JPanel pnSecundarioReservas;
+	private JLabel lblTxtAñadeSocio;
+	private JPanel pnTxtContainer;
+	private JButton btnNuevoSocio;
+	private List<JTextField> listaTxtFields;
+	private JPanel pnBotones;
+	private JButton btnBorrarSocio;
+	private JPanel pnTxtFields;
+	private JButton btnVolver;
+	private JButton btnReservar;
+	private JPanel pnBotonesSur;
+	
+	private static final String INTRODUZCA_AQUI = "Introduzca DNI";
 	
 	public VentanaReservas(Database db) {
 		this.db = db;
 		reMan = new ReservationController(this.db);
+		listaTxtFields = new ArrayList<>();
 		chosenDay = "";
 		setTitle("Reservas");
 		setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 		setBounds(100, 100, 870, 618);
-		getContentPane().setLayout(new BorderLayout(0, 0));
-		getContentPane().add(getPnPrincipal(), BorderLayout.CENTER);
-		getContentPane().add(getPnSelector(), BorderLayout.EAST);
+		getContentPane().setLayout(new CardLayout(0, 0));
 		
+		getContentPane().add(getPnPrincipalReservas(), "principal");
+		getContentPane().add(getPnSecundarioReservas(), "secundario");
+		
+	}
+	
+	private JPanel getPnPrincipalReservas() {
+		if (pnPrincipalReservas == null) {
+			pnPrincipalReservas = new JPanel();
+			pnPrincipalReservas.setLayout(new BorderLayout(0, 0));
+			pnPrincipalReservas.add(getPnPrincipal(), BorderLayout.CENTER);
+			pnPrincipalReservas.add(getPnSelector(), BorderLayout.EAST);
+		}
+		return pnPrincipalReservas;
 	}
 	
 	private JPanel getPnPrincipal() {
@@ -64,7 +114,6 @@ public class VentanaReservas extends JDialog {
 			pnPrincipal.setBackground(Color.WHITE);
 			pnPrincipal.setLayout(new BorderLayout(0, 0));
 			pnPrincipal.add(getCalendar(), BorderLayout.CENTER);
-			//pnPrincipal.add(getCbInstalaciones(), BorderLayout.NORTH);
 		}
 		return pnPrincipal;
 	}
@@ -75,9 +124,9 @@ public class VentanaReservas extends JDialog {
 			pnSelector.setVisible(false);
 			pnSelector.setLayout(new BorderLayout(0, 0));
 			pnSelector.add(getList(), BorderLayout.CENTER);
-			pnSelector.add(getCbInstalaciones(), BorderLayout.NORTH);
 			pnSelector.setPreferredSize(new Dimension(200, 100));
-			pnSelector.add(getBtnReserva(), BorderLayout.SOUTH);
+			pnSelector.add(getPnNorth(), BorderLayout.NORTH);
+			pnSelector.add(getPnSouth(), BorderLayout.SOUTH);
 		}
 		return pnSelector;
 	}
@@ -100,7 +149,7 @@ public class VentanaReservas extends JDialog {
 	}
 	
 	private void dayPicker(PropertyChangeEvent evt) {
-		String pattern = "dd/MM/yyyy";
+		String pattern = "yyyy-MM-dd";
 		SimpleDateFormat formatDate = new SimpleDateFormat(pattern);
 		chosenDay = formatDate.format(calendar.getDate());
 		getPnSelector().setVisible(true);
@@ -108,26 +157,101 @@ public class VentanaReservas extends JDialog {
 		generaHoras();
 	}
 	
-	@SuppressWarnings("deprecation")
 	private void reservar() {
+		if (!completeCheckToSocios())
+			return;
+		
 		int selectedVal = getList().getSelectedIndex();
 		String hora = modeloListaHoras.get(selectedVal);
-		Date selectedDate = getCalendar().getDate();
+		LocalDate selectedDate = getCalendar().getDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();;
+		boolean hasExtra = getChkAmpliaHora().isSelected();
 		
-		selectedDate.setHours(Integer.parseInt(hora.split(":")[0]));
-		selectedDate.setMinutes(0);
+		LocalTime horaSel = LocalTime.of(Integer.parseInt(hora.split(":")[0]), 00);
+		LocalDateTime finalDate = selectedDate.atTime(horaSel); 
 		
-		String pattern = "dd/MM/yyyy - HH:mm";
+		String pattern = "yyyy-MM-dd HH:mm";
 		SimpleDateFormat formatDate = new SimpleDateFormat(pattern);
-		String dateS = formatDate.format(selectedDate);
+		String dateS = formatDate.format(finalDate);
 
 		Instalacion instalacion = ((Instalacion)getCbInstalaciones().getSelectedItem());
-		reMan.reservar(selectedDate, dateS, instalacion.getCode());
+		reMan.reservar(finalDate, dateS, instalacion.getCode(), hasExtra);
 		
 		JOptionPane.showMessageDialog(null, "Reserva confirmada de " + instalacion.toString() +": " + dateS);
-		this.dispose();
+		//this.dispose();
 	}
 
+	private boolean completeCheckToSocios() {
+		List<String> valuesTxt = getTxtFromDniFields(); // Recibe todos los valores escritos en los txt de DNIs
+		
+		if (!checkEqualSocios(valuesTxt)) // Comprueba que no se repita ningún DNI
+			return false;
+		
+		for (boolean res : checkSocios(valuesTxt)) { // Comprueba que todos los DNIs introducidos son de socios
+			if (res)
+				continue;
+			else {
+				JOptionPane.showMessageDialog(null, "Uno de los DNIs no es válido o no es un socio activo.\n"
+						+ "Por favor, revise los datos introducidos.", "Error", JOptionPane.ERROR_MESSAGE);
+				return false;
+			}
+			
+		}
+		
+		return true;
+	}
+
+	private List<String> getTxtFromDniFields() {
+		List<String> listTxtValues = new ArrayList<>();
+		for (JTextField txt: listaTxtFields) {
+			listTxtValues.add(txt.getText());
+		}
+		return listTxtValues;
+	}
+
+	private boolean[] checkSocios(List<String> values) {
+		List<String> dnis = SociosController.getDni(db); // Recibe todos los dnis de todos los socios disponibles
+		Iterator<String> itDnis = dnis.iterator();
+		List<String> txtValues = values;
+		boolean[] results = new boolean[listaTxtFields.size()];
+		int counter = 0;		
+		
+		for (String txt: txtValues) {
+			while (itDnis.hasNext()) {
+				if (txt.equals(itDnis.next())) {
+					results[counter] = true;
+					break;
+				} else {
+					results[counter] = false;
+				}
+			}
+			counter++;
+		}
+		
+		return results;
+		
+	}
+	
+	private boolean checkEqualSocios(List<String> values) {
+		List<String> listaChecker = new ArrayList<>();
+		List<String> txtValues = values;
+		
+		for (String txt : txtValues) {
+			if (listaChecker.isEmpty()) {
+				listaChecker.add(txt);				
+			} else {
+				if (!listaChecker.contains(txt))
+					listaChecker.add(txt);
+				else {
+					JOptionPane.showMessageDialog(null, "No se puede reutilizar el mismo DNI más de una vez.\n"
+							+ "Por favor, revise los datos introducidos.", "Error", JOptionPane.ERROR_MESSAGE);
+					return false;
+				}
+			}
+		}
+	
+		return true;
+	}
+	
 	private JList<String> getList() {
 		if (list == null) {
 			modeloListaHoras = new DefaultListModel<String>();
@@ -135,12 +259,32 @@ public class VentanaReservas extends JDialog {
 			list.addFocusListener(new FocusAdapter() {
 				@Override
 				public void focusGained(FocusEvent e) {
-					getBtnReserva().setEnabled(true);
+					getBtnSiguiente().setEnabled(true); // Solo se permite reservar si hay hora seleccionada
+				}
+				
+				@Override
+				public void focusLost(FocusEvent e) {
+					list.clearSelection();
+				}
+			});
+			list.addListSelectionListener(new ListSelectionListener() {
+				@Override
+				public void valueChanged(ListSelectionEvent e) {
+					checkEnabler(e); // Si la reserva se puede ampliar una hora, se habilita el check
 				}
 			});
 			list.setModel(modeloListaHoras);
 		}
 		return list;
+	}
+	
+	@SuppressWarnings("unchecked")
+	private void checkEnabler(ListSelectionEvent e) {
+		JList<String> lista = (JList<String>) e.getSource();
+		if (lista.getSelectedValue() == null)
+			return;
+		String selected = lista.getSelectedValue().split(":")[0];
+		getChkAmpliaHora().setEnabled(modeloListaHoras.contains((Integer.parseInt(selected)+1)+":00"));
 	}
 
 	private void generaHoras() {
@@ -149,12 +293,16 @@ public class VentanaReservas extends JDialog {
 			modeloListaHoras.addElement(i+":00");
 		}		
 		
-		for (Reserva reserva : reMan.getReservas()) {			
+		for (Reserva reserva : reMan.getReservas()) {	
+			System.out.println(reserva.getHora() + "hora?");
 			if (reserva.getFecha().trim().equals(chosenDay)
 					&& modeloListaHoras.contains(reserva.getHora().trim())
 							&& reserva.getInstalacionId().trim().equals(((Instalacion)getCbInstalaciones().getSelectedItem()).getCode().toString())) {
 				System.out.println("Ya hay una reserva");
 				modeloListaHoras.removeElement(reserva.getHora().trim());
+				int horaSig = Integer.parseInt(reserva.getHora().split(":")[0]);
+				if (horaSig + 1 <= 23 && reserva.hasExtra()) // Si la hora fue reservada con un extra, se elimina la sig tmb
+					modeloListaHoras.removeElement((horaSig+1)+":00");
 			}
 		}
 	}
@@ -172,16 +320,209 @@ public class VentanaReservas extends JDialog {
 		return cbInstalaciones;
 	}
 	
-	private JButton getBtnReserva() {
-		if (btnReserva == null) {
-			btnReserva = new JButton("Reservar");
-			btnReserva.setEnabled(false);
-			btnReserva.addActionListener(new ActionListener() {
+	private JButton getBtnSiguiente() {
+		if (btnSiguiente == null) {
+			btnSiguiente = new JButton("Siguiente");
+			btnSiguiente.setEnabled(false);
+			btnSiguiente.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					((CardLayout) getContentPane().getLayout()).next(getContentPane());
+				}
+			});
+		}
+		return btnSiguiente;
+	}
+	private JPanel getPnNorth() {
+		if (pnNorth == null) {
+			pnNorth = new JPanel();
+			pnNorth.setBackground(Color.WHITE);
+			pnNorth.setLayout(new BorderLayout(0, 0));
+			pnNorth.add(getLblHorasDisp(), BorderLayout.SOUTH);
+			pnNorth.add(getCbInstalaciones());
+		}
+		return pnNorth;
+	}
+	private JLabel getLblHorasDisp() {
+		if (lblHorasDisp == null) {
+			lblHorasDisp = new JLabel("Horas disponibles:");
+		}
+		return lblHorasDisp;
+	}
+	private JPanel getPnSouth() {
+		if (pnSouth == null) {
+			pnSouth = new JPanel();
+			pnSouth.setBackground(Color.WHITE);
+			pnSouth.setLayout(new BorderLayout(0, 0));
+			pnSouth.add(getChkAmpliaHora(), BorderLayout.NORTH);
+			pnSouth.add(getBtnSiguiente());
+		}
+		return pnSouth;
+	}
+	private JCheckBox getChkAmpliaHora() {
+		if (chkAmpliaHora == null) {
+			chkAmpliaHora = new JCheckBox("Añadir una hora extra");
+			chkAmpliaHora.setBackground(Color.WHITE);
+		}
+		return chkAmpliaHora;
+	}
+
+	private JPanel getPnSecundarioReservas() {
+		if (pnSecundarioReservas == null) {
+			pnSecundarioReservas = new JPanel();
+			pnSecundarioReservas.setBackground(Color.WHITE);
+			pnSecundarioReservas.setLayout(new BorderLayout(0, 0));
+			pnSecundarioReservas.add(getLblTxtAñadeSocio(), BorderLayout.NORTH);
+			pnSecundarioReservas.add(getPnTxtContainer(), BorderLayout.CENTER);
+			pnSecundarioReservas.add(getPnBotonesSur(), BorderLayout.SOUTH);
+		}
+		return pnSecundarioReservas;
+	}
+	private JLabel getLblTxtAñadeSocio() {
+		if (lblTxtAñadeSocio == null) {
+			lblTxtAñadeSocio = new JLabel("Introduzca el DNI de los socios que participarán en la reserva:");
+			lblTxtAñadeSocio.setFont(new Font("Tahoma", Font.BOLD, 20));
+		}
+		return lblTxtAñadeSocio;
+	}
+	private JPanel getPnTxtContainer() {
+		if (pnTxtContainer == null) {
+			pnTxtContainer = new JPanel();
+			pnTxtContainer.setLayout(new BorderLayout(0, 0));
+			pnTxtContainer.add(getPnBotones(), BorderLayout.NORTH);
+			pnTxtContainer.add(getPnTxtFields(), BorderLayout.CENTER);
+		}
+		return pnTxtContainer;
+	}
+	private JButton getBtnNuevoSocio() {
+		if (btnNuevoSocio == null) {
+			btnNuevoSocio = new JButton("+");
+			btnNuevoSocio.setFont(new Font("Tahoma", Font.BOLD, 25));
+			btnNuevoSocio.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					addNewSocio();
+				}
+			});
+		}
+		return btnNuevoSocio;
+	}
+
+	private void addNewSocio() {
+		JTextField nuevo = prepareTxtField();
+		listaTxtFields.add(nuevo);
+		getPnTxtFields().add(nuevo);
+		getPnTxtFields().repaint();
+		getPnTxtFields().revalidate();
+	}
+
+	private JTextField prepareTxtField() {
+		JTextField nuevo = new JTextField();
+		nuevo.setText(INTRODUZCA_AQUI);
+		nuevo.setForeground(Color.LIGHT_GRAY);
+		nuevo.addFocusListener(new FocusListener() {
+			
+			@Override
+			public void focusLost(FocusEvent e) {
+				if (nuevo.getText().isEmpty()) {
+					nuevo.setForeground(Color.LIGHT_GRAY);
+					nuevo.setText(INTRODUZCA_AQUI);
+		        }
+			}
+			
+			@Override
+			public void focusGained(FocusEvent e) {
+				if (nuevo.getText().equals(INTRODUZCA_AQUI)) {
+					nuevo.setText("");
+					nuevo.setForeground(Color.BLACK);
+		        }
+			}
+		});
+		nuevo.setEditable(true);
+		nuevo.setEnabled(true);
+		nuevo.setBounds(30, 96, 427, 35);
+		nuevo.setColumns(20);
+		nuevo.setPreferredSize(new Dimension(427, 35));
+		nuevo.setFont(new Font("Tahoma", Font.PLAIN, 25));
+		nuevo.setHorizontalAlignment(SwingConstants.CENTER);
+		return nuevo;
+	}
+	private JPanel getPnBotones() {
+		if (pnBotones == null) {
+			pnBotones = new JPanel();
+			pnBotones.setLayout(new GridLayout(0, 2, 0, 0));
+			pnBotones.add(getBtnNuevoSocio());
+			pnBotones.add(getBtnBorrarSocio());
+		}
+		return pnBotones;
+	}
+	private JButton getBtnBorrarSocio() {
+		if (btnBorrarSocio == null) {
+			btnBorrarSocio = new JButton("-");
+			btnBorrarSocio.setFont(new Font("Tahoma", Font.BOLD, 25));
+			btnBorrarSocio.setPreferredSize(new Dimension());
+			btnBorrarSocio.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					eliminaSocio();
+				}
+			});
+		}
+		return btnBorrarSocio;
+	}
+	private void eliminaSocio() {
+		if (listaTxtFields.size() > 0) {
+			JTextField txtBorrar = listaTxtFields.remove(listaTxtFields.size()-1);
+			getPnTxtFields().remove(txtBorrar);
+			getPnTxtFields().repaint();
+			getPnTxtFields().revalidate();					
+		}
+	}
+
+	private JPanel getPnTxtFields() {
+		if (pnTxtFields == null) {
+			pnTxtFields = new JPanel();
+			pnTxtFields.setBackground(Color.WHITE);
+			FlowLayout fl_pnTxtFields = new FlowLayout(FlowLayout.CENTER, 10, 10);
+			fl_pnTxtFields.setAlignOnBaseline(true);
+			pnTxtFields.setLayout(fl_pnTxtFields);
+		}
+		return pnTxtFields;
+	}
+	private JButton getBtnVolver() {
+		if (btnVolver == null) {
+			btnVolver = new JButton("Volver");
+			btnVolver.setFont(new Font("Tahoma", Font.PLAIN, 18));
+			btnVolver.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					cancelarOperacion();
+				}
+			});
+		}
+		return btnVolver;
+	}
+
+	private void cancelarOperacion() {	
+		listaTxtFields.removeAll(listaTxtFields);
+		getPnTxtFields().removeAll();
+		((CardLayout)getContentPane().getLayout()).show(getContentPane(), "principal");
+	}
+	private JButton getBtnReservar() {
+		if (btnReservar == null) {
+			btnReservar = new JButton("Reservar");
+			btnReservar.setFont(new Font("Tahoma", Font.PLAIN, 18));
+			btnReservar.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
 					reservar();
 				}
 			});
 		}
-		return btnReserva;
+		return btnReservar;
+	}
+	private JPanel getPnBotonesSur() {
+		if (pnBotonesSur == null) {
+			pnBotonesSur = new JPanel();
+			pnBotonesSur.setLayout(new GridLayout(0, 2, 0, 0));
+			pnBotonesSur.add(getBtnVolver());
+			pnBotonesSur.add(getBtnReservar());
+		}
+		return pnBotonesSur;
 	}
 }

@@ -4,14 +4,16 @@ public class Reserva {
 
 	private int owner_id;
 	private String fecha;
-	private String hora;
 	private String instalacionId;	
+	private String hora;
+	private boolean extra;
 	
-	public Reserva(int owner_id, String fecha, String hora, String instalacionId) {
+	public Reserva(int owner_id, String fecha, String hora, String instalacionId, boolean extra) {
 		this.owner_id = owner_id;
 		this.fecha = fecha;
 		this.hora = hora;
 		this.instalacionId = instalacionId;
+		this.extra = extra;
 	}
 	
 	public int getOwner_id() {
@@ -30,9 +32,13 @@ public class Reserva {
 		return instalacionId;
 	}
 	
+	public boolean hasExtra() {
+		return extra;
+	}
+	
 	@Override
 	public String toString() {
-		return "Reserva: " + owner_id + " - " + fecha + " - " + hora + "- " + instalacionId;
+		return "Reserva: " + owner_id + " - " + fecha + " - " + hora + " - " + instalacionId + " - " + hasExtra();
 	}
 	
 }

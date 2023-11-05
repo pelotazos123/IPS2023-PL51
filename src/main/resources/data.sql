@@ -28,11 +28,11 @@ insert into licencias (owner_id, tutor_dni, tutor_name, tutor_surname, tutor_ema
 	(105,'noTutor','noTutor','noTutor','noTutor',null,null,null,'pagado',30,'JUEZ','Gijon','Segundo A'),
 	(106,'123456789L','Pedro','Garcia','pedro@gmail.com',654873691,'1983-6-8','HOMBRE','pagado',30,'DEPORTISTA','Oviedo','Segundo A');
 	
-INSERT INTO reservas (owner_id, fecha, hora, instalation_code) VALUES 
-	(100, "20/10/2023", "20:00", "13410"),
-	(100, "22/10/2023", "20:00", "13412"),
-	(100, "24/10/2023", "20:00", "13411"),
-	(100, "21/10/2023", "20:00", "13413");
+INSERT INTO reservas (owner_id, fecha, instalation_code, extra) VALUES 
+	(100, "2023-11-20 20:00", "13410", true),
+	(100, "2023-11-22 21:00", "13411", false),
+	(100, "2023-11-23 22:00", "13412", false),
+	(100, "2023-11-24 23:00", "13413", false);
 
 INSERT INTO instalaciones (code, name) VALUES
 	("13410", "Pista Atletismo"),
