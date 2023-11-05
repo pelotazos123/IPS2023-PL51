@@ -4,10 +4,14 @@ public class Instalacion {
 	
 	private String name;
 	private String code;
+	private int min;
+	private int max;
 	
-	public Instalacion(String name, String code) {
+	public Instalacion(String name, String code, int min, int max) {
 		this.name = name;
 		this.code = code;
+		this.min = min;
+		this.max = max;
 	}
 	
 	public String getName() {
@@ -16,6 +20,14 @@ public class Instalacion {
 	
 	public String getCode() {
 		return code;
+	}
+	
+	public int getMin() {
+		return min;
+	}
+	
+	public int getMax() {
+		return max;
 	}
 	
 	public String toString() {

@@ -34,8 +34,18 @@ INSERT INTO reservas (owner_id, fecha, instalation_code, extra) VALUES
 	(100, "2023-11-23 22:00", "13412", false),
 	(100, "2023-11-24 23:00", "13413", false);
 
-INSERT INTO instalaciones (code, name) VALUES
-	("13410", "Pista Atletismo"),
-	("13411", "Piscina"),
-	("13412", "Cancha fútbol"),
-	("13413", "Sauna");
+INSERT INTO participante_reserva (reserva_id, dni) VALUES
+	(1, "123456789A"),
+	(2, "123456789B"),
+	(3, "123456789A"),
+	(3, "123456789B"),
+	(3, "123456789C"),
+	(3, "123456789D"),
+	(4, "123456789A"),
+	(4, "123456789B");
+
+INSERT INTO instalaciones (code, name, min_users, max_users) VALUES
+	("13410", "Pista Atletismo", 1, 1),
+	("13411", "Piscina", 1, 1),
+	("13412", "Cancha fútbol", 1, 28),
+	("13413", "Pista de tenis",1, 4);

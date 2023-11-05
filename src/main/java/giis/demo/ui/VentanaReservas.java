@@ -15,6 +15,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.DefaultListModel;
@@ -48,8 +49,9 @@ import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 
 import java.awt.GridLayout;
-import java.awt.FlowLayout;
 import java.awt.Font;
+import javax.swing.JScrollPane;
+import javax.swing.ScrollPaneConstants;
 
 public class VentanaReservas extends JDialog {
 	
@@ -73,15 +75,17 @@ public class VentanaReservas extends JDialog {
 	private JLabel lblTxtAñadeSocio;
 	private JPanel pnTxtContainer;
 	private JButton btnNuevoSocio;
-	private List<JTextField> listaTxtFields;
+	private List<JPanel> listaTxtFields;
 	private JPanel pnBotones;
 	private JButton btnBorrarSocio;
 	private JPanel pnTxtFields;
 	private JButton btnVolver;
 	private JButton btnReservar;
 	private JPanel pnBotonesSur;
+	private Instalacion selInstalacion;
 	
 	private static final String INTRODUZCA_AQUI = "Introduzca DNI";
+	private JScrollPane scrlTxts;
 	
 	public VentanaReservas(Database db) {
 		this.db = db;
@@ -90,7 +94,7 @@ public class VentanaReservas extends JDialog {
 		chosenDay = "";
 		setTitle("Reservas");
 		setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
-		setBounds(100, 100, 870, 618);
+		setBounds(100, 100, 911, 618);
 		getContentPane().setLayout(new CardLayout(0, 0));
 		
 		getContentPane().add(getPnPrincipalReservas(), "principal");
@@ -155,6 +159,7 @@ public class VentanaReservas extends JDialog {
 		getPnSelector().setVisible(true);
 		System.out.println(chosenDay);
 		generaHoras();
+		getBtnSiguiente().setEnabled(false);
 	}
 	
 	private void reservar() {
@@ -162,21 +167,25 @@ public class VentanaReservas extends JDialog {
 			return;
 		
 		int selectedVal = getList().getSelectedIndex();
-		String hora = modeloListaHoras.get(selectedVal);
-		LocalDate selectedDate = getCalendar().getDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();;
+		
 		boolean hasExtra = getChkAmpliaHora().isSelected();
 		
+		String hora = modeloListaHoras.get(selectedVal);
+		LocalDate selectedDate = getCalendar().getDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();;
 		LocalTime horaSel = LocalTime.of(Integer.parseInt(hora.split(":")[0]), 00);
+		
 		LocalDateTime finalDate = selectedDate.atTime(horaSel); 
 		
-		String pattern = "yyyy-MM-dd HH:mm";
-		SimpleDateFormat formatDate = new SimpleDateFormat(pattern);
-		String dateS = formatDate.format(finalDate);
+		DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+		String reserva = finalDate.format(dtf);
 
-		Instalacion instalacion = ((Instalacion)getCbInstalaciones().getSelectedItem());
-		reMan.reservar(finalDate, dateS, instalacion.getCode(), hasExtra);
+		selInstalacion = ((Instalacion)getCbInstalaciones().getSelectedItem());
 		
-		JOptionPane.showMessageDialog(null, "Reserva confirmada de " + instalacion.toString() +": " + dateS);
+		List<String> listaParticipantes = getTxtFromDniFields();
+		
+		reMan.reservar(finalDate, reserva, selInstalacion, listaParticipantes, hasExtra);
+		
+		JOptionPane.showMessageDialog(null, "Reserva confirmada de " + selInstalacion.toString() +": " + reserva);
 		//this.dispose();
 	}
 
@@ -194,16 +203,14 @@ public class VentanaReservas extends JDialog {
 						+ "Por favor, revise los datos introducidos.", "Error", JOptionPane.ERROR_MESSAGE);
 				return false;
 			}
-			
 		}
-		
 		return true;
 	}
 
 	private List<String> getTxtFromDniFields() {
 		List<String> listTxtValues = new ArrayList<>();
-		for (JTextField txt: listaTxtFields) {
-			listTxtValues.add(txt.getText());
+		for (JPanel txt: listaTxtFields) {
+			listTxtValues.add(((JTextField)txt.getComponent(0)).getText());
 		}
 		return listTxtValues;
 	}
@@ -262,10 +269,10 @@ public class VentanaReservas extends JDialog {
 					getBtnSiguiente().setEnabled(true); // Solo se permite reservar si hay hora seleccionada
 				}
 				
-				@Override
-				public void focusLost(FocusEvent e) {
-					list.clearSelection();
-				}
+//				@Override
+//				public void focusLost(FocusEvent e) {
+//					list.clearSelection();
+//				}
 			});
 			list.addListSelectionListener(new ListSelectionListener() {
 				@Override
@@ -288,6 +295,7 @@ public class VentanaReservas extends JDialog {
 	}
 
 	private void generaHoras() {
+		getBtnSiguiente().setEnabled(false);
 		modeloListaHoras.removeAllElements();
 		for (int i = 9; i <= 23; i++) {
 			modeloListaHoras.addElement(i+":00");
@@ -301,7 +309,7 @@ public class VentanaReservas extends JDialog {
 				System.out.println("Ya hay una reserva");
 				modeloListaHoras.removeElement(reserva.getHora().trim());
 				int horaSig = Integer.parseInt(reserva.getHora().split(":")[0]);
-				if (horaSig + 1 <= 23 && reserva.hasExtra()) // Si la hora fue reservada con un extra, se elimina la sig tmb
+				if (horaSig + 1 <= 23 && reserva.hasExtra()) // Si la hora fue reservada con una extra, se elimina la sig tmb
 					modeloListaHoras.removeElement((horaSig+1)+":00");
 			}
 		}
@@ -327,6 +335,7 @@ public class VentanaReservas extends JDialog {
 			btnSiguiente.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
 					((CardLayout) getContentPane().getLayout()).next(getContentPane());
+					selInstalacion = ((Instalacion)getCbInstalaciones().getSelectedItem());
 				}
 			});
 		}
@@ -389,7 +398,7 @@ public class VentanaReservas extends JDialog {
 			pnTxtContainer = new JPanel();
 			pnTxtContainer.setLayout(new BorderLayout(0, 0));
 			pnTxtContainer.add(getPnBotones(), BorderLayout.NORTH);
-			pnTxtContainer.add(getPnTxtFields(), BorderLayout.CENTER);
+			pnTxtContainer.add(getScrlTxts(), BorderLayout.CENTER);
 		}
 		return pnTxtContainer;
 	}
@@ -407,11 +416,18 @@ public class VentanaReservas extends JDialog {
 	}
 
 	private void addNewSocio() {
-		JTextField nuevo = prepareTxtField();
-		listaTxtFields.add(nuevo);
-		getPnTxtFields().add(nuevo);
-		getPnTxtFields().repaint();
-		getPnTxtFields().revalidate();
+		if (listaTxtFields.size() < selInstalacion.getMax()) {
+			JPanel pnlController = new JPanel();
+			pnlController.setBackground(Color.WHITE);
+			JTextField nuevo = prepareTxtField();
+			pnlController.add(nuevo);
+			listaTxtFields.add(pnlController);
+			getPnTxtFields().add(pnlController);
+			getPnTxtFields().repaint();
+			getPnTxtFields().revalidate();
+		} else {
+			JOptionPane.showMessageDialog(null, "Ya has alcanzado el máximo de participantes.", "Error", JOptionPane.ERROR_MESSAGE);
+		}
 	}
 
 	private JTextField prepareTxtField() {
@@ -438,11 +454,12 @@ public class VentanaReservas extends JDialog {
 		});
 		nuevo.setEditable(true);
 		nuevo.setEnabled(true);
-		nuevo.setBounds(30, 96, 427, 35);
+		//nuevo.setBounds(30, 96, 427, 35);
 		nuevo.setColumns(20);
-		nuevo.setPreferredSize(new Dimension(427, 35));
+		//nuevo.setPreferredSize(new Dimension(424, 35));
 		nuevo.setFont(new Font("Tahoma", Font.PLAIN, 25));
 		nuevo.setHorizontalAlignment(SwingConstants.CENTER);
+		System.out.println(nuevo.getSize());
 		return nuevo;
 	}
 	private JPanel getPnBotones() {
@@ -469,7 +486,7 @@ public class VentanaReservas extends JDialog {
 	}
 	private void eliminaSocio() {
 		if (listaTxtFields.size() > 0) {
-			JTextField txtBorrar = listaTxtFields.remove(listaTxtFields.size()-1);
+			JPanel txtBorrar = listaTxtFields.remove(listaTxtFields.size()-1);
 			getPnTxtFields().remove(txtBorrar);
 			getPnTxtFields().repaint();
 			getPnTxtFields().revalidate();					
@@ -480,9 +497,7 @@ public class VentanaReservas extends JDialog {
 		if (pnTxtFields == null) {
 			pnTxtFields = new JPanel();
 			pnTxtFields.setBackground(Color.WHITE);
-			FlowLayout fl_pnTxtFields = new FlowLayout(FlowLayout.CENTER, 10, 10);
-			fl_pnTxtFields.setAlignOnBaseline(true);
-			pnTxtFields.setLayout(fl_pnTxtFields);
+			pnTxtFields.setLayout(new GridLayout(0, 2, 0, 0));
 		}
 		return pnTxtFields;
 	}
@@ -503,6 +518,7 @@ public class VentanaReservas extends JDialog {
 		listaTxtFields.removeAll(listaTxtFields);
 		getPnTxtFields().removeAll();
 		((CardLayout)getContentPane().getLayout()).show(getContentPane(), "principal");
+		selInstalacion = null;
 	}
 	private JButton getBtnReservar() {
 		if (btnReservar == null) {
@@ -510,12 +526,16 @@ public class VentanaReservas extends JDialog {
 			btnReservar.setFont(new Font("Tahoma", Font.PLAIN, 18));
 			btnReservar.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
-					reservar();
+					if (listaTxtFields.size() >= selInstalacion.getMin())
+						reservar();
+					else
+						JOptionPane.showMessageDialog(null, "No llegas al mínimo de participantes.", "Error", JOptionPane.ERROR_MESSAGE);
 				}
 			});
 		}
 		return btnReservar;
 	}
+	
 	private JPanel getPnBotonesSur() {
 		if (pnBotonesSur == null) {
 			pnBotonesSur = new JPanel();
@@ -524,5 +544,15 @@ public class VentanaReservas extends JDialog {
 			pnBotonesSur.add(getBtnReservar());
 		}
 		return pnBotonesSur;
+	}
+	
+	private JScrollPane getScrlTxts() {
+		if (scrlTxts == null) {
+			scrlTxts = new JScrollPane();
+			scrlTxts.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+			scrlTxts.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
+			scrlTxts.setViewportView(getPnTxtFields());
+		}
+		return scrlTxts;
 	}
 }
