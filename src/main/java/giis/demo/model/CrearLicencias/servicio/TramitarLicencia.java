@@ -22,16 +22,20 @@ public class TramitarLicencia {
 	private final static int ID_SOCIO_CON_LICENCIA_PRUEBAS = 104;
 	@SuppressWarnings("unused")
 	private final static int ID_SOCIO_CON_LICENCIA_MENOR_EDAD_PRUEBAS = 106;
+	@SuppressWarnings("unused")
 	private final static int ID_SOCIO_CON_DOS_LICENCIAS_PRUEBAS = 105;
 	@SuppressWarnings("unused")
 	private final static int ID_SOCIO_CON_TRES_LICENCIAS_PRUEBAS = 101;
+	@SuppressWarnings("unused")
 	private final static int ID_DIRECTIVO_PRUEBAS = 100;
 	
 	
 	private final static String SQL_OBTENER_IDS= "select id from socios";
+	private final static String SQL_OBTENER_SI_ES_DIRECTIVO = "select directive from socios where dni=?";
+	private final static String SQL_OBTENER_ID_SOCIO = "select id from socios where dni=?";
 	
 	
-	private Database db=new Database();
+	private Database db;
 	private Socio directivo;
 	private Socio socio;
 	private Licencia licenciaSeleccionada;
@@ -41,19 +45,24 @@ public class TramitarLicencia {
 		this.db = db;
 	}
 	
-	public void loggearSocio(boolean esDirectivo) {
-		if(esDirectivo) {
-			cargarDirectivo(ID_DIRECTIVO_PRUEBAS);
+	public void loggearSocio(String dniSocio) {
+		if(esDirectivo(dniSocio)) {
+			cargarDirectivo(dniSocio);
 			System.out.println(directivo.toString());
 		}else {
-			cargarSocio(ID_SOCIO_CON_DOS_LICENCIAS_PRUEBAS);
+			cargarSocio(dniSocio);
 			System.out.println(socio.toString());
 		}
 	}
 	
+	private boolean esDirectivo(String dniSocio) {
+		Object[] result = db.executeQueryArray(SQL_OBTENER_SI_ES_DIRECTIVO,dniSocio).get(0);
+		return (int)result[0] == 1;
+	}
+
 	public void crearSocio(String dni, String nombre, String apellidos, String correo, int telf, Generos genero, LocalDate fecha) {
 		socio = new Socio(db,generarId(),dni,nombre, apellidos, correo, telf,null,-1,-1,genero,fecha);
-		socio.insertarSocio();;
+		socio.insertarSocio();
 	}
 	
 	public void crearLicencia(String nombre,String apellido,String dni,int telf,String correo, LocalDate fecha, Generos genero, String direccion, String info, TiposLicencia licencia) {
@@ -97,12 +106,14 @@ public class TramitarLicencia {
 		return tiposDisponibles.toArray(new TiposLicencia[tiposDisponibles.size()]);
 	}
 	
-	private void cargarSocio(int id) {
+	private void cargarSocio(String dniSocio) {
+		int id = (int) db.executeQueryArray(SQL_OBTENER_ID_SOCIO,dniSocio).get(0)[0];
 		socio = new Socio(db, id);
 		cargarLicenciasDelSocio();
 	}
 	
-	private void cargarDirectivo(int id) {
+	private void cargarDirectivo(String dniSocio) {
+		int id = (int) db.executeQueryArray(SQL_OBTENER_ID_SOCIO,dniSocio).get(0)[0];
 		directivo = new Socio(db, id);
 	} 
 	
@@ -257,5 +268,9 @@ public class TramitarLicencia {
 	private int generarId() {
 		List<Object[]> result = db.executeQueryArray(SQL_OBTENER_IDS);
 		return ((int) result.get(result.size()-1)[0])+1;
+	}
+	
+	public Socio getUsuario() {
+		return esDirectivo()? getDirectivo():getSocio();
 	}
 }
