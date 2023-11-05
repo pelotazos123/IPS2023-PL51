@@ -26,6 +26,7 @@ import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
+import javax.swing.border.TitledBorder;
 
 import com.toedter.calendar.JDateChooser;
 
@@ -52,11 +53,10 @@ public class VentanaPrincipal extends JFrame {
 	private JPanel pnPrincipal;
 	private JPanel pnPrincipalSocio;
 	private JPanel pnPrincipalDirectivo;
-	private JLabel lbProvisionalSocio;
-	private JLabel lbProvisionalDirectivo;
 	private JButton btTramitarLicencia;
 	private JButton btRenovarLicencia;
 	private JButton btPagoTransferencia;
+	private JButton btTestsFisiologicos;
 	private VentanaReservas vr;
 	private VentanaListaSocios vLS;
 	private JButton btnReservas;
@@ -72,6 +72,7 @@ public class VentanaPrincipal extends JFrame {
 	private JLabel lbSeleccionarFecha;
 	private JPanel pnContraseña;
 	private JPanel pnBoton;
+	private JButton btnGeneracionRecibos;
 	private JButton btnEntrar;
 	private JPanel pnEscribirContraseña;
 	private JLabel lblContraseña;
@@ -83,6 +84,24 @@ public class VentanaPrincipal extends JFrame {
 	private JLabel lblDniDelUsuario;
 	private JTextField txDniUsuario;
 	private JButton btCambiarContraseña;
+	private JPanel pnSelectorFechaSocio;
+	private JLabel lbSeleccionarFechaSocio;
+	private JPanel pnSeccionSocio;
+	private JPanel pnSeccionSocioPersonal;
+	private JPanel pnSeccionSocioDeportiva;
+	private JPanel pnBienvenidoAlClub;
+	private JLabel lbBienvenidoSocio;
+	private JPanel pnBotonesDeportiva;
+	private JPanel pnSelectorFechaDirectivo;
+	private JLabel lbSeleccionarFechaDirectivo;
+	private JPanel pnSeccionDirectivo;
+	private JPanel pnSeccionDirectivoPersonal;
+	private JPanel pnSeccionDirectivoFunciones;
+	private JPanel pnBienvenidoAlClubDirectivo;
+	private JLabel lbBienvenidoDirectivo;
+	private JPanel pnBotonesDeportivoDirectivo;
+	private JPanel pnSeccionDirectivoAdministracion;
+
 
 	/**
 	 * Create the frame.
@@ -116,11 +135,16 @@ public class VentanaPrincipal extends JFrame {
 	private JPanel getPnPrincipalSocio() {
 		if (pnPrincipalSocio == null) {
 			pnPrincipalSocio = new JPanel();
-			pnPrincipalSocio.setLayout(null);
-			pnPrincipalSocio.add(getLbProvisionalSocio());
-			pnPrincipalSocio.add(getBtTramitarLicencia());
-			pnPrincipalSocio.add(getBtRenovarLicencia());
-			JButton btTestsFisiologicos = new JButton("Tests Fisiológicos");
+			pnPrincipalSocio.setLayout(new BorderLayout(0, 0));
+			pnPrincipalSocio.add(getPnSelectorFechaSocio(), BorderLayout.NORTH);
+			pnPrincipalSocio.add(getPnSeccionSocio(), BorderLayout.CENTER);
+		}
+		return pnPrincipalSocio;
+	}
+	
+	private JButton getBtTestsFisiologicos() {
+		if(btTestsFisiologicos == null) {
+			btTestsFisiologicos = new JButton("Tests Fisiológicos");
 			btTestsFisiologicos.addActionListener(new ActionListener() {
 				@Override
 				public void actionPerformed(ActionEvent e) {
@@ -128,11 +152,8 @@ public class VentanaPrincipal extends JFrame {
 				}
 			});
 			btTestsFisiologicos.setMnemonic('f');
-			btTestsFisiologicos.setBounds(156, 252, 191, 52);
-			pnPrincipalSocio.add(btTestsFisiologicos);
-			pnPrincipalSocio.add(getBtPagoTransferencia());
 		}
-		return pnPrincipalSocio;
+		return btTestsFisiologicos;
 	}
 
 	private void creaVentanasTest() {
@@ -150,44 +171,30 @@ public class VentanaPrincipal extends JFrame {
 	private JPanel getPnPrincipalDirectivo() {
 		if (pnPrincipalDirectivo == null) {
 			pnPrincipalDirectivo = new JPanel();
-			pnPrincipalDirectivo.setLayout(null);
-			pnPrincipalDirectivo.add(getLbProvisionalDirectivo());
-			pnPrincipalDirectivo.add(getBtnAsambleas());
-
-			JButton btnGeneracionRecibos = new JButton("Generar Recibos");
-			btnGeneracionRecibos.addActionListener(new ActionListener() {
-				@Override
-				public void actionPerformed(ActionEvent e) {
-					RecibosView view = new RecibosView();
-					RecibosModel model = new RecibosModel();
-					RecibosController controller = new RecibosController(model,view);
-					
-					controller.initController();
-				}
-			});
-			btnGeneracionRecibos.setBounds(86, 304, 185, 60);
-			pnPrincipalDirectivo.add(btnGeneracionRecibos);
-			pnPrincipalDirectivo.add(getBtnListadoSocios());
+			pnPrincipalDirectivo.setLayout(new BorderLayout(0, 0));
+			pnPrincipalDirectivo.add(getPnSelectorFechaDirectivo(), BorderLayout.NORTH);
+			pnPrincipalDirectivo.add(getPnSeccionDirectivo(), BorderLayout.CENTER);
 		}
 		return pnPrincipalDirectivo;
 	}
-
-	private JLabel getLbProvisionalSocio() {
-		if (lbProvisionalSocio == null) {
-			lbProvisionalSocio = new JLabel("Pantalla principal del socio");
-			lbProvisionalSocio.setBounds(248, 10, 225, 13);
+	
+	 private JButton getBtnGeneracionRecibos() {
+			if (btnGeneracionRecibos == null) {
+				btnGeneracionRecibos = new JButton("Generar Recibos");
+				btnGeneracionRecibos.addActionListener(new ActionListener() {
+					@Override
+					public void actionPerformed(ActionEvent e) {
+						RecibosView view = new RecibosView();
+						RecibosModel model = new RecibosModel();
+						RecibosController controller = new RecibosController(model,view);
+						
+						controller.initController();
+					}
+				});
+				btnGeneracionRecibos.setBounds(183, 358, 139, 52);
+			}
+			return btnGeneracionRecibos;
 		}
-		return lbProvisionalSocio;
-	}
-
-	private JLabel getLbProvisionalDirectivo() {
-		if (lbProvisionalDirectivo == null) {
-			lbProvisionalDirectivo = new JLabel("Pantalla principal del directivo");
-
-			lbProvisionalDirectivo.setBounds(188, 116, 223, 32);
-		}
-		return lbProvisionalDirectivo;
-	}
 
 	private JButton getBtTramitarLicencia() {
 		if (btTramitarLicencia == null) {
@@ -203,7 +210,6 @@ public class VentanaPrincipal extends JFrame {
 					}
 				}
 			});
-			btTramitarLicencia.setBounds(405, 358, 139, 52);
 		}
 		return btTramitarLicencia;
 	}
@@ -211,7 +217,6 @@ public class VentanaPrincipal extends JFrame {
 	private JButton getBtRenovarLicencia() {
 		if (btRenovarLicencia == null) {
 			btRenovarLicencia = new JButton("Renovar Licencia");
-			btRenovarLicencia.setBounds(410, 252, 134, 54);
 			btRenovarLicencia.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
 					if(tramitarLicencia.esDirectivo()) {
@@ -236,7 +241,6 @@ public class VentanaPrincipal extends JFrame {
         }
       });
       btPagoTransferencia.setMnemonic('t');
-      btPagoTransferencia.setBounds(156, 433, 191, 52);
     }
     return btPagoTransferencia;
   }
@@ -272,7 +276,6 @@ public class VentanaPrincipal extends JFrame {
 					controller.initController();
 				}
 			});
-			btnAsambleas.setBounds(86, 205, 185, 60);
 		}
 		return btnAsambleas;
 	}
@@ -284,7 +287,6 @@ public class VentanaPrincipal extends JFrame {
 					openListadoSocios();
 				}
 			});
-			btnListadoSocios.setBounds(86, 399, 185, 53);
 		}
 		return btnListadoSocios;
 	}
@@ -418,16 +420,28 @@ public class VentanaPrincipal extends JFrame {
 	private void loggearSocio() {
 		tramitarLicencia.loggearSocio(getTxDniUsuario().getText());
 		if(tramitarLicencia.esDirectivo()) {
-			pnPrincipalDirectivo.add(getBtTramitarLicencia());
-			pnPrincipalDirectivo.add(getBtRenovarLicencia());
-			pnPrincipalDirectivo.add(getBtnReservas());
-			pnPrincipalDirectivo.add(getBtCambiarContraseña());
+			pnSeccionDirectivoPersonal.add(getBtTramitarLicencia());
+			pnSeccionDirectivoPersonal.add(getBtPagoTransferencia());
+			pnSeccionDirectivoPersonal.add(getBtRenovarLicencia());
+			pnBotonesDeportivoDirectivo.add(getBtnReservas());
+			pnSeccionDirectivoPersonal.add(getBtCambiarContraseña());
+			pnSelectorFechaDirectivo.add(getDcFechaAplicacion());
+			pnBotonesDeportivoDirectivo.add(getBtTestsFisiologicos());
+			pnSeccionDirectivoAdministracion.add(getBtnAsambleas());
+			pnSeccionDirectivoAdministracion.add(getBtnGeneracionRecibos());
+			pnSeccionDirectivoAdministracion.add(getBtnListadoSocios());
+			getLbBienvenidoDirectivo().setText("Bienvenido al club "+tramitarLicencia.getDirectivo().getNombre());
+			
 			((CardLayout) pnPrincipal.getLayout()).show(pnPrincipal, "PrincipalDirectivo");
 		}else {
-			pnPrincipalSocio.add(getBtTramitarLicencia());
-			pnPrincipalSocio.add(getBtRenovarLicencia());
-			pnPrincipalSocio.add(getBtnReservas());
-			pnPrincipalSocio.add(getBtCambiarContraseña());
+			pnSeccionSocioPersonal.add(getBtTramitarLicencia());
+			pnSeccionSocioPersonal.add(getBtPagoTransferencia());
+			pnSeccionSocioPersonal.add(getBtRenovarLicencia());
+			pnBotonesDeportiva.add(getBtnReservas());
+			pnSeccionSocioPersonal.add(getBtCambiarContraseña());
+			pnSelectorFechaSocio.add(getDcFechaAplicacion());
+			pnBotonesDeportiva.add(getBtTestsFisiologicos());
+			getLbBienvenidoSocio().setText("Bienvenido al club "+tramitarLicencia.getSocio().getNombre());
 			((CardLayout)pnPrincipal.getLayout()).show(pnPrincipal,"PrincipalSocio");
 		}
 	}
@@ -592,7 +606,7 @@ public class VentanaPrincipal extends JFrame {
 	}
 	
 	private void cambiarContraseña() {
-		String dniUsuario = tramitarLicencia.esDirectivo()? tramitarLicencia.getDirectivo().getDni():tramitarLicencia.getSocio().getDni();
+		String dniUsuario = tramitarLicencia.getUsuario().getDni();
 		String nuevaContraseña = "";
 		do {
 			nuevaContraseña = JOptionPane.showInputDialog(this,"Nueva Contraseña\nDebe contener mayusculas, minusculas y al menos un numero","Cambiar contraseña",JOptionPane.QUESTION_MESSAGE);
@@ -602,5 +616,155 @@ public class VentanaPrincipal extends JFrame {
 		loggin.cambiarContraseña(dniUsuario, nuevaContraseña);
 		JOptionPane.showMessageDialog(this,"Contraseña actualizada",
 				"Cambiar contraseña", JOptionPane.INFORMATION_MESSAGE);
+	}
+	private JPanel getPnSelectorFechaSocio() {
+		if (pnSelectorFechaSocio == null) {
+			pnSelectorFechaSocio = new JPanel();
+			FlowLayout flowLayout = (FlowLayout) pnSelectorFechaSocio.getLayout();
+			flowLayout.setAlignment(FlowLayout.LEFT);
+			pnSelectorFechaSocio.setBackground(Color.WHITE);
+			pnSelectorFechaSocio.add(getLbSeleccionarFechaSocio());
+		}
+		return pnSelectorFechaSocio;
+	}
+	private JLabel getLbSeleccionarFechaSocio() {
+		if (lbSeleccionarFechaSocio == null) {
+			lbSeleccionarFechaSocio = new JLabel("Seleccionar fecha de la aplicacion:");
+			lbSeleccionarFechaSocio.setFont(new Font("Tahoma", Font.PLAIN, 19));
+		}
+		return lbSeleccionarFechaSocio;
+	}
+	private JPanel getPnSeccionSocio() {
+		if (pnSeccionSocio == null) {
+			pnSeccionSocio = new JPanel();
+			pnSeccionSocio.setBackground(Color.WHITE);
+			pnSeccionSocio.setLayout(new BorderLayout(0, 0));
+			pnSeccionSocio.add(getPnSeccionSocioPersonal(), BorderLayout.NORTH);
+			pnSeccionSocio.add(getPnSeccionSocioDeportiva(), BorderLayout.CENTER);
+		}
+		return pnSeccionSocio;
+	}
+	private JPanel getPnSeccionSocioPersonal() {
+		if (pnSeccionSocioPersonal == null) {
+			pnSeccionSocioPersonal = new JPanel();
+			pnSeccionSocioPersonal.setBorder(new TitledBorder(null, "Personal", TitledBorder.LEADING, TitledBorder.TOP, null, null));
+			pnSeccionSocioPersonal.setBackground(Color.WHITE);
+		}
+		return pnSeccionSocioPersonal;
+	}
+	private JPanel getPnSeccionSocioDeportiva() {
+		if (pnSeccionSocioDeportiva == null) {
+			pnSeccionSocioDeportiva = new JPanel();
+			pnSeccionSocioDeportiva.setBorder(null);
+			pnSeccionSocioDeportiva.setBackground(Color.WHITE);
+			pnSeccionSocioDeportiva.setLayout(new GridLayout(0, 1, 0, 0));
+			pnSeccionSocioDeportiva.add(getPnBienvenidoAlClub());
+			pnSeccionSocioDeportiva.add(getPnBotonesDeportiva());
+		}
+		return pnSeccionSocioDeportiva;
+	}
+	private JPanel getPnBienvenidoAlClub() {
+		if (pnBienvenidoAlClub == null) {
+			pnBienvenidoAlClub = new JPanel();
+			pnBienvenidoAlClub.setBackground(Color.WHITE);
+			FlowLayout flowLayout = (FlowLayout) pnBienvenidoAlClub.getLayout();
+			flowLayout.setVgap(80);
+			pnBienvenidoAlClub.add(getLbBienvenidoSocio());
+		}
+		return pnBienvenidoAlClub;
+	}
+	private JLabel getLbBienvenidoSocio() {
+		if (lbBienvenidoSocio == null) {
+			lbBienvenidoSocio = new JLabel("Bienvenido");
+			lbBienvenidoSocio.setFont(new Font("Tahoma", Font.PLAIN, 30));
+		}
+		return lbBienvenidoSocio;
+	}
+	private JPanel getPnBotonesDeportiva() {
+		if (pnBotonesDeportiva == null) {
+			pnBotonesDeportiva = new JPanel();
+			pnBotonesDeportiva.setBorder(new TitledBorder(null, "Deportiva", TitledBorder.LEADING, TitledBorder.TOP, null, null));
+			pnBotonesDeportiva.setBackground(Color.WHITE);
+		}
+		return pnBotonesDeportiva;
+	}
+	private JPanel getPnSelectorFechaDirectivo() {
+		if (pnSelectorFechaDirectivo == null) {
+			pnSelectorFechaDirectivo = new JPanel();
+			FlowLayout flowLayout = (FlowLayout) pnSelectorFechaDirectivo.getLayout();
+			flowLayout.setAlignment(FlowLayout.LEFT);
+			pnSelectorFechaDirectivo.setBackground(Color.WHITE);
+			pnSelectorFechaDirectivo.add(getLbSeleccionarFechaDirectivo());
+		}
+		return pnSelectorFechaDirectivo;
+	}
+	private JLabel getLbSeleccionarFechaDirectivo() {
+		if (lbSeleccionarFechaDirectivo == null) {
+			lbSeleccionarFechaDirectivo = new JLabel("Seleccionar fecha de la aplicacion:");
+			lbSeleccionarFechaDirectivo.setFont(new Font("Tahoma", Font.PLAIN, 19));
+		}
+		return lbSeleccionarFechaDirectivo;
+	}
+	private JPanel getPnSeccionDirectivo() {
+		if (pnSeccionDirectivo == null) {
+			pnSeccionDirectivo = new JPanel();
+			pnSeccionDirectivo.setBackground(Color.WHITE);
+			pnSeccionDirectivo.setLayout(new BorderLayout(0, 0));
+			pnSeccionDirectivo.add(getPnSeccionDirectivoPersonal(), BorderLayout.NORTH);
+			pnSeccionDirectivo.add(getPnSeccionDirectivoFunciones(), BorderLayout.CENTER);
+		}
+		return pnSeccionDirectivo;
+	}
+	private JPanel getPnSeccionDirectivoPersonal() {
+		if (pnSeccionDirectivoPersonal == null) {
+			pnSeccionDirectivoPersonal = new JPanel();
+			pnSeccionDirectivoPersonal.setBorder(new TitledBorder(null, "Personal", TitledBorder.LEADING, TitledBorder.TOP, null, null));
+			pnSeccionDirectivoPersonal.setBackground(Color.WHITE);
+		}
+		return pnSeccionDirectivoPersonal;
+	}
+	private JPanel getPnSeccionDirectivoFunciones() {
+		if (pnSeccionDirectivoFunciones == null) {
+			pnSeccionDirectivoFunciones = new JPanel();
+			pnSeccionDirectivoFunciones.setBackground(Color.WHITE);
+			pnSeccionDirectivoFunciones.setLayout(new GridLayout(0, 1, 0, 0));
+			pnSeccionDirectivoFunciones.add(getPnBienvenidoAlClubDirectivo());
+			pnSeccionDirectivoFunciones.add(getPnBotonesDeportivoDirectivo());
+			pnSeccionDirectivoFunciones.add(getPnSeccionDirectivoAdministracion());
+		}
+		return pnSeccionDirectivoFunciones;
+	}
+	private JPanel getPnBienvenidoAlClubDirectivo() {
+		if (pnBienvenidoAlClubDirectivo == null) {
+			pnBienvenidoAlClubDirectivo = new JPanel();
+			FlowLayout flowLayout = (FlowLayout) pnBienvenidoAlClubDirectivo.getLayout();
+			flowLayout.setVgap(60);
+			pnBienvenidoAlClubDirectivo.setBackground(Color.WHITE);
+			pnBienvenidoAlClubDirectivo.add(getLbBienvenidoDirectivo());
+		}
+		return pnBienvenidoAlClubDirectivo;
+	}
+	private JLabel getLbBienvenidoDirectivo() {
+		if (lbBienvenidoDirectivo == null) {
+			lbBienvenidoDirectivo = new JLabel("Bienvenido");
+			lbBienvenidoDirectivo.setFont(new Font("Tahoma", Font.PLAIN, 30));
+		}
+		return lbBienvenidoDirectivo;
+	}
+	private JPanel getPnBotonesDeportivoDirectivo() {
+		if (pnBotonesDeportivoDirectivo == null) {
+			pnBotonesDeportivoDirectivo = new JPanel();
+			pnBotonesDeportivoDirectivo.setBorder(new TitledBorder(null, "Deportiva", TitledBorder.LEADING, TitledBorder.TOP, null, null));
+			pnBotonesDeportivoDirectivo.setBackground(Color.WHITE);
+		}
+		return pnBotonesDeportivoDirectivo;
+	}
+	private JPanel getPnSeccionDirectivoAdministracion() {
+		if (pnSeccionDirectivoAdministracion == null) {
+			pnSeccionDirectivoAdministracion = new JPanel();
+			pnSeccionDirectivoAdministracion.setBorder(new TitledBorder(null, "Administracion", TitledBorder.LEADING, TitledBorder.TOP, null, null));
+			pnSeccionDirectivoAdministracion.setBackground(Color.WHITE);
+		}
+		return pnSeccionDirectivoAdministracion;
 	}
 }

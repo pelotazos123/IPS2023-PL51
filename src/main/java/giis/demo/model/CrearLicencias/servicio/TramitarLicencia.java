@@ -269,4 +269,8 @@ public class TramitarLicencia {
 		List<Object[]> result = db.executeQueryArray(SQL_OBTENER_IDS);
 		return ((int) result.get(result.size()-1)[0])+1;
 	}
+	
+	public Socio getUsuario() {
+		return esDirectivo()? getDirectivo():getSocio();
+	}
 }
