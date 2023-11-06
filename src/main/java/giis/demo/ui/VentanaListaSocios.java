@@ -2,8 +2,10 @@ package giis.demo.ui;
 
 import java.awt.BorderLayout;
 
-import javax.swing.DefaultListModel;
+import javax.swing.DefaultCellEditor;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
 import javax.swing.JDialog;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
@@ -11,18 +13,19 @@ import java.awt.Color;
 import java.awt.Dimension;
 
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.border.LineBorder;
 
 import giis.demo.business.SociosController;
-import giis.demo.model.Socio;
+import giis.demo.logica.JDateChooserEditor;
 import giis.demo.util.Database;
 
 import java.awt.Font;
 import javax.swing.JScrollPane;
-import javax.swing.JList;
 import java.awt.event.ActionListener;
-import java.util.List;
 import java.awt.event.ActionEvent;
+import javax.swing.JTable;
+import javax.swing.ListSelectionModel;
 
 public class VentanaListaSocios extends JDialog {
 
@@ -35,12 +38,10 @@ public class VentanaListaSocios extends JDialog {
 	private JButton btnActualizar;
 	private JLabel lblText;
 	private JScrollPane scrlListaSocios;
-	private JList<String> listSocios;
-	private List<Socio> listaSocios;
-	private DefaultListModel<String> modeloListaSocios;
 	private Database db;
 
 	private static final String NO_SOCIO_FOUND = "Ningún socio encontrado";
+	private JTable tableSocios;
 	
 	/**
 	 * Create the dialog.
@@ -56,7 +57,7 @@ public class VentanaListaSocios extends JDialog {
 		contentPanel.setLayout(new BorderLayout(0, 0));
 		contentPanel.add(getPnLista());
 		contentPanel.add(getBtnPanel(), BorderLayout.NORTH);
-		actualizar();
+		actualizar("");
 	}
 
 	private JPanel getPnLista() {
@@ -64,8 +65,8 @@ public class VentanaListaSocios extends JDialog {
 			pnLista = new JPanel();
 			pnLista.setBackground(Color.WHITE);
 			pnLista.setBorder(new LineBorder(new Color(0, 0, 0), 3));
-			pnLista.add(getScrlListaSocios());
-			pnLista.add(getListSocios());
+			pnLista.setLayout(new BorderLayout(0, 0));
+			pnLista.add(getScrlListaSocios(), BorderLayout.CENTER);
 		}
 		return pnLista;
 	}
@@ -116,7 +117,7 @@ public class VentanaListaSocios extends JDialog {
 			btnActualizar = new JButton("↻");
 			btnActualizar.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
-					actualizar();
+					actualizar("");
 				}
 			});
 			btnActualizar.setBackground(Color.WHITE);
@@ -126,24 +127,35 @@ public class VentanaListaSocios extends JDialog {
 		return btnActualizar;
 	}
 	
-	private void actualizar() {
-		listaSocios = SociosController.cargarSocios(db, "", "");
-		listaSocios.stream().filter(e -> e.getTipoCuota().equals("Cuota Joven"));
-		modeloListaSocios.removeAllElements();
-		for (int i = 0; i < listaSocios.size(); i++) {
-			modeloListaSocios.addElement(listaSocios.get(i).toStringList());
-		}
+	protected void actualizar(String filter) {
+		tableSocios.setModel(SociosController.setTableModel(db, filter, tableSocios));
+		settingCuotas();
+		settingDateChooser();
+		settingGenre();
 		
-	}
-	
-	protected void actualizar(String filter, String order) {
-		List<Socio> result = SociosController.cargarSocios(db, filter, order);
-		modeloListaSocios.removeAllElements();
-		for (int i = 0; i < result.size(); i++) {
-			modeloListaSocios.addElement(result.get(i).toStringList());
+		if (tableSocios.getModel().getRowCount() <= 0) {
+			JOptionPane.showMessageDialog(null, NO_SOCIO_FOUND, "ERROR", JOptionPane.WARNING_MESSAGE);
 		}
-		if (result.isEmpty())
-			modeloListaSocios.addElement(NO_SOCIO_FOUND);
+	}
+
+	private void settingDateChooser() {
+		tableSocios.getColumnModel().getColumn(9).setCellEditor(new JDateChooserEditor(new JCheckBox()));
+	}
+
+	private void settingGenre() {
+		JComboBox<String> generos = new JComboBox<String>();
+		generos.addItem("HOMBRE");
+		generos.addItem("MUJER");
+		tableSocios.getColumnModel().getColumn(8).setCellEditor(new DefaultCellEditor(generos));
+	}
+
+	private void settingCuotas() {
+		JComboBox<String> cuotas = new JComboBox<String>();
+		cuotas.addItem("SUB18");
+		cuotas.addItem("SENIOR");
+		cuotas.addItem("VETERANO");
+		
+		tableSocios.getColumnModel().getColumn(6).setCellEditor(new DefaultCellEditor(cuotas));
 	}
 
 	private JLabel getLblText() {
@@ -158,17 +170,35 @@ public class VentanaListaSocios extends JDialog {
 	private JScrollPane getScrlListaSocios() {
 		if (scrlListaSocios == null) {
 			scrlListaSocios = new JScrollPane();
-			scrlListaSocios.setViewportView(listSocios);
+			scrlListaSocios.setViewportView(getTableSocios());
 		}
 		return scrlListaSocios;
 	}
 	
-	private JList<String> getListSocios() {
-		if (listSocios == null) {
-			listSocios = new JList<String>();
-			modeloListaSocios = new DefaultListModel<String>();
-			listSocios.setModel(modeloListaSocios);
+	@SuppressWarnings("serial")
+	private JTable getTableSocios() {
+		if (tableSocios == null) {
+			tableSocios = new JTable() {
+				@Override // Establece que las columnas 1 y 2 no sean editables (ID de socio y DNI)
+				public boolean isCellEditable(int row, int column) {
+				    return column == 0 || column==1 ? false : true;
+				}
+				@SuppressWarnings({ "unchecked", "rawtypes" })
+				@Override
+				public Class getColumnClass(int columnIndex) {
+					return (getValueAt(0, columnIndex).getClass());
+				}
+			};
+			tableSocios.setBackground(Color.WHITE);
+			tableSocios.setColumnSelectionAllowed(true);
+			tableSocios.setAutoCreateRowSorter(true);
+			tableSocios.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+			tableSocios.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
+			tableSocios.setFillsViewportHeight(true);
+			tableSocios.setColumnSelectionAllowed(true);
+			tableSocios.setRowSelectionAllowed(true);
 		}
-		return listSocios;
+		return tableSocios;
 	}
+
 }
