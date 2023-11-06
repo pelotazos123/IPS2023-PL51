@@ -32,6 +32,7 @@ import com.toedter.calendar.JDateChooser;
 
 import giis.demo.business.AsambleasController;
 import giis.demo.business.AsambleasModel;
+import giis.demo.business.GestionRecibosController;
 import giis.demo.business.RecibosController;
 import giis.demo.business.RecibosModel;
 import giis.demo.model.CrearLicencias.servicio.TramitarLicencia;
@@ -67,6 +68,7 @@ public class VentanaPrincipal extends JFrame {
 	private JButton btnListadoSocios;
 	private JButton btnAñadirCompeticiones;
 	private Database db;
+	private JButton btnGestionRecibos;
 	private JPanel pnInicio;
 	private JPanel pnLoggin;
 	private JPanel pnDni;
@@ -177,7 +179,7 @@ public class VentanaPrincipal extends JFrame {
 
 	private JPanel getPnPrincipalDirectivo() {
 		if (pnPrincipalDirectivo == null) {
-			pnPrincipalDirectivo = new JPanel();
+			pnPrincipalDirectivo = new JPanel();			
 			pnPrincipalDirectivo.setLayout(new BorderLayout(0, 0));
 			pnPrincipalDirectivo.add(getPnSelectorFechaDirectivo(), BorderLayout.NORTH);
 			pnPrincipalDirectivo.add(getPnSeccionDirectivo(), BorderLayout.CENTER);
@@ -337,7 +339,7 @@ public class VentanaPrincipal extends JFrame {
 	private boolean comprobarSocioConLicenciaPagada() {
 		if(tramitarLicencia.socioConLicenciasPagadas()) {
 			return true;
-		}else {
+		} else {
 			JOptionPane.showMessageDialog(this,"No tienes ninguna licencia para renovar",
 					"Licencias", JOptionPane.INFORMATION_MESSAGE);
 			return false;
@@ -466,6 +468,7 @@ public class VentanaPrincipal extends JFrame {
 			pnBotonesDeportivoDirectivo.add(getBtInscripcionCompeticiones());
 			pnSeccionDirectivoAdministracion.add(getBtnAsambleas());
 			pnSeccionDirectivoAdministracion.add(getBtnGeneracionRecibos());
+			pnSeccionDirectivoAdministracion.add(getBtnGestionRecibos());
 			pnSeccionDirectivoAdministracion.add(getBtnListadoSocios());
 			pnSeccionDirectivoAdministracion.add(getBtnAñadirCompeticiones());
 			
@@ -837,5 +840,21 @@ public class VentanaPrincipal extends JFrame {
 		gestorCompeticiones.cargarCompeticiones();
 		VentanaInscripcionCompeticiones frame = new VentanaInscripcionCompeticiones(gestorCompeticiones,tramitarLicencia);
 		frame.setVisible(true);
+	}
+	private JButton getBtnGestionRecibos() {
+		if (btnGestionRecibos == null) {
+			btnGestionRecibos = new JButton("Gestionar Recibos");
+			btnGestionRecibos.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					GestionRecibosView view = new GestionRecibosView();
+					RecibosModel model = new RecibosModel();
+					GestionRecibosController controller = new GestionRecibosController(model,view);
+					
+					controller.initController();
+				}
+			});
+			btnGestionRecibos.setBounds(476, 205, 185, 60);
+		}
+		return btnGestionRecibos;
 	}
 }

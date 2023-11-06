@@ -1,8 +1,6 @@
 package giis.demo.ui;
 
 import java.awt.Color;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.Calendar;
 
 import javax.swing.DefaultComboBoxModel;
@@ -72,11 +70,6 @@ public class RecibosView {
 			btnGenerarRecibos = new JButton("Generar Recibos");
 			btnGenerarRecibos.setForeground(new Color(255, 255, 255));
 			btnGenerarRecibos.setBackground(new Color(0, 128, 0));
-			btnGenerarRecibos.addActionListener(new ActionListener() {
-				@Override
-				public void actionPerformed(ActionEvent e) {
-				}
-			});
 			btnGenerarRecibos.setBounds(217, 267, 148, 46);
 		}
 		return btnGenerarRecibos;
