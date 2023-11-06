@@ -2,20 +2,22 @@ package giis.demo.model;
 
 public class Reserva {
 
-	private int owner_id;
+	private int id;
 	private String fecha;
-	private String hora;
 	private String instalacionId;	
+	private String hora;
+	private boolean extra;
 	
-	public Reserva(int owner_id, String fecha, String hora, String instalacionId) {
-		this.owner_id = owner_id;
+	public Reserva(int id, String fecha, String hora, String instalacionId, boolean extra) {
+		this.id = id;
 		this.fecha = fecha;
 		this.hora = hora;
 		this.instalacionId = instalacionId;
+		this.extra = extra;
 	}
 	
-	public int getOwner_id() {
-		return owner_id;
+	public int getId() {
+		return id;
 	}
 
 	public String getFecha() {
@@ -30,9 +32,13 @@ public class Reserva {
 		return instalacionId;
 	}
 	
+	public boolean hasExtra() {
+		return extra;
+	}
+	
 	@Override
 	public String toString() {
-		return "Reserva: " + owner_id + " - " + fecha + " - " + hora + "- " + instalacionId;
+		return "Reserva: " + id + " - " + fecha + " - " + hora + " - " + instalacionId + " - " + hasExtra();
 	}
 	
 }
