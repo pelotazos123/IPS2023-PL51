@@ -67,4 +67,5 @@ insert into loggin (dni_socio, contrasena) values
 	--Usuario: 123456789E contraseña:e4852
 	--Usuario: 123456789J contraseña:j1236
 	--Usuario: 123456789K contraseña:k2143
-	
+	--Usuario: 123456789K contraseña:k2143
+
