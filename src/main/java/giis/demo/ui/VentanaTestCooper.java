@@ -45,7 +45,7 @@ public class VentanaTestCooper extends JFrame {
 		setTitle("Test de Cooper");
 		setResizable(false);
 		vst = ventanaSeleccionTest;
-		tf = new TestsFisiologicos(vst.getVp().getDb());
+		tf = new TestsFisiologicos(vst);
 		
 		setContentPane(contentPane);
 		contentPane.setLayout(null);

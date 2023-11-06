@@ -6,40 +6,36 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 
+import org.jfree.chart.ChartPanel;
+
+import giis.demo.logica.TestsFisiologicos;
+
 public class VentanaTestAnteriores extends JFrame {
 
 	private static final long serialVersionUID = 1L;
 	private JPanel contentPane;
-
-//	/**
-//	 * Launch the application.
-//	 */
-//	public static void main(String[] args) {
-//		EventQueue.invokeLater(new Runnable() {
-//			public void run() {
-//				try {
-//					VentanaTestAnteriores frame = new VentanaTestAnteriores();
-//					frame.setVisible(true);
-//				} catch (Exception e) {
-//					e.printStackTrace();
-//				}
-//			}
-//		});
-//	}
+	private VentanaSeleccionTest vst;
+	private TestsFisiologicos tf;
 
 	/**
 	 * Create the frame.
-	 * @param ventanaSeleccionTest 
+	 * 
+	 * @param ventanaSeleccionTest
 	 */
 	public VentanaTestAnteriores(VentanaSeleccionTest ventanaSeleccionTest) {
+		this.vst = ventanaSeleccionTest;
+		this.tf = new TestsFisiologicos(vst);
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		setBounds(100, 100, 574, 411);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		contentPane.setLayout(new BorderLayout(0, 0));
+		ChartPanel cp = new ChartPanel(tf.creaGrafica());
+		
 		setContentPane(contentPane);
 		setTitle("Gestión Deportiva");
 		setLocationRelativeTo(null);
+		contentPane.add(cp);
 	}
 
 }

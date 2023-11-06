@@ -20,10 +20,12 @@ public class VentanaSeleccionTest extends JFrame {
 	private JButton btResultadosAnteriores;
 	private JButton btResultadosEntrenados;
 	private VentanaPrincipal vp;
+	private int id;
 
 	/**
 	 * Create the frame.
-	 * @param ventanaPrincipal 
+	 * 
+	 * @param ventanaPrincipal
 	 */
 	public VentanaSeleccionTest(VentanaPrincipal ventanaPrincipal) {
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
@@ -33,8 +35,9 @@ public class VentanaSeleccionTest extends JFrame {
 		setLocationRelativeTo(null);
 		setTitle("Gestión Deportiva");
 		setResizable(false);
-		setMinimumSize(new Dimension(300,450));
+		setMinimumSize(new Dimension(300, 450));
 		this.vp = ventanaPrincipal;
+		this.id = 101;
 
 		setContentPane(contentPane);
 		contentPane.setLayout(null);
@@ -42,17 +45,21 @@ public class VentanaSeleccionTest extends JFrame {
 		contentPane.add(getBtnTestDeRockport());
 		contentPane.add(getBtResultadosAnteriores());
 		contentPane.add(getBtResultadosEntrenados());
-//		activaEntrenador();
+		if(id == 101) {
+			activaEntrenador();
+		}
 	}
-	//PREGUNTARLE CÓMO TIENE QUE SER LA PESTAÑA DE VER ENTRENADOS
+
+	// PREGUNTARLE CÓMO TIENE QUE SER LA PESTAÑA DE VER ENTRENADOS
 	/**
-	 * Si el usuario es entrenador activa el componente de Ver Resultados de entrenados
+	 * Si el usuario es entrenador activa el componente de Ver Resultados de
+	 * entrenados
 	 */
 	private void activaEntrenador() {
-		//if usuario es entrenador
-//			getBtResultadosEntrenados().setEnabled(true);
+		// if usuario es entrenador
+			getBtResultadosEntrenados().setEnabled(true);
 	}
-	
+
 	private JButton getBtCooper() {
 		if (btCooper == null) {
 			btCooper = new JButton("Test de Cooper");
@@ -66,6 +73,7 @@ public class VentanaSeleccionTest extends JFrame {
 		}
 		return btCooper;
 	}
+
 	private void muestraVentanaCooper() {
 		VentanaTestCooper vtc = new VentanaTestCooper(this);
 		vtc.setVisible(true);
@@ -89,6 +97,7 @@ public class VentanaSeleccionTest extends JFrame {
 		VentanaTestRockport vtr = new VentanaTestRockport(this);
 		vtr.setVisible(true);
 	}
+
 	private JButton getBtResultadosAnteriores() {
 		if (btResultadosAnteriores == null) {
 			btResultadosAnteriores = new JButton("Test anteriores");
@@ -102,13 +111,12 @@ public class VentanaSeleccionTest extends JFrame {
 		}
 		return btResultadosAnteriores;
 	}
-	
-	private void creaVentanaTestAnteriores() { 
+
+	private void creaVentanaTestAnteriores() {
 		VentanaTestAnteriores vta = new VentanaTestAnteriores(this);
 		vta.setVisible(true);
 	}
-	
-	
+
 	private JButton getBtResultadosEntrenados() {
 		if (btResultadosEntrenados == null) {
 			btResultadosEntrenados = new JButton("Test entrenados");
@@ -123,12 +131,12 @@ public class VentanaSeleccionTest extends JFrame {
 		}
 		return btResultadosEntrenados;
 	}
-	
+
 	private void activaVentanaEntrenados() {
 		VentanaEntrenados ve = new VentanaEntrenados(this);
 		ve.setVisible(true);
 	}
-	
+
 	public VentanaPrincipal getVp() {
 		return vp;
 	}

@@ -41,10 +41,11 @@ public class VentanaTestRockport extends JFrame {
 	private JComboBox<Integer> cbEdad;
 	private VentanaSeleccionTest vst;
 	private TestsFisiologicos tf;
-	
+
 	/**
 	 * Create the frame.
-	 * @param ventanaSeleccionTest 
+	 * 
+	 * @param ventanaSeleccionTest
 	 */
 	public VentanaTestRockport(VentanaSeleccionTest ventanaSeleccionTest) {
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
@@ -55,8 +56,8 @@ public class VentanaTestRockport extends JFrame {
 		setTitle("Test de Rockport");
 		setResizable(false);
 		this.vst = ventanaSeleccionTest;
-		tf = new TestsFisiologicos(vst.getVp().getDb());
-		
+		tf = new TestsFisiologicos(vst);
+
 		setContentPane(contentPane);
 		contentPane.setLayout(null);
 		contentPane.add(getLbTestRockport());
@@ -73,15 +74,21 @@ public class VentanaTestRockport extends JFrame {
 		contentPane.add(getLbResultado());
 		contentPane.add(getTxResultado());
 		contentPane.add(getCbEdad());
-//		cargaValores();  //TODO completar cuando haya login con el id del socio
+//		cargaValores();
 	}
-	
-	private void cargaValores() {
-		String[] valores = tf.cargaValores();
-		getCbEdad().setSelectedItem(Integer.parseInt(valores[0]));
-		getCbPeso().setSelectedItem(Integer.parseInt(valores[1]));
-		getCbSexo().setSelectedItem(valores[2]);
-	}
+//
+//	private void cargaValores() {
+//		String[] valores = tf.cargaValores();
+//		if (valores != null) {
+//			int edad = Integer.parseInt(valores[0]);
+//			int peso = Integer.parseInt(valores[1]);
+//			if (edad != 0 && peso != 0) {
+//				getCbEdad().setSelectedItem(edad);
+//				getCbPeso().setSelectedItem(peso);
+//				getCbSexo().setSelectedItem(valores[2]);
+//			}
+//		}
+//	}
 
 	private JLabel getLbTestRockport() {
 		if (lbTestRockport == null) {
@@ -92,6 +99,7 @@ public class VentanaTestRockport extends JFrame {
 		}
 		return lbTestRockport;
 	}
+
 	private JLabel getLbPeso() {
 		if (lbPeso == null) {
 			lbPeso = new JLabel("Peso (en kg):");
@@ -101,6 +109,7 @@ public class VentanaTestRockport extends JFrame {
 		}
 		return lbPeso;
 	}
+
 	private JLabel getLbEdad() {
 		if (lbEdad == null) {
 			lbEdad = new JLabel("Edad");
@@ -110,6 +119,7 @@ public class VentanaTestRockport extends JFrame {
 		}
 		return lbEdad;
 	}
+
 	private JLabel getLbSexo() {
 		if (lbSexo == null) {
 			lbSexo = new JLabel("Sexo:");
@@ -119,6 +129,7 @@ public class VentanaTestRockport extends JFrame {
 		}
 		return lbSexo;
 	}
+
 	private JLabel getLblTiempo() {
 		if (lblTiempo == null) {
 			lblTiempo = new JLabel("Tiempo para recorrer 1,6 km (en min):");
@@ -128,6 +139,7 @@ public class VentanaTestRockport extends JFrame {
 		}
 		return lblTiempo;
 	}
+
 	private JLabel getLblPulsaciones() {
 		if (lblPulsaciones == null) {
 			lblPulsaciones = new JLabel("Pulsaciones por minuto en la carrera:");
@@ -137,14 +149,16 @@ public class VentanaTestRockport extends JFrame {
 		}
 		return lblPulsaciones;
 	}
+
 	private JComboBox<String> getCbSexo() {
 		if (cbSexo == null) {
 			cbSexo = new JComboBox<String>();
-			cbSexo.setModel(new DefaultComboBoxModel<String>(new String[] {"Hombre", "Mujer"}));
+			cbSexo.setModel(new DefaultComboBoxModel<String>(new String[] { "Hombre", "Mujer" }));
 			cbSexo.setBounds(245, 147, 97, 29);
 		}
 		return cbSexo;
 	}
+
 	private JTextField getTxTiempo() {
 		if (txTiempo == null) {
 			txTiempo = new JTextField();
@@ -153,6 +167,7 @@ public class VentanaTestRockport extends JFrame {
 		}
 		return txTiempo;
 	}
+
 	private JTextField getTxPulsaciones() {
 		if (txPulsaciones == null) {
 			txPulsaciones = new JTextField();
@@ -161,6 +176,7 @@ public class VentanaTestRockport extends JFrame {
 		}
 		return txPulsaciones;
 	}
+
 	private JComboBox<Integer> getCbPeso() {
 		if (cbPeso == null) {
 			cbPeso = new JComboBox<Integer>(new DefaultComboBoxModel<Integer>(rellenaPeso()));
@@ -168,23 +184,23 @@ public class VentanaTestRockport extends JFrame {
 		}
 		return cbPeso;
 	}
-	
+
 	private Integer[] rellenaPeso() {
 		Integer[] nums = new Integer[146];
-		for(int i = 45; i <= 190; i++)
+		for (int i = 45; i <= 190; i++)
 			nums[i - 45] = i;
 		return nums;
 	}
-	
+
 	private JButton getBtCalcular() {
 		if (btCalcular == null) {
 			btCalcular = new JButton("Calcular");
 			btCalcular.setMnemonic('c');
 			btCalcular.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
-					//Comprueba que hay datos
-					if(compruebaDatos()) {
-						//Calcula y habilita componentes
+					// Comprueba que hay datos
+					if (compruebaDatos()) {
+						// Calcula y habilita componentes
 						activaComponentes();
 						muestraResultado();
 					}
@@ -194,14 +210,14 @@ public class VentanaTestRockport extends JFrame {
 		}
 		return btCalcular;
 	}
-	
+
 	private void muestraResultado() {
 		int edad = (int) getCbEdad().getSelectedItem();
 		int peso = (int) getCbPeso().getSelectedItem();
 		int sexo = 0;
-		if(getCbSexo().getSelectedItem().equals("Hombre"))
+		if (getCbSexo().getSelectedItem().equals("Hombre"))
 			sexo = TestsFisiologicos.HOMBRE;
-		else if(getCbSexo().getSelectedItem().equals("Mujer"))
+		else if (getCbSexo().getSelectedItem().equals("Mujer"))
 			sexo = TestsFisiologicos.MUJER;
 		double tiempo = Double.parseDouble(getTxTiempo().getText());
 		int pulsaciones = Integer.parseInt(getTxPulsaciones().getText());
@@ -225,7 +241,7 @@ public class VentanaTestRockport extends JFrame {
 		}
 		return true;
 	}
-	
+
 	private void desactivaComponentes() {
 		getLbResultado().setEnabled(false);
 		getTxResultado().setText("");
@@ -240,6 +256,7 @@ public class VentanaTestRockport extends JFrame {
 		}
 		return lbResultado;
 	}
+
 	private JTextField getTxResultado() {
 		if (txResultado == null) {
 			txResultado = new JTextField();
@@ -250,6 +267,7 @@ public class VentanaTestRockport extends JFrame {
 		}
 		return txResultado;
 	}
+
 	private JComboBox<Integer> getCbEdad() {
 		if (cbEdad == null) {
 			cbEdad = new JComboBox<Integer>();
@@ -261,8 +279,8 @@ public class VentanaTestRockport extends JFrame {
 
 	private Integer[] rellenaEdad() {
 		Integer[] nums = new Integer[76];
-		for(int i = 15; i <= 90; i++)
-			nums[i-15] = i;
+		for (int i = 15; i <= 90; i++)
+			nums[i - 15] = i;
 		return nums;
 	}
 }

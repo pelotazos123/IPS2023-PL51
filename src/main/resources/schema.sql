@@ -18,7 +18,7 @@ create table licencias (owner_id int,tutor_dni varchar2(255), tutor_name varchar
 create table cuotas (owner_id int, cuota_type varchar2(255), price int, state int, foreign key(owner_id) references socios(id));
 create table reservas (owner_id int, fecha varchar, hora varchar, instalation_code varchar2(255), foreign key(owner_id) references socios(id));
 create table instalaciones (code varchar2(255), name varchar2(255), foreign key(code) references reservas(instalation_code));
-create table test(id int, tipo varchar2(255), peso int, edad int, sexo varchar2(255), tiempo int, pulsaciones int, distance int, resultado int);
+create table test(id int, fecha date, tipo varchar2(255), peso int, edad int, sexo varchar2(255), tiempo int, pulsaciones int, distance int, resultado int);
 create table loggin (dni_socio varchar2(255), contrasena varchar2(255), fin_bloqueo date, foreign key(dni_socio) references socios(dni));
 -- create table recibos (number int, foreign key(number) references cuotas(num_recibo));
 -- create table asambleas (type varchar2(255), announcement varchar2(255), date_announcement1 date, date_announcement2 date);

@@ -57,6 +57,7 @@ public class VentanaPrincipal extends JFrame {
 	private JButton btTramitarLicencia;
 	private JButton btRenovarLicencia;
 	private JButton btPagoTransferencia;
+	private JButton btTestsFisiologicos;
 	private VentanaReservas vr;
 	private VentanaListaSocios vLS;
 	private JButton btnReservas;
@@ -120,7 +121,13 @@ public class VentanaPrincipal extends JFrame {
 			pnPrincipalSocio.add(getLbProvisionalSocio());
 			pnPrincipalSocio.add(getBtTramitarLicencia());
 			pnPrincipalSocio.add(getBtRenovarLicencia());
-			JButton btTestsFisiologicos = new JButton("Tests Fisiológicos");
+		}
+		return pnPrincipalSocio;
+	}
+	
+	public JButton getbtTestsFisiologicos() {
+		if(btTestsFisiologicos == null) {
+			btTestsFisiologicos = new JButton("Tests Fisiológicos");
 			btTestsFisiologicos.addActionListener(new ActionListener() {
 				@Override
 				public void actionPerformed(ActionEvent e) {
@@ -129,10 +136,8 @@ public class VentanaPrincipal extends JFrame {
 			});
 			btTestsFisiologicos.setMnemonic('f');
 			btTestsFisiologicos.setBounds(156, 252, 191, 52);
-			pnPrincipalSocio.add(btTestsFisiologicos);
-			pnPrincipalSocio.add(getBtPagoTransferencia());
 		}
-		return pnPrincipalSocio;
+		return btTestsFisiologicos;
 	}
 
 	private void creaVentanasTest() {
@@ -153,7 +158,8 @@ public class VentanaPrincipal extends JFrame {
 			pnPrincipalDirectivo.setLayout(null);
 			pnPrincipalDirectivo.add(getLbProvisionalDirectivo());
 			pnPrincipalDirectivo.add(getBtnAsambleas());
-
+			pnPrincipalDirectivo.add(getBtPagoTransferencia());
+			pnPrincipalDirectivo.add(getbtTestsFisiologicos());
 			JButton btnGeneracionRecibos = new JButton("Generar Recibos");
 			btnGeneracionRecibos.addActionListener(new ActionListener() {
 				@Override
@@ -606,5 +612,9 @@ public class VentanaPrincipal extends JFrame {
 		loggin.cambiarContraseña(dniUsuario, nuevaContraseña);
 		JOptionPane.showMessageDialog(this,"Contraseña actualizada",
 				"Cambiar contraseña", JOptionPane.INFORMATION_MESSAGE);
+	}
+
+	public TramitarLicencia getTramitarLicencia() {
+		return tramitarLicencia;
 	}
 }
