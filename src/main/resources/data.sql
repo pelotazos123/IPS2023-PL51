@@ -35,14 +35,14 @@ INSERT INTO reservas (id, fecha, instalation_code, extra) VALUES
 	(3, "2023-11-24 23:00", "13413", false);
 
 INSERT INTO participante_reserva (reserva_id, dni) VALUES
-	(1, "123456789A"),
+	(0, "123456789A"),
+	(1, "123456789B"),
+	(2, "123456789A"),
 	(2, "123456789B"),
+	(2, "123456789C"),
+	(2, "123456789D"),
 	(3, "123456789A"),
-	(3, "123456789B"),
-	(3, "123456789C"),
-	(3, "123456789D"),
-	(4, "123456789A"),
-	(4, "123456789B");
+	(3, "123456789B");
 
 INSERT INTO instalaciones (code, name, min_users, max_users) VALUES
 	("13410", "Pista Atletismo", 1, 1),

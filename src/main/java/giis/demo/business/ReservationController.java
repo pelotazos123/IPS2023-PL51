@@ -12,9 +12,10 @@ public class ReservationController {
 	
 	private Database db;
 	
-	private final static String SQL_CARGAR_RESERVA = "select id, fecha, instalation_code, extra from reservas";
-	private final static String SQL_CREAR_RESERVA = "insert into reservas(fecha, instalation_code, extra) values (?, ?, ?)";
-	private final static String SQL_ID_RESERVA = "SELECT LAST_INSERT_ROWID() FROM reservas";
+	private final static String SQL_CARGAR_RESERVA = "SELECT id, fecha, instalation_code, extra FROM reservas";
+	private final static String SQL_CREAR_RESERVA = "INSERT INTO reservas(fecha, instalation_code, extra) VALUES (?, ?, ?)";
+	private final static String SQL_ID_RESERVA = "SELECT seq FROM sqlite_sequence where name='reservas'";
+	private final static String SQL_CARGAR_PARTICIPANTES = "SELECT * FROM participante_reserva";
 	private final static String SQL_CREAR_PARTICIPANTE = "INSERT INTO participante_reserva (reserva_id, dni) VALUES (?, ?)";
 	
 	private List<Object[]> resQuery;
@@ -34,6 +35,8 @@ public class ReservationController {
 	
 	private void createQueryParticipants(List<String> listaParticipantes) {
 		int id_reserva = (int) db.executeQueryArray(SQL_ID_RESERVA).get(0)[0];
+		
+		System.out.println("loco aver: " + id_reserva);
 		
 		for (String dni: listaParticipantes) {
 			System.out.println(id_reserva + " - " + dni);
@@ -78,15 +81,15 @@ public class ReservationController {
 	}
 	
 	public void getParticipantes() {
-		List<Object[]> resQuery = db.executeQueryArray(SQL_CARGAR_RESERVA);
+		List<Object[]> resQuery = db.executeQueryArray(SQL_CARGAR_PARTICIPANTES);
 		int id = 0;
 		String dni = "";
 		
 		for (Object[] objects : resQuery) {
 			id = (int) objects[0];
-			dni = (String) objects[1];
+			dni = (String) objects[2];
 			
-			System.out.println(id + " |hola| " + dni);
+			//System.out.println(id + " |hola| " + dni);
 		}
 	}
 	
