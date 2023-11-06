@@ -181,25 +181,26 @@ public class VentanaPrincipal extends JFrame {
 	private JPanel getPnPrincipalDirectivo() {
 		if (pnPrincipalDirectivo == null) {
 			pnPrincipalDirectivo = new JPanel();
-			pnPrincipalDirectivo.setLayout(null);
-			pnPrincipalDirectivo.add(getLbProvisionalDirectivo());
+//			pnPrincipalDirectivo.setLayout(null);
+//			pnPrincipalDirectivo.add(getPnSeccionDirectivo());
 			pnPrincipalDirectivo.add(getBtnAsambleas());
 
-			JButton btnGeneracionRecibos = new JButton("Generar Recibos");
-			btnGeneracionRecibos.addActionListener(new ActionListener() {
-				@Override
-				public void actionPerformed(ActionEvent e) {
-					RecibosView view = new RecibosView();
-					RecibosModel model = new RecibosModel();
-					RecibosController controller = new RecibosController(model,view);
-					
-					controller.initController();
-				}
-			});
-			btnGeneracionRecibos.setBounds(281, 205, 185, 60);
-			pnPrincipalDirectivo.add(btnGeneracionRecibos);
+//			JButton btnGeneracionRecibos = new JButton("Generar Recibos");
+//			btnGeneracionRecibos.addActionListener(new ActionListener() {
+//				@Override
+//				public void actionPerformed(ActionEvent e) {
+//					RecibosView view = new RecibosView();
+//					RecibosModel model = new RecibosModel();
+//					RecibosController controller = new RecibosController(model,view);
+//					
+//					controller.initController();
+//				}
+//			});
+//			btnGeneracionRecibos.setBounds(281, 205, 185, 60);
+//			pnPrincipalDirectivo.add(btnGeneracionRecibos);
+//			pnPrincipalDirectivo.add(getBtnGestionRecibos());
 			pnPrincipalDirectivo.add(getBtnListadoSocios());
-			pnPrincipalDirectivo.add(getBtnGestionRecibos());
+			
 			pnPrincipalDirectivo.setLayout(new BorderLayout(0, 0));
 			pnPrincipalDirectivo.add(getPnSelectorFechaDirectivo(), BorderLayout.NORTH);
 			pnPrincipalDirectivo.add(getPnSeccionDirectivo(), BorderLayout.CENTER);
@@ -488,6 +489,7 @@ public class VentanaPrincipal extends JFrame {
 			pnBotonesDeportivoDirectivo.add(getBtInscripcionCompeticiones());
 			pnSeccionDirectivoAdministracion.add(getBtnAsambleas());
 			pnSeccionDirectivoAdministracion.add(getBtnGeneracionRecibos());
+			pnSeccionDirectivoAdministracion.add(getBtnGestionRecibos());
 			pnSeccionDirectivoAdministracion.add(getBtnListadoSocios());
 			pnSeccionDirectivoAdministracion.add(getBtnAñadirCompeticiones());
 			
