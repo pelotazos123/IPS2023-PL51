@@ -20,6 +20,7 @@ create table reservas (owner_id int, fecha varchar, hora varchar, instalation_co
 create table instalaciones (code varchar2(255), name varchar2(255), foreign key(code) references reservas(instalation_code));
 create table test(id int, fecha date, tipo varchar2(255), peso int, edad int, sexo varchar2(255), tiempo int, pulsaciones int, distance int, resultado int);
 create table loggin (dni_socio varchar2(255), contrasena varchar2(255), fin_bloqueo date, foreign key(dni_socio) references socios(dni));
+create table trained(idEntrenado int, idEntrenador int);
 -- create table recibos (number int, foreign key(number) references cuotas(num_recibo));
 -- create table asambleas (type varchar2(255), announcement varchar2(255), date_announcement1 date, date_announcement2 date);
 
