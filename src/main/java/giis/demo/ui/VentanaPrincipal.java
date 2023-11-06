@@ -587,11 +587,11 @@ public class VentanaPrincipal extends JFrame {
 		String dniUsuario = getTxDniUsuario().getText();
 		try {
 			loggin.restablecerContraseña(dniUsuario);
-			JOptionPane.showMessageDialog(this,"Contraseña restablecida\nSe ha enviado la nueva contraseña a: "+loggin.getCorreoDeUsuario(dniUsuario),
+			JOptionPane.showMessageDialog(null,"Contraseña restablecida\nSe ha enviado la nueva contraseña a: "+loggin.getCorreoDeUsuario(dniUsuario),
 					"Iniciar Sesion", JOptionPane.INFORMATION_MESSAGE);
 		}catch (MessagingException e) {
 			System.err.println("Ha ocurrido un error al enviar el correo");
-			JOptionPane.showMessageDialog(this,"Error al enviar nueva contraseña a: "+loggin.getCorreoDeUsuario(dniUsuario),
+			JOptionPane.showMessageDialog(null,"Error al enviar nueva contraseña a: "+loggin.getCorreoDeUsuario(dniUsuario),
 					"Iniciar Sesion", JOptionPane.INFORMATION_MESSAGE);
 			e.printStackTrace();
 		}finally {
@@ -651,11 +651,15 @@ public class VentanaPrincipal extends JFrame {
 	private void cambiarContraseña() {
 		String dniUsuario = tramitarLicencia.getUsuario().getDni();
 		String nuevaContraseña = "";
+		Boolean continuar = null;
 		do {
 			nuevaContraseña = JOptionPane.showInputDialog(this,"Nueva Contraseña\nDebe contener mayusculas, minusculas y al menos un numero","Cambiar contraseña",JOptionPane.QUESTION_MESSAGE);
-			JOptionPane.showMessageDialog(this,"La contraseña debe contener mayusculas, minusculas y al menos un numero",
-					"Cambiar contraseña", JOptionPane.INFORMATION_MESSAGE);
-		}while(!loggin.comprobarNuevaContraseñaValida(nuevaContraseña));
+			
+			if (nuevaContraseña == null) // Cancela la operación si cancelar es presionado (Devuelve null)
+				return;				
+			continuar = loggin.comprobarNuevaContraseñaValida(nuevaContraseña);
+			
+		}while(!continuar);
 		loggin.cambiarContraseña(dniUsuario, nuevaContraseña);
 		JOptionPane.showMessageDialog(this,"Contraseña actualizada",
 				"Cambiar contraseña", JOptionPane.INFORMATION_MESSAGE);
