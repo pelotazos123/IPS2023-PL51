@@ -17,6 +17,7 @@ public class ReservationController {
 	private final static String SQL_ID_RESERVA = "SELECT seq FROM sqlite_sequence where name='reservas'";
 	private final static String SQL_CARGAR_PARTICIPANTES = "SELECT * FROM participante_reserva";
 	private final static String SQL_CREAR_PARTICIPANTE = "INSERT INTO participante_reserva (reserva_id, dni) VALUES (?, ?)";
+	private final static String SQL_CARGAR_FECHAS_RESERVA = "SELECT DISTINCT fecha FROM reservas, participante_reserva WHERE participante_reserva.dni='?' and reservas.instalation_code='?'";
 	
 	private List<Object[]> resQuery;
 	
@@ -26,13 +27,21 @@ public class ReservationController {
 		this.db = db;
 	}
 	
-	public void reservar(LocalDateTime dia, String reserva, Instalacion instalacionId, List<String> listaParticipantes, boolean extra) {
-		createReservation(reserva, instalacionId.getCode(), extra);
+	public void reservar(LocalDateTime dia, String reserva, Instalacion instalacion, List<String> listaParticipantes, boolean extra) {
+		checkParticipantsAvailability(dia, instalacion, listaParticipantes);
+		createReservation(reserva, instalacion.getCode(), extra);
 		createQueryParticipants(listaParticipantes);
 		getReservas();
 		getParticipantes();
 	}
 	
+	private void checkParticipantsAvailability(LocalDateTime dia, Instalacion instalacion, List<String> participantes) {
+		List<Object[]> queryRes = new ArrayList<>();
+		for (String dni: participantes) {
+			
+		}
+	}
+
 	private void createQueryParticipants(List<String> listaParticipantes) {
 		int id_reserva = (int) db.executeQueryArray(SQL_ID_RESERVA).get(0)[0];
 		
@@ -89,7 +98,7 @@ public class ReservationController {
 			id = (int) objects[0];
 			dni = (String) objects[2];
 			
-			//System.out.println(id + " |hola| " + dni);
+			System.out.println(id + " |hola| " + dni);
 		}
 	}
 	

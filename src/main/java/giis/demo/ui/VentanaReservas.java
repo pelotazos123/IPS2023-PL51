@@ -162,8 +162,7 @@ public class VentanaReservas extends JDialog {
 	}
 	
 	private void reservar() {
-		if (!completeCheckToSocios())
-			return;
+		if (!completeCheckToSocios()) return;
 		
 		int selectedVal = getList().getSelectedIndex();
 		
