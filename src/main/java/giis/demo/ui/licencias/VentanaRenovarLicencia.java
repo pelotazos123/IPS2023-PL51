@@ -396,7 +396,7 @@ public class VentanaRenovarLicencia extends JFrame {
 	}
 	
 	private String cargarPoliticaDeDatos() {
-		return FileUtil.loadFileTickets(VentanaTramitarLicencia.FICHERO_POLITICA_PROTECCION_DATOS);
+		return FileUtil.loadFilePoliticaDatos(VentanaTramitarLicencia.FICHERO_POLITICA_PROTECCION_DATOS);
 	}
 	private JPanel getPnModificarLicencia() {
 		if (pnModificarLicencia == null) {

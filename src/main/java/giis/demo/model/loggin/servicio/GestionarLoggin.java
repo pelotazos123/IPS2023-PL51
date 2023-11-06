@@ -1,9 +1,11 @@
-package giis.demo.model.loggin;
+package giis.demo.model.loggin.servicio;
 
 import java.time.LocalDate;
 
 import javax.mail.MessagingException;
 
+import giis.demo.model.loggin.Correo;
+import giis.demo.model.loggin.Loggin;
 import giis.demo.util.Database;
 
 public class GestionarLoggin {

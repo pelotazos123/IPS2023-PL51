@@ -33,7 +33,7 @@ import com.toedter.calendar.JDateChooser;
 import giis.demo.model.Generos;
 import giis.demo.model.CrearLicencias.TiposLicencia;
 import giis.demo.model.CrearLicencias.servicio.TramitarLicencia;
-import giis.demo.model.loggin.GestionarLoggin;
+import giis.demo.model.loggin.servicio.GestionarLoggin;
 import giis.demo.util.FileUtil;
 
 public class VentanaTramitarLicencia extends JFrame {
@@ -740,7 +740,7 @@ public class VentanaTramitarLicencia extends JFrame {
 		return txPoliticaDeDatos;
 	}
 	private String cargarPoliticaDeDatos() {
-		return FileUtil.loadFileTickets(FICHERO_POLITICA_PROTECCION_DATOS);
+		return FileUtil.loadFilePoliticaDatos(FICHERO_POLITICA_PROTECCION_DATOS);
 	}
 	private JScrollPane getScrPoliticaDeDatos() {
 		if (scrPoliticaDeDatos == null) {
