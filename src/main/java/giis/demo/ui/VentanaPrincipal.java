@@ -16,7 +16,6 @@ import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.Date;
 
-import javax.mail.MessagingException;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
@@ -585,19 +584,25 @@ public class VentanaPrincipal extends JFrame {
 	
 	private void restablecerContraseña() {
 		String dniUsuario = getTxDniUsuario().getText();
-		try {
-			loggin.restablecerContraseña(dniUsuario);
-			JOptionPane.showMessageDialog(null,"Contraseña restablecida\nSe ha enviado la nueva contraseña a: "+loggin.getCorreoDeUsuario(dniUsuario),
-					"Iniciar Sesion", JOptionPane.INFORMATION_MESSAGE);
-		}catch (MessagingException e) {
-			System.err.println("Ha ocurrido un error al enviar el correo");
-			JOptionPane.showMessageDialog(null,"Error al enviar nueva contraseña a: "+loggin.getCorreoDeUsuario(dniUsuario),
-					"Iniciar Sesion", JOptionPane.INFORMATION_MESSAGE);
-			e.printStackTrace();
-		}finally {
-			getTxDniUsuario().setText("");
-			getPfContraseña().setText("");
+		if(dniUsuario.isEmpty() || !loggin.existeUsuario(dniUsuario)) {
+			JOptionPane.showMessageDialog(null,
+					"Usuario incorrecto o inexistente", "Iniciar Sesion",
+					JOptionPane.INFORMATION_MESSAGE);
+		}else {
+			String correo= JOptionPane.showInputDialog(this,"Introduzca correo de recuperacion","Iniciar Sesion",JOptionPane.QUESTION_MESSAGE);
+			if(correo != null) {
+				if (loggin.restablecerContraseña(dniUsuario,correo)) {
+					JOptionPane.showMessageDialog(null, "Contraseña restablecida\nSe ha enviado la nueva contraseña a: "
+							+ loggin.getCorreoDeUsuario(dniUsuario), "Iniciar Sesion", JOptionPane.INFORMATION_MESSAGE);
+				} else {
+					JOptionPane.showMessageDialog(null,
+							"Error al enviar nueva contraseña a: " + loggin.getCorreoDeUsuario(dniUsuario), "Iniciar Sesion",
+							JOptionPane.INFORMATION_MESSAGE);
+				}
+			}
 		}
+		getTxDniUsuario().setText("");
+		getPfContraseña().setText("");
 	}
 	
 	public class PintaBotonRestablecerContraseña extends MouseAdapter{

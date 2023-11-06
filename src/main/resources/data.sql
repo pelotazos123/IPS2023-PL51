@@ -60,7 +60,7 @@ insert into loggin (dni_socio, contrasena) values
 	('123456789E','7143807319c982cdcb00af7d92ba1ea8'), 
 	('123456789J','99eeb6fb14afe15448b972fad2bb6337'), 
 	('123456789K','4d1000ad38485563b550c7dc6f2221f1'); 
-	--Usuario: 123456789A contraseña:Aa1
+	--Usuario: 123456789A contraseña:a5896
 	--Usuario: 123456789B contraseña:b8763
 	--Usuario: 123456789C contraseña:c9863
 	--Usuario: 123456789D contraseña:d4789
