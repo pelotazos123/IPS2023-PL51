@@ -6,7 +6,6 @@
 drop table socios;
 drop table licencias;
 drop table cuotas;
-drop table participante_reservas;
 drop table reservas;
 drop table instalaciones;
 drop table asambleas;
@@ -19,8 +18,8 @@ create table cuotas (owner_id int, cuota_type varchar2(255), price int, state in
 create table instalaciones (code varchar2(255), name varchar2(255), min_users int, max_users int, foreign key(code) references reservas(instalation_code));
 create table recibos (owner_iban varchar2(255), number int, amount int, value_date date, charge_date date);
 create table asambleas (type varchar2(255), announcement varchar2(255), date_announcement1 date, date_announcement2 date, orderOfDay varchar2(255));
-create table reservas (reserva_id integer PRIMARY KEY, owner_id int, fecha date, instalation_code varchar2(255), extra bool, foreign key(owner_id) references socios(id));
-CREATE TABLE participante_reserva (id integer PRIMARY KEY, reserva_id int, dni varchar2(255) NOT NULL, FOREIGN KEY(reserva_id) REFERENCES reservas(reserva_id));
+create table reservas (id integer PRIMARY KEY AUTOINCREMENT, fecha date, instalation_code varchar2(255), extra bool);
+CREATE TABLE IF NOT EXISTS participante_reserva (id integer PRIMARY KEY AUTOINCREMENT, reserva_id int, dni varchar2(255) NOT NULL, FOREIGN KEY(reserva_id) REFERENCES reservas(id));
 create table loggin (dni_socio varchar2(255), contrasena varchar2(255), fin_bloqueo date, foreign key(dni_socio) references socios(dni));
 -- create table recibos (number int, foreign key(number) references cuotas(num_recibo));
 -- create table asambleas (type varchar2(255), announcement varchar2(255), date_announcement1 date, date_announcement2 date);

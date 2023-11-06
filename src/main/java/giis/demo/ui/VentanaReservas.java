@@ -157,7 +157,6 @@ public class VentanaReservas extends JDialog {
 		SimpleDateFormat formatDate = new SimpleDateFormat(pattern);
 		chosenDay = formatDate.format(calendar.getDate());
 		getPnSelector().setVisible(true);
-		System.out.println(chosenDay);
 		generaHoras();
 		getBtnSiguiente().setEnabled(false);
 	}
@@ -186,7 +185,7 @@ public class VentanaReservas extends JDialog {
 		reMan.reservar(finalDate, reserva, selInstalacion, listaParticipantes, hasExtra);
 		
 		JOptionPane.showMessageDialog(null, "Reserva confirmada de " + selInstalacion.toString() +": " + reserva);
-		//this.dispose();
+		this.dispose();
 	}
 
 	private boolean completeCheckToSocios() {
@@ -302,7 +301,6 @@ public class VentanaReservas extends JDialog {
 		}		
 		
 		for (Reserva reserva : reMan.getReservas()) {	
-			System.out.println(reserva.getHora() + "hora?");
 			if (reserva.getFecha().trim().equals(chosenDay)
 					&& modeloListaHoras.contains(reserva.getHora().trim())
 							&& reserva.getInstalacionId().trim().equals(((Instalacion)getCbInstalaciones().getSelectedItem()).getCode().toString())) {
@@ -459,7 +457,6 @@ public class VentanaReservas extends JDialog {
 		//nuevo.setPreferredSize(new Dimension(424, 35));
 		nuevo.setFont(new Font("Tahoma", Font.PLAIN, 25));
 		nuevo.setHorizontalAlignment(SwingConstants.CENTER);
-		System.out.println(nuevo.getSize());
 		return nuevo;
 	}
 	private JPanel getPnBotones() {

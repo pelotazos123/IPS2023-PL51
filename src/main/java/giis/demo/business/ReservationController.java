@@ -12,10 +12,9 @@ public class ReservationController {
 	
 	private Database db;
 	
-	private final static int MOCK_ID_OWNER = 100;
-	private final static String SQL_CARGAR_RESERVA = "select owner_id, fecha, instalation_code, extra from reservas";
-	private final static String SQL_CREAR_RESERVA = "insert into reservas(owner_id, fecha, instalation_code, extra) values (?, ?, ?, ?)";
-	private final static String SQL_ID_RESERVA = "SELECT LAST_INSERT_ID() FROM reservas";
+	private final static String SQL_CARGAR_RESERVA = "select id, fecha, instalation_code, extra from reservas";
+	private final static String SQL_CREAR_RESERVA = "insert into reservas(fecha, instalation_code, extra) values (?, ?, ?)";
+	private final static String SQL_ID_RESERVA = "SELECT LAST_INSERT_ROWID() FROM reservas";
 	private final static String SQL_CREAR_PARTICIPANTE = "INSERT INTO participante_reserva (reserva_id, dni) VALUES (?, ?)";
 	
 	private List<Object[]> resQuery;
@@ -28,8 +27,9 @@ public class ReservationController {
 	
 	public void reservar(LocalDateTime dia, String reserva, Instalacion instalacionId, List<String> listaParticipantes, boolean extra) {
 		createReservation(reserva, instalacionId.getCode(), extra);
-		//createQueryParticipants(listaParticipantes);
+		createQueryParticipants(listaParticipantes);
 		getReservas();
+		getParticipantes();
 	}
 	
 	private void createQueryParticipants(List<String> listaParticipantes) {
@@ -71,14 +71,27 @@ public class ReservationController {
 		}
 		
 		for (Reserva reservaTP : listaReservas) {
-			System.out.println(reservaTP.toString());
+			System.out.println(reservaTP.getId());
 		}
 		
 		return listaReservas;		
 	}
 	
+	public void getParticipantes() {
+		List<Object[]> resQuery = db.executeQueryArray(SQL_CARGAR_RESERVA);
+		int id = 0;
+		String dni = "";
+		
+		for (Object[] objects : resQuery) {
+			id = (int) objects[0];
+			dni = (String) objects[1];
+			
+			System.out.println(id + " |hola| " + dni);
+		}
+	}
+	
 	private void createReservation(String reserva, String instalacionId, boolean extra) {
-		db.executeUpdate(SQL_CREAR_RESERVA, MOCK_ID_OWNER, reserva, instalacionId, extra);
+		db.executeUpdate(SQL_CREAR_RESERVA, reserva, instalacionId, extra);
 	}
 
 }
