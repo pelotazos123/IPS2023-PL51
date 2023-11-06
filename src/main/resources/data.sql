@@ -17,7 +17,7 @@ insert into socios (id,dni,name,surname,email,telf,cuota_type,iban,height,weight
 insert into cuotas (owner_id, cuota_type, price, state) values
 	(100, 'Joven', 100, 'Pendiente'),
 	(101, 'Joven', 100, 'Pendiente'),
-	(102, 'Adulto', 200, 'Emitida'),
+	(102, 'Adulto', 200, 'Pendiente'),
 	(103, 'Jubilado', 150, 'Pendiente');
 
 insert into licencias (owner_id, tutor_dni, tutor_name, tutor_surname, tutor_email, tutor_telf, tutor_birth_date, tutor_gender, state, price, licence_type, facturation_direction, facturation_info) values 
