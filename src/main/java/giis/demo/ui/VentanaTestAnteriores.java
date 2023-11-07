@@ -8,7 +8,6 @@ import javax.swing.border.EmptyBorder;
 
 import org.jfree.chart.ChartPanel;
 
-import demo.ChartPanelSerializationTest;
 import giis.demo.logica.TestsFisiologicos;
 
 public class VentanaTestAnteriores extends JFrame {
