@@ -497,6 +497,7 @@ public class VentanaReservas extends JDialog {
 		}
 		return pnTxtFields;
 	}
+	
 	private JButton getBtnVolver() {
 		if (btnVolver == null) {
 			btnVolver = new JButton("Volver");
