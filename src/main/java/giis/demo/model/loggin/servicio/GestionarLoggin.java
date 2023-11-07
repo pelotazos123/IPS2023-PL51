@@ -1,9 +1,9 @@
-package giis.demo.model.loggin;
+package giis.demo.model.loggin.servicio;
 
 import java.time.LocalDate;
 
-import javax.mail.MessagingException;
-
+import giis.demo.model.loggin.Correo;
+import giis.demo.model.loggin.Loggin;
 import giis.demo.util.Database;
 
 public class GestionarLoggin {
@@ -35,18 +35,17 @@ public class GestionarLoggin {
 		return loggin.contraseñaCorrecta(dniUsuario, contraseña);
 	}
 	
-	public void generarLoggin(String dniUsuario) throws MessagingException {
+	public boolean generarLoggin(String dniUsuario){
 		String contraseña = loggin.generarLoggin(dniUsuario);
 		String correoUsuario = getCorreoDeUsuario(dniUsuario);
 		String textoCorreo = "Contraseña generada: "+contraseña+"\nPara modificarla acceda a su cuenta , pulse cambiar contraseña e introduzca la nueva contraseña";
-		enviarCorreos.enviarCorreo(correoUsuario, textoCorreo);
+		return enviarCorreos.enviarCorreo(correoUsuario, textoCorreo);
 	}
 	
-	public void restablecerContraseña(String dniUsuario) throws MessagingException {
+	public boolean restablecerContraseña(String dniUsuario,String correoUsuario) {
 		String contraseña = loggin.restablecerContraseña(dniUsuario);
-		String correoUsuario = getCorreoDeUsuario(dniUsuario);
 		String textoCorreo = "Contraseña restablecida: "+contraseña+"\nPara modificarla acceda a su cuenta , pulse cambiar contraseña e introduzca la nueva contraseña";
-		enviarCorreos.enviarCorreo(correoUsuario, textoCorreo);
+		return enviarCorreos.enviarCorreo(correoUsuario, textoCorreo);
 	}
 	
 	public void cambiarContraseña(String dniUsuario, String nuevaContraseña) {

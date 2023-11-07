@@ -16,8 +16,8 @@ import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.Date;
 
-import javax.mail.MessagingException;
 import javax.swing.JButton;
+import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -26,15 +26,19 @@ import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
+import javax.swing.border.TitledBorder;
 
 import com.toedter.calendar.JDateChooser;
 
 import giis.demo.business.AsambleasController;
 import giis.demo.business.AsambleasModel;
+import giis.demo.business.GestionRecibosController;
 import giis.demo.business.RecibosController;
 import giis.demo.business.RecibosModel;
 import giis.demo.model.CrearLicencias.servicio.TramitarLicencia;
-import giis.demo.model.loggin.GestionarLoggin;
+import giis.demo.model.competiciones.servicio.GestionarCompeticiones;
+import giis.demo.model.loggin.servicio.GestionarLoggin;
+import giis.demo.ui.competiciones.VentanaInscripcionCompeticiones;
 import giis.demo.ui.licencias.VentanaRenovarLicencia;
 import giis.demo.ui.licencias.VentanaTramitarLicencia;
 import giis.demo.util.Database;
@@ -48,12 +52,11 @@ public class VentanaPrincipal extends JFrame {
 	
 	private TramitarLicencia tramitarLicencia;
 	private GestionarLoggin loggin;
+	private GestionarCompeticiones gestorCompeticiones;
 	
 	private JPanel pnPrincipal;
 	private JPanel pnPrincipalSocio;
 	private JPanel pnPrincipalDirectivo;
-	private JLabel lbProvisionalSocio;
-	private JLabel lbProvisionalDirectivo;
 	private JButton btTramitarLicencia;
 	private JButton btRenovarLicencia;
 	private JButton btPagoTransferencia;
@@ -63,7 +66,9 @@ public class VentanaPrincipal extends JFrame {
 	private JButton btnReservas;
 	private JButton btnAsambleas;
 	private JButton btnListadoSocios;
+	private JButton btnAñadirCompeticiones;
 	private Database db;
+	private JButton btnGestionRecibos;
 	private JPanel pnInicio;
 	private JPanel pnLoggin;
 	private JPanel pnDni;
@@ -73,6 +78,7 @@ public class VentanaPrincipal extends JFrame {
 	private JLabel lbSeleccionarFecha;
 	private JPanel pnContraseña;
 	private JPanel pnBoton;
+	private JButton btnGeneracionRecibos;
 	private JButton btnEntrar;
 	private JPanel pnEscribirContraseña;
 	private JLabel lblContraseña;
@@ -84,6 +90,25 @@ public class VentanaPrincipal extends JFrame {
 	private JLabel lblDniDelUsuario;
 	private JTextField txDniUsuario;
 	private JButton btCambiarContraseña;
+	private JPanel pnSelectorFechaSocio;
+	private JLabel lbSeleccionarFechaSocio;
+	private JPanel pnSeccionSocio;
+	private JPanel pnSeccionSocioPersonal;
+	private JPanel pnSeccionSocioDeportiva;
+	private JPanel pnBienvenidoAlClub;
+	private JLabel lbBienvenidoSocio;
+	private JPanel pnBotonesDeportiva;
+	private JPanel pnSelectorFechaDirectivo;
+	private JLabel lbSeleccionarFechaDirectivo;
+	private JPanel pnSeccionDirectivo;
+	private JPanel pnSeccionDirectivoPersonal;
+	private JPanel pnSeccionDirectivoFunciones;
+	private JPanel pnBienvenidoAlClubDirectivo;
+	private JLabel lbBienvenidoDirectivo;
+	private JPanel pnBotonesDeportivoDirectivo;
+	private JPanel pnSeccionDirectivoAdministracion;
+	private JButton btInscripcionCompeticiones;
+
 
 	/**
 	 * Create the frame.
@@ -105,7 +130,9 @@ public class VentanaPrincipal extends JFrame {
 		pnPrincipal.add(getPnPrincipalDirectivo(), "PrincipalDirectivo");
 		tramitarLicencia = new TramitarLicencia(db);
 		loggin = new GestionarLoggin(db);
+		gestorCompeticiones = new GestionarCompeticiones(db);
 		cargarFecha();
+		setMinimumSize(new Dimension(517, 517));
 	}
 
 	private void cargarFecha() {
@@ -121,6 +148,9 @@ public class VentanaPrincipal extends JFrame {
 			pnPrincipalSocio.add(getLbProvisionalSocio());
 			pnPrincipalSocio.add(getBtTramitarLicencia());
 			pnPrincipalSocio.add(getBtRenovarLicencia());
+			pnPrincipalSocio.setLayout(new BorderLayout(0, 0));
+			pnPrincipalSocio.add(getPnSelectorFechaSocio(), BorderLayout.NORTH);
+			pnPrincipalSocio.add(getPnSeccionSocio(), BorderLayout.CENTER);
 		}
 		return pnPrincipalSocio;
 	}
@@ -174,63 +204,74 @@ public class VentanaPrincipal extends JFrame {
 			btnGeneracionRecibos.setBounds(86, 304, 185, 60);
 			pnPrincipalDirectivo.add(btnGeneracionRecibos);
 			pnPrincipalDirectivo.add(getBtnListadoSocios());
+			pnPrincipalDirectivo = new JPanel();			
+			pnPrincipalDirectivo.setLayout(new BorderLayout(0, 0));
+			pnPrincipalDirectivo.add(getPnSelectorFechaDirectivo(), BorderLayout.NORTH);
+			pnPrincipalDirectivo.add(getPnSeccionDirectivo(), BorderLayout.CENTER);
 		}
 		return pnPrincipalDirectivo;
 	}
-
-	private JLabel getLbProvisionalSocio() {
-		if (lbProvisionalSocio == null) {
-			lbProvisionalSocio = new JLabel("Pantalla principal del socio");
-			lbProvisionalSocio.setBounds(248, 10, 225, 13);
+	
+	 private JButton getBtnGeneracionRecibos() {
+			if (btnGeneracionRecibos == null) {
+				btnGeneracionRecibos = new JButton("Generar Recibos");
+				btnGeneracionRecibos.addActionListener(new ActionListener() {
+					@Override
+					public void actionPerformed(ActionEvent e) {
+						RecibosView view = new RecibosView();
+						RecibosModel model = new RecibosModel();
+						RecibosController controller = new RecibosController(model,view);
+						
+						controller.initController();
+					}
+				});
+				btnGeneracionRecibos.setBounds(183, 358, 139, 52);
+			}
+			return btnGeneracionRecibos;
 		}
-		return lbProvisionalSocio;
-	}
-
-	private JLabel getLbProvisionalDirectivo() {
-		if (lbProvisionalDirectivo == null) {
-			lbProvisionalDirectivo = new JLabel("Pantalla principal del directivo");
-
-			lbProvisionalDirectivo.setBounds(188, 116, 223, 32);
-		}
-		return lbProvisionalDirectivo;
-	}
 
 	private JButton getBtTramitarLicencia() {
 		if (btTramitarLicencia == null) {
 			btTramitarLicencia = new JButton("Tramitar Licencia");
 			btTramitarLicencia.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
-					if(tramitarLicencia.esDirectivo()) {
-						VentanaTramitarLicencia frame = new VentanaTramitarLicencia(tramitarLicencia,loggin);
-						frame.setVisible(true);
-					}else if(comprobarSocioConAlgunaLicenciaDisponible()) {
-						VentanaTramitarLicencia frame = new VentanaTramitarLicencia(tramitarLicencia,loggin);
-						frame.setVisible(true);
-					}
+					irTramitarLicencia();
 				}
 			});
-			btTramitarLicencia.setBounds(405, 358, 139, 52);
 		}
 		return btTramitarLicencia;
+	}
+	
+	private void irTramitarLicencia() {
+		if(tramitarLicencia.esDirectivo()) {
+			VentanaTramitarLicencia frame = new VentanaTramitarLicencia(tramitarLicencia,loggin);
+			frame.setVisible(true);
+		}else if(comprobarSocioConAlgunaLicenciaDisponible()) {
+			VentanaTramitarLicencia frame = new VentanaTramitarLicencia(tramitarLicencia,loggin);
+			frame.setVisible(true);
+		}
 	}
 
 	private JButton getBtRenovarLicencia() {
 		if (btRenovarLicencia == null) {
 			btRenovarLicencia = new JButton("Renovar Licencia");
-			btRenovarLicencia.setBounds(410, 252, 134, 54);
 			btRenovarLicencia.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
-					if(tramitarLicencia.esDirectivo()) {
-						VentanaRenovarLicencia frame = new VentanaRenovarLicencia(tramitarLicencia);
-						frame.setVisible(true);
-					}else if(comprobarSocioConLicenciaPagada()) {
-						VentanaRenovarLicencia frame = new VentanaRenovarLicencia(tramitarLicencia);
-						frame.setVisible(true);
-					}
+					irRenovarLicencia();
 				}
 			});
 		}
 		return btRenovarLicencia;
+	}
+	
+	private void irRenovarLicencia() {
+		if(tramitarLicencia.esDirectivo()) {
+			VentanaRenovarLicencia frame = new VentanaRenovarLicencia(tramitarLicencia);
+			frame.setVisible(true);
+		}else if(comprobarSocioConLicenciaPagada()) {
+			VentanaRenovarLicencia frame = new VentanaRenovarLicencia(tramitarLicencia);
+			frame.setVisible(true);
+		}
 	}
   
   private JButton getBtPagoTransferencia() {
@@ -242,7 +283,6 @@ public class VentanaPrincipal extends JFrame {
         }
       });
       btPagoTransferencia.setMnemonic('t');
-      btPagoTransferencia.setBounds(156, 433, 191, 52);
     }
     return btPagoTransferencia;
   }
@@ -278,7 +318,6 @@ public class VentanaPrincipal extends JFrame {
 					controller.initController();
 				}
 			});
-			btnAsambleas.setBounds(86, 205, 185, 60);
 		}
 		return btnAsambleas;
 	}
@@ -290,9 +329,29 @@ public class VentanaPrincipal extends JFrame {
 					openListadoSocios();
 				}
 			});
-			btnListadoSocios.setBounds(86, 399, 185, 53);
 		}
 		return btnListadoSocios;
+	}
+	
+	private JButton getBtnAñadirCompeticiones() {
+		if (btnAñadirCompeticiones == null) {
+			btnAñadirCompeticiones = new JButton("Añadir competiciones");
+			btnAñadirCompeticiones.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					añadirCompeticones();
+				}
+			});
+		}
+		return btnAñadirCompeticiones;
+	}
+	
+	private void añadirCompeticones() {
+		JFileChooser cargar = new JFileChooser();
+		int resp = cargar.showOpenDialog(null);
+		if(resp == JFileChooser.APPROVE_OPTION) {
+			gestorCompeticiones.añadirCompeticiones(cargar.getSelectedFile());
+		}
+		
 	}
 	
 	private void openListadoSocios() {
@@ -305,7 +364,7 @@ public class VentanaPrincipal extends JFrame {
 	private boolean comprobarSocioConLicenciaPagada() {
 		if(tramitarLicencia.socioConLicenciasPagadas()) {
 			return true;
-		}else {
+		} else {
 			JOptionPane.showMessageDialog(this,"No tienes ninguna licencia para renovar",
 					"Licencias", JOptionPane.INFORMATION_MESSAGE);
 			return false;
@@ -428,17 +487,36 @@ public class VentanaPrincipal extends JFrame {
 	private void loggearSocio() {
 		tramitarLicencia.loggearSocio(getTxDniUsuario().getText());
 		if(tramitarLicencia.esDirectivo()) {
-			pnPrincipalDirectivo.add(getBtTramitarLicencia());
-			pnPrincipalDirectivo.add(getBtRenovarLicencia());
-			pnPrincipalDirectivo.add(getBtnReservas());
-			pnPrincipalDirectivo.add(getBtCambiarContraseña());
+			pnSeccionDirectivoPersonal.add(getBtTramitarLicencia());
+			pnSeccionDirectivoPersonal.add(getBtPagoTransferencia());
+			pnSeccionDirectivoPersonal.add(getBtRenovarLicencia());
+			pnBotonesDeportivoDirectivo.add(getBtnReservas());
+			pnSeccionDirectivoPersonal.add(getBtCambiarContraseña());
+			pnSelectorFechaDirectivo.add(getDcFechaAplicacion());
+			pnBotonesDeportivoDirectivo.add(getBtTestsFisiologicos());
+			pnBotonesDeportivoDirectivo.add(getBtInscripcionCompeticiones());
+			pnSeccionDirectivoAdministracion.add(getBtnAsambleas());
+			pnSeccionDirectivoAdministracion.add(getBtnGeneracionRecibos());
+			pnSeccionDirectivoAdministracion.add(getBtnGestionRecibos());
+			pnSeccionDirectivoAdministracion.add(getBtnListadoSocios());
+			pnSeccionDirectivoAdministracion.add(getBtnAñadirCompeticiones());
+			
+			getLbBienvenidoDirectivo().setText("Bienvenido al club "+tramitarLicencia.getDirectivo().getNombre());
+			
 			((CardLayout) pnPrincipal.getLayout()).show(pnPrincipal, "PrincipalDirectivo");
+			setMinimumSize(new Dimension(800, 517));
 		}else {
-			pnPrincipalSocio.add(getBtTramitarLicencia());
-			pnPrincipalSocio.add(getBtRenovarLicencia());
-			pnPrincipalSocio.add(getBtnReservas());
-			pnPrincipalSocio.add(getBtCambiarContraseña());
+			pnSeccionSocioPersonal.add(getBtTramitarLicencia());
+			pnSeccionSocioPersonal.add(getBtPagoTransferencia());
+			pnSeccionSocioPersonal.add(getBtRenovarLicencia());
+			pnBotonesDeportiva.add(getBtnReservas());
+			pnBotonesDeportiva.add(getBtInscripcionCompeticiones());
+			pnSeccionSocioPersonal.add(getBtCambiarContraseña());
+			pnSelectorFechaSocio.add(getDcFechaAplicacion());
+			pnBotonesDeportiva.add(getBtTestsFisiologicos());
+			getLbBienvenidoSocio().setText("Bienvenido al club "+tramitarLicencia.getSocio().getNombre());
 			((CardLayout)pnPrincipal.getLayout()).show(pnPrincipal,"PrincipalSocio");
+			setMinimumSize(new Dimension(800, 517));
 		}
 	}
 	
@@ -538,19 +616,25 @@ public class VentanaPrincipal extends JFrame {
 	
 	private void restablecerContraseña() {
 		String dniUsuario = getTxDniUsuario().getText();
-		try {
-			loggin.restablecerContraseña(dniUsuario);
-			JOptionPane.showMessageDialog(this,"Contraseña restablecida\nSe ha enviado la nueva contraseña a: "+loggin.getCorreoDeUsuario(dniUsuario),
-					"Iniciar Sesion", JOptionPane.INFORMATION_MESSAGE);
-		}catch (MessagingException e) {
-			System.err.println("Ha ocurrido un error al enviar el correo");
-			JOptionPane.showMessageDialog(this,"Error al enviar nueva contraseña a: "+loggin.getCorreoDeUsuario(dniUsuario),
-					"Iniciar Sesion", JOptionPane.INFORMATION_MESSAGE);
-			e.printStackTrace();
-		}finally {
-			getTxDniUsuario().setText("");
-			getPfContraseña().setText("");
+		if(dniUsuario.isEmpty() || !loggin.existeUsuario(dniUsuario)) {
+			JOptionPane.showMessageDialog(null,
+					"Usuario incorrecto o inexistente", "Iniciar Sesion",
+					JOptionPane.INFORMATION_MESSAGE);
+		}else {
+			String correo= JOptionPane.showInputDialog(this,"Introduzca correo de recuperacion","Iniciar Sesion",JOptionPane.QUESTION_MESSAGE);
+			if(correo != null) {
+				if (loggin.restablecerContraseña(dniUsuario,correo)) {
+					JOptionPane.showMessageDialog(null, "Contraseña restablecida\nSe ha enviado la nueva contraseña a: "
+							+ loggin.getCorreoDeUsuario(dniUsuario), "Iniciar Sesion", JOptionPane.INFORMATION_MESSAGE);
+				} else {
+					JOptionPane.showMessageDialog(null,
+							"Error al enviar nueva contraseña a: " + loggin.getCorreoDeUsuario(dniUsuario), "Iniciar Sesion",
+							JOptionPane.INFORMATION_MESSAGE);
+				}
+			}
 		}
+		getTxDniUsuario().setText("");
+		getPfContraseña().setText("");
 	}
 	
 	public class PintaBotonRestablecerContraseña extends MouseAdapter{
@@ -602,19 +686,207 @@ public class VentanaPrincipal extends JFrame {
 	}
 	
 	private void cambiarContraseña() {
-		String dniUsuario = tramitarLicencia.esDirectivo()? tramitarLicencia.getDirectivo().getDni():tramitarLicencia.getSocio().getDni();
+		String dniUsuario = tramitarLicencia.getUsuario().getDni();
 		String nuevaContraseña = "";
+		Boolean continuar = null;
 		do {
 			nuevaContraseña = JOptionPane.showInputDialog(this,"Nueva Contraseña\nDebe contener mayusculas, minusculas y al menos un numero","Cambiar contraseña",JOptionPane.QUESTION_MESSAGE);
-			JOptionPane.showMessageDialog(this,"La contraseña debe contener mayusculas, minusculas y al menos un numero",
-					"Cambiar contraseña", JOptionPane.INFORMATION_MESSAGE);
-		}while(!loggin.comprobarNuevaContraseñaValida(nuevaContraseña));
+			
+			if (nuevaContraseña == null) // Cancela la operación si cancelar es presionado (Devuelve null)
+				return;				
+			continuar = loggin.comprobarNuevaContraseñaValida(nuevaContraseña);
+			
+		}while(!continuar);
 		loggin.cambiarContraseña(dniUsuario, nuevaContraseña);
 		JOptionPane.showMessageDialog(this,"Contraseña actualizada",
 				"Cambiar contraseña", JOptionPane.INFORMATION_MESSAGE);
 	}
-
 	public TramitarLicencia getTramitarLicencia() {
 		return tramitarLicencia;
+  }
+	private JPanel getPnSelectorFechaSocio() {
+		if (pnSelectorFechaSocio == null) {
+			pnSelectorFechaSocio = new JPanel();
+			FlowLayout flowLayout = (FlowLayout) pnSelectorFechaSocio.getLayout();
+			flowLayout.setAlignment(FlowLayout.LEFT);
+			pnSelectorFechaSocio.setBackground(Color.WHITE);
+			pnSelectorFechaSocio.add(getLbSeleccionarFechaSocio());
+		}
+		return pnSelectorFechaSocio;
+	}
+	private JLabel getLbSeleccionarFechaSocio() {
+		if (lbSeleccionarFechaSocio == null) {
+			lbSeleccionarFechaSocio = new JLabel("Seleccionar fecha de la aplicacion:");
+			lbSeleccionarFechaSocio.setFont(new Font("Tahoma", Font.PLAIN, 19));
+		}
+		return lbSeleccionarFechaSocio;
+	}
+	private JPanel getPnSeccionSocio() {
+		if (pnSeccionSocio == null) {
+			pnSeccionSocio = new JPanel();
+			pnSeccionSocio.setBackground(Color.WHITE);
+			pnSeccionSocio.setLayout(new BorderLayout(0, 0));
+			pnSeccionSocio.add(getPnSeccionSocioPersonal(), BorderLayout.NORTH);
+			pnSeccionSocio.add(getPnSeccionSocioDeportiva(), BorderLayout.CENTER);
+		}
+		return pnSeccionSocio;
+	}
+	private JPanel getPnSeccionSocioPersonal() {
+		if (pnSeccionSocioPersonal == null) {
+			pnSeccionSocioPersonal = new JPanel();
+			pnSeccionSocioPersonal.setBorder(new TitledBorder(null, "Personal", TitledBorder.LEADING, TitledBorder.TOP, null, null));
+			pnSeccionSocioPersonal.setBackground(Color.WHITE);
+		}
+		return pnSeccionSocioPersonal;
+	}
+	private JPanel getPnSeccionSocioDeportiva() {
+		if (pnSeccionSocioDeportiva == null) {
+			pnSeccionSocioDeportiva = new JPanel();
+			pnSeccionSocioDeportiva.setBorder(null);
+			pnSeccionSocioDeportiva.setBackground(Color.WHITE);
+			pnSeccionSocioDeportiva.setLayout(new GridLayout(0, 1, 0, 0));
+			pnSeccionSocioDeportiva.add(getPnBienvenidoAlClub());
+			pnSeccionSocioDeportiva.add(getPnBotonesDeportiva());
+		}
+		return pnSeccionSocioDeportiva;
+	}
+	private JPanel getPnBienvenidoAlClub() {
+		if (pnBienvenidoAlClub == null) {
+			pnBienvenidoAlClub = new JPanel();
+			pnBienvenidoAlClub.setBackground(Color.WHITE);
+			FlowLayout flowLayout = (FlowLayout) pnBienvenidoAlClub.getLayout();
+			flowLayout.setVgap(80);
+			pnBienvenidoAlClub.add(getLbBienvenidoSocio());
+		}
+		return pnBienvenidoAlClub;
+	}
+	private JLabel getLbBienvenidoSocio() {
+		if (lbBienvenidoSocio == null) {
+			lbBienvenidoSocio = new JLabel("Bienvenido");
+			lbBienvenidoSocio.setFont(new Font("Tahoma", Font.PLAIN, 30));
+		}
+		return lbBienvenidoSocio;
+	}
+	private JPanel getPnBotonesDeportiva() {
+		if (pnBotonesDeportiva == null) {
+			pnBotonesDeportiva = new JPanel();
+			pnBotonesDeportiva.setBorder(new TitledBorder(null, "Deportiva", TitledBorder.LEADING, TitledBorder.TOP, null, null));
+			pnBotonesDeportiva.setBackground(Color.WHITE);
+		}
+		return pnBotonesDeportiva;
+	}
+	private JPanel getPnSelectorFechaDirectivo() {
+		if (pnSelectorFechaDirectivo == null) {
+			pnSelectorFechaDirectivo = new JPanel();
+			FlowLayout flowLayout = (FlowLayout) pnSelectorFechaDirectivo.getLayout();
+			flowLayout.setAlignment(FlowLayout.LEFT);
+			pnSelectorFechaDirectivo.setBackground(Color.WHITE);
+			pnSelectorFechaDirectivo.add(getLbSeleccionarFechaDirectivo());
+		}
+		return pnSelectorFechaDirectivo;
+	}
+	private JLabel getLbSeleccionarFechaDirectivo() {
+		if (lbSeleccionarFechaDirectivo == null) {
+			lbSeleccionarFechaDirectivo = new JLabel("Seleccionar fecha de la aplicacion:");
+			lbSeleccionarFechaDirectivo.setFont(new Font("Tahoma", Font.PLAIN, 19));
+		}
+		return lbSeleccionarFechaDirectivo;
+	}
+	private JPanel getPnSeccionDirectivo() {
+		if (pnSeccionDirectivo == null) {
+			pnSeccionDirectivo = new JPanel();
+			pnSeccionDirectivo.setBackground(Color.WHITE);
+			pnSeccionDirectivo.setLayout(new BorderLayout(0, 0));
+			pnSeccionDirectivo.add(getPnSeccionDirectivoPersonal(), BorderLayout.NORTH);
+			pnSeccionDirectivo.add(getPnSeccionDirectivoFunciones(), BorderLayout.CENTER);
+		}
+		return pnSeccionDirectivo;
+	}
+	private JPanel getPnSeccionDirectivoPersonal() {
+		if (pnSeccionDirectivoPersonal == null) {
+			pnSeccionDirectivoPersonal = new JPanel();
+			pnSeccionDirectivoPersonal.setBorder(new TitledBorder(null, "Personal", TitledBorder.LEADING, TitledBorder.TOP, null, null));
+			pnSeccionDirectivoPersonal.setBackground(Color.WHITE);
+		}
+		return pnSeccionDirectivoPersonal;
+	}
+	private JPanel getPnSeccionDirectivoFunciones() {
+		if (pnSeccionDirectivoFunciones == null) {
+			pnSeccionDirectivoFunciones = new JPanel();
+			pnSeccionDirectivoFunciones.setBackground(Color.WHITE);
+			pnSeccionDirectivoFunciones.setLayout(new GridLayout(0, 1, 0, 0));
+			pnSeccionDirectivoFunciones.add(getPnBienvenidoAlClubDirectivo());
+			pnSeccionDirectivoFunciones.add(getPnBotonesDeportivoDirectivo());
+			pnSeccionDirectivoFunciones.add(getPnSeccionDirectivoAdministracion());
+		}
+		return pnSeccionDirectivoFunciones;
+	}
+	private JPanel getPnBienvenidoAlClubDirectivo() {
+		if (pnBienvenidoAlClubDirectivo == null) {
+			pnBienvenidoAlClubDirectivo = new JPanel();
+			FlowLayout flowLayout = (FlowLayout) pnBienvenidoAlClubDirectivo.getLayout();
+			flowLayout.setVgap(60);
+			pnBienvenidoAlClubDirectivo.setBackground(Color.WHITE);
+			pnBienvenidoAlClubDirectivo.add(getLbBienvenidoDirectivo());
+		}
+		return pnBienvenidoAlClubDirectivo;
+	}
+	private JLabel getLbBienvenidoDirectivo() {
+		if (lbBienvenidoDirectivo == null) {
+			lbBienvenidoDirectivo = new JLabel("Bienvenido");
+			lbBienvenidoDirectivo.setFont(new Font("Tahoma", Font.PLAIN, 30));
+		}
+		return lbBienvenidoDirectivo;
+	}
+	private JPanel getPnBotonesDeportivoDirectivo() {
+		if (pnBotonesDeportivoDirectivo == null) {
+			pnBotonesDeportivoDirectivo = new JPanel();
+			pnBotonesDeportivoDirectivo.setBorder(new TitledBorder(null, "Deportiva", TitledBorder.LEADING, TitledBorder.TOP, null, null));
+			pnBotonesDeportivoDirectivo.setBackground(Color.WHITE);
+		}
+		return pnBotonesDeportivoDirectivo;
+	}
+	private JPanel getPnSeccionDirectivoAdministracion() {
+		if (pnSeccionDirectivoAdministracion == null) {
+			pnSeccionDirectivoAdministracion = new JPanel();
+			pnSeccionDirectivoAdministracion.setBorder(new TitledBorder(null, "Administracion", TitledBorder.LEADING, TitledBorder.TOP, null, null));
+			pnSeccionDirectivoAdministracion.setBackground(Color.WHITE);
+		}
+		return pnSeccionDirectivoAdministracion;
+	}
+	
+	private JButton getBtInscripcionCompeticiones() {
+		if (btInscripcionCompeticiones == null) {
+			btInscripcionCompeticiones = new JButton("Competiciones");
+			btInscripcionCompeticiones.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					irCompeticiones();
+				}
+			});
+			btInscripcionCompeticiones.setBounds(584, 269, 134, 54);
+		}
+		return btInscripcionCompeticiones;
+	}
+	
+	private void irCompeticiones() {
+		gestorCompeticiones.cargarCompeticiones();
+		VentanaInscripcionCompeticiones frame = new VentanaInscripcionCompeticiones(gestorCompeticiones,tramitarLicencia);
+		frame.setVisible(true);
+	}
+	private JButton getBtnGestionRecibos() {
+		if (btnGestionRecibos == null) {
+			btnGestionRecibos = new JButton("Gestionar Recibos");
+			btnGestionRecibos.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					GestionRecibosView view = new GestionRecibosView();
+					RecibosModel model = new RecibosModel();
+					GestionRecibosController controller = new GestionRecibosController(model,view);
+					
+					controller.initController();
+				}
+			});
+			btnGestionRecibos.setBounds(476, 205, 185, 60);
+		}
+		return btnGestionRecibos;
 	}
 }

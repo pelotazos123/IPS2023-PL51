@@ -2,20 +2,22 @@
 
 --Para giis.demo.tkrun:
 delete from socios;
+DELETE FROM participante_reserva;
+DELETE FROM reservas;
 
 insert into socios (id,dni,name,surname,email,telf,cuota_type,iban,height,weight,birth_date,gender,directive) values 
-	(100,'123456789A','Lucia','Suarez','lucia@gmail.com',684295304,'SENIOR','ES6000138500051234567523','1.72',70,'2000-10-24','MUJER',true),
+	(100,'123456789A','Lucia','Suarez','uo276220@uniovi.es',684295304,'SENIOR','ES6000138500051234567523','1.72',70,'2000-10-24','MUJER',true),
 	(101,'123456789B','Juan','Garcia','juan@gmail.com',650369327,'VETERANO','ES6000491506251234567713','1.95',105,'1950-05-14','HOMBRE',true),
 	(102,'123456789C','Jose','Alonso','UO289549@uniovi.es',789453618,'SENIOR','ES6340491500088834566464','1.81',75,'1999-06-29','HOMBRE',false),
 	(103,'123456789D','Paula','Perez','pau@gmail.com',693528769,'SUB18','ES6000491515051234567692','1.83',78,'2007-01-16','MUJER',false),
 	(104,'123456789E','Cristian','Gonzalez','cristian@gmail.com',634895248,'VETERANO','ES6000491500063234560069','1.78',77,'1963-09-10','HOMBRE',false),
 	(105,'123456789J','Pedro','Fernandez','pedro@gmail.com',796231447,'VETERANO','ES6000436501851414507715','1.75',80,'1995-01-01','HOMBRE',false),
-	(106,'123456789K','Adrian','Garcia','adrian@gmail.com',649874539,'SENIOR','ES6340491500088834566478','1.54',57,'2008-06-06','HOMBRE',false);
+	(106,'123456789K','Adrian','Garcia','adrian@gmail.com',649874539,'SUB18','ES6340491500088834566478','1.54',57,'2008-06-06','HOMBRE',false);
 
 insert into cuotas (owner_id, cuota_type, price, state) values
 	(100, 'Joven', 100, 'Pendiente'),
 	(101, 'Joven', 100, 'Pendiente'),
-	(102, 'Adulto', 200, 'Emitida'),
+	(102, 'Adulto', 200, 'Pendiente'),
 	(103, 'Jubilado', 150, 'Pendiente');
 
 insert into licencias (owner_id, tutor_dni, tutor_name, tutor_surname, tutor_email, tutor_telf, tutor_birth_date, tutor_gender, state, price, licence_type, facturation_direction, facturation_info) values 
@@ -28,17 +30,17 @@ insert into licencias (owner_id, tutor_dni, tutor_name, tutor_surname, tutor_ema
 	(105,'noTutor','noTutor','noTutor','noTutor',null,null,null,'pagado',30,'JUEZ','Gijon','Segundo A'),
 	(106,'123456789L','Pedro','Garcia','pedro@gmail.com',654873691,'1983-6-8','HOMBRE','pagado',30,'DEPORTISTA','Oviedo','Segundo A');
 	
-INSERT INTO reservas (owner_id, fecha, hora, instalation_code) VALUES 
-	(100, "20/10/2023", "20:00", "13410"),
-	(100, "22/10/2023", "20:00", "13412"),
-	(100, "24/10/2023", "20:00", "13411"),
-	(100, "21/10/2023", "20:00", "13413");
+INSERT INTO reservas (id, fecha, instalation_code, extra) VALUES 
+	(0, "2023-11-20 20:00", "13410", true);
 
-INSERT INTO instalaciones (code, name) VALUES
-	("13410", "Pista Atletismo"),
-	("13411", "Piscina"),
-	("13412", "Cancha fútbol"),
-	("13413", "Sauna");
+INSERT INTO participante_reserva (reserva_id, dni) VALUES
+	(0, "123456789A");
+
+INSERT INTO instalaciones (code, name, min_users, max_users) VALUES
+	("13410", "Tiro con arco", 1, 1),
+	("13411", "Piscina", 1, 1),
+	("13412", "Campo de fútbol", 1, 28),
+	("13413", "Pista de tenis",1, 4);
 
 insert into loggin (dni_socio, contrasena) values
 	('123456789A','c455eb6a355fd48b6ece6dee6fbd6b53'),
@@ -55,7 +57,8 @@ insert into loggin (dni_socio, contrasena) values
 	--Usuario: 123456789E contraseña:e4852
 	--Usuario: 123456789J contraseña:j1236
 	--Usuario: 123456789K contraseña:k2143
-	
+  --Usuario: 123456789K contraseña:k2143
+
 insert into test(id, fecha, tipo, peso, edad, sexo, tiempo, pulsaciones, distance, resultado) values
 	(100, '2021-05-10','ROCKPORT', 55, 20, 'MUJER', '5.5', 170, null, '77.36'),
 	(100, '2023-05-10','ROCKPORT', 65, 22, 'MUJER', '5.8', 156, null, '76.07'),
@@ -63,3 +66,5 @@ insert into test(id, fecha, tipo, peso, edad, sexo, tiempo, pulsaciones, distanc
 	(104, '2021-05-10','COOPER', null, null, 'HOMBRE', null, null, 3.2, '82.81'),
 	(104, '2023-05-10','COOPER', null, null, 'HOMBRE', null, null, 2.5, '67.17'),
 	(104, '2023-10-10','COOPER', null, null, 'HOMBRE', null, null, 2.2, '60.46');
+	
+

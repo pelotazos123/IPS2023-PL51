@@ -2,6 +2,7 @@ package giis.demo.business;
 
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.JOptionPane;
@@ -18,6 +19,7 @@ import giis.demo.util.SwingUtil;
 public abstract class SociosController {
 	
 	private final static String SQL_CARGAR_TODOS_SOCIOS = "SELECT id, dni, name, surname, email, telf, cuota_type, iban, gender, birth_date, directive FROM socios ";
+	private final static String SQL_CARGAR_DNI_SOCIOS = "SELECT dni FROM socios";
 	private final static String WHERE = "WHERE";
 	
 	private static String selectedValue = "";
@@ -61,6 +63,21 @@ public abstract class SociosController {
             }
 		});
 		return model;
+	}
+	
+	public static List<String> getDni(Database db) {
+		List<Object[]> result = db.executeQueryArray(SQL_CARGAR_DNI_SOCIOS);
+		List<String> dnis = new ArrayList<String>();
+		
+		String dni = "";
+		
+		for (Object[] objects : result) {
+			dni = (String) objects[0];
+			dnis.add(dni);
+			System.out.println(dni);
+		}		
+		
+		return dnis;
 	}
 	
 	private static void actualizaSocio(TableModelEvent e, Database db, JTable tabla) {
