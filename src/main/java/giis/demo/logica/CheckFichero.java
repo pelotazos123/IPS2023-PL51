@@ -12,7 +12,9 @@ import giis.demo.util.Database;
 public class CheckFichero {
 
 	private static final String SQL_LICENCIA_PAGADO = "update licencias set state = 'PAGADO' where owner_id = ? ";
-	private static final String SQL_COMPRUEBA_PAGADO = "select state from licencias where owner_id = ? ";
+	private static final String SQL_COMPRUEBA_PAGADO = "select * from licencias where owner_id = ? "
+			+ "and state = 'PAGADO' ";
+	
 
 //	private static final Double IMPORTE = 0.0;
 //	private static final String IBAN_BENEFICIARIO = "ES";
@@ -47,17 +49,20 @@ public class CheckFichero {
 			valido = false;
 			e.printStackTrace();
 		}
+		if(!noPagada())
+			return false;
 		if(valido)
 			estableceLicenciaPagada();
 		return valido;
 	}
 
+	private boolean noPagada() {
+		List<Object[]> resQuery = db.executeQueryArray(SQL_COMPRUEBA_PAGADO, id);
+		return resQuery.size() == 0;
+	}
+
 	private void estableceLicenciaPagada() {	
 		db.executeUpdate(SQL_LICENCIA_PAGADO, id);
-		List<Object[]> resQuery = db.executeQueryArray(SQL_COMPRUEBA_PAGADO, id);
-		for(Object[] a: resQuery) {
-			System.out.println(a[0].toString());
-		}
 //		System.out.println(resQuery.get(0).toString());
 	}
 
@@ -85,7 +90,6 @@ public class CheckFichero {
 		} else if(numLinea == 3) {
 			if(line[0].equals("ID:")) {
 				this.id= line[1];
-//				//TODO: Consulta a la base de datos
 			} else 
 				return false;
 		} else if(numLinea == 4) {
