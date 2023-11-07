@@ -140,9 +140,12 @@ public class VentanaInscripcionCompeticiones extends JFrame {
 	
 	public void sacarListadoCompeticion(Competicion compe) {
 		JFileChooser guardar = new JFileChooser();
-		guardar.showSaveDialog(null);
+		int res = guardar.showSaveDialog(null);
+		if (res != JFileChooser.APPROVE_OPTION)
+			return;
 		guardar.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
 		File archivo = guardar.getSelectedFile();
+		
 		gestorCompeticiones.generarListaSocios(compe.getId(), archivo);
 		
 	}
