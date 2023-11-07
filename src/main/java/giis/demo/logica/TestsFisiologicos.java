@@ -10,7 +10,6 @@ import org.jfree.chart.axis.NumberAxis;
 import org.jfree.chart.plot.XYPlot;
 import org.jfree.data.time.TimeSeries;
 import org.jfree.data.time.TimeSeriesCollection;
-import giis.demo.model.CrearLicencias.servicio.TramitarLicencia;
 import giis.demo.ui.VentanaSeleccionTest;
 import giis.demo.util.Database;
 
