@@ -3,6 +3,9 @@ package giis.demo.ui;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
+
+import giis.demo.logica.TestsFisiologicos;
+
 import javax.swing.JButton;
 import java.awt.event.ActionListener;
 import java.awt.Dimension;
@@ -21,6 +24,7 @@ public class VentanaSeleccionTest extends JFrame {
 	private JButton btResultadosEntrenados;
 	private VentanaPrincipal vp;
 	private int id;
+	private TestsFisiologicos tf;
 
 	/**
 	 * Create the frame.
@@ -37,7 +41,8 @@ public class VentanaSeleccionTest extends JFrame {
 		setResizable(false);
 		setMinimumSize(new Dimension(300, 450));
 		this.vp = ventanaPrincipal;
-		this.id = 101;
+		this.id = 100;
+		this.tf = new TestsFisiologicos(this);
 
 		setContentPane(contentPane);
 		contentPane.setLayout(null);
@@ -45,7 +50,7 @@ public class VentanaSeleccionTest extends JFrame {
 		contentPane.add(getBtnTestDeRockport());
 		contentPane.add(getBtResultadosAnteriores());
 		contentPane.add(getBtResultadosEntrenados());
-		if(id == 101) {
+		if(tf.esEntrenador()) {
 			activaEntrenador();
 		}
 	}
@@ -54,8 +59,7 @@ public class VentanaSeleccionTest extends JFrame {
 	 * entrenados
 	 */
 	private void activaEntrenador() {
-		// if usuario es entrenador
-			getBtResultadosEntrenados().setEnabled(true);
+		getBtResultadosEntrenados().setEnabled(true);
 	}
 
 	private JButton getBtCooper() {
