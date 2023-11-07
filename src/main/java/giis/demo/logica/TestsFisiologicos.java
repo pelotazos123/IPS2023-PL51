@@ -24,7 +24,10 @@ public class TestsFisiologicos {
 	private static final String INSERTCOOPER = "insert into test(id, fecha, tipo, distance, "
 			+ "resultado) values (?,?,'COOPER',?,?)";
 	private static final String SELECTALL = "select fecha, resultado from test where id = ?";
-
+	private static final String ES_ENTRENADOR = "select * from licencias where "
+			+ "owner_id = ? and licence_type = 'MONITOR' ";
+	
+	
 	private Database db;
 	private int id;
 	private LocalDate[] fechas;
@@ -38,6 +41,11 @@ public class TestsFisiologicos {
 //		this.id = tl.getSocio().getId();
 		this.id = 100;
 		this.idEntrenado = 104;
+	}
+	
+	public boolean esEntrenador() {
+		List<Object[]> esEntrenador = db.executeQueryArray(ES_ENTRENADOR, id);
+		return esEntrenador.size() != 0;
 	}
 
 	public Double getTestCooper(double distance) {
