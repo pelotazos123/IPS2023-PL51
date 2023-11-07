@@ -14,7 +14,6 @@ import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.time.Year;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 
@@ -23,7 +22,6 @@ import javax.swing.DefaultListModel;
 import javax.swing.JDialog;
 import java.awt.BorderLayout;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Iterator;
 import java.util.List;
 
@@ -74,6 +72,7 @@ public class VentanaReservas extends JDialog {
 	private JCheckBox chkAmpliaHora;
 	private JPanel pnPrincipalReservas;
 	private JPanel pnSecundarioReservas;
+	private JLabel lblTxtAñadeSocio;
 	private JPanel pnTxtContainer;
 	private JButton btnNuevoSocio;
 	private List<JPanel> listaTxtFields;
@@ -87,9 +86,6 @@ public class VentanaReservas extends JDialog {
 	
 	private static final String INTRODUZCA_AQUI = "Introduzca DNI";
 	private JScrollPane scrlTxts;
-	private JPanel panel;
-	private JLabel lblTxtAñadeSocio;
-	private JLabel lblInstalacion;
 	
 	public VentanaReservas(Database db) {
 		this.db = db;
@@ -129,6 +125,7 @@ public class VentanaReservas extends JDialog {
 	private JPanel getPnSelector() {
 		if (pnSelector == null) {
 			pnSelector = new JPanel();
+			pnSelector.setVisible(false);
 			pnSelector.setLayout(new BorderLayout(0, 0));
 			pnSelector.add(getList(), BorderLayout.CENTER);
 			pnSelector.setPreferredSize(new Dimension(200, 100));
@@ -141,11 +138,6 @@ public class VentanaReservas extends JDialog {
 	private JCalendar getCalendar() {
 		if(calendar == null) {
 			calendar = new JCalendar();
-			calendar.getYearChooser().setMinimum(Year.now().getValue());
-			calendar.getYearChooser().getSpinner().setBackground(Color.WHITE);
-			calendar.getMonthChooser().setBackground(Color.WHITE);
-			calendar.getDayChooser().setDecorationBackgroundColor(Color.CYAN);
-			calendar.getDayChooser().getDayPanel().setBackground(Color.WHITE);
 			calendar.getDayChooser().setAlwaysFireDayProperty(false);
 			calendar.getDayChooser().setDayBordersVisible(true);
 			calendar.setWeekOfYearVisible(false);
@@ -189,10 +181,10 @@ public class VentanaReservas extends JDialog {
 		
 		List<String> listaParticipantes = getTxtFromDniFields();
 		
-		if (reMan.reservar(finalDate, reserva, selInstalacion, listaParticipantes, hasExtra)) {
-			JOptionPane.showMessageDialog(null, "Reserva confirmada de " + selInstalacion.toString() +": " + reserva);
-			this.dispose();
-		}
+		reMan.reservar(finalDate, reserva, selInstalacion, listaParticipantes, hasExtra);
+		
+		JOptionPane.showMessageDialog(null, "Reserva confirmada de " + selInstalacion.toString() +": " + reserva);
+		this.dispose();
 	}
 
 	private boolean completeCheckToSocios() {
@@ -323,7 +315,6 @@ public class VentanaReservas extends JDialog {
 	private JComboBox<Instalacion> getCbInstalaciones() {
 		if (cbInstalaciones == null) {
 			cbInstalaciones = new JComboBox<Instalacion>();
-			cbInstalaciones.setBackground(Color.WHITE);
 			cbInstalaciones.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
 					generaHoras();
@@ -342,8 +333,6 @@ public class VentanaReservas extends JDialog {
 				public void actionPerformed(ActionEvent e) {
 					((CardLayout) getContentPane().getLayout()).next(getContentPane());
 					selInstalacion = ((Instalacion)getCbInstalaciones().getSelectedItem());
-					getLblInstalacion().setText("Instalacion: " + selInstalacion.getName() + " | Nº max participantes: " + selInstalacion.getMax() +
-							" | Nº min participantes: " + selInstalacion.getMin());
 				}
 			});
 		}
@@ -388,11 +377,18 @@ public class VentanaReservas extends JDialog {
 			pnSecundarioReservas = new JPanel();
 			pnSecundarioReservas.setBackground(Color.WHITE);
 			pnSecundarioReservas.setLayout(new BorderLayout(0, 0));
+			pnSecundarioReservas.add(getLblTxtAñadeSocio(), BorderLayout.NORTH);
 			pnSecundarioReservas.add(getPnTxtContainer(), BorderLayout.CENTER);
 			pnSecundarioReservas.add(getPnBotonesSur(), BorderLayout.SOUTH);
-			pnSecundarioReservas.add(getPanel(), BorderLayout.NORTH);
 		}
 		return pnSecundarioReservas;
+	}
+	private JLabel getLblTxtAñadeSocio() {
+		if (lblTxtAñadeSocio == null) {
+			lblTxtAñadeSocio = new JLabel("Introduzca el DNI de los socios que participarán en la reserva:");
+			lblTxtAñadeSocio.setFont(new Font("Tahoma", Font.BOLD, 20));
+		}
+		return lblTxtAñadeSocio;
 	}
 	private JPanel getPnTxtContainer() {
 		if (pnTxtContainer == null) {
@@ -406,7 +402,6 @@ public class VentanaReservas extends JDialog {
 	private JButton getBtnNuevoSocio() {
 		if (btnNuevoSocio == null) {
 			btnNuevoSocio = new JButton("+");
-			btnNuevoSocio.setBackground(Color.GREEN);
 			btnNuevoSocio.setFont(new Font("Tahoma", Font.BOLD, 25));
 			btnNuevoSocio.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
@@ -475,7 +470,6 @@ public class VentanaReservas extends JDialog {
 	private JButton getBtnBorrarSocio() {
 		if (btnBorrarSocio == null) {
 			btnBorrarSocio = new JButton("-");
-			btnBorrarSocio.setBackground(Color.RED);
 			btnBorrarSocio.setFont(new Font("Tahoma", Font.BOLD, 25));
 			btnBorrarSocio.setPreferredSize(new Dimension());
 			btnBorrarSocio.addActionListener(new ActionListener() {
@@ -556,27 +550,5 @@ public class VentanaReservas extends JDialog {
 			scrlTxts.setViewportView(getPnTxtFields());
 		}
 		return scrlTxts;
-	}
-	private JPanel getPanel() {
-		if (panel == null) {
-			panel = new JPanel();
-			panel.setLayout(new BorderLayout(0, 0));
-			panel.add(getLblTxtAñadeSocio_1(), BorderLayout.CENTER);
-			panel.add(getLblInstalacion(), BorderLayout.SOUTH);
-		}
-		return panel;
-	}
-	private JLabel getLblTxtAñadeSocio_1() {
-		if (lblTxtAñadeSocio == null) {
-			lblTxtAñadeSocio = new JLabel("Introduzca el DNI de los socios que participarán en la reserva:");
-			lblTxtAñadeSocio.setFont(new Font("Tahoma", Font.BOLD, 20));
-		}
-		return lblTxtAñadeSocio;
-	}
-	private JLabel getLblInstalacion() {
-		if (lblInstalacion == null) {
-			lblInstalacion = new JLabel("");
-		}
-		return lblInstalacion;
 	}
 }

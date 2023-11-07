@@ -31,15 +31,25 @@ insert into licencias (owner_id, tutor_dni, tutor_name, tutor_surname, tutor_ema
 	(106,'123456789L','Pedro','Garcia','pedro@gmail.com',654873691,'1983-6-8','HOMBRE','pagado',30,'DEPORTISTA','Oviedo','Segundo A');
 	
 INSERT INTO reservas (id, fecha, instalation_code, extra) VALUES 
-	(0, "2023-11-20 20:00", "13410", true);
+	(0, "2023-11-20 20:00", "13410", true),
+	(1, "2023-11-22 21:00", "13411", false),
+	(2, "2023-11-23 22:00", "13412", false),
+	(3, "2023-11-24 23:00", "13413", false);
 
 INSERT INTO participante_reserva (reserva_id, dni) VALUES
-	(0, "123456789A");
+	(0, "123456789A"),
+	(1, "123456789B"),
+	(2, "123456789A"),
+	(2, "123456789B"),
+	(2, "123456789C"),
+	(2, "123456789D"),
+	(3, "123456789A"),
+	(3, "123456789B");
 
 INSERT INTO instalaciones (code, name, min_users, max_users) VALUES
-	("13410", "Tiro con arco", 1, 1),
+	("13410", "Pista Atletismo", 1, 1),
 	("13411", "Piscina", 1, 1),
-	("13412", "Campo de fútbol", 1, 28),
+	("13412", "Cancha fútbol", 1, 28),
 	("13413", "Pista de tenis",1, 4);
 
 insert into loggin (dni_socio, contrasena) values
