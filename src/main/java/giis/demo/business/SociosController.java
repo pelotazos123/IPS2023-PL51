@@ -3,6 +3,7 @@ package giis.demo.business;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import javax.swing.JOptionPane;
@@ -22,32 +23,43 @@ public abstract class SociosController {
 	private final static String SQL_CARGAR_DNI_SOCIOS = "SELECT dni FROM socios";
 	private final static String WHERE = "WHERE";
 	
+	private final static int NAME = 2;
+	private final static int SURNAME = 3;
+	private final static int EMAIL = 4;
+	private final static int TELF = 5;
+	private final static int CUOTA_TYPE = 6;
+	private final static int IBAN = 7;
+	private final static int GENDER = 8;
+	private final static int BIRTH_DATE = 9;
+	private final static int DIRECTIVE = 10;
+	
 	private static String selectedValue = "";
 	
-	private static String[] columns;
+	private static HashMap<Integer, String> columnas = new HashMap<Integer, String>(){
+		private static final long serialVersionUID = -2242980961209539019L;
+		{
+			put(NAME, "UPDATE socios SET name=? WHERE id=?");
+			put(SURNAME, "UPDATE socios SET surname=? WHERE id=?");
+			put(EMAIL, "UPDATE socios SET email=? WHERE id=?");
+			put(TELF, "UPDATE socios SET telf=? WHERE id=?");
+			put(CUOTA_TYPE, "UPDATE socios SET cuota_type=? WHERE id=?");
+			put(IBAN, "UPDATE socios SET iban=? WHERE id=?");
+			put(GENDER, "UPDATE socios SET gender=? WHERE id=?");
+			put(BIRTH_DATE, "UPDATE socios SET birth_date=? WHERE id=?");
+			put(DIRECTIVE, "UPDATE socios SET directive=? WHERE id=?");
+		}
+	};
 	
 	public static TableModel setTableModel(Database db, String filter, JTable tabla) {
 		TableModel model = SwingUtil.getTableModelFromPojos(getSociosForTabla(db, filter), 
 				new String[] {"id", "dni", "name", "surname", "email", "telf", "cuota_type", "iban", "gender", "birth_date", "directive"});
 		
-		columns = new String[model.getColumnCount()+1];
-		columns[2] = "UPDATE socios SET name=? WHERE id=?";
-		columns[3] = "UPDATE socios SET surname=? WHERE id=?";
-		columns[4] = "UPDATE socios SET email=? WHERE id=?";
-		columns[5] = "UPDATE socios SET telf=? WHERE id=?";
-		columns[6] = "UPDATE socios SET cuota_type=? WHERE id=?";
-		columns[7] = "UPDATE socios SET iban=? WHERE id=?";
-		columns[8] = "UPDATE socios SET gender=? WHERE id=?";
-		columns[9] = "UPDATE socios SET birth_date=? WHERE id=?";
-		columns[10] = "UPDATE socios SET directive=? WHERE id=?";
-		
 		tabla.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
 				try {
-					if (tabla.getSelectedColumn() != 9 && tabla.getSelectedColumn() != 10) {
-						selectedValue = String.valueOf(tabla.getModel().getValueAt(tabla.getSelectedRow(), tabla.getSelectedColumn()));
-						System.out.println("Fila: " + tabla.getSelectedRow() + "Columna: " + tabla.getSelectedColumn());					
+					if (tabla.getSelectedColumn() != BIRTH_DATE && tabla.getSelectedColumn() != DIRECTIVE) {
+						selectedValue = String.valueOf(tabla.getModel().getValueAt(tabla.getSelectedRow(), tabla.getSelectedColumn()));					
 					}
 				} catch (ArrayIndexOutOfBoundsException e1) {
 					System.err.println("Click detectado dentro de la tabla pero fuera de una fila válida.");
@@ -58,7 +70,6 @@ public abstract class SociosController {
 		model.addTableModelListener(new TableModelListener(){
 			@Override
             public void tableChanged(TableModelEvent e) {
-            	System.out.println(e.getColumn());
                 actualizaSocio(e, db, tabla);
             }
 		});
@@ -74,7 +85,6 @@ public abstract class SociosController {
 		for (Object[] objects : result) {
 			dni = (String) objects[0];
 			dnis.add(dni);
-			System.out.println(dni);
 		}		
 		
 		return dnis;
@@ -88,13 +98,12 @@ public abstract class SociosController {
 
 	        String dato=String.valueOf(modelo.getValueAt(fila,columna));	
 	        String id_user = String.valueOf(modelo.getValueAt(fila, 0));
-	        System.out.println(dato + "??");
+	        System.out.println(dato + " ?");
 	        
-	        String update = columns[columna];
+	        String update = columnas.get(columna);
 	        
-	        if (columna == 10) {
+	        if (columna == DIRECTIVE) {
 	        	update = "UPDATE socios SET directive="+dato+" WHERE id=?";
-	        	System.out.println(update);
 	        	db.executeUpdate(update, id_user);
 	        	
 	        } else if (!dato.isEmpty()) {
@@ -103,7 +112,7 @@ public abstract class SociosController {
 	        		JOptionPane.showMessageDialog(null, "Campo actualizado correctamente.", "INFO", JOptionPane.INFORMATION_MESSAGE);
 	        	System.out.println(update);
 	        } else {
-	        	if (columna != 9) {
+	        	if (columna != BIRTH_DATE) {
 	        		modelo.setValueAt(selectedValue, fila, columna);
 	        		JOptionPane.showMessageDialog(null, "No puedes dejar el campo vacío.", "ERROR", JOptionPane.ERROR_MESSAGE);	        		
 	        		return;
@@ -124,8 +133,6 @@ public abstract class SociosController {
 		} else {
 			query = SQL_CARGAR_TODOS_SOCIOS;
 		}
-		
-		System.out.println(query);
 		
 		return query;
 	}

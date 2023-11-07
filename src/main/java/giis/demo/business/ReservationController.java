@@ -74,10 +74,8 @@ public class ReservationController {
 	private void createQueryParticipants(List<String> listaParticipantes) {
 		int id_reserva = (int) db.executeQueryArray(SQL_ID_RESERVA).get(0)[0];
 		
-		System.out.println("loco aver: " + id_reserva);
-		
 		for (String dni: listaParticipantes) {
-			System.out.println(id_reserva + " - " + dni);
+			System.out.println("id reserva: " + id_reserva + " - dni part: " + dni);
 			db.executeUpdate(SQL_CREAR_PARTICIPANTE, id_reserva, dni);
 		}
 	}
@@ -106,13 +104,11 @@ public class ReservationController {
 			fecha = reserva.split(" ")[0];
 			hora = reserva.split(" ")[1];
 			
-			System.out.println(fecha + " || " + hora);
-			
 			listaReservas.add(new Reserva(id, fecha, hora, instalacionId, extra));
 		}
 		
-		for (Reserva reservaTP : listaReservas) {
-			System.out.println(reservaTP.getId());
+		for (Reserva reservaS : listaReservas) {
+			System.out.println(reservaS);
 		}
 		
 		return listaReservas;		
