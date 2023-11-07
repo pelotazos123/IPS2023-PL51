@@ -22,6 +22,7 @@ insert into cuotas (owner_id, cuota_type, price, state) values
 
 insert into licencias (owner_id, tutor_dni, tutor_name, tutor_surname, tutor_email, tutor_telf, tutor_birth_date, tutor_gender, state, price, licence_type, facturation_direction, facturation_info) values 
 	(100,'noTutor','noTutor','noTutor','noTutor',null,null,null, 'PENDIENTE', 30, 'DEPORTISTA', "ESXX-XXXX-XXXX-XXXX-XXXX-XXXX", null),
+	(100,'noTutor','noTutor','noTutor','noTutor',null,null,null, 'PENDIENTE', 30, 'MONITOR', "ESXX-XXXX-XXXX-XXXX-XXXX-XXXX", null),
 	(101,'noTutor','noTutor','noTutor','noTutor',null,null,null,'pagado',30,'DEPORTISTA','Aviles','Segundo A'),
 	(101,'noTutor','noTutor','noTutor','noTutor',null,null,null,'pagado',30,'JUEZ','Aviles','Tercero B'),
 	(101,'noTutor','noTutor','noTutor','noTutor',null,null,null,'pagado',30,'MONITOR','Aviles','Tercero B'),
@@ -59,3 +60,13 @@ insert into loggin (dni_socio, contrasena) values
 	--Usuario: 123456789K contraseña:k2143
 	--Usuario: 123456789K contraseña:k2143
 
+insert into test(id, fecha, tipo, peso, edad, sexo, tiempo, pulsaciones, distance, resultado) values
+	(100, '2021-05-10','ROCKPORT', 55, 20, 'MUJER', '5.5', 170, null, '77.36'),
+	(100, '2023-05-10','ROCKPORT', 65, 22, 'MUJER', '5.8', 156, null, '76.07'),
+	(100, '2023-10-10','ROCKPORT', 67, 23, 'MUJER', '5.0', 160, null, '77.34'),
+	(104, '2021-05-10','COOPER', null, null, 'HOMBRE', null, null, 3.2, '82.81'),
+	(104, '2023-05-10','COOPER', null, null, 'HOMBRE', null, null, 2.5, '67.17'),
+	(104, '2023-10-10','COOPER', null, null, 'HOMBRE', null, null, 2.2, '60.46');
+
+insert into entrenados(entrenador_id, entrenado_id) values 
+	(100, 104);

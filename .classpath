@@ -36,7 +36,6 @@
 			<attribute name="maven.pomderived" value="true"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="src/main/resources/libraries/activation.jar"/>
 	<classpathentry kind="lib" path="src/main/resources/libraries/javax.mail.jar"/>
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>

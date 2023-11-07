@@ -166,7 +166,7 @@ public class VentanaPrincipal extends JFrame {
 	}
 
 	private void creaVentanasTest() {
-		VentanaSeleccionTest vst = new VentanaSeleccionTest();
+		VentanaSeleccionTest vst = new VentanaSeleccionTest(this);
 		vst.setVisible(true);
 	}
 
@@ -856,5 +856,9 @@ public class VentanaPrincipal extends JFrame {
 			btnGestionRecibos.setBounds(476, 205, 185, 60);
 		}
 		return btnGestionRecibos;
+	}
+
+	public Database getDb() {
+		return db;
 	}
 }
