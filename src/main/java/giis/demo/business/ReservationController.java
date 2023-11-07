@@ -89,6 +89,7 @@ public class ReservationController {
 		return listaReservas;		
 	}
 	
+	
 	public void getParticipantes() {
 		List<Object[]> resQuery = db.executeQueryArray(SQL_CARGAR_PARTICIPANTES);
 		int id = 0;
