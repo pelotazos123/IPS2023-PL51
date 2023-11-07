@@ -658,17 +658,20 @@ public class VentanaPrincipal extends JFrame {
 	
 	private void cambiarContraseña() {
 		String dniUsuario = tramitarLicencia.getUsuario().getDni();
-		String nuevaContraseña = "";
+		
+		PasswordPane pp = new PasswordPane();
+		
 		Boolean continuar = null;
+		
 		do {
-			nuevaContraseña = JOptionPane.showInputDialog(this,"Nueva Contraseña\nDebe contener mayusculas, minusculas y al menos un numero","Cambiar contraseña",JOptionPane.QUESTION_MESSAGE);
+			int act = JOptionPane.showConfirmDialog(null, pp.getPn(), "Nueva contraseña",JOptionPane.OK_CANCEL_OPTION);
 			
-			if (nuevaContraseña == null) // Cancela la operación si cancelar es presionado (Devuelve null)
+			if (act == JOptionPane.CANCEL_OPTION || act == JOptionPane.CLOSED_OPTION) // Cancela la operación si cancelar es presionado (Devuelve -1)
 				return;				
-			continuar = loggin.comprobarNuevaContraseñaValida(nuevaContraseña);
-			
+			continuar = loggin.comprobarNuevaContraseñaValida(pp.getPswd().getPassword());
+			if (!continuar) pp.getPswd().setText("");
 		}while(!continuar);
-		loggin.cambiarContraseña(dniUsuario, nuevaContraseña);
+		loggin.cambiarContraseña(dniUsuario, pp.getPswd().getPassword());
 		JOptionPane.showMessageDialog(this,"Contraseña actualizada",
 				"Cambiar contraseña", JOptionPane.INFORMATION_MESSAGE);
 	}
@@ -860,5 +863,28 @@ public class VentanaPrincipal extends JFrame {
 
 	public Database getDb() {
 		return db;
+	}
+	
+	private class PasswordPane {
+		
+		private JPanel pn;
+		private JPasswordField pswd;
+		
+		public PasswordPane() {
+			pn = new JPanel();
+			pn.setLayout(new BorderLayout());
+			pswd = new JPasswordField();
+			JLabel lbl = new JLabel("<html>Debe contener mayusculas, <br> minusculas y al menos un numero.</html>");
+			pn.add(pswd, BorderLayout.CENTER);
+			pn.add(lbl, BorderLayout.NORTH);
+		}
+		
+		public JPasswordField getPswd() {
+			return pswd;
+		}
+		
+		public JPanel getPn() {
+			return pn;
+		}
 	}
 }

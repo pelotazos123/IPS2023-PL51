@@ -2,6 +2,8 @@ package giis.demo.model.loggin.servicio;
 
 import java.time.LocalDate;
 
+import javax.swing.JOptionPane;
+
 import giis.demo.model.loggin.Correo;
 import giis.demo.model.loggin.Loggin;
 import giis.demo.util.Database;
@@ -48,7 +50,8 @@ public class GestionarLoggin {
 		return enviarCorreos.enviarCorreo(correoUsuario, textoCorreo);
 	}
 	
-	public void cambiarContraseña(String dniUsuario, String nuevaContraseña) {
+	public void cambiarContraseña(String dniUsuario, char[] nuevaContraseña) {
+		
 		loggin.cambiarContraseña(dniUsuario, nuevaContraseña);
 	}
 	
@@ -74,12 +77,17 @@ public class GestionarLoggin {
 		return (String) result[0];
 	}
 	
-	public boolean comprobarNuevaContraseñaValida(String nuevaContraseña) {
+	public boolean comprobarNuevaContraseñaValida(char[] nuevaContraseña) {
 		int mayus = 0;
 		int minus = 0;
 		int num = 0;
-		for (int i = 0; i < nuevaContraseña.length(); i++) {
-			char character = nuevaContraseña.charAt(i);
+		if (nuevaContraseña.length == 0) {
+			JOptionPane.showMessageDialog(null,"La contraseña no puede estar vacía.",
+					"Cambiar contraseña", JOptionPane.ERROR_MESSAGE);
+			return false;
+		}
+		for (int i = 0; i < nuevaContraseña.length; i++) {
+			char character = nuevaContraseña[i];
 			if(Character.isAlphabetic(character) && Character.isLowerCase(character)) {
 				minus++;
 			}else if(Character.isAlphabetic(character) && Character.isUpperCase(character)) {
@@ -90,6 +98,13 @@ public class GestionarLoggin {
 				return false;
 			}
 		}
-		return mayus > 0 && minus > 0 && num > 0;
+
+		if (mayus > 0 && minus > 0 && num > 0) {
+			return true;
+		} else {
+			JOptionPane.showMessageDialog(null,"La contraseña debe contener mayusculas, minusculas y al menos un numero",
+					"Cambiar contraseña", JOptionPane.INFORMATION_MESSAGE);
+			return false;
+		}
 	}
 }

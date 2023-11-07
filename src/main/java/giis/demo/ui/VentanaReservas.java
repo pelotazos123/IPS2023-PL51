@@ -149,6 +149,7 @@ public class VentanaReservas extends JDialog {
 			calendar.getDayChooser().setAlwaysFireDayProperty(false);
 			calendar.getDayChooser().setDayBordersVisible(true);
 			calendar.setWeekOfYearVisible(false);
+			calendar.setSelectableDateRange(java.sql.Date.valueOf(LocalDate.now()), java.sql.Date.valueOf(LocalDate.of(2600, 12, 31)));
 			calendar.addPropertyChangeListener("calendar", new PropertyChangeListener() {
 				@Override
 				public void propertyChange(PropertyChangeEvent evt) {

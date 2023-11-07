@@ -8,6 +8,8 @@ import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 
+import org.apache.log4j.BasicConfigurator;
+
 import giis.demo.ui.VentanaPrincipal;
 
 /**
@@ -49,6 +51,7 @@ public class SwingMain {
 	 * Initialize the contents of the frame.
 	 */
 	private void initialize() {
+		BasicConfigurator.configure();
 		frame = new JFrame();
 		frame.setTitle("Main");
 		frame.setBounds(0, 0, 287, 185);
