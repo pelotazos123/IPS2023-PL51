@@ -181,7 +181,7 @@ public class VentanaListaSocios extends JDialog {
 			tableSocios = new JTable() {
 				@Override // Establece que las columnas 1 y 2 no sean editables (ID de socio y DNI)
 				public boolean isCellEditable(int row, int column) {
-				    return column == 0 || column==1 ? false : true;
+				    return column == 0 || column==1 || column==9? false : true;
 				}
 				@SuppressWarnings({ "unchecked", "rawtypes" })
 				@Override

@@ -33,6 +33,8 @@ public abstract class SociosController {
 	private final static int BIRTH_DATE = 9;
 	private final static int DIRECTIVE = 10;
 	
+	private static boolean active = true;
+	
 	private static String selectedValue = "";
 	
 	private static HashMap<Integer, String> columnas = new HashMap<Integer, String>(){
@@ -45,7 +47,7 @@ public abstract class SociosController {
 			put(CUOTA_TYPE, "UPDATE socios SET cuota_type=? WHERE id=?");
 			put(IBAN, "UPDATE socios SET iban=? WHERE id=?");
 			put(GENDER, "UPDATE socios SET gender=? WHERE id=?");
-			put(BIRTH_DATE, "UPDATE socios SET birth_date=? WHERE id=?");
+			put(BIRTH_DATE, "UPDATE socios SET birth_date= WHERE id=?");
 			put(DIRECTIVE, "UPDATE socios SET directive=? WHERE id=?");
 		}
 	};
@@ -70,7 +72,8 @@ public abstract class SociosController {
 		model.addTableModelListener(new TableModelListener(){
 			@Override
             public void tableChanged(TableModelEvent e) {
-                actualizaSocio(e, db, tabla);
+                if (active)
+					actualizaSocio(e, db, tabla);
             }
 		});
 		return model;
@@ -104,24 +107,32 @@ public abstract class SociosController {
 	        
 	        String update = columnas.get(columna);
 	        
-	        if (columna == DIRECTIVE) {
-	        	update = "UPDATE socios SET directive="+dato+" WHERE id=?";
-	        	db.executeUpdate(update, id_user);
-	        	
+        	if (columna == DIRECTIVE) {
+        		update = "UPDATE socios SET directive="+dato+" WHERE id=?";
+        		db.executeUpdate(update, id_user);
+        	} else if (columna == GENDER || columna == CUOTA_TYPE){
+        		db.executeUpdate(update, dato, id_user);
 	        } else if (!dato.isEmpty()) {
-	        	db.executeUpdate(update, dato, id_user);
 	        	if (selectedValue != dato)
 	        		res = JOptionPane.showConfirmDialog(null, "¿Está seguro de que quiere realizar este cambio?", "Confirmación", JOptionPane.YES_NO_OPTION);
 	        		if (res == JOptionPane.NO_OPTION || res == JOptionPane.CLOSED_OPTION) {
+	        			active = false;
 	        			modelo.setValueAt(selectedValue, fila, columna);
+	        			active = true;
 	        			return;
 	        		} else if (res == JOptionPane.YES_OPTION){
+	        			active = false;
+	        			db.executeUpdate(update, dato, id_user);
 	        			JOptionPane.showMessageDialog(null, "Campo actualizado correctamente.", "INFO", JOptionPane.INFORMATION_MESSAGE);
+	        			active = true;
+	        			return;
 	        		}
 	        	System.out.println(update);
 	        } else {
 	        	if (columna != BIRTH_DATE) {
+	        		active = false;
 	        		modelo.setValueAt(selectedValue, fila, columna);
+	        		active = true;
 	        		JOptionPane.showMessageDialog(null, "No puedes dejar el campo vacío.", "ERROR", JOptionPane.ERROR_MESSAGE);	        		
 	        		return;
 	        	}	        	
