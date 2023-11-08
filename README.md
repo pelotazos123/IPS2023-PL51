@@ -18,10 +18,10 @@ Proporcione una breve introducción al proyecto IPS2023-PL03-ING-01, describiend
 
 ## Miembros
 Este proyecto es mantenido por los siguientes miembros del equipo:
-- [Alumno](URL PERFIL)
-- [Alumno](URL PERFIL)
-- [Alumno](URL PERFIL)
-- [Alumno](URL PERFIL)
+- [Pablo Calvo Gamonal - UO276220](https://github.com/pelotazos123)
+- [Luis Miguel Gómez del Cueto - UO277310](https://github.com/uo277310)
+- [Yago Fernandez Lopez - UO289549](https://github.com/uo289549)
+- [Gabriel García Martínez - UO289097](https://github.com/uo289097)
 
 No dude en ponerse en contacto con cualquiera de los miembros del equipo si tiene preguntas o desea contribuir al proyecto.
 
