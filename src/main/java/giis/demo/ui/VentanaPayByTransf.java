@@ -90,7 +90,8 @@ public class VentanaPayByTransf extends JFrame {
 							JOptionPane.showMessageDialog(null, "El fichero ha sido validado");
 							cierraVentana();
 						} else {
-							JOptionPane.showMessageDialog(null, "El fichero no tiene el formato correcto");
+							JOptionPane.showMessageDialog(null, "El fichero no tiene el formato correcto "
+									+ "o la licencia ya ha sido pagada.");
 						}
 					}
 				}

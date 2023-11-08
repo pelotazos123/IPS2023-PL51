@@ -1,6 +1,7 @@
 package giis.demo.ui;
 
 import java.awt.Color;
+import java.util.Calendar;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -13,6 +14,7 @@ import javax.swing.border.EmptyBorder;
 
 public class GestionRecibosView {
 
+	private Calendar date;
 	private JFrame frame;
 	private JPanel contentPanel;
 	private JButton btnCargarRecibos;
@@ -24,7 +26,8 @@ public class GestionRecibosView {
 	/**
 	 * Create the application.
 	 */
-	public GestionRecibosView() {
+	public GestionRecibosView(Calendar date) {
+		this.date = date;
 		initialize();
 	}
 
@@ -49,6 +52,10 @@ public class GestionRecibosView {
 		contentPanel.add(getBtnCargarRecibos());
 		contentPanel.add(getBtnReclamar());
 
+	}
+	
+	public Calendar getDate() {
+		return date;
 	}
 
 	public JButton getBtnCargarRecibos() {
