@@ -16,6 +16,7 @@ import javax.swing.border.EmptyBorder;
 
 public class RecibosView {
 	
+	private Calendar date;
 	private JFrame frame;
 	private JPanel contentPanel;
 	private JButton btnGenerarRecibos;
@@ -33,7 +34,8 @@ public class RecibosView {
 	/**
 	 * Create the application.
 	 */
-	public RecibosView() {
+	public RecibosView(Calendar date) {
+		this.date = date;
 		initialize();
 	}
 	
@@ -65,6 +67,11 @@ public class RecibosView {
 		
 		
 	}
+	
+	public Calendar getDate() {
+		return date;
+	}
+	
 	public JButton getBtnGenerarRecibos() {
 		if (btnGenerarRecibos == null) {
 			btnGenerarRecibos = new JButton("Generar Recibos");
@@ -144,7 +151,7 @@ public class RecibosView {
 
 			String[] años = new String[5];
 			for(int i = 0; i < 5; i++) {
-				años[i] = "" + (Calendar.getInstance().get(Calendar.YEAR) + i);
+				años[i] = "" + (getDate().get(Calendar.YEAR) + i);
 			}
 			cbYear.setModel(new DefaultComboBoxModel<String>(años));
 			cbYear.setBounds(420, 167, 106, 22);

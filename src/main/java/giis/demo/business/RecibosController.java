@@ -78,16 +78,18 @@ public class RecibosController {
 		}
 		
 		Calendar v_date = Calendar.getInstance();
+		v_date.set(Calendar.YEAR, view.getDate().get(Calendar.YEAR));
+		v_date.set(Calendar.MONTH, view.getDate().get(Calendar.MONTH));
 		v_date.set(Calendar.DAY_OF_MONTH, 1);
-		String value_date = new SimpleDateFormat("dd-MM-yyyy").format(v_date.getTime());
+		String value_date = new SimpleDateFormat("yyyy-MM-dd").format(v_date.getTime());
 
 		Calendar c_date = Calendar.getInstance();
 		c_date.set(Calendar.YEAR, Integer.parseInt(view.getCbYear().getItemAt(view.getCbYear().getSelectedIndex())));
 		c_date.set(Calendar.MONTH, view.getCbMonth().getSelectedIndex());
 		c_date.set(Calendar.DAY_OF_MONTH, 15);
-		String charge_date = new SimpleDateFormat("dd-MM-yyyy").format(c_date.getTime());
+		String charge_date = new SimpleDateFormat("yyyy-MM-dd").format(c_date.getTime());
 		
-		if(c_date.before(v_date)) {
+		if(c_date.before(v_date) || c_date.before(view.getDate())) {
 			JOptionPane.showMessageDialog(null, "Fecha de cargo no válida", "Error", JOptionPane.ERROR_MESSAGE);
 		}
 		else {
