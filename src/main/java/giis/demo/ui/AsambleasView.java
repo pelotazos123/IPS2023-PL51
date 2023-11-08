@@ -27,6 +27,7 @@ import javax.swing.border.EmptyBorder;
  */
 public class AsambleasView {
 
+	private Calendar date;
 	private JFrame frame;
 	private JPanel contentPanel;
 	private JPanel pnEleccionAsambleas;
@@ -54,7 +55,8 @@ public class AsambleasView {
 	/**
 	 * Create the application.
 	 */
-	public AsambleasView() {
+	public AsambleasView(Calendar date) {
+		this.date = date;
 		initialize();
 	}
 
@@ -78,6 +80,10 @@ public class AsambleasView {
 		contentPanel.add(getPnEleccionAsambleas(),"EleccionAsambleas");
 		contentPanel.add(getPnFormularioAsambleaOrd(),"FormularioAsambleaOrd");
 		contentPanel.add(getPnFormularioAsambleaExt(),"FormularioAsambleaExt");
+	}
+	
+	public Calendar getDate() {
+		return date;
 	}
 	
 	public JPanel getPnEleccionAsambleas() {
@@ -210,7 +216,7 @@ public class AsambleasView {
 	public JTextField getTxtFecha() {
 		if (txtFecha == null) {
 			txtFecha = new JTextField();
-			txtFecha.setText(new SimpleDateFormat("dd-MM-yyyy").format(Calendar.getInstance().getTime()));
+			txtFecha.setText(new SimpleDateFormat("yyyy-MM-dd").format(getDate().getTime()));
 			txtFecha.setBounds(307, 39, 86, 20);
 			txtFecha.setColumns(10);
 		}
@@ -222,7 +228,7 @@ public class AsambleasView {
 
 			String[] años = new String[5];
 			for(int i = 0; i < 5; i++) {
-				años[i] = "" + (Calendar.getInstance().get(Calendar.YEAR) + i);
+				años[i] = "" + (getDate().get(Calendar.YEAR) + i);
 			}
 			cbYear.setModel(new DefaultComboBoxModel<String>(años));
 			cbYear.setBounds(307, 59, 106, 22);

@@ -33,6 +33,9 @@ public class RecibosModel {
 	public static final String SQL_CLAIM_RECIBO = 
 			"update recibos set state = 'Reclamado' where state = 'Devuelto' and number = ?";
 	
+	public RecibosModel(Database db) {
+		this.db = db;
+	}
 	
 	public List<SocioEntity> getListaSocios() {
 		return db.executeQueryPojo(SocioEntity.class, SQL_LISTA_SOCIOS);
