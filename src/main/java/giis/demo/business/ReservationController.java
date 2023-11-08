@@ -23,6 +23,9 @@ public class ReservationController {
 	private final static String SQL_CREAR_PARTICIPANTE = "INSERT INTO participante_reserva (reserva_id, dni) VALUES (?, ?)";
 	private final static String SQL_CARGAR_FECHAS_RESERVA = "SELECT DISTINCT fecha FROM reservas, participante_reserva WHERE participante_reserva.dni=? and reservas.instalation_code=?";
 	
+	public final static int HORA_MAXIMA = 2;
+	public final static int HORA_MINIMA = 1;
+	
 	private List<Object[]> resQuery;
 	
 	private List<Reserva> listaReservas = new ArrayList<Reserva>();
