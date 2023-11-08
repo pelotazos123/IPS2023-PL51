@@ -95,6 +95,8 @@ public abstract class SociosController {
 			AbstractTableModel modelo = ((AbstractTableModel) e.getSource());
 	        int fila = e.getFirstRow();
 	        int columna = e.getColumn();
+	        
+	        int res = 0;
 
 	        String dato=String.valueOf(modelo.getValueAt(fila,columna));	
 	        String id_user = String.valueOf(modelo.getValueAt(fila, 0));
@@ -109,7 +111,13 @@ public abstract class SociosController {
 	        } else if (!dato.isEmpty()) {
 	        	db.executeUpdate(update, dato, id_user);
 	        	if (selectedValue != dato)
-	        		JOptionPane.showMessageDialog(null, "Campo actualizado correctamente.", "INFO", JOptionPane.INFORMATION_MESSAGE);
+	        		res = JOptionPane.showConfirmDialog(null, "¿Está seguro de que quiere realizar este cambio?", "Confirmación", JOptionPane.YES_NO_OPTION);
+	        		if (res == JOptionPane.NO_OPTION || res == JOptionPane.CLOSED_OPTION) {
+	        			modelo.setValueAt(selectedValue, fila, columna);
+	        			return;
+	        		} else if (res == JOptionPane.YES_OPTION){
+	        			JOptionPane.showMessageDialog(null, "Campo actualizado correctamente.", "INFO", JOptionPane.INFORMATION_MESSAGE);
+	        		}
 	        	System.out.println(update);
 	        } else {
 	        	if (columna != BIRTH_DATE) {
