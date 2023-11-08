@@ -3,6 +3,7 @@ package giis.demo.ui;
 import javax.swing.JPanel;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+import javax.swing.text.MaskFormatter;
 
 import com.toedter.calendar.JCalendar;
 
@@ -10,6 +11,7 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -21,6 +23,8 @@ import java.time.format.DateTimeFormatter;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.DefaultListModel;
 import javax.swing.JDialog;
+import javax.swing.JFormattedTextField;
+
 import java.awt.BorderLayout;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -54,6 +58,7 @@ import java.awt.GridLayout;
 import java.awt.Font;
 import javax.swing.JScrollPane;
 import javax.swing.ScrollPaneConstants;
+import javax.swing.border.LineBorder;
 
 public class VentanaReservas extends JDialog {
 	
@@ -71,7 +76,6 @@ public class VentanaReservas extends JDialog {
 	private JPanel pnNorth;
 	private JLabel lblHorasDisp;
 	private JPanel pnSouth;
-	private JCheckBox chkAmpliaHora;
 	private JPanel pnPrincipalReservas;
 	private JPanel pnSecundarioReservas;
 	private JPanel pnTxtContainer;
@@ -90,6 +94,11 @@ public class VentanaReservas extends JDialog {
 	private JPanel panel;
 	private JLabel lblTxtAñadeSocio;
 	private JLabel lblInstalacion;
+	private JPanel pnHoras;
+	private JTextField txtInicio;
+	private JTextField txtFin;
+	private JLabel lblTxtInicio;
+	private JLabel lblTxtFin;
 	
 	public VentanaReservas(Database db) {
 		this.db = db;
@@ -149,7 +158,8 @@ public class VentanaReservas extends JDialog {
 			calendar.getDayChooser().setAlwaysFireDayProperty(false);
 			calendar.getDayChooser().setDayBordersVisible(true);
 			calendar.setWeekOfYearVisible(false);
-			calendar.setSelectableDateRange(java.sql.Date.valueOf(LocalDate.now()), java.sql.Date.valueOf(LocalDate.of(2600, 12, 31)));
+			LocalDate actualDay = LocalDate.now();
+			calendar.setSelectableDateRange(java.sql.Date.valueOf(actualDay), java.sql.Date.valueOf(actualDay.plusDays(2)));
 			calendar.addPropertyChangeListener("calendar", new PropertyChangeListener() {
 				@Override
 				public void propertyChange(PropertyChangeEvent evt) {
@@ -175,7 +185,7 @@ public class VentanaReservas extends JDialog {
 		
 		int selectedVal = getList().getSelectedIndex();
 		
-		boolean hasExtra = getChkAmpliaHora().isSelected();
+		boolean hasExtra = hasExtraHour();
 		
 		String hora = modeloListaHoras.get(selectedVal);
 		LocalDate selectedDate = getCalendar().getDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();;
@@ -194,6 +204,19 @@ public class VentanaReservas extends JDialog {
 		
 		JOptionPane.showMessageDialog(null, "Reserva confirmada de " + selInstalacion.toString() +": " + reserva);
 		this.dispose();
+	}
+
+	private boolean hasExtraHour() {
+		String[] horaInicioStr = getTxtInicio().getText().split(":");
+		String[] horaFinStr = getTxtFin().getText().split(":");
+		
+		LocalTime horaInicio = LocalTime.of(Integer.parseInt(horaInicioStr[0]),Integer.parseInt(horaInicioStr[1]));
+		LocalTime horaFin = LocalTime.of(Integer.parseInt(horaFinStr[0]),Integer.parseInt(horaFinStr[1]));
+		
+		boolean hasExtra = (horaFin.minusHours(horaInicio.getHour()) == LocalTime.of(02, 00));
+		
+		System.out.println("Resta: " + horaFin.minusHours(horaInicio.getHour()) +  "bool: " + hasExtra);
+		return hasExtra;
 	}
 
 	private boolean completeCheckToSocios() {
@@ -275,16 +298,11 @@ public class VentanaReservas extends JDialog {
 				public void focusGained(FocusEvent e) {
 					getBtnSiguiente().setEnabled(true); // Solo se permite reservar si hay hora seleccionada
 				}
-				
-//				@Override
-//				public void focusLost(FocusEvent e) {
-//					list.clearSelection();
-//				}
 			});
 			list.addListSelectionListener(new ListSelectionListener() {
 				@Override
 				public void valueChanged(ListSelectionEvent e) {
-					checkEnabler(e); // Si la reserva se puede ampliar una hora, se habilita el check
+					setTimeSelected(e); // Si la reserva se puede ampliar una hora, se habilita el check
 				}
 			});
 			list.setModel(modeloListaHoras);
@@ -293,18 +311,17 @@ public class VentanaReservas extends JDialog {
 	}
 	
 	@SuppressWarnings("unchecked")
-	private void checkEnabler(ListSelectionEvent e) {
+	private void setTimeSelected(ListSelectionEvent e) {
 		JList<String> lista = (JList<String>) e.getSource();
 		if (lista.getSelectedValue() == null)
 			return;
-		String selected = lista.getSelectedValue().split(":")[0];
-		getChkAmpliaHora().setEnabled(modeloListaHoras.contains((Integer.parseInt(selected)+1)+":00"));
+		getTxtInicio().setText(lista.getSelectedValue());
 	}
 
 	private void generaHoras() {
 		getBtnSiguiente().setEnabled(false);
 		modeloListaHoras.removeAllElements();
-		for (int i = 9; i <= 23; i++) {
+		for (int i = 9; i < 23; i++) {
 			modeloListaHoras.addElement(i+":00");
 		}		
 		
@@ -341,15 +358,56 @@ public class VentanaReservas extends JDialog {
 			btnSiguiente.setEnabled(false);
 			btnSiguiente.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
-					((CardLayout) getContentPane().getLayout()).next(getContentPane());
-					selInstalacion = ((Instalacion)getCbInstalaciones().getSelectedItem());
-					getLblInstalacion().setText("Instalacion: " + selInstalacion.getName() + " | Nº max participantes: " + selInstalacion.getMax() +
-							" | Nº min participantes: " + selInstalacion.getMin());
+					siguiente();
 				}
 			});
 		}
 		return btnSiguiente;
 	}
+	
+	private void siguiente() {		
+		if (!checkHourInserted())
+			return;
+		
+		((CardLayout) getContentPane().getLayout()).next(getContentPane());
+		selInstalacion = ((Instalacion)getCbInstalaciones().getSelectedItem());
+		getLblInstalacion().setText("Instalacion: " + selInstalacion.getName() + " | Nº max participantes: " + selInstalacion.getMax() +
+				" | Nº min participantes: " + selInstalacion.getMin());
+
+	}
+
+	private boolean checkHourInserted() {
+		String[] horaInicioStr = getTxtInicio().getText().split(":");
+		String[] horaFinStr = getTxtFin().getText().split(":");
+		
+		LocalTime horaInicio = LocalTime.of(Integer.parseInt(horaInicioStr[0]),Integer.parseInt(horaInicioStr[1]));
+		LocalTime horaFin = LocalTime.of(Integer.parseInt(horaFinStr[0]),Integer.parseInt(horaFinStr[1]));
+		
+		if (horaInicio.equals(LocalTime.of(22, 00)) && horaFin.equals(LocalTime.of(00, 00))) {
+			JOptionPane.showMessageDialog(null, "A partir de las 22:00 solo se puede reservar durante " + ReservationController.HORA_MINIMA + " hora.", "Error", JOptionPane.ERROR_MESSAGE);
+			return false;
+		}
+		
+		if (horaFin.isBefore(horaInicio)) {
+			JOptionPane.showMessageDialog(null, "La hora de finalización no puede ser anterior a la de inicio", "Error", JOptionPane.ERROR_MESSAGE);
+			return false;
+		}
+		
+		LocalTime horaSumada = horaInicio.plusHours(ReservationController.HORA_MAXIMA);
+		
+		if (!horaSumada.equals(horaFin) && horaSumada.isBefore(horaFin)) {
+			JOptionPane.showMessageDialog(null, "La instalación solo se puede reservar por " + ReservationController.HORA_MAXIMA + " horas como máximo.", "Error", JOptionPane.ERROR_MESSAGE);
+			return false;
+		}
+		
+		if (horaInicio.equals(horaFin)) {
+			JOptionPane.showMessageDialog(null, "La duración minima de la reserva es de " + ReservationController.HORA_MINIMA + " hora.", "Error", JOptionPane.ERROR_MESSAGE);
+			return false;
+		}
+		
+		return true;
+	}
+	
 	private JPanel getPnNorth() {
 		if (pnNorth == null) {
 			pnNorth = new JPanel();
@@ -371,17 +429,10 @@ public class VentanaReservas extends JDialog {
 			pnSouth = new JPanel();
 			pnSouth.setBackground(Color.WHITE);
 			pnSouth.setLayout(new BorderLayout(0, 0));
-			pnSouth.add(getChkAmpliaHora(), BorderLayout.NORTH);
 			pnSouth.add(getBtnSiguiente());
+			pnSouth.add(getPnHoras(), BorderLayout.NORTH);
 		}
 		return pnSouth;
-	}
-	private JCheckBox getChkAmpliaHora() {
-		if (chkAmpliaHora == null) {
-			chkAmpliaHora = new JCheckBox("Añadir una hora extra");
-			chkAmpliaHora.setBackground(Color.WHITE);
-		}
-		return chkAmpliaHora;
 	}
 
 	private JPanel getPnSecundarioReservas() {
@@ -579,5 +630,53 @@ public class VentanaReservas extends JDialog {
 			lblInstalacion = new JLabel("");
 		}
 		return lblInstalacion;
+	}
+	private JPanel getPnHoras() {
+		if (pnHoras == null) {
+			pnHoras = new JPanel();
+			pnHoras.setBackground(Color.WHITE);
+			pnHoras.setLayout(new GridLayout(0, 2, 0, 0));
+			pnHoras.add(getLblTxtInicio());
+			pnHoras.add(getLblTxtFin());
+			pnHoras.add(getTxtInicio());
+			pnHoras.add(getTxtFin());
+		}
+		return pnHoras;
+	}
+	private JTextField getTxtInicio() {
+		if (txtInicio == null) {        
+			txtInicio = new JTextField();
+			txtInicio.setEditable(false);
+			txtInicio.setColumns(10);
+		}
+		return txtInicio;
+	}
+	private JTextField getTxtFin() {
+		if (txtFin == null) {
+			MaskFormatter maskFormatter = null;
+	        
+	        try {
+	            maskFormatter = new MaskFormatter("##:00");
+	            maskFormatter.setPlaceholderCharacter('_');
+	        } catch (ParseException e) {
+	            System.err.println("Formato inválido");
+	        }
+			txtFin = new JFormattedTextField(maskFormatter);
+			txtFin.setToolTipText("HH:mm");
+			txtFin.setColumns(10);
+		}
+		return txtFin;
+	}
+	private JLabel getLblTxtInicio() {
+		if (lblTxtInicio == null) {
+			lblTxtInicio = new JLabel("Hora inicio:");
+		}
+		return lblTxtInicio;
+	}
+	private JLabel getLblTxtFin() {
+		if (lblTxtFin == null) {
+			lblTxtFin = new JLabel("Hora fin:");
+		}
+		return lblTxtFin;
 	}
 }
