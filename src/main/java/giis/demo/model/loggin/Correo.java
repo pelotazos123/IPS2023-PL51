@@ -9,7 +9,7 @@ import javax.mail.Transport;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 
-public class Correo {
+public class Correo implements Runnable{
 	
 	private final Properties properties = System.getProperties();
 	
@@ -19,6 +19,11 @@ public class Correo {
 	private final static String CONTRASEÑA = "vguz ubjs oksa ucvc";
 	
 	private Session sesion;
+	private Thread t;
+	
+	private String correoUsuario;
+	private String textoContraseña;
+	private boolean enviado;
 	
 	public Correo() {
 		properties.put("mail.smtp.host", HOST);
@@ -31,9 +36,19 @@ public class Correo {
 
 		
 		sesion = Session.getDefaultInstance(properties);
+		t = new Thread(this);
 	}
 	
-	public void enviarCorreo(String correoUsuario, String textoContraseña) throws MessagingException {
+	public boolean enviarCorreo(String correoUsuario, String textoContraseña) {
+		this.correoUsuario = correoUsuario;
+		this.textoContraseña = textoContraseña;
+		enviado = true;
+		t.start();
+		return enviado;
+		
+	}
+	
+	private void mandarCorreo(String correoUsuario, String textoContraseña) throws MessagingException {
 		MimeMessage mensaje = new MimeMessage(sesion);
 		mensaje.setFrom(new InternetAddress(CORREO));
 		mensaje.addRecipient(Message.RecipientType.TO, new InternetAddress(correoUsuario));
@@ -43,6 +58,18 @@ public class Correo {
 		t.connect(properties.getProperty("mail.smtp.host"), CORREO, CONTRASEÑA);
 		t.sendMessage(mensaje, mensaje.getAllRecipients());
 		t.close();
+	}
+
+	@Override
+	public void run() {
+		try {
+			mandarCorreo(correoUsuario, textoContraseña);
+		} catch (MessagingException e) {
+			System.err.println("Ha ocurrido un error al enviar el correo");
+			e.printStackTrace();
+			enviado = false;
+		}
+		
 	}
 
 }

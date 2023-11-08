@@ -14,7 +14,6 @@ import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.Date;
 
-import javax.mail.MessagingException;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
@@ -594,11 +593,7 @@ public class VentanaTramitarLicencia extends JFrame {
 			
 			if(esDirectivo) {
 				tramitarLicencia.crearSocio(dniSocio, nombreSocio, apellidoSocio, correoSocio, telfSocio, generoSocio, fechaNacimiento);
-				try {
-					loggin.generarLoggin(dniSocio);
-				}catch (MessagingException e) {
-					System.err.println("Ha ocurrido un error al enviar el correo");
-					e.printStackTrace();
+				if(!loggin.generarLoggin(dniSocio)) {
 					JOptionPane.showMessageDialog(this,"Error al enviar nueva contraseña a: "+loggin.getCorreoDeUsuario(dniSocio),
 							"Iniciar Sesion", JOptionPane.INFORMATION_MESSAGE);
 				}
@@ -610,13 +605,9 @@ public class VentanaTramitarLicencia extends JFrame {
 		}else {
 			if(esDirectivo) {
 				tramitarLicencia.crearSocio(dniSocio, nombreSocio, apellidoSocio, correoSocio, telfSocio, generoSocio, fechaNacimiento);
-				try {
-					loggin.generarLoggin(dniSocio);
-				}catch (MessagingException e) {
-					System.err.println("Ha ocurrido un error al enviar el correo");
+				if(!loggin.generarLoggin(dniSocio)) {
 					JOptionPane.showMessageDialog(this,"Error al enviar nueva contraseña a: "+loggin.getCorreoDeUsuario(dniSocio),
 							"Iniciar Sesion", JOptionPane.INFORMATION_MESSAGE);
-					e.printStackTrace();
 				}
 			}else {
 				tramitarLicencia.modificarDatosSocio(dniSocio,nombreSocio, apellidoSocio, generoSocio,telfSocio,correoSocio, fechaNacimiento);

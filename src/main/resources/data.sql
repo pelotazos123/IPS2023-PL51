@@ -22,6 +22,7 @@ insert into cuotas (owner_id, cuota_type, price, state) values
 
 insert into licencias (owner_id, tutor_dni, tutor_name, tutor_surname, tutor_email, tutor_telf, tutor_birth_date, tutor_gender, state, price, licence_type, facturation_direction, facturation_info) values 
 	(100,'noTutor','noTutor','noTutor','noTutor',null,null,null, 'PENDIENTE', 30, 'DEPORTISTA', "ESXX-XXXX-XXXX-XXXX-XXXX-XXXX", null),
+	(100,'noTutor','noTutor','noTutor','noTutor',null,null,null, 'PENDIENTE', 30, 'MONITOR', "ESXX-XXXX-XXXX-XXXX-XXXX-XXXX", null),
 	(101,'noTutor','noTutor','noTutor','noTutor',null,null,null,'pagado',30,'DEPORTISTA','Aviles','Segundo A'),
 	(101,'noTutor','noTutor','noTutor','noTutor',null,null,null,'pagado',30,'JUEZ','Aviles','Tercero B'),
 	(101,'noTutor','noTutor','noTutor','noTutor',null,null,null,'pagado',30,'MONITOR','Aviles','Tercero B'),
@@ -31,25 +32,15 @@ insert into licencias (owner_id, tutor_dni, tutor_name, tutor_surname, tutor_ema
 	(106,'123456789L','Pedro','Garcia','pedro@gmail.com',654873691,'1983-6-8','HOMBRE','pagado',30,'DEPORTISTA','Oviedo','Segundo A');
 	
 INSERT INTO reservas (id, fecha, instalation_code, extra) VALUES 
-	(0, "2023-11-20 20:00", "13410", true),
-	(1, "2023-11-22 21:00", "13411", false),
-	(2, "2023-11-23 22:00", "13412", false),
-	(3, "2023-11-24 23:00", "13413", false);
+	(0, "2023-11-20 20:00", "13410", true);
 
 INSERT INTO participante_reserva (reserva_id, dni) VALUES
-	(0, "123456789A"),
-	(1, "123456789B"),
-	(2, "123456789A"),
-	(2, "123456789B"),
-	(2, "123456789C"),
-	(2, "123456789D"),
-	(3, "123456789A"),
-	(3, "123456789B");
+	(0, "123456789A");
 
 INSERT INTO instalaciones (code, name, min_users, max_users) VALUES
-	("13410", "Pista Atletismo", 1, 1),
+	("13410", "Tiro con arco", 1, 1),
 	("13411", "Piscina", 1, 1),
-	("13412", "Cancha fútbol", 1, 28),
+	("13412", "Campo de fútbol", 1, 28),
 	("13413", "Pista de tenis",1, 4);
 
 insert into loggin (dni_socio, contrasena) values
@@ -60,7 +51,7 @@ insert into loggin (dni_socio, contrasena) values
 	('123456789E','7143807319c982cdcb00af7d92ba1ea8'), 
 	('123456789J','99eeb6fb14afe15448b972fad2bb6337'), 
 	('123456789K','4d1000ad38485563b550c7dc6f2221f1'); 
-	--Usuario: 123456789A contraseña:Aa1
+	--Usuario: 123456789A contraseña:a5896
 	--Usuario: 123456789B contraseña:b8763
 	--Usuario: 123456789C contraseña:c9863
 	--Usuario: 123456789D contraseña:d4789
@@ -69,3 +60,13 @@ insert into loggin (dni_socio, contrasena) values
 	--Usuario: 123456789K contraseña:k2143
 	--Usuario: 123456789K contraseña:k2143
 
+insert into test(id, fecha, tipo, peso, edad, sexo, tiempo, pulsaciones, distance, resultado) values
+	(100, '2021-05-10','ROCKPORT', 55, 20, 'MUJER', '5.5', 170, null, '77.36'),
+	(100, '2023-05-10','ROCKPORT', 65, 22, 'MUJER', '5.8', 156, null, '76.07'),
+	(100, '2023-10-10','ROCKPORT', 67, 23, 'MUJER', '5.0', 160, null, '77.34'),
+	(104, '2021-05-10','COOPER', null, null, 'HOMBRE', null, null, 3.2, '82.81'),
+	(104, '2023-05-10','COOPER', null, null, 'HOMBRE', null, null, 2.5, '67.17'),
+	(104, '2023-10-10','COOPER', null, null, 'HOMBRE', null, null, 2.2, '60.46');
+
+insert into entrenados(entrenador_id, entrenado_id) values 
+	(100, 104);

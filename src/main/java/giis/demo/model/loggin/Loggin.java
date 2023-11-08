@@ -50,8 +50,8 @@ public class Loggin {
 		return nuevaContraseña;
 	}
 	
-	public void cambiarContraseña(String dniUsuario, String nuevaContraseña) {
-		db.executeUpdate(SQL_CAMBIAR_CONTRASEÑA, cifrarContraseña(nuevaContraseña),dniUsuario);
+	public void cambiarContraseña(String dniUsuario, char[] nuevaContraseña) {
+		db.executeUpdate(SQL_CAMBIAR_CONTRASEÑA, cifrarContraseña(new String(nuevaContraseña)),dniUsuario);
 	}
 	
 	public boolean comprobarBloqueado(String dniUsuario,LocalDate actual) {

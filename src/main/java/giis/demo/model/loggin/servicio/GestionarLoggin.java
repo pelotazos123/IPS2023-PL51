@@ -2,7 +2,7 @@ package giis.demo.model.loggin.servicio;
 
 import java.time.LocalDate;
 
-import javax.mail.MessagingException;
+import javax.swing.JOptionPane;
 
 import giis.demo.model.loggin.Correo;
 import giis.demo.model.loggin.Loggin;
@@ -37,21 +37,21 @@ public class GestionarLoggin {
 		return loggin.contraseñaCorrecta(dniUsuario, contraseña);
 	}
 	
-	public void generarLoggin(String dniUsuario) throws MessagingException {
+	public boolean generarLoggin(String dniUsuario){
 		String contraseña = loggin.generarLoggin(dniUsuario);
 		String correoUsuario = getCorreoDeUsuario(dniUsuario);
 		String textoCorreo = "Contraseña generada: "+contraseña+"\nPara modificarla acceda a su cuenta , pulse cambiar contraseña e introduzca la nueva contraseña";
-		enviarCorreos.enviarCorreo(correoUsuario, textoCorreo);
+		return enviarCorreos.enviarCorreo(correoUsuario, textoCorreo);
 	}
 	
-	public void restablecerContraseña(String dniUsuario) throws MessagingException {
+	public boolean restablecerContraseña(String dniUsuario,String correoUsuario) {
 		String contraseña = loggin.restablecerContraseña(dniUsuario);
-		String correoUsuario = getCorreoDeUsuario(dniUsuario);
 		String textoCorreo = "Contraseña restablecida: "+contraseña+"\nPara modificarla acceda a su cuenta , pulse cambiar contraseña e introduzca la nueva contraseña";
-		enviarCorreos.enviarCorreo(correoUsuario, textoCorreo);
+		return enviarCorreos.enviarCorreo(correoUsuario, textoCorreo);
 	}
 	
-	public void cambiarContraseña(String dniUsuario, String nuevaContraseña) {
+	public void cambiarContraseña(String dniUsuario, char[] nuevaContraseña) {
+		
 		loggin.cambiarContraseña(dniUsuario, nuevaContraseña);
 	}
 	
@@ -77,12 +77,17 @@ public class GestionarLoggin {
 		return (String) result[0];
 	}
 	
-	public boolean comprobarNuevaContraseñaValida(String nuevaContraseña) {
+	public boolean comprobarNuevaContraseñaValida(char[] nuevaContraseña) {
 		int mayus = 0;
 		int minus = 0;
 		int num = 0;
-		for (int i = 0; i < nuevaContraseña.length(); i++) {
-			char character = nuevaContraseña.charAt(i);
+		if (nuevaContraseña.length == 0) {
+			JOptionPane.showMessageDialog(null,"La contraseña no puede estar vacía.",
+					"Cambiar contraseña", JOptionPane.ERROR_MESSAGE);
+			return false;
+		}
+		for (int i = 0; i < nuevaContraseña.length; i++) {
+			char character = nuevaContraseña[i];
 			if(Character.isAlphabetic(character) && Character.isLowerCase(character)) {
 				minus++;
 			}else if(Character.isAlphabetic(character) && Character.isUpperCase(character)) {
@@ -93,6 +98,13 @@ public class GestionarLoggin {
 				return false;
 			}
 		}
-		return mayus > 0 && minus > 0 && num > 0;
+
+		if (mayus > 0 && minus > 0 && num > 0) {
+			return true;
+		} else {
+			JOptionPane.showMessageDialog(null,"La contraseña debe contener mayusculas, minusculas y al menos un numero",
+					"Cambiar contraseña", JOptionPane.INFORMATION_MESSAGE);
+			return false;
+		}
 	}
 }

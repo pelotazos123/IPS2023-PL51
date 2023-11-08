@@ -16,7 +16,6 @@ import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.Date;
 
-import javax.mail.MessagingException;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
@@ -167,7 +166,7 @@ public class VentanaPrincipal extends JFrame {
 	}
 
 	private void creaVentanasTest() {
-		VentanaSeleccionTest vst = new VentanaSeleccionTest();
+		VentanaSeleccionTest vst = new VentanaSeleccionTest(this);
 		vst.setVisible(true);
 	}
 
@@ -588,19 +587,25 @@ public class VentanaPrincipal extends JFrame {
 	
 	private void restablecerContraseña() {
 		String dniUsuario = getTxDniUsuario().getText();
-		try {
-			loggin.restablecerContraseña(dniUsuario);
-			JOptionPane.showMessageDialog(null,"Contraseña restablecida\nSe ha enviado la nueva contraseña a: "+loggin.getCorreoDeUsuario(dniUsuario),
-					"Iniciar Sesion", JOptionPane.INFORMATION_MESSAGE);
-		}catch (MessagingException e) {
-			System.err.println("Ha ocurrido un error al enviar el correo");
-			JOptionPane.showMessageDialog(null,"Error al enviar nueva contraseña a: "+loggin.getCorreoDeUsuario(dniUsuario),
-					"Iniciar Sesion", JOptionPane.INFORMATION_MESSAGE);
-			e.printStackTrace();
-		}finally {
-			getTxDniUsuario().setText("");
-			getPfContraseña().setText("");
+		if(dniUsuario.isEmpty() || !loggin.existeUsuario(dniUsuario)) {
+			JOptionPane.showMessageDialog(null,
+					"Usuario incorrecto o inexistente", "Iniciar Sesion",
+					JOptionPane.INFORMATION_MESSAGE);
+		}else {
+			String correo= JOptionPane.showInputDialog(this,"Introduzca correo de recuperacion","Iniciar Sesion",JOptionPane.QUESTION_MESSAGE);
+			if(correo != null) {
+				if (loggin.restablecerContraseña(dniUsuario,correo)) {
+					JOptionPane.showMessageDialog(null, "Contraseña restablecida\nSe ha enviado la nueva contraseña a: "
+							+ loggin.getCorreoDeUsuario(dniUsuario), "Iniciar Sesion", JOptionPane.INFORMATION_MESSAGE);
+				} else {
+					JOptionPane.showMessageDialog(null,
+							"Error al enviar nueva contraseña a: " + loggin.getCorreoDeUsuario(dniUsuario), "Iniciar Sesion",
+							JOptionPane.INFORMATION_MESSAGE);
+				}
+			}
 		}
+		getTxDniUsuario().setText("");
+		getPfContraseña().setText("");
 	}
 	
 	public class PintaBotonRestablecerContraseña extends MouseAdapter{
@@ -653,17 +658,20 @@ public class VentanaPrincipal extends JFrame {
 	
 	private void cambiarContraseña() {
 		String dniUsuario = tramitarLicencia.getUsuario().getDni();
-		String nuevaContraseña = "";
+		
+		PasswordPane pp = new PasswordPane();
+		
 		Boolean continuar = null;
+		
 		do {
-			nuevaContraseña = JOptionPane.showInputDialog(this,"Nueva Contraseña\nDebe contener mayusculas, minusculas y al menos un numero","Cambiar contraseña",JOptionPane.QUESTION_MESSAGE);
+			int act = JOptionPane.showConfirmDialog(null, pp.getPn(), "Nueva contraseña",JOptionPane.OK_CANCEL_OPTION);
 			
-			if (nuevaContraseña == null) // Cancela la operación si cancelar es presionado (Devuelve null)
+			if (act == JOptionPane.CANCEL_OPTION || act == JOptionPane.CLOSED_OPTION) // Cancela la operación si cancelar es presionado (Devuelve -1)
 				return;				
-			continuar = loggin.comprobarNuevaContraseñaValida(nuevaContraseña);
-			
+			continuar = loggin.comprobarNuevaContraseñaValida(pp.getPswd().getPassword());
+			if (!continuar) pp.getPswd().setText("");
 		}while(!continuar);
-		loggin.cambiarContraseña(dniUsuario, nuevaContraseña);
+		loggin.cambiarContraseña(dniUsuario, pp.getPswd().getPassword());
 		JOptionPane.showMessageDialog(this,"Contraseña actualizada",
 				"Cambiar contraseña", JOptionPane.INFORMATION_MESSAGE);
 	}
@@ -851,5 +859,32 @@ public class VentanaPrincipal extends JFrame {
 			btnGestionRecibos.setBounds(476, 205, 185, 60);
 		}
 		return btnGestionRecibos;
+	}
+
+	public Database getDb() {
+		return db;
+	}
+	
+	private class PasswordPane {
+		
+		private JPanel pn;
+		private JPasswordField pswd;
+		
+		public PasswordPane() {
+			pn = new JPanel();
+			pn.setLayout(new BorderLayout());
+			pswd = new JPasswordField();
+			JLabel lbl = new JLabel("<html>Debe contener mayusculas, <br> minusculas y al menos un numero.</html>");
+			pn.add(pswd, BorderLayout.CENTER);
+			pn.add(lbl, BorderLayout.NORTH);
+		}
+		
+		public JPasswordField getPswd() {
+			return pswd;
+		}
+		
+		public JPanel getPn() {
+			return pn;
+		}
 	}
 }

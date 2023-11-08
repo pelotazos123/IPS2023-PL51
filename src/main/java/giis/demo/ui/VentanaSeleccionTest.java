@@ -3,6 +3,9 @@ package giis.demo.ui;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
+
+import giis.demo.logica.TestsFisiologicos;
+
 import javax.swing.JButton;
 import java.awt.event.ActionListener;
 import java.awt.Dimension;
@@ -17,25 +20,48 @@ public class VentanaSeleccionTest extends JFrame {
 	private JPanel contentPane;
 	private JButton btCooper;
 	private JButton btnTestDeRockport;
+	private JButton btResultadosAnteriores;
+	private JButton btResultadosEntrenados;
+	private VentanaPrincipal vp;
+	private int id;
+	private TestsFisiologicos tf;
 
 	/**
 	 * Create the frame.
+	 * 
+	 * @param ventanaPrincipal
 	 */
-	public VentanaSeleccionTest() {
+	public VentanaSeleccionTest(VentanaPrincipal ventanaPrincipal) {
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		setBounds(100, 100, 450, 300);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setLocationRelativeTo(null);
-		setTitle("Selección de tipo de test");
+		setTitle("Gestión Deportiva");
 		setResizable(false);
-		setMinimumSize(new Dimension(300,450));
+		setMinimumSize(new Dimension(300, 450));
+		this.vp = ventanaPrincipal;
+		this.id = 100;
+		this.tf = new TestsFisiologicos(this);
 
 		setContentPane(contentPane);
 		contentPane.setLayout(null);
 		contentPane.add(getBtCooper());
 		contentPane.add(getBtnTestDeRockport());
+		contentPane.add(getBtResultadosAnteriores());
+		contentPane.add(getBtResultadosEntrenados());
+		if(tf.esEntrenador()) {
+			activaEntrenador();
+		}
 	}
+	/**
+	 * Si el usuario es entrenador activa el componente de Ver Resultados de
+	 * entrenados
+	 */
+	private void activaEntrenador() {
+		getBtResultadosEntrenados().setEnabled(true);
+	}
+
 	private JButton getBtCooper() {
 		if (btCooper == null) {
 			btCooper = new JButton("Test de Cooper");
@@ -49,8 +75,9 @@ public class VentanaSeleccionTest extends JFrame {
 		}
 		return btCooper;
 	}
+
 	private void muestraVentanaCooper() {
-		VentanaTestCooper vtc = new VentanaTestCooper();
+		VentanaTestCooper vtc = new VentanaTestCooper(this);
 		vtc.setVisible(true);
 	}
 
@@ -69,7 +96,51 @@ public class VentanaSeleccionTest extends JFrame {
 	}
 
 	private void muestraVentanaRockport() {
-		VentanaTestRockport vtr = new VentanaTestRockport();
+		VentanaTestRockport vtr = new VentanaTestRockport(this);
 		vtr.setVisible(true);
 	}
+
+	private JButton getBtResultadosAnteriores() {
+		if (btResultadosAnteriores == null) {
+			btResultadosAnteriores = new JButton("Test anteriores");
+			btResultadosAnteriores.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					creaVentanaTestAnteriores();
+				}
+			});
+			btResultadosAnteriores.setMnemonic('a');
+			btResultadosAnteriores.setBounds(60, 191, 142, 89);
+		}
+		return btResultadosAnteriores;
+	}
+
+	private void creaVentanaTestAnteriores() {
+		VentanaTestAnteriores vta = new VentanaTestAnteriores(this);
+		vta.setVisible(true);
+	}
+
+	private JButton getBtResultadosEntrenados() {
+		if (btResultadosEntrenados == null) {
+			btResultadosEntrenados = new JButton("Test entrenados");
+			btResultadosEntrenados.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					activaVentanaEntrenados();
+				}
+			});
+			btResultadosEntrenados.setEnabled(false);
+			btResultadosEntrenados.setMnemonic('e');
+			btResultadosEntrenados.setBounds(228, 191, 141, 89);
+		}
+		return btResultadosEntrenados;
+	}
+
+	private void activaVentanaEntrenados() {
+		VentanaEntrenados ve = new VentanaEntrenados(this);
+		ve.setVisible(true);
+	}
+
+	public VentanaPrincipal getVp() {
+		return vp;
+	}
 }
+
