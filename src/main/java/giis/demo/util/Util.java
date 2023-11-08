@@ -124,7 +124,7 @@ public class Util {
 	 */
 	public static Date isoStringToDate(String isoDateString) {
 		try {
-		return new SimpleDateFormat("yyyy-MM-dd").parse(isoDateString);
+		return new SimpleDateFormat("yyyy-MM-dd HH:mm").parse(isoDateString);
 		} catch (ParseException e) {
 			throw new ApplicationException("Formato ISO incorrecto para fecha: "+isoDateString);
 		}

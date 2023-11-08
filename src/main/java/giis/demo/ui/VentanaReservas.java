@@ -190,10 +190,10 @@ public class VentanaReservas extends JDialog {
 		
 		List<String> listaParticipantes = getTxtFromDniFields();
 		
-		if (reMan.reservar(finalDate, reserva, selInstalacion, listaParticipantes, hasExtra)) {
-			JOptionPane.showMessageDialog(null, "Reserva confirmada de " + selInstalacion.toString() +": " + reserva);
-			this.dispose();
-		}
+		if (!reMan.reservar(finalDate, reserva, selInstalacion, listaParticipantes, hasExtra)) return;
+		
+		JOptionPane.showMessageDialog(null, "Reserva confirmada de " + selInstalacion.toString() +": " + reserva);
+		this.dispose();
 	}
 
 	private boolean completeCheckToSocios() {
