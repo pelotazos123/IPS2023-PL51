@@ -105,10 +105,16 @@ public class GestionRecibosController {
 				String value_date = view.getTabRecibos().getValueAt(seleccionados[i], 3).toString();
 				
 				Calendar date = Calendar.getInstance();
+				
+				date.set(Calendar.YEAR, view.getDate().get(Calendar.YEAR));
+				date.set(Calendar.MONTH, view.getDate().get(Calendar.MONTH));
+				date.set(Calendar.DAY_OF_MONTH, view.getDate().get(Calendar.DAY_OF_MONTH));
+				
+				
 				if(date.get(Calendar.DAY_OF_MONTH) >= 15)
 					date.add(Calendar.MONTH, 1);
 				date.set(Calendar.DAY_OF_MONTH, 15);
-				String charge_date = new SimpleDateFormat("dd-MM-yyyy").format(date.getTime());
+				String charge_date = new SimpleDateFormat("yyyy-MM-dd").format(date.getTime());
 				
 				model.generateRecibo(iban, number, amount, value_date, charge_date, "Reliquidado", "Pendiente");
 			}

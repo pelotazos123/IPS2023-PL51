@@ -53,7 +53,6 @@ public class AsambleasController {
 	}
 	
 	private void addAsambleaOrdinaria() {
-		Calendar today = Calendar.getInstance();
 		Calendar date = Calendar.getInstance();
 		
 		int year = Integer.parseInt(view.getCbYear().getItemAt(view.getCbYear().getSelectedIndex()));
@@ -62,14 +61,14 @@ public class AsambleasController {
 		date.set(Calendar.YEAR, year);
 		date.set(Calendar.MONTH, month);
 		
-		if(date.before(Calendar.getInstance())) {
+		if(date.before(view.getDate())) {
 			JOptionPane.showMessageDialog(null, "Fecha incorrecta", "Error", JOptionPane.ERROR_MESSAGE);
 		}
 		else {
 			date.set(Calendar.DAY_OF_MONTH, 1);
-			if(date.get(Calendar.MONTH) == today.get(Calendar.MONTH))
+			if(date.get(Calendar.MONTH) == view.getDate().get(Calendar.MONTH))
 				date.add(Calendar.MONTH, 1);
-			addAsamblea("Ordinaria", new SimpleDateFormat("dd-MM-yyyy").format(date.getTime()), "8:00", "8:30", view.getTxtOrdenDiaOrd().getText());
+			addAsamblea("Ordinaria", new SimpleDateFormat("yyyy-MM-dd").format(date.getTime()), "8:00", "8:30", view.getTxtOrdenDiaOrd().getText());
 		}
 	}
 	
@@ -79,25 +78,34 @@ public class AsambleasController {
 		String conv2 = view.getTxtConv2().getText();
 		String orderOfDay = view.getTxtOrdenDiaExt().getText();
 		
-		if(comprobarFecha(date) && comprobarConvocatorias(conv1, conv2)) {
-			addAsamblea("Ordinaria", date, conv1, conv2, orderOfDay);
-		}
+		if(comprobarFecha(date) && comprobarConvocatorias(conv1, conv2)) 
+			addAsamblea("Extraordinaria", date, conv1, conv2, orderOfDay);
 		
 		
 	}
 	
 	// Metodos privados de comprobacion
 	private boolean comprobarFecha(String date) {
-		SimpleDateFormat formatoFecha = new SimpleDateFormat("dd-MM-yyyy");
+		SimpleDateFormat formatoFecha = new SimpleDateFormat("yyyy-MM-dd");
 		formatoFecha.setLenient(false);
 
 		try {
 			formatoFecha.parse(date);
 			
+			Calendar dateC = Calendar.getInstance();
+			dateC.set(Calendar.YEAR, Integer.parseInt(date.split("-")[0]));
+			dateC.set(Calendar.MONTH, Integer.parseInt(date.split("-")[1]));
+			dateC.set(Calendar.DAY_OF_MONTH, Integer.parseInt(date.split("-")[2]));
+			
+			if(dateC.before(view.getDate())) {
+				JOptionPane.showMessageDialog(null, "Fecha incorrecta", "Error", JOptionPane.ERROR_MESSAGE);
+				return false;
+			}
+			
 			return true;
 			
 		} catch (ParseException e) {
-			JOptionPane.showMessageDialog(null, "Formato de fecha: \"dd-MM-yyyy\"", "Error", JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(null, "Formato de fecha: \"yyyy-MM-dd\"", "Error", JOptionPane.ERROR_MESSAGE);
 			return false;
 		}
 	}
