@@ -599,7 +599,7 @@ public class VentanaPrincipal extends JFrame {
 							+ loggin.getCorreoDeUsuario(dniUsuario), "Iniciar Sesion", JOptionPane.INFORMATION_MESSAGE);
 				} else {
 					JOptionPane.showMessageDialog(null,
-							"Error al enviar nueva contraseña a: " + loggin.getCorreoDeUsuario(dniUsuario), "Iniciar Sesion",
+							"Error al enviar nueva contraseña", "Iniciar Sesion",
 							JOptionPane.INFORMATION_MESSAGE);
 				}
 			}
