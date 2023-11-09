@@ -15,8 +15,8 @@ public class GestionarCompeticiones {
 	
 	private final static String SQL_OBTENER_COMPETICIONES = "select * from competiciones";
 	private final static String SQL_OBTENER_FECHA_COMPETICION = "select competition_date from competiciones where id=?";
-	private final static String SQL_OBTENER_SOCIO_INSCRITO = "select * from inscripcion_competiciones where competicion_id=? and socio_id=?";
 	private final static String SQL_OBTENER_SOCIOS_INSCRITOS_COMPETICION = "select socio_id from inscripcion_competiciones where competicion_id=?";
+	private final static String SQL_OBTENER_SOCIO_INSCRITO = "select * from inscripcion_competiciones where competicion_id=? and socio_id=?";
 	private final static String SQL_OBTENER_COMPETICIONES_DE_SOCIO = "select competicion_id from inscripcion_competiciones where socio_id=?";
 	private final static String SQL_OBTENER_IDS= "select id from competiciones";
 	
@@ -126,20 +126,22 @@ public class GestionarCompeticiones {
 		return true;
 	}
 	
-	public boolean comprobarSocioYaInscrito(int idCompeticion, int idSocio) {
-		List<Object[]> result = db.executeQueryArray(SQL_OBTENER_SOCIO_INSCRITO,idCompeticion,idSocio);
-		return !result.isEmpty();
-	}
-	
 	public void generarListaSocios(int idCompeticion,File archivo) {
 		List<Object[]> result = db.executeQueryArray(SQL_OBTENER_SOCIOS_INSCRITOS_COMPETICION,idCompeticion);
 		
-		List<Socio> socios = new ArrayList<>();
-		for(int i = 0; i < result.size(); i++) {
-			int socioId = (int) result.get(i)[0];
-			socios.add(new Socio(db, socioId));
+		List<Socio> sociosOrdenadosPorCategoria = new ArrayList<>();
+		
+		for(TiposCuotas categoria : TiposCuotas.values()) {
+			for(int i = 0; i < result.size(); i++) {
+				
+				int socioId = (int) result.get(i)[0];
+				Socio socio = new Socio(db, socioId);
+				if(socio.getTipoCuota().equals(categoria) && !sociosOrdenadosPorCategoria.contains(socio)) {
+					sociosOrdenadosPorCategoria.add(socio);
+				}
+			}
 		}
-		FileUtil.saveToFileSociosInscritos(archivo, socios);
+		FileUtil.saveToFileSociosInscritos(archivo, sociosOrdenadosPorCategoria);
 	}
 	
 	public List<Competicion> getCompeticionesFiltradas(boolean sub18, boolean senior, boolean veterano) {
@@ -163,5 +165,10 @@ public class GestionarCompeticiones {
 	private int generarId() {
 		List<Object[]> result = db.executeQueryArray(SQL_OBTENER_IDS);
 		return result.size() == 0? 1 : ((int) result.get(result.size()-1)[0])+1;
+	}
+	
+	public boolean comprobarSocioYaInscrito(int idCompeticion, int idSocio) {
+		List<Object[]> result = db.executeQueryArray(SQL_OBTENER_SOCIO_INSCRITO,idCompeticion,idSocio);
+		return !result.isEmpty();
 	}
 }

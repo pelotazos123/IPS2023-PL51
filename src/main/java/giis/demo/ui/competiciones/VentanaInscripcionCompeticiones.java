@@ -112,7 +112,8 @@ public class VentanaInscripcionCompeticiones extends JFrame {
 			competicionesDisponibles = gestorCompeticiones.getCompeticionesDisponibles(tramitarLicencia.getSocio().getTipoCuota());
 		}
 		for(int i = 0; i < competicionesDisponibles.size(); i++) {
-			elemento = new PanelCompeticion(this,competicionesDisponibles.get(i));
+			Competicion compe = competicionesDisponibles.get(i);
+			elemento = new PanelCompeticion(this,compe,gestorCompeticiones.comprobarSocioYaInscrito(compe.getId(), tramitarLicencia.getUsuario().getId()));
 			getPnCompeticiones().add(elemento);
 		}
 	}
@@ -125,10 +126,7 @@ public class VentanaInscripcionCompeticiones extends JFrame {
 		int competicionId = compe.getId();
 		int socioId = tramitarLicencia.getSocio().getId();
 		
-		if(gestorCompeticiones.comprobarSocioYaInscrito(competicionId, socioId)) {
-			JOptionPane.showMessageDialog(this,"Ya estas inscrito",
-					"Competiciones", JOptionPane.INFORMATION_MESSAGE);
-		}else if(gestorCompeticiones.comprobarSiSePuedeInscribir(competicionId, socioId)) {
+		if(gestorCompeticiones.comprobarSiSePuedeInscribir(competicionId, socioId)) {
 			gestorCompeticiones.inscribirSocio(competicionId, socioId);
 			JOptionPane.showMessageDialog(this,"Ha sido inscrito en "+compe.getNombre(),
 					"Competiciones", JOptionPane.INFORMATION_MESSAGE);
@@ -242,7 +240,8 @@ public class VentanaInscripcionCompeticiones extends JFrame {
 		PanelCompeticion elemento;
 		List<Competicion> competicionesDisponibles = competiciones;
 		for(int i = 0; i < competicionesDisponibles.size(); i++) {
-			elemento = new PanelCompeticion(this,competicionesDisponibles.get(i));
+			Competicion compe = competicionesDisponibles.get(i);
+			elemento = new PanelCompeticion(this,compe,gestorCompeticiones.comprobarSocioYaInscrito(compe.getId(), tramitarLicencia.getUsuario().getId()));
 			getPnCompeticiones().add(elemento);
 		}
 		validate();

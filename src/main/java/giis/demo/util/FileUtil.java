@@ -53,7 +53,7 @@ public abstract class FileUtil {
 			String texto="";
 			for(int i = 0; i < socios.size(); i++) {
 				Socio socio = socios.get(i);
-				texto += socio.getDni()+"#"+socio.getNombre()+"#"+socio.getApellidos()+"#"+socio.getCorreo()+"#"+socio.getTelefono()+"#"+socio.getFechaNacimiento().toString()+"\n";
+				texto += socio.getNombre()+";"+socio.getApellidos()+";"+socio.getCorreo()+";"+socio.getTelefono()+";"+socio.getFechaNacimiento().toString()+";"+socio.getTipoCuota()+"\n";
 			}
 			escribir.write(texto);
 			escribir.close();
@@ -75,7 +75,7 @@ public abstract class FileUtil {
 			BufferedReader fichero = new BufferedReader(new FileReader(archivo.getAbsolutePath()));
 			while (fichero.ready()) {
 				linea = fichero.readLine();
-				String[] texto = linea.split("#");
+				String[] texto = linea.split(";");
 				lista.add(crearCompeticion(texto,ultimoId++));
 			}
 			fichero.close();
