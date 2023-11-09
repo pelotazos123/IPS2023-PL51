@@ -45,11 +45,14 @@ public class GestionarLoggin {
 	}
 	
 	public boolean restablecerContraseña(String dniUsuario,String correoUsuario) {
+		if(!comprobarCorreoCorrecto(dniUsuario,correoUsuario)) {
+			return false;
+		}
 		String contraseña = loggin.restablecerContraseña(dniUsuario);
 		String textoCorreo = "Contraseña restablecida: "+contraseña+"\nPara modificarla acceda a su cuenta , pulse cambiar contraseña e introduzca la nueva contraseña";
-		return enviarCorreos.enviarCorreo(correoUsuario, textoCorreo);
+		return enviarCorreos.enviarCorreo(getCorreoDeUsuario(dniUsuario), textoCorreo);
 	}
-	
+
 	public void cambiarContraseña(String dniUsuario, char[] nuevaContraseña) {
 		
 		loggin.cambiarContraseña(dniUsuario, nuevaContraseña);
@@ -75,6 +78,16 @@ public class GestionarLoggin {
 	public String getCorreoDeUsuario(String dniUsuario) {
 		Object[] result = db.executeQueryArray(SQL_OBTENER_CORREO_USUARIO,dniUsuario).get(0);
 		return (String) result[0];
+	}
+	
+	private boolean comprobarCorreoCorrecto(String dniUsuario, String correoUsuario) {
+		String correoVerificado = getCorreoDeUsuario(dniUsuario);
+		if(correoUsuario.equals(correoVerificado)) {
+			return true;
+		}else {
+			return false;
+		}
+		
 	}
 	
 	public boolean comprobarNuevaContraseñaValida(char[] nuevaContraseña) {
