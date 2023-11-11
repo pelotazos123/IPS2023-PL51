@@ -49,14 +49,14 @@ public class VentanaTestAnteriores extends JDialog {
 		contentPane.setLayout(new BorderLayout(0, 0));
 		contentPane.add(getPnBotones(), BorderLayout.NORTH);
 		contentPane.add(getPnGrafica());
-		habilitaBotones();
+//		habilitaBotones();
 	}
-	private void habilitaBotones() {
-		if(!tf.tieneTestTipo(tf.getId(), TestsFisiologicos.COOPER))
-			getBtCooper().setEnabled(false);
-		if(!tf.tieneTestTipo(tf.getId(), TestsFisiologicos.ROCKPORT))
-			getBtRockport().setEnabled(false);
-	}
+//	private void habilitaBotones() {
+//		if(!tf.tieneTestTipo(tf.getId(), TestsFisiologicos.COOPER))
+//			getBtCooper().setEnabled(false);
+//		if(!tf.tieneTestTipo(tf.getId(), TestsFisiologicos.ROCKPORT))
+//			getBtRockport().setEnabled(false);
+//	}
 	private JPanel getPnBotones() {
 		if (pnBotones == null) {
 			pnBotones = new JPanel();

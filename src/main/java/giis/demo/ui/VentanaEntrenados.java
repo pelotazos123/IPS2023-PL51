@@ -73,15 +73,17 @@ public class VentanaEntrenados extends JFrame {
 		}
 	}
 	
-	protected void activaBotones() {
+	private void activaBotones() {
 		pnGrafica.removeAll();
 		pnGrafica.repaint();
-		getBtCooper().setEnabled(false);
-		getBtRockport().setEnabled(false);
-		if(tf.tieneTestTipo(idSelected, TestsFisiologicos.COOPER))
-			getBtCooper().setEnabled(true);
-		if(tf.tieneTestTipo(idSelected, TestsFisiologicos.ROCKPORT))
-			getBtRockport().setEnabled(true);
+		getBtCooper().setEnabled(true);
+		getBtRockport().setEnabled(true);
+//		getBtCooper().setEnabled(false);
+//		getBtRockport().setEnabled(false);
+//		if(tf.tieneTestTipo(idSelected, TestsFisiologicos.COOPER))
+//			getBtCooper().setEnabled(true);
+//		if(tf.tieneTestTipo(idSelected, TestsFisiologicos.ROCKPORT))
+//			getBtRockport().setEnabled(true);
 	}
 	protected void creaGrafica(String tipo) {
 		pnGrafica.removeAll();

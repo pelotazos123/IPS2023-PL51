@@ -25,8 +25,7 @@ public class TestsFisiologicos {
 	public static final String COOPER = "COOPER";
 	public static final String ROCKPORT = "ROCKPORT";
 
-	private static final String CARGAPESO = "select peso from test where id = ? and "
-			+ "tipo = 'ROCKPORT'";
+	private static final String CARGAPESO = "select peso from test where id = ? and " + "tipo = 'ROCKPORT'";
 	private static final String CARGAEDAD = "select birth_date from socios where id = ?";
 	private static final String CARGASEXO = "select gender from socios where id = ? ";
 	private static final String INSERTROCKPORT = "insert into test(id, fecha, tipo, peso, "
@@ -40,7 +39,7 @@ public class TestsFisiologicos {
 	private static final String TIENE_TEST = "select * from test where id = ?";
 	private static final String TIENE_TEST_TIPO = "select * from test where id = ? and tipo = ? ";
 	private static final String GETNOMBREWITHID = "select name, surname from socios where id = ? ";
-	
+
 	private Database db;
 	private int id;
 	private List<LocalDate> fechas;
@@ -48,23 +47,23 @@ public class TestsFisiologicos {
 	private int[] idEntrenados;
 	private TramitarLicencia tl;
 	private VentanaSeleccionTest vst;
-	
+
 	public TestsFisiologicos(VentanaSeleccionTest vst) {
 		this.vst = vst;
 		this.db = vst.getVp().getDb();
 		this.tl = vst.getVp().getTramitarLicencia();
-		if(tl.esDirectivo())
+		if (tl.esDirectivo())
 			this.id = tl.getDirectivo().getId();
 		else
 			this.id = tl.getSocio().getId();
-		if(esEntrenador())
+		if (esEntrenador())
 			this.idEntrenados = getEntrenados();
 	}
-	
+
 	private int[] getEntrenados() {
 		List<Object[]> entrenados = db.executeQueryArray(SELECT_ENTRENADOS, id);
 		int[] ids = new int[entrenados.size()];
-		for(int i = 0; i < entrenados.size(); i++) {
+		for (int i = 0; i < entrenados.size(); i++) {
 			Object[] entrenado = entrenados.get(i);
 			ids[i] = Integer.parseInt(entrenado[0].toString());
 		}
@@ -104,11 +103,10 @@ public class TestsFisiologicos {
 		int month = calendar.get(Calendar.MONTH) + 1;
 		int day = calendar.get(Calendar.DAY_OF_MONTH);
 		LocalDate date = LocalDate.of(year, month, day);
-		db.executeUpdate(INSERTROCKPORT, id, date.toString(), peso, edad, sexoAux, tiempo, pulsaciones,
-				resultado);
+		db.executeUpdate(INSERTROCKPORT, id, date.toString(), peso, edad, sexoAux, tiempo, pulsaciones, resultado);
 		return resultado;
 	}
-	
+
 	public int cargaEdad(int id) {
 		List<Object[]> edad = db.executeQueryArray(CARGAEDAD, id);
 		LocalDate birth = LocalDate.parse(edad.get(0)[0].toString());
@@ -121,7 +119,7 @@ public class TestsFisiologicos {
 		LocalDate actual = LocalDate.of(year, month, day);
 		return Integer.parseInt(actual.compareTo(birth) + "");
 	}
-	
+
 	public String cargaSexo(int id) {
 		List<Object[]> sexo = db.executeQueryArray(CARGASEXO, id);
 		return sexo.get(0)[0].toString();
@@ -129,7 +127,7 @@ public class TestsFisiologicos {
 
 	public int cargaPeso(int id) {
 		List<Object[]> peso = db.executeQueryArray(CARGAPESO, id);
-		return Integer.parseInt(peso.get(peso.size()-1)[0] + "");
+		return Integer.parseInt(peso.get(peso.size() - 1)[0] + "");
 	}
 
 	private void selectValores(int id, String tipo) {
@@ -141,10 +139,10 @@ public class TestsFisiologicos {
 		fechas = new ArrayList<>();
 		resultado = new ArrayList<>();
 		int i = 0;
-		for (Object[] par: datos) {
+		for (Object[] par : datos) {
 			fechaActual = LocalDate.parse((CharSequence) par[0]).getDayOfYear();
 			añoActual = LocalDate.parse((CharSequence) par[0]).getYear();
-			if(fechaActual == fechaAnterior && añoActual == añoAnterior) {
+			if (fechaActual == fechaAnterior && añoActual == añoAnterior) {
 				i--;
 				fechas.remove(i);
 				fechas.add(LocalDate.parse((CharSequence) par[0]));
@@ -164,31 +162,38 @@ public class TestsFisiologicos {
 
 	public JFreeChart creaGrafica(int id, String tipo) {
 		selectValores(id, tipo);
+		JFreeChart chart;
+		if (resultado.size() != 0) {
+			TimeSeries series = new TimeSeries("Resultados");
 
-		TimeSeries series = new TimeSeries("Resultados");
-		
-		for (int i = 0; i < resultado.size(); i++) {
-			Date fecha = Date.from(fechas.get(i).atStartOfDay().atZone(ZoneId.systemDefault()).toInstant());
-			series.add(new org.jfree.data.time.Day(fecha), resultado.get(i));
+			for (int i = 0; i < resultado.size(); i++) {
+				Date fecha = Date.from(fechas.get(i).atStartOfDay().atZone(ZoneId.systemDefault()).toInstant());
+				series.add(new org.jfree.data.time.Day(fecha), resultado.get(i));
+			}
+
+			TimeSeriesCollection dcs = new TimeSeriesCollection(series);
+
+			chart = ChartFactory.createTimeSeriesChart("Resultados de test anteriores", "FECHA", "VO2", dcs, false,
+					true, false);
+
+			XYPlot plot = (XYPlot) chart.getPlot();
+
+			NumberAxis yAxis = (NumberAxis) plot.getRangeAxis();
+			yAxis.setRange(resultado.get(0) - 10.0, resultado.get(0) + 10.0);
+		} else {
+			TimeSeriesCollection dcs = new TimeSeriesCollection();
+
+			chart = ChartFactory.createTimeSeriesChart("Resultados de test anteriores", "FECHA", "VO2", dcs, false,
+					true, false);
+
 		}
-
-		TimeSeriesCollection dcs = new TimeSeriesCollection(series);
-		
-		JFreeChart chart = ChartFactory.createTimeSeriesChart("Resultados de test anteriores", 
-				"FECHA","VO2", dcs, false, true, false);
-		
-		XYPlot plot = (XYPlot) chart.getPlot();
-	    
-	    NumberAxis yAxis = (NumberAxis) plot.getRangeAxis();
-	    yAxis.setRange(resultado.get(0) - 10.0, resultado.get(0) + 10.0); 
-		
 		return chart;
 	}
-	
+
 	public int getId() {
 		return id;
 	}
-	
+
 	public boolean tieneTest(int id) {
 		List<Object[]> testEntrenado = db.executeQueryArray(TIENE_TEST, id);
 		return testEntrenado.size() != 0;
@@ -202,22 +207,16 @@ public class TestsFisiologicos {
 	public int[] getIdEntrenados() {
 		return idEntrenados;
 	}
-	
+
 	public String getNombre(int id) {
 		List<Object[]> name = db.executeQueryArray(GETNOMBREWITHID, id);
 		return name.get(0)[0].toString() + " " + name.get(0)[1].toString();
 	}
-/* TODO DESCOMENTAR SI ES NECESARIO O BORRAR SI NO LO ES
-	public boolean tieneEntrenados() {
-		return getEntrenados().length != 0;
-	}
-
-	public boolean entrenadoTieneTest() {
-		for(int i = 0; i < idEntrenados.length; i++) {
-			if(tieneTest(idEntrenados[i]))
-				return true;
-		}
-		return false;
-	}
-*/	
+	/*
+	 * TODO DESCOMENTAR SI ES NECESARIO O BORRAR SI NO LO ES public boolean
+	 * tieneEntrenados() { return getEntrenados().length != 0; }
+	 * 
+	 * public boolean entrenadoTieneTest() { for(int i = 0; i < idEntrenados.length;
+	 * i++) { if(tieneTest(idEntrenados[i])) return true; } return false; }
+	 */
 }

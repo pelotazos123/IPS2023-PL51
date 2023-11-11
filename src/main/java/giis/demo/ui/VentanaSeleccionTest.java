@@ -45,9 +45,9 @@ public class VentanaSeleccionTest extends JFrame {
 		contentPane.add(getBtnTestDeRockport());
 		contentPane.add(getBtResultadosAnteriores());
 		contentPane.add(getBtResultadosEntrenados());
-		if(!tf.tieneTest(tf.getId())) {
-			getBtResultadosAnteriores().setEnabled(false);
-		}
+//		if(!tf.tieneTest(tf.getId())) {
+//			getBtResultadosAnteriores().setEnabled(false);
+//		}
 		//TODO Preguntar si es necesarios
 		if(tf.esEntrenador() /* && tf.tieneEntrenados() && tf.entrenadoTieneTest()*/) {
 			activaEntrenador();
