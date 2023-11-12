@@ -179,13 +179,18 @@ public class TestsFisiologicos {
 			XYPlot plot = (XYPlot) chart.getPlot();
 
 			NumberAxis yAxis = (NumberAxis) plot.getRangeAxis();
-			yAxis.setRange(60.0, 100.0);
+			yAxis.setRange(30.0, 90.0);
 		} else {
 			TimeSeriesCollection dcs = new TimeSeriesCollection();
 
 			chart = ChartFactory.createTimeSeriesChart("Resultados de test anteriores", "FECHA", "VO2", dcs, false,
 					true, false);
 
+			XYPlot plot = (XYPlot) chart.getPlot();
+
+			NumberAxis yAxis = (NumberAxis) plot.getRangeAxis();
+			yAxis.setRange(30.0, 90.0);
+			
 		}
 		return chart;
 	}
