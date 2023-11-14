@@ -53,7 +53,7 @@ public abstract class FileUtil {
 			String texto="";
 			for(int i = 0; i < socios.size(); i++) {
 				Socio socio = socios.get(i);
-				texto += socio.getNombre()+";"+socio.getApellidos()+";"+socio.getCorreo()+";"+socio.getTelefono()+";"+socio.getFechaNacimiento().toString()+";"+socio.getTipoCuota()+"\n";
+				texto += socio.getNombre()+";"+socio.getApellidos()+";"+socio.getTipoCuota()+"\n";
 			}
 			escribir.write(texto);
 			escribir.close();
@@ -65,7 +65,7 @@ public abstract class FileUtil {
 			new RuntimeException("Error de entrada/salida");
 		}
 	}
-	
+
 	public static List<Competicion> loadFileCompeticiones(File archivo,int ultimoId) {
 
 		String linea;

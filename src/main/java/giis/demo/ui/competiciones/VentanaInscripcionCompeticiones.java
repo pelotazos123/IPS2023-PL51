@@ -21,6 +21,7 @@ import javax.swing.border.LineBorder;
 import javax.swing.border.TitledBorder;
 
 import giis.demo.componentes.PanelCompeticion;
+import giis.demo.model.Socio;
 import giis.demo.model.CrearLicencias.servicio.TramitarLicencia;
 import giis.demo.model.competiciones.Competicion;
 import giis.demo.model.competiciones.servicio.GestionarCompeticiones;
@@ -124,16 +125,22 @@ public class VentanaInscripcionCompeticiones extends JFrame {
 	
 	public void inscribirseEnCompeticion(Competicion compe) {
 		int competicionId = compe.getId();
-		int socioId = tramitarLicencia.getSocio().getId();
+		Socio socio = tramitarLicencia.getSocio();
 		
-		if(gestorCompeticiones.comprobarSiSePuedeInscribir(competicionId, socioId)) {
-			gestorCompeticiones.inscribirSocio(competicionId, socioId);
-			JOptionPane.showMessageDialog(this,"Ha sido inscrito en "+compe.getNombre(),
-					"Competiciones", JOptionPane.INFORMATION_MESSAGE);
+		if(gestorCompeticiones.comprobarSiSePuedeInscribir(competicionId, socio.getId())) {
+			mostrarVentanaSeleccionarCategoria(compe,socio);
 		}else {
 			JOptionPane.showMessageDialog(this,"No se puede inscribir a dos competiciones en un mismo dia",
 					"Competiciones", JOptionPane.INFORMATION_MESSAGE);
 		}
+	}
+	
+	private void mostrarVentanaSeleccionarCategoria(Competicion compe, Socio socio) {
+		VentanaSeleccionarCategoria vC = new VentanaSeleccionarCategoria(gestorCompeticiones,compe,socio);
+		vC.setLocationRelativeTo(this);
+		vC.setModal(true);
+		vC.setVisible(true);
+		
 	}
 	
 	public void sacarListadoCompeticion(Competicion compe) {
