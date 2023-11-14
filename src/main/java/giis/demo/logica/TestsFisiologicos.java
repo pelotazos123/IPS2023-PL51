@@ -150,6 +150,7 @@ public class TestsFisiologicos {
 				añoAnterior = fechas.get(i).getYear();
 				resultado.remove(i);
 				resultado.add(Double.parseDouble((par[1] + "")));
+				i++;
 			} else {
 				fechas.add(LocalDate.parse((CharSequence) par[0]));
 				fechaAnterior = fechas.get(i).getDayOfYear();
@@ -162,7 +163,7 @@ public class TestsFisiologicos {
 
 	public JFreeChart creaGrafica(int id, String tipo) {
 		selectValores(id, tipo);
-		JFreeChart chart;
+		JFreeChart chart = null;
 		if (resultado.size() != 0) {
 			TimeSeries series = new TimeSeries("Resultados");
 
