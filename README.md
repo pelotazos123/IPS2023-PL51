@@ -47,8 +47,18 @@ Para implementar el proyecto, siga los siguientes pasos:
 1. Paso 1: Acceda al directorio `src/main/java/giis/demo/util` y lance la aplicación usando la clase `SwingMain.java`.
 2. Paso 2: Una vez iniciada la aplicación, seleccione una de las opciones para cargar la base de datos o iniciarla vacía.
 3. Paso 3: Seleccione la opción de iniciar apliación.
-
-Asegúrese de tener las dependencias y configuraciones necesarias en su lugar antes de implementar el proyecto.
+4. Paso 4: Inicie sesión en la aplicación. Para ello puede usar uno de los siguientes usuarios:
+   * `Usuario: 123456789A contraseña:a5896 (Directivo)`
+   * `Usuario: 123456789B contraseña:b8763 (Directivo)`
+   * `Usuario: 123456789C contraseña:c9863`
+   * `Usuario: 123456789D contraseña:d4789`
+   * `Usuario: 123456789E contraseña:e4852`
+   * `Usuario: 123456789J contraseña:j1236`
+   * `Usuario: 123456789K contraseña:k2143`
+   * `Usuario: 123456789K contraseña:k2143`
+   * 
+Asegúrese de tener las dependencias y configuraciones necesarias en su lugar antes de implementar el proyecto.<br>
+En caso de recibir un error en la base de datos al iniciar la aplicación, seleccione iniciar la base de datos en blanco y luego cargar los datos
 
 ## Contribuciones
 Agradecemos las contribuciones de la comunidad. Si desea contribuir a este proyecto, siga estos pasos:
