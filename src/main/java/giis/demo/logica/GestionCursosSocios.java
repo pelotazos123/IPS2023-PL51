@@ -43,6 +43,9 @@ public class GestionCursosSocios {
 //				vp.getDb().executeUpdate(ACTUALIZAPRECIO, precio);
 			}
 		}
+		else {
+			
+		}
 	}
 	
 	public Object[][] cargaFilas() {
