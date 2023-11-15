@@ -56,7 +56,7 @@ Para implementar el proyecto, siga los siguientes pasos:
    * `Usuario: 123456789J contraseña:j1236`
    * `Usuario: 123456789K contraseña:k2143`
    * `Usuario: 123456789K contraseña:k2143`
-   * 
+     
 Asegúrese de tener las dependencias y configuraciones necesarias en su lugar antes de implementar el proyecto.<br>
 En caso de recibir un error en la base de datos al iniciar la aplicación, seleccione iniciar la base de datos en blanco y luego cargar los datos
 
