@@ -13,9 +13,6 @@ import java.awt.event.ActionEvent;
 
 public class VentanaSeleccionTest extends JFrame {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 1L;
 	private JPanel contentPane;
 	private JButton btCooper;
@@ -23,7 +20,6 @@ public class VentanaSeleccionTest extends JFrame {
 	private JButton btResultadosAnteriores;
 	private JButton btResultadosEntrenados;
 	private VentanaPrincipal vp;
-	private int id;
 	private TestsFisiologicos tf;
 
 	/**
@@ -41,7 +37,6 @@ public class VentanaSeleccionTest extends JFrame {
 		setResizable(false);
 		setMinimumSize(new Dimension(300, 450));
 		this.vp = ventanaPrincipal;
-		this.id = 100;
 		this.tf = new TestsFisiologicos(this);
 
 		setContentPane(contentPane);
@@ -141,6 +136,10 @@ public class VentanaSeleccionTest extends JFrame {
 
 	public VentanaPrincipal getVp() {
 		return vp;
+	}
+	
+	public TestsFisiologicos getTf() {
+		return tf;
 	}
 }
 
