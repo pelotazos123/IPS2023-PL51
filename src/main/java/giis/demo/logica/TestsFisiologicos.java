@@ -180,7 +180,7 @@ public class TestsFisiologicos {
 			XYPlot plot = (XYPlot) chart.getPlot();
 
 			NumberAxis yAxis = (NumberAxis) plot.getRangeAxis();
-			yAxis.setRange(30.0, 90.0);
+			yAxis.setRange(30.0, 105.0);
 		} else {
 			TimeSeriesCollection dcs = new TimeSeriesCollection();
 
@@ -190,7 +190,7 @@ public class TestsFisiologicos {
 			XYPlot plot = (XYPlot) chart.getPlot();
 
 			NumberAxis yAxis = (NumberAxis) plot.getRangeAxis();
-			yAxis.setRange(30.0, 90.0);
+			yAxis.setRange(30.0, 105.0);
 			
 		}
 		return chart;
