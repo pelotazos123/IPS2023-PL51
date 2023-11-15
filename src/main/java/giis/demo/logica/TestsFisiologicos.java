@@ -39,7 +39,7 @@ public class TestsFisiologicos {
 	public TestsFisiologicos(VentanaSeleccionTest vst) {
 		this.db = vst.getVp().getDb();
 //		this.id = tl.getSocio().getId();
-		this.id = 100;
+		this.id = 102;
 		this.idEntrenado = 104;
 	}
 	

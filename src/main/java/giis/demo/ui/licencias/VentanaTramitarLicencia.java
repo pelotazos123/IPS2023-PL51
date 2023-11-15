@@ -86,9 +86,7 @@ public class VentanaTramitarLicencia extends JFrame {
 	private JPanel pnInfoFacturacion;
 	private JLabel lbInfoFacturacion;
 	private JTextField txInfoFacturacion;
-	private JPanel pnTipoLicencia;
-	private JLabel lbTipoLicencia;
-	private JComboBox<TiposLicencia> cbTipoLicencia;
+	private JPanel pnLicencia;
 	private JPanel pnCrearYCancelarLicencia;
 	private JButton btCrearLicencia;
 	private JButton btCancelarLicencia;
@@ -122,6 +120,9 @@ public class VentanaTramitarLicencia extends JFrame {
 	private JPanel pnDniTutor;
 	private JLabel lbDniTutor;
 	private JTextField txDniTutor;
+	private JPanel pnTipoLicencia;
+	private JLabel lbTipoLicencia;
+	private JComboBox<TiposLicencia> cbTipoLicencia;
 
 
 	/**
@@ -427,7 +428,7 @@ public class VentanaTramitarLicencia extends JFrame {
 			pnDatosFacturacionYLicencia.setLayout(new GridLayout(1, 0, 0, 0));
 			pnDatosFacturacionYLicencia.add(getPnDireccionFacturacion());
 			pnDatosFacturacionYLicencia.add(getPnInfoFacturacion());
-			pnDatosFacturacionYLicencia.add(getPnTipoLicencia());
+			pnDatosFacturacionYLicencia.add(getPnLicencia());
 		}
 		return pnDatosFacturacionYLicencia;
 	}
@@ -475,27 +476,13 @@ public class VentanaTramitarLicencia extends JFrame {
 		}
 		return txInfoFacturacion;
 	}
-	private JPanel getPnTipoLicencia() {
-		if (pnTipoLicencia == null) {
-			pnTipoLicencia = new JPanel();
-			pnTipoLicencia.setBackground(Color.WHITE);
-			pnTipoLicencia.add(getLbTipoLicencia());
-			pnTipoLicencia.add(getCbTipoLicencia());
+	private JPanel getPnLicencia() {
+		if (pnLicencia == null) {
+			pnLicencia = new JPanel();
+			pnLicencia.setBackground(Color.WHITE);
+			pnLicencia.add(getPnTipoLicencia());
 		}
-		return pnTipoLicencia;
-	}
-	private JLabel getLbTipoLicencia() {
-		if (lbTipoLicencia == null) {
-			lbTipoLicencia = new JLabel("Tipo de licencia:");
-		}
-		return lbTipoLicencia;
-	}
-	private JComboBox<TiposLicencia> getCbTipoLicencia() {
-		if (cbTipoLicencia == null) {
-			cbTipoLicencia = new JComboBox<TiposLicencia>();
-			cbTipoLicencia.setBounds(146, 66, 106, 22);
-		}
-		return cbTipoLicencia;
+		return pnLicencia;
 	}
 	private JPanel getPnCrearYCancelarLicencia() {
 		if (pnCrearYCancelarLicencia == null) {
@@ -939,5 +926,25 @@ public class VentanaTramitarLicencia extends JFrame {
 			txDniTutor.setColumns(10);
 		}
 		return txDniTutor;
+	}
+	private JPanel getPnTipoLicencia() {
+		if (pnTipoLicencia == null) {
+			pnTipoLicencia = new JPanel();
+			pnTipoLicencia.add(getLbTipoLicenci());
+			pnTipoLicencia.add(getCbTipoLicencia());
+		}
+		return pnTipoLicencia;
+	}
+	private JLabel getLbTipoLicenci() {
+		if (lbTipoLicencia == null) {
+			lbTipoLicencia = new JLabel("Tipo de licencia:");
+		}
+		return lbTipoLicencia;
+	}
+	private JComboBox<TiposLicencia> getCbTipoLicencia() {
+		if (cbTipoLicencia == null) {
+			cbTipoLicencia = new JComboBox<TiposLicencia>();
+		}
+		return cbTipoLicencia;
 	}
 }
