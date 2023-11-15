@@ -48,7 +48,7 @@ public class Correo implements Runnable{
 		
 	}
 	
-	private void mandarCorreo(String correoUsuario, String textoContraseña) throws MessagingException {
+	public void mandarCorreo(String correoUsuario, String textoContraseña) throws MessagingException {
 		MimeMessage mensaje = new MimeMessage(sesion);
 		mensaje.setFrom(new InternetAddress(CORREO));
 		mensaje.addRecipient(Message.RecipientType.TO, new InternetAddress(correoUsuario));
