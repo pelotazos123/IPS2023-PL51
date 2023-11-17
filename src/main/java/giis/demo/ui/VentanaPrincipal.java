@@ -35,6 +35,7 @@ import giis.demo.business.AsambleasModel;
 import giis.demo.business.GestionRecibosController;
 import giis.demo.business.RecibosController;
 import giis.demo.business.RecibosModel;
+import giis.demo.logica.ServiciosMeteorologicos;
 import giis.demo.model.CrearLicencias.servicio.TramitarLicencia;
 import giis.demo.model.competiciones.servicio.GestionarCompeticiones;
 import giis.demo.model.loggin.servicio.GestionarLoggin;
@@ -471,6 +472,9 @@ public class VentanaPrincipal extends JFrame {
 			pnSeccionDirectivoAdministracion.add(getBtnGestionRecibos());
 			pnSeccionDirectivoAdministracion.add(getBtnListadoSocios());
 			pnSeccionDirectivoAdministracion.add(getBtnAñadirCompeticiones());
+			//TODO AQUÍ ESTÁN LOS SM
+			ServiciosMeteorologicos sm = new ServiciosMeteorologicos(this);
+			sm.checkTiempo();
 			
 			getLbBienvenidoDirectivo().setText("Bienvenido al club "+tramitarLicencia.getDirectivo().getNombre());
 			
