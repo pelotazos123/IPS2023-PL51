@@ -5,6 +5,7 @@ import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+import javax.swing.table.DefaultTableCellRenderer;
 
 import giis.demo.logica.GestionCursosSocios;
 
@@ -13,6 +14,7 @@ import javax.swing.ListSelectionModel;
 import javax.swing.JScrollPane;
 import javax.swing.JButton;
 import java.awt.event.ActionListener;
+import java.awt.Component;
 import java.awt.event.ActionEvent;
 
 public class VentanaGestionCursosSocios extends JFrame {
@@ -35,6 +37,7 @@ public class VentanaGestionCursosSocios extends JFrame {
 		// TODO TÍTULO Y ESAS COSAS
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		setBounds(100, 100, 730, 474);
+		setLocationRelativeTo(null);
 		this.vp = vp;
 		this.gestionCursos = new GestionCursosSocios(this);
 
@@ -52,10 +55,12 @@ public class VentanaGestionCursosSocios extends JFrame {
 	}
 
 	private void creaTablaPrueba() {
-		this.datos = new Object[][] {{1,"Iniciación", "Tenis"},
-			{2,"Avanzado", "Tenis"},
-			{3,"Iniciación", "Tiro con arco"}};
-		this.columnas = new String[]{"ID CURSO","NOMBRE CURSO","DEPORTE"};
+		JButton btInsc = new JButton("Inscribirse");
+		JButton btBorr = new JButton("Desapuntarse");
+		this.datos = new Object[][] {{1,"Iniciación", "Tenis", btBorr},
+			{2,"Avanzado", "Tenis", btInsc},
+			{3,"Iniciación", "Tiro con arco", btBorr}};
+		this.columnas = new String[]{"ID CURSO","NOMBRE CURSO","DEPORTE", "OPCIÓN"};
 	}
 
 	private JScrollPane getSpCursos() {
@@ -72,12 +77,14 @@ public class VentanaGestionCursosSocios extends JFrame {
 //			cargaDatos();
 			tableCursos = new JTable(datos, columnas);
 			tableCursos.setRowSelectionAllowed(true);
-			tableCursos.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);// TODO PREGUNTAR 
+			tableCursos.getColumnModel().getColumn(3).setCellRenderer(new BotonRenderer());
+			tableCursos.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);// TODO PREGUNTAR 
 			tableCursos.getSelectionModel().addListSelectionListener(
 					new ListSelectionListener() {	
 				@Override
 				public void valueChanged(ListSelectionEvent e) {
-					btConfirmar.setEnabled(true);					
+					System.out.println(tableCursos.getSelectedRow());
+//					btConfirmar.setEnabled(true);					
 				}
 			});
 		}
@@ -114,4 +121,18 @@ public class VentanaGestionCursosSocios extends JFrame {
 	public JTable getTable() {
 		return tableCursos;
 	}
+	
+	class BotonRenderer extends DefaultTableCellRenderer {
+
+		private static final long serialVersionUID = 1L;
+
+		@Override
+        public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+            if (value instanceof Component) {
+                return (Component) value;
+            } else {
+                return super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+            }
+        }
+    }
 }
