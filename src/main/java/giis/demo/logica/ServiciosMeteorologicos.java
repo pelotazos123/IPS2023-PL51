@@ -81,8 +81,6 @@ public class ServiciosMeteorologicos {
 //			System.out.println(linesAux.length);
 			String path = "src/main/resources/files/json.txt";
 			writeToTxt(linesAux, path);
-//			ObjectMapper objectMapper = new ObjectMapper();
-//			JsonNode jsonNode = objectMapper.readTree(linesAux[0]);
 			
 		} catch (Exception e/*IOException e*/) {
 			e.printStackTrace();
