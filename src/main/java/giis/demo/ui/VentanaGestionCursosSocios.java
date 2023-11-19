@@ -77,7 +77,7 @@ public class VentanaGestionCursosSocios extends JFrame {
 //			cargaDatos();
 			tableCursos = new JTable(datos, columnas);
 			tableCursos.setRowSelectionAllowed(true);
-			tableCursos.getColumnModel().getColumn(3).setCellRenderer(new BotonRenderer());
+			tableCursos.getColumnModel().getColumn(3).setCellRenderer(new BotonRenderer());		//TODO CAMBIAR EL GETCOLUMN
 			tableCursos.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);// TODO PREGUNTAR 
 			tableCursos.getSelectionModel().addListSelectionListener(
 					new ListSelectionListener() {	
