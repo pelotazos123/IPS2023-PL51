@@ -34,6 +34,13 @@ public class ReservationController {
 		this.db = db;
 	}
 	
+	//TODO NECESARIO? CAMBIAR A VOID?
+	public boolean anular(LocalDateTime dia, String reserva, String instalacionId) {
+		createReservation(reserva, instalacionId, false);
+		getReservas();
+		return true;
+	}
+	
 	public boolean reservar(LocalDateTime dia, String reserva, Instalacion instalacion, List<String> listaParticipantes, boolean extra) {
 		if (!checkParticipantsAvailability(dia, instalacion, listaParticipantes))
 			return false;

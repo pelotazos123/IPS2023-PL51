@@ -73,9 +73,11 @@ public class ServiciosMeteorologicos {
 					.get("temperature").asDouble();
 				dto.temperatureApparent = jn.path("values")
 						.get("temperatureApparent").asDouble();
-				System.out.println(dto.hora + "  " + dto.precipitationProbability + " " 
-					+ dto.temperature + "  " + dto.temperatureApparent);
-				checkInstalationes(dto);
+				dto.rainAccumulationLwe = jn.path("values")
+						.get("rainAccumulationLwe").asDouble();
+//				System.out.println(dto.hora + "  " + dto.precipitationProbability + " " 
+//					+ dto.temperature + "  " + dto.temperatureApparent);
+				checkInstalationes(dto, day);
 			}
 //			System.out.println(time.toString());
 //			System.out.println(linesAux.length);
@@ -90,7 +92,7 @@ public class ServiciosMeteorologicos {
 		}
 	}
 
-	private void checkInstalationes(WeatherDto weather) {
+	private void checkInstalationes(WeatherDto weather, LocalDateTime day) {
 //		Date date = Date.from(Instant.parse(weather.hora));
 //		Calendar calendar = Calendar.getInstance();
 //		calendar.setTime(date);
@@ -100,28 +102,68 @@ public class ServiciosMeteorologicos {
 			List<Object[]> instalaciones = vp.getDb().executeQueryArray(CARGAINSTALACIONES);
 			for(Object[] instalacion: instalaciones) {
 			if(instalacion[1].equals("Tiro con arco"))
-				checkTiroConArco(weather, instalacion[0].toString());
+				checkTiroConArco(weather, instalacion[0].toString(), day);
 			else if(instalacion[1].equals("Campo de fútbol"))
-				checkFutbol(weather, instalacion[0].toString());
+				checkFutbol(weather, instalacion[0].toString(), day);
 			else if(instalacion[1].equals("Pista de tenis"))
-				checkTenis(weather, instalacion[0].toString());
+				checkTenis(weather, instalacion[0].toString(), day);
 			}
 		}
 	}
 
-	private void checkTenis(WeatherDto weather, String idInst) {
+	private void checkTenis(WeatherDto weather, String idInst, LocalDateTime day) {
 		// TODO Añadir tipo a la tabla reserva?
-		//SI hay reserva y ...
+		DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+		String reserva = day.format(dtf);
+		//SI HAY CONDICIONES ADVERSAS...
+		if(weather.rainAccumulationLwe >= 1.0 || weather.temperatureApparent >= 40.0 
+				|| weather.snowAccumulationLwe >= 0.1) 
+//			if(HAY RESERVA Y NO ES ANULADA)
+				//BORRA DE RESERVAS 
+			//RESERVA PARA ANULAR
+			rc.anular(day, reserva, idInst);
+		//SI NO HAY CONDICIONES ADVERSAS Y HAY RESERVA ANULADA
+		else {
+//			if(HAY RESERVA ANULADA)
+//			BORRA RESERVA
+		}
+			
 	}
 
-	private void checkFutbol(WeatherDto weather, String idInst) {
-		// TODO Auto-generated method stub
-		
+	private void checkFutbol(WeatherDto weather, String idInst, LocalDateTime day) {
+		//TODO y cambiar condiciones para anular
+		DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+		String reserva = day.format(dtf);
+		//SI HAY CONDICIONES ADVERSAS...
+		if(weather.rainAccumulationLwe >= 1.0 || weather.temperatureApparent >= 40.0 
+				|| weather.snowAccumulationLwe >= 0.1) 
+//			if(HAY RESERVA Y NO ES ANULADA)
+				//BORRA DE RESERVAS 
+			//RESERVA PARA ANULAR
+			rc.anular(day, reserva, idInst);
+		//SI NO HAY CONDICIONES ADVERSAS Y HAY RESERVA ANULADA
+		else {
+//			if(HAY RESERVA ANULADA)
+//			BORRA RESERVA
+		}
 	}
 
-	private void checkTiroConArco(WeatherDto weather, String idInst) {
-		// TODO Auto-generated method stub
-		
+	private void checkTiroConArco(WeatherDto weather, String idInst, LocalDateTime day) {
+		//TODO y cambiar condiciones de anulación
+		DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+		String reserva = day.format(dtf);
+		//SI HAY CONDICIONES ADVERSAS...
+		if(weather.rainAccumulationLwe >= 1.0 || weather.temperatureApparent >= 40.0 
+				|| weather.snowAccumulationLwe >= 0.1) 
+//			if(HAY RESERVA Y NO ES ANULADA)
+				//BORRA DE RESERVAS 
+			//RESERVA PARA ANULAR
+			rc.anular(day, reserva, idInst);
+		//SI NO HAY CONDICIONES ADVERSAS Y HAY RESERVA ANULADA
+		else {
+//			if(HAY RESERVA ANULADA)
+//			BORRA RESERVA
+		}
 	}
 
 	public static void writeToTxt(String[] array, String filePath) {
