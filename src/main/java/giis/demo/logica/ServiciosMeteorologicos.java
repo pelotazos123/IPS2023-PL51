@@ -143,8 +143,11 @@ public class ServiciosMeteorologicos {
 		double precipitationProbability;
 		double windSpeed;			
 		double rainIntensity;		//MAYOR QUE 10
+		double rainAccumulationLwe;
 		double temperatureApparent;		//MAYOR QUE 40
-		
+		double humidity;
+		double iceAccumulationLwe;
+		double snowAccumulationLwe;
 	}
 
 }
