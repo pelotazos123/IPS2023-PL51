@@ -27,7 +27,6 @@ import javax.swing.JFormattedTextField;
 
 import java.awt.BorderLayout;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Iterator;
 import java.util.List;
 
@@ -49,7 +48,6 @@ import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 
 import javax.swing.JLabel;
-import javax.swing.JCheckBox;
 import java.awt.CardLayout;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
@@ -58,7 +56,6 @@ import java.awt.GridLayout;
 import java.awt.Font;
 import javax.swing.JScrollPane;
 import javax.swing.ScrollPaneConstants;
-import javax.swing.border.LineBorder;
 
 public class VentanaReservas extends JDialog {
 	
@@ -371,8 +368,8 @@ public class VentanaReservas extends JDialog {
 		
 		((CardLayout) getContentPane().getLayout()).next(getContentPane());
 		selInstalacion = ((Instalacion)getCbInstalaciones().getSelectedItem());
-		getLblInstalacion().setText("Instalacion: " + selInstalacion.getName() + " | Nº max participantes: " + selInstalacion.getMax() +
-				" | Nº min participantes: " + selInstalacion.getMin());
+		getLblInstalacion().setText("Instalacion: " + selInstalacion.getName() + " | Nº max participantes: " + selInstalacion.getMaxReserva() +
+				" | Nº min participantes: " + selInstalacion.getMinReserva());
 
 	}
 
@@ -475,7 +472,7 @@ public class VentanaReservas extends JDialog {
 	}
 
 	private void addNewSocio() {
-		if (listaTxtFields.size() < selInstalacion.getMax()) {
+		if (listaTxtFields.size() < selInstalacion.getMaxReserva()) {
 			JPanel pnlController = new JPanel();
 			pnlController.setBackground(Color.WHITE);
 			JTextField nuevo = prepareTxtField();
@@ -585,7 +582,7 @@ public class VentanaReservas extends JDialog {
 			btnReservar.setFont(new Font("Tahoma", Font.PLAIN, 18));
 			btnReservar.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
-					if (listaTxtFields.size() >= selInstalacion.getMin())
+					if (listaTxtFields.size() >= selInstalacion.getMinReserva())
 						reservar();
 					else
 						JOptionPane.showMessageDialog(null, "No llegas al mínimo de participantes.", "Error", JOptionPane.ERROR_MESSAGE);

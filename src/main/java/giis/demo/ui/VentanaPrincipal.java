@@ -108,6 +108,8 @@ public class VentanaPrincipal extends JFrame {
 	private JPanel pnBotonesDeportivoDirectivo;
 	private JPanel pnSeccionDirectivoAdministracion;
 	private JButton btInscripcionCompeticiones;
+	private JButton btnCrearCursillos;
+	private VentanaCrearCursillos vcc;
 
 
 	/**
@@ -471,6 +473,7 @@ public class VentanaPrincipal extends JFrame {
 			pnSeccionDirectivoAdministracion.add(getBtnGestionRecibos());
 			pnSeccionDirectivoAdministracion.add(getBtnListadoSocios());
 			pnSeccionDirectivoAdministracion.add(getBtnAñadirCompeticiones());
+			pnSeccionDirectivoAdministracion.add(getBtnCrearCursillos());
 			
 			getLbBienvenidoDirectivo().setText("Bienvenido al club "+tramitarLicencia.getDirectivo().getNombre());
 			
@@ -491,6 +494,25 @@ public class VentanaPrincipal extends JFrame {
 		}
 	}
 	
+	private JButton getBtnCrearCursillos() {
+		if (btnCrearCursillos == null) {
+			btnCrearCursillos = new JButton("Crear cursillos");
+			btnCrearCursillos.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					openCrearCursillos();
+				}
+			});
+		}
+		return btnCrearCursillos;
+	}
+	
+	private void openCrearCursillos() {
+		vcc = new VentanaCrearCursillos(db);
+		vcc.setModal(true);
+		vcc.setLocationRelativeTo(this);
+		vcc.setVisible(true);
+	}
+
 	private boolean comprobarUsuario() {
 		String dniUsuario = getTxDniUsuario().getText();
 		if( loggin.existeUsuario(dniUsuario)) {

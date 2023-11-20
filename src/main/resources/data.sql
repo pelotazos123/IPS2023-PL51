@@ -37,11 +37,11 @@ INSERT INTO reservas (id, fecha, instalation_code, extra) VALUES
 INSERT INTO participante_reserva (reserva_id, dni) VALUES
 	(0, "123456789A");
 
-INSERT INTO instalaciones (code, name, min_users, max_users) VALUES
-	("13410", "Tiro con arco", 1, 1),
-	("13411", "Piscina", 1, 1),
-	("13412", "Campo de fútbol", 1, 28),
-	("13413", "Pista de tenis",1, 4);
+INSERT INTO instalaciones (code, name, min_reserva, max_reserva, min_curso, max_curso) VALUES
+	("13410", "Tiro con arco", 1, 1, 5, 12),
+	("13411", "Piscina", 1, 1, 5, 15),
+	("13412", "Campo de fútbol", 1, 28, 10, 22),
+	("13413", "Pista de tenis",1, 4, 6, 10);
 
 insert into loggin (dni_socio, contrasena) values
 	('123456789A','c455eb6a355fd48b6ece6dee6fbd6b53'),
