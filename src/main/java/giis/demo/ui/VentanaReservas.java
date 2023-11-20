@@ -380,6 +380,11 @@ public class VentanaReservas extends JDialog {
 		String[] horaInicioStr = getTxtInicio().getText().split(":");
 		String[] horaFinStr = getTxtFin().getText().split(":");
 		
+		if (horaFinStr[0].equals("__")) {
+			JOptionPane.showMessageDialog(null, "No puedes dejar la hora de finalización vacía.", "Error", JOptionPane.ERROR_MESSAGE);
+			return false;
+		}
+		
 		LocalTime horaInicio = LocalTime.of(Integer.parseInt(horaInicioStr[0]),Integer.parseInt(horaInicioStr[1]));
 		LocalTime horaFin = LocalTime.of(Integer.parseInt(horaFinStr[0]),Integer.parseInt(horaFinStr[1]));
 		

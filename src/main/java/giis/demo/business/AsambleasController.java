@@ -4,7 +4,9 @@ import java.awt.CardLayout;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalTime;
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.List;
 
 import javax.mail.MessagingException;
 import javax.swing.JOptionPane;
@@ -165,15 +167,20 @@ public class AsambleasController {
 	}
 	
 	private void enviarAsamblea(String type, String announcement, String date1, String date2, String orderOfDay, String acta) {
+		String asamblea = "Asamblea " + type + "\nFecha: " + announcement + "\nHora de primera convocatoria: " + date1 + "\nHora de segunda convocatoria: " + date2 + "\nOrden del dia: "+ orderOfDay+ "\nActa anterior:\n"+ acta;
+		List<String> correos = new ArrayList<>();
+		for(Object[] correo : model.getCorreos()) {
+			correos.add((String)correo[0]);
+		}		
 		
-		String asamblea = "asamblea " + type + " date: " + announcement + ", conv1: "+ date1 + ", conv2: "+ date2 + ", order of the day: "+ orderOfDay+ ", acta: "+ acta;
-		
-		model.getCorreos().parallelStream().forEach(e -> {
+		for (String correo : correos) {
+            Thread thread = new Thread(new Correo(correo,"Asamblea convocada", asamblea));
+            thread.start();
 			try {
 				correo.mandarCorreo((String) e[0], asamblea);
 			} catch (MessagingException e1) {
 				e1.printStackTrace();
-			}
+        }
 		});
 		
 	}

@@ -22,7 +22,8 @@ public class Correo implements Runnable{
 	private Thread t;
 	
 	private String correoUsuario;
-	private String textoContraseña;
+	private String asunto;
+	private String texto;
 	private boolean enviado;
 	
 	public Correo() {
@@ -33,26 +34,34 @@ public class Correo implements Runnable{
 		
 		properties.put("mail.smtp.user", CORREO);
 		properties.put("mail.smtp.clave", CONTRASEÑA);
-
+		
 		
 		sesion = Session.getDefaultInstance(properties);
 		t = new Thread(this);
 	}
 	
-	public boolean enviarCorreo(String correoUsuario, String textoContraseña) {
+	public Correo(String correoUsuario, String asunto, String texto) {
+		this();
 		this.correoUsuario = correoUsuario;
-		this.textoContraseña = textoContraseña;
+		this.asunto = asunto;
+		this.texto = texto;
+	}
+	
+	public boolean enviarCorreo(String correoUsuario, String asunto, String texto) {
+		this.correoUsuario = correoUsuario;
+		this.asunto = asunto;
+		this.texto = texto;
 		enviado = true;
 		t.start();
 		return enviado;
 		
 	}
 	
-	public void mandarCorreo(String correoUsuario, String textoContraseña) throws MessagingException {
+	public void mandarCorreo(String correoUsuario, String asunto, String textoContraseña) throws MessagingException {
 		MimeMessage mensaje = new MimeMessage(sesion);
 		mensaje.setFrom(new InternetAddress(CORREO));
 		mensaje.addRecipient(Message.RecipientType.TO, new InternetAddress(correoUsuario));
-		mensaje.setSubject("Nueva contraseña");
+		mensaje.setSubject(asunto);
 		mensaje.setText(textoContraseña);
 		Transport t = sesion.getTransport("smtp");
 		t.connect(properties.getProperty("mail.smtp.host"), CORREO, CONTRASEÑA);
@@ -63,7 +72,7 @@ public class Correo implements Runnable{
 	@Override
 	public void run() {
 		try {
-			mandarCorreo(correoUsuario, textoContraseña);
+			mandarCorreo(correoUsuario, asunto, texto);
 		} catch (MessagingException e) {
 			System.err.println("Ha ocurrido un error al enviar el correo");
 			e.printStackTrace();

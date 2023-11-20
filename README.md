@@ -18,30 +18,47 @@ Proporcione una breve introducción al proyecto IPS2023-PL03-ING-01, describiend
 
 ## Miembros
 Este proyecto es mantenido por los siguientes miembros del equipo:
-- [Alumno](URL PERFIL)
-- [Alumno](URL PERFIL)
-- [Alumno](URL PERFIL)
-- [Alumno](URL PERFIL)
+| Member | Contact |
+| :-: | :-: |
+| [Pablo Calvo Gamonal](https://github.com/pelotazos123) | UO276220@uniovi.es |
+| [Luis Miguel Gómez del Cueto](https://github.com/uo277310) | UO277310@uniovi.es |
+| [Yago Fernandez Lopez](https://github.com/uo289549) | UO289549@uniovi.es |
+| [Gabriel García Martínez](https://github.com/uo289097) | UO289097@uniovi.es |
 
 No dude en ponerse en contacto con cualquiera de los miembros del equipo si tiene preguntas o desea contribuir al proyecto.
 
 ## Estructura del Proyecto
 El proyecto está estructurado de la siguiente manera:
 
-1. `/algundirectorio`: Descripción del directorio y su contenido.
-2. `/algundirectorio`: Descripción del directorio y su contenido.
-3. `/algundirectorio`: Descripción del directorio y su contenido.
+1. `src/main/java/`: Código fuente de la aplicación.
+2. `src/main/resources/`: Archivos sql y extras para la configuración y carga de datos del proyecto. 
+3. `src/main/java/giis/demo/ui`: Ilustra estructura del proyecto con Swing.
+4. `src/main/java/giis/demo/logica`: Lógica del proyecto.
+5. `src/main/java/giis/demo/model`: Modelo de clases del proyectos.
+6. `src/main/java/giis/demo/jdbc`: Acceso de base de datos mediante jdbc.
+7. `src/main/java/giis/demo/business`: Manejo del modelo de datos y controladores.
+8. `src/main/java/giis/demo/util`: Diferentes utilidades de uso para los anteriores directorios.
 
 Puede explorar cada directorio para obtener más información sobre los componentes y características del proyecto.
 
 ## Despliegue
 Para implementar el proyecto, siga los siguientes pasos:
 
-1. Paso 1: Describa el primer paso de implementación, incluyendo cualquier requisito previo o configuración necesaria.
-2. Paso 2: Proporcione instrucciones para el segundo paso de implementación.
-3. Paso 3: Continúe con pasos adicionales de implementación si es necesario.
-
-Asegúrese de tener las dependencias y configuraciones necesarias en su lugar antes de implementar el proyecto.
+1. Paso 1: Acceda al directorio `src/main/java/giis/demo/util` y lance la aplicación usando la clase `SwingMain.java`.
+2. Paso 2: Una vez iniciada la aplicación, seleccione una de las opciones para cargar la base de datos o iniciarla vacía.
+3. Paso 3: Seleccione la opción de iniciar apliación.
+4. Paso 4: Inicie sesión en la aplicación. Para ello puede usar uno de los siguientes usuarios:
+   * `Usuario: 123456789A contraseña:a5896 (Directivo)`
+   * `Usuario: 123456789B contraseña:b8763 (Directivo)`
+   * `Usuario: 123456789C contraseña:c9863`
+   * `Usuario: 123456789D contraseña:d4789`
+   * `Usuario: 123456789E contraseña:e4852`
+   * `Usuario: 123456789J contraseña:j1236`
+   * `Usuario: 123456789K contraseña:k2143`
+   * `Usuario: 123456789K contraseña:k2143`
+     
+Asegúrese de tener las dependencias y configuraciones necesarias en su lugar antes de implementar el proyecto.<br>
+En caso de recibir un error en la base de datos al iniciar la aplicación, seleccione iniciar la base de datos en blanco y luego cargar los datos
 
 ## Contribuciones
 Agradecemos las contribuciones de la comunidad. Si desea contribuir a este proyecto, siga estos pasos:
@@ -52,91 +69,3 @@ Agradecemos las contribuciones de la comunidad. Si desea contribuir a este proye
 5. Cree una solicitud de extracción para fusionar sus cambios en el proyecto principal.
 
 Apreciamos sus contribuciones y revisaremos sus solicitudes de extracción de manera oportuna.
-
-#README Original
-
-
-
-# IPS2023-PL51
-
-Este proyecto es utilizado como proyecto base o plantilla para el desarrollo y a modo de ejemplo para ilustrar algunos aspectos del desarrollo y automatización de pruebas para las asignaturas relacionadas con ingenieria del software, sistemas de información y pruebas de software.
-
-[Descargar la última versión](https://github.com/javiertuya/samples-test-dev/releases) - 
-[Ver más detalles en el javadoc](https://javiertuya.github.io/samples-test-dev/)
-
-## Contenido
-
-Permite ilustrar, entre otros:
-- Repaso del uso de JDBC para acceder a bases de datos
-- Un conjunto de utilidades para simplificar el acceso a base de datos y el uso de tablas en Swing
-- Implementación de MVC con Swing
-- Automatización de pruebas unitarias con varias versiones de JUnit
-- Estructura y configuración de un proyecto Maven y diferentes reports
-
-Contiene los siguientes paquetes principales:
-- `giis.demo.jdbc`: Repaso de acceso a base de datos con jdbc
-- `giis.demo.tkrun`: Ilustra estructura de proyecto MVC con Swing (TicketRun)
-- `giis.demo.tkrun.ut`: Ilustra pruebas con JUnit para TicketRun
-- `giis.demo.util`: Diferentes utilidades de uso por parte de los anteriores
-
-La estructura es la estándar de maven:
-- `src/main/java`: Codigo fuente de aplicación
-- `src/test/java`: Pruebas unitarias
-- `target`: Generado con el codigo objeto y reports
-
-## Requisitos e Instalación
-
-Este proyecto requiere un mínimo de Java 8 JDK.
-
-Preparación del proyecto:
-- Si se va a utilizar solamente para pruebas y experimentación, clonar/descargar el zip
-  (opción `<> Code` en esta página) o desde [Releases](https://github.com/javiertuya/samples-test-dev/releases)
-- Si se va a utilizar como plantilla para un proyecto propio en GitHub,
-  Crear el repositorio directamente en Git usando este proyecto como plantilla
-  (opción `Use this template` en esta página)
-- En este segundo caso es imprescindible cambiar `samples-test-dev` por el nombre del nuevo proyecto
-  (se puede hacer desde el propio repositorio creado) en los ficheros:
-  - `.project`: cambiar `<name>samples-test-dev</name>` para incluir el nombre del proyecto
-  - `pom.xml`: cambiar `<artifactId>samples-test-dev</artifactId>` para incluir el nombre del proyecto
-
-## Ejecución del proyecto:
-
-- Desde línea de comandos con [Apache Maven](https://maven.apache.org/download.cgi):
-  - Asegurarse de que JAVA_HOME apunta a un JDK y no JRE
-  - Ejecución completa: `mvn install`, incluye generación del Javadoc
-  - Solo pruebas unitarias: `mvn test`, todas las pruebas: `mvn verify`
-  - Ejecución sin tests: `mvn install -DskipTests=true`, genera todos los jar incluyendo javadoc
-
-- Desde Eclipse con M2Eclipse instalado (las distribuciones recientes ya lo incluyen).
-  Desde la raiz del proyecto:
-  - Asegurarse de que esta configurado JDK: Desde build path, editar JRE System Library y en Environment
-	comprobar que JavaSE-1.8 apunta a un JDK en vez de un JRE
-  - *Maven->Update Project*: Actualiza todas las dependencias y permite usar el proyecto como 
-    si hubiera sido creado desde el propio Eclipse
-  - *Run As->Maven install*: Ejecuta este (o otros) comandos maven desde Eclipse
-  - Ejecutar los tests en `src/main/test` o el programa principal (aplicación swing)
-    en la clase `giis.demo.util.SwingMain`
-
-## Reports
-
-La instalacion anterior compilará, ejecutará pruebas y dispondrá de los reports en carpetas dentro de `target`:
-- `site/testapidocs/index.html`: javadoc del proyecto
-- `site/surefire-report.html`: report de las pruebas unitarias (ut)
-- `site/junit*`: report de todas las pruebas con el formato que genera junit
-- `site/jacoco-ut`: reports de cobertura de código
-
-## Personalización de GitHub Actions y Dependabot
-
-Este proyecto está configurado con los correspondientes scripts de Dependabot (para actualización de versiones de dependencias)
-y GitHub actions (para realizar acciones automáticas cuando se realiza un pull request hacia main o un push de una rama).
-A continuación se describen y se indican las posibles personalizaciones a realizar:
-
-- `.github/workflows/test.yml`: Ejecuta automáticamente un build y todas las pruebas unitarias.
-  Aunque se puede eliminar o desactivar. Si se mantiene,
-  en el caso de que no se tengan pruebas unitarias, modificarlo para que compile la aplicación de la siguiente forma:
-  - cambiar `verify` por `compile` en la acción `run: mvn verify ...`
-  - eliminar el código a partir de `- name: Publish surefire test report`
-- `.github/workflows/pages.yml`: Exporta el javadoc de la aplicación a GitHub pages, e indiará fallo
-  si no se ha configurado el repositorio para ello, por lo que se puede eliminar.
-- `.github/dependabot.yml`: Permite que Dependabot cree una pull request cuando hay alguna dependencia
-  que precisa actualización. Se recomienda mantenerlo.
