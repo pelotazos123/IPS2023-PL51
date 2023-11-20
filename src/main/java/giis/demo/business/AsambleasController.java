@@ -8,7 +8,6 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
-import javax.mail.MessagingException;
 import javax.swing.JOptionPane;
 
 import giis.demo.model.loggin.Correo;
@@ -19,8 +18,6 @@ public class AsambleasController {
 
 	private AsambleasModel model;
 	private AsambleasView view;
-	
-	private Correo correo = new Correo();
 	
 	public AsambleasController(AsambleasModel model, AsambleasView view) {
 		this.model = model;
@@ -176,13 +173,7 @@ public class AsambleasController {
 		for (String correo : correos) {
             Thread thread = new Thread(new Correo(correo,"Asamblea convocada", asamblea));
             thread.start();
-			try {
-				correo.mandarCorreo((String) e[0], asamblea);
-			} catch (MessagingException e1) {
-				e1.printStackTrace();
         }
-		});
-		
 	}
 	
 }
