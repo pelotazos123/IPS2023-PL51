@@ -35,6 +35,8 @@ import giis.demo.business.AsambleasModel;
 import giis.demo.business.GestionRecibosController;
 import giis.demo.business.RecibosController;
 import giis.demo.business.RecibosModel;
+import giis.demo.business.TiendaController;
+import giis.demo.business.TiendaModel;
 import giis.demo.model.CrearLicencias.servicio.TramitarLicencia;
 import giis.demo.model.competiciones.servicio.GestionarCompeticiones;
 import giis.demo.model.loggin.servicio.GestionarLoggin;
@@ -61,6 +63,7 @@ public class VentanaPrincipal extends JFrame {
 	private JButton btRenovarLicencia;
 	private JButton btPagoTransferencia;
 	private JButton btTestsFisiologicos;
+	private JButton btTienda;
 	private VentanaReservas vr;
 	private VentanaListaSocios vLS;
 	private JButton btnReservas;
@@ -466,6 +469,7 @@ public class VentanaPrincipal extends JFrame {
 			pnSelectorFechaDirectivo.add(getDcFechaAplicacion());
 			pnBotonesDeportivoDirectivo.add(getBtTestsFisiologicos());
 			pnBotonesDeportivoDirectivo.add(getBtInscripcionCompeticiones());
+			pnBotonesDeportivoDirectivo.add(getBtTienda());
 			pnSeccionDirectivoAdministracion.add(getBtnAsambleas());
 			pnSeccionDirectivoAdministracion.add(getBtnGeneracionRecibos());
 			pnSeccionDirectivoAdministracion.add(getBtnGestionRecibos());
@@ -485,12 +489,13 @@ public class VentanaPrincipal extends JFrame {
 			pnSeccionSocioPersonal.add(getBtCambiarContraseña());
 			pnSelectorFechaSocio.add(getDcFechaAplicacion());
 			pnBotonesDeportiva.add(getBtTestsFisiologicos());
+			pnBotonesDeportiva.add(getBtTienda());
 			getLbBienvenidoSocio().setText("Bienvenido al club "+tramitarLicencia.getSocio().getNombre());
 			((CardLayout)pnPrincipal.getLayout()).show(pnPrincipal,"PrincipalSocio");
 			setMinimumSize(new Dimension(800, 517));
 		}
 	}
-	
+
 	private boolean comprobarUsuario() {
 		String dniUsuario = getTxDniUsuario().getText();
 		if( loggin.existeUsuario(dniUsuario)) {
@@ -837,6 +842,23 @@ public class VentanaPrincipal extends JFrame {
 			btInscripcionCompeticiones.setBounds(584, 269, 134, 54);
 		}
 		return btInscripcionCompeticiones;
+	}
+	
+	private JButton getBtTienda() {
+		if (btTienda == null) {
+			btTienda = new JButton("Tienda");
+			btTienda.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					TiendaView view = new TiendaView();
+					TiendaModel model = new TiendaModel(db);
+					TiendaController controller = new TiendaController(model,view);
+					
+					controller.initController();
+				}
+			});
+			btTienda.setBounds(584, 269, 134, 54);
+		}
+		return btTienda;
 	}
 	
 	private void irCompeticiones() {
