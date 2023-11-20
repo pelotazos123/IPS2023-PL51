@@ -66,6 +66,7 @@ public class GestionCursosSocios {
 
 	protected void inscribirse() {
 		int row = vgcs.getTableCursos().getSelectedRow();
+		System.out.println(row);												// TODO ELIMINAR
 		int idCurso = Integer.parseInt(vgcs.getDatos()[row][0].toString());
 		int precio= Integer.parseInt(vgcs.getDatos()[row][0].toString());		// TODO CAMBIAR POR LA COLUMNA DEL PRECIO
 		vgcs.getVp().getDb().executeUpdate(INSCRIBIRSE, idCurso, id);
