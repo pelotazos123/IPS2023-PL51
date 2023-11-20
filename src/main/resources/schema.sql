@@ -21,7 +21,7 @@ create table socios (id int, dni varchar2(255), name varchar2(255),surname varch
 create table licencias (owner_id int,tutor_dni varchar2(255), tutor_name varchar2(255),tutor_surname varchar2(255), tutor_email varchar2(255), tutor_telf int, tutor_birth_date date, tutor_gender varchar2(255), state varchar2(255), price int, licence_type varchar2(255), facturation_direction varchar2(255),facturation_info varchar2(255), foreign key(owner_id) references socios(id));
 create table cuotas (owner_id int, cuota_type varchar2(255), price int, state int, foreign key(owner_id) references socios(id));
 create table instalaciones (code varchar2(255), name varchar2(255), min_users int, max_users int, foreign key(code) references reservas(instalation_code));
-create table reservas (id integer PRIMARY KEY AUTOINCREMENT, fecha date, instalation_code varchar2(255), extra bool);
+create table reservas (id integer PRIMARY KEY AUTOINCREMENT, fecha date, instalation_code varchar2(255), extra bool, tipo varchar2(255));
 CREATE TABLE IF NOT EXISTS participante_reserva (id integer PRIMARY KEY AUTOINCREMENT, reserva_id int, dni varchar2(255) NOT NULL, FOREIGN KEY(reserva_id) REFERENCES reservas(id));
 create table loggin (dni_socio varchar2(255), contrasena varchar2(255), fin_bloqueo date, foreign key(dni_socio) references socios(dni));
 create table test(id int, fecha date, tipo varchar2(255), peso int, edad int, sexo varchar2(255), tiempo int, pulsaciones int, distance int, resultado int);

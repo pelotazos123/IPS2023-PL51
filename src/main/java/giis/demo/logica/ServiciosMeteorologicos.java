@@ -6,12 +6,8 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.time.temporal.TemporalField;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 
 import com.fasterxml.jackson.databind.JsonNode;
@@ -115,17 +111,20 @@ public class ServiciosMeteorologicos {
 		// TODO Añadir tipo a la tabla reserva?
 		DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
 		String reserva = day.format(dtf);
-		//SI HAY CONDICIONES ADVERSAS...
 		if(weather.rainAccumulationLwe >= 1.0 || weather.temperatureApparent >= 40.0 
-				|| weather.snowAccumulationLwe >= 0.1) 
+				|| weather.snowAccumulationLwe >= 0.1) {
 //			if(HAY RESERVA Y NO ES ANULADA)
+			if(rc.getReservasNoAnuladasHora(reserva, idInst))
 				//BORRA DE RESERVAS 
+				rc.borraReserva(idInst, reserva);
 			//RESERVA PARA ANULAR
 			rc.anular(day, reserva, idInst);
 		//SI NO HAY CONDICIONES ADVERSAS Y HAY RESERVA ANULADA
-		else {
+		} else {
 //			if(HAY RESERVA ANULADA)
+			if(rc.getReservasAnuladasHora(reserva, idInst))
 //			BORRA RESERVA
+				rc.borraReserva(idInst, reserva);
 		}
 			
 	}
@@ -136,15 +135,19 @@ public class ServiciosMeteorologicos {
 		String reserva = day.format(dtf);
 		//SI HAY CONDICIONES ADVERSAS...
 		if(weather.rainAccumulationLwe >= 1.0 || weather.temperatureApparent >= 40.0 
-				|| weather.snowAccumulationLwe >= 0.1) 
+				|| weather.snowAccumulationLwe >= 0.1) {
 //			if(HAY RESERVA Y NO ES ANULADA)
+			if(rc.getReservasNoAnuladasHora(reserva, idInst))
 				//BORRA DE RESERVAS 
+				rc.borraReserva(idInst, reserva);
 			//RESERVA PARA ANULAR
 			rc.anular(day, reserva, idInst);
 		//SI NO HAY CONDICIONES ADVERSAS Y HAY RESERVA ANULADA
-		else {
+		} else {
 //			if(HAY RESERVA ANULADA)
+			if(rc.getReservasAnuladasHora(reserva, idInst))
 //			BORRA RESERVA
+				rc.borraReserva(idInst, reserva);
 		}
 	}
 

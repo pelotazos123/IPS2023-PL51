@@ -17,11 +17,18 @@ public class ReservationController {
 	private Database db;
 	
 	private final static String SQL_CARGAR_RESERVA = "SELECT id, fecha, instalation_code, extra FROM reservas";
-	private final static String SQL_CREAR_RESERVA = "INSERT INTO reservas(fecha, instalation_code, extra) VALUES (?, ?, ?)";
+	private final static String SQL_CREAR_RESERVA = "INSERT INTO reservas(fecha, instalation_code, extra, tipo) VALUES (?, ?, ?, 'NORMAL')";
 	private final static String SQL_ID_RESERVA = "SELECT seq FROM sqlite_sequence where name='reservas'";
 	private final static String SQL_CARGAR_PARTICIPANTES = "SELECT * FROM participante_reserva";
 	private final static String SQL_CREAR_PARTICIPANTE = "INSERT INTO participante_reserva (reserva_id, dni) VALUES (?, ?)";
 	private final static String SQL_CARGAR_FECHAS_RESERVA = "SELECT DISTINCT fecha FROM reservas, participante_reserva WHERE participante_reserva.dni=? and reservas.instalation_code=?";
+	private final static String SQL_ANULAR = "INSERT INTO reservas(fecha, instalation_code, extra, tipo) "
+			+ "VALUES (?, ?, ?, 'ANULADA')"; 
+	private final static String SQL_CARGA_NO_ANULADAS = "select * from reservas where tipo == 'NORMAL' "
+			+ "and fecha = ? and instalation_code = ?";
+	private final static String SQL_BORRA_RESERVA = "delete from reservas where fecha = ? and instalation_code = ?";
+	private final static String SQL_CARGA_ANULADAS = "select * from reservas where tipo == 'ANULADA' "
+			+ "and fecha = ? and instalation_code = ?";
 	
 	public final static int HORA_MAXIMA = 2;
 	public final static int HORA_MINIMA = 1;
@@ -36,11 +43,11 @@ public class ReservationController {
 	
 	//TODO NECESARIO? CAMBIAR A VOID?
 	public boolean anular(LocalDateTime dia, String reserva, String instalacionId) {
-		createReservation(reserva, instalacionId, false);
+		createAnulation(reserva, instalacionId);
 		getReservas();
 		return true;
 	}
-	
+
 	public boolean reservar(LocalDateTime dia, String reserva, Instalacion instalacion, List<String> listaParticipantes, boolean extra) {
 		if (!checkParticipantsAvailability(dia, instalacion, listaParticipantes))
 			return false;
@@ -140,6 +147,24 @@ public class ReservationController {
 	
 	private void createReservation(String reserva, String instalacionId, boolean extra) {
 		db.executeUpdate(SQL_CREAR_RESERVA, reserva, instalacionId, extra);
+	}
+	
+	private void createAnulation(String reserva, String instalacionId) {
+		// TODO Auto-generated method stub
+		db.executeUpdate(SQL_ANULAR, reserva, instalacionId, false);
+	}
+
+	public boolean getReservasNoAnuladasHora(String reserva, String idInst) {
+		return !db.executeQueryArray(SQL_CARGA_NO_ANULADAS, reserva, idInst).isEmpty();
+	}
+
+	public void borraReserva(String idInst, String reserva) {
+		System.out.println("Reserva borrada");
+		db.executeUpdate(SQL_BORRA_RESERVA, reserva, idInst);
+	}
+
+	public boolean getReservasAnuladasHora(String reserva, String idInst) {
+		return !db.executeQueryArray(SQL_CARGA_ANULADAS, reserva, idInst).isEmpty();
 	}
 
 }
