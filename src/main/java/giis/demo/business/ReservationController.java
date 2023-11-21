@@ -26,6 +26,12 @@ public class ReservationController {
 	public final static int HORA_MAXIMA = 2;
 	public final static int HORA_MINIMA = 1;
 	
+	public final static int HORA_MAXIMA_CURSO = 4;
+	public final static int HORA_MINIMA_CURSO = 2;
+	
+	public final static int MAX_ENTRENADORES = 4;
+	public final static int EMPTY = 0;
+	
 	private List<Object[]> resQuery;
 	
 	private List<Reserva> listaReservas = new ArrayList<Reserva>();

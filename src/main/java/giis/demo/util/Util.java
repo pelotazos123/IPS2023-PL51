@@ -4,9 +4,12 @@ import java.lang.reflect.InvocationTargetException;
 import java.text.Format;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalTime;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+
+import javax.swing.JOptionPane;
 
 import org.apache.commons.beanutils.BeanUtils;
 import com.fasterxml.jackson.annotation.JsonFormat;
@@ -19,6 +22,43 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 public class Util {
 	private Util() {
 	    throw new IllegalStateException("Utility class");
+	}
+	
+	public static boolean checkHourInserted(String txtInicio, String txtFinal, int horaMax, int horaMin) {
+		String[] horaInicioStr = txtInicio.split(":");
+		String[] horaFinStr = txtFinal.split(":");
+		
+		if (horaFinStr[0].equals("__")) {
+			JOptionPane.showMessageDialog(null, "No puedes dejar la hora de finalización vacía.", "Error", JOptionPane.ERROR_MESSAGE);
+			return false;
+		}
+		
+		LocalTime horaInicio = LocalTime.of(Integer.parseInt(horaInicioStr[0]),Integer.parseInt(horaInicioStr[1]));
+		LocalTime horaFin = LocalTime.of(Integer.parseInt(horaFinStr[0]),Integer.parseInt(horaFinStr[1]));
+		
+		if (horaInicio.equals(LocalTime.of(22, 00)) && horaFin.equals(LocalTime.of(00, 00))) {
+			JOptionPane.showMessageDialog(null, "A partir de las 22:00 solo se puede reservar durante " + horaMin + " hora.", "Error", JOptionPane.ERROR_MESSAGE);
+			return false;
+		}
+		
+		if (horaFin.isBefore(horaInicio)) {
+			JOptionPane.showMessageDialog(null, "La hora de finalización no puede ser anterior a la de inicio", "Error", JOptionPane.ERROR_MESSAGE);
+			return false;
+		}
+		
+		LocalTime horaSumada = horaInicio.plusHours(horaMax);
+		
+		if (!horaSumada.equals(horaFin) && horaSumada.isBefore(horaFin)) {
+			JOptionPane.showMessageDialog(null, "La instalación solo se puede reservar por " + horaMax + " horas como máximo.", "Error", JOptionPane.ERROR_MESSAGE);
+			return false;
+		}
+		
+		if (horaInicio.equals(horaFin)) {
+			JOptionPane.showMessageDialog(null, "La duración minima de la reserva es de " + horaMin + " hora.", "Error", JOptionPane.ERROR_MESSAGE);
+			return false;
+		}
+		
+		return true;
 	}
 
 	/**

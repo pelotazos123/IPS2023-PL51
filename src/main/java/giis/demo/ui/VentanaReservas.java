@@ -36,6 +36,7 @@ import giis.demo.business.SociosController;
 import giis.demo.model.Instalacion;
 import giis.demo.model.Reserva;
 import giis.demo.util.Database;
+import giis.demo.util.Util;
 
 import javax.swing.JList;
 import javax.swing.JOptionPane;
@@ -363,7 +364,7 @@ public class VentanaReservas extends JDialog {
 	}
 	
 	private void siguiente() {		
-		if (!checkHourInserted())
+		if (!Util.checkHourInserted(getTxtInicio().getText(), getTxtFin().getText(), ReservationController.HORA_MAXIMA, ReservationController.HORA_MINIMA))
 			return;
 		
 		((CardLayout) getContentPane().getLayout()).next(getContentPane());
@@ -371,43 +372,6 @@ public class VentanaReservas extends JDialog {
 		getLblInstalacion().setText("Instalacion: " + selInstalacion.getName() + " | Nº max participantes: " + selInstalacion.getMaxReserva() +
 				" | Nº min participantes: " + selInstalacion.getMinReserva());
 
-	}
-
-	private boolean checkHourInserted() {
-		String[] horaInicioStr = getTxtInicio().getText().split(":");
-		String[] horaFinStr = getTxtFin().getText().split(":");
-		
-		if (horaFinStr[0].equals("__")) {
-			JOptionPane.showMessageDialog(null, "No puedes dejar la hora de finalización vacía.", "Error", JOptionPane.ERROR_MESSAGE);
-			return false;
-		}
-		
-		LocalTime horaInicio = LocalTime.of(Integer.parseInt(horaInicioStr[0]),Integer.parseInt(horaInicioStr[1]));
-		LocalTime horaFin = LocalTime.of(Integer.parseInt(horaFinStr[0]),Integer.parseInt(horaFinStr[1]));
-		
-		if (horaInicio.equals(LocalTime.of(22, 00)) && horaFin.equals(LocalTime.of(00, 00))) {
-			JOptionPane.showMessageDialog(null, "A partir de las 22:00 solo se puede reservar durante " + ReservationController.HORA_MINIMA + " hora.", "Error", JOptionPane.ERROR_MESSAGE);
-			return false;
-		}
-		
-		if (horaFin.isBefore(horaInicio)) {
-			JOptionPane.showMessageDialog(null, "La hora de finalización no puede ser anterior a la de inicio", "Error", JOptionPane.ERROR_MESSAGE);
-			return false;
-		}
-		
-		LocalTime horaSumada = horaInicio.plusHours(ReservationController.HORA_MAXIMA);
-		
-		if (!horaSumada.equals(horaFin) && horaSumada.isBefore(horaFin)) {
-			JOptionPane.showMessageDialog(null, "La instalación solo se puede reservar por " + ReservationController.HORA_MAXIMA + " horas como máximo.", "Error", JOptionPane.ERROR_MESSAGE);
-			return false;
-		}
-		
-		if (horaInicio.equals(horaFin)) {
-			JOptionPane.showMessageDialog(null, "La duración minima de la reserva es de " + ReservationController.HORA_MINIMA + " hora.", "Error", JOptionPane.ERROR_MESSAGE);
-			return false;
-		}
-		
-		return true;
 	}
 	
 	private JPanel getPnNorth() {
@@ -541,7 +505,7 @@ public class VentanaReservas extends JDialog {
 		return btnBorrarSocio;
 	}
 	private void eliminaSocio() {
-		if (listaTxtFields.size() > 0) {
+		if (listaTxtFields.size() > ReservationController.EMPTY) {
 			JPanel txtBorrar = listaTxtFields.remove(listaTxtFields.size()-1);
 			getPnTxtFields().remove(txtBorrar);
 			getPnTxtFields().repaint();
