@@ -45,13 +45,11 @@ public class ServiciosMeteorologicos {
 			
 			String line = reader.readLine(); 
 			reader.close();
-			//TODO PARSEAR POR { HASTA }
 			String[] linesAux = line.split("hourly");
 			linesAux[0] = linesAux[1];
 			
 			line = linesAux[0];
 			line = line.substring(2, line.length());
-//			System.out.println(line.toString());
 			ObjectMapper om = new ObjectMapper();
 			JsonNode jsonNode = om.readTree(line);
 			
@@ -60,10 +58,6 @@ public class ServiciosMeteorologicos {
 				JsonNode jn = jsonNode.get(i);
 				String time = jn.get("time").asText();
 				LocalDateTime day = LocalDateTime.parse(time, DateTimeFormatter.ISO_DATE_TIME);
-//				DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
-//				dto.hora = day.format(dtf);
-//				System.out.println(hora.toString());
-//				System.out.println(date.toString());
 				dto.hora = day;
 				dto.precipitationProbability = jn.path("values")
 					.get("precipitationProbability").asDouble();
@@ -73,13 +67,10 @@ public class ServiciosMeteorologicos {
 						.get("temperatureApparent").asDouble();
 				dto.rainAccumulationLwe = jn.path("values")
 						.get("rainAccumulationLwe").asDouble();
-//				System.out.println(dto.hora + "  " + dto.precipitationProbability + " " 
-//					+ dto.temperature + "  " + dto.temperatureApparent);
 				checkInstalationes(dto, day);
 			}
 			rc.getReservas();
-//			System.out.println(time.toString());
-//			System.out.println(linesAux.length);
+			// TODO Borrar
 			String path = "src/main/resources/files/json.txt";
 			writeToTxt(linesAux, path);
 			
@@ -92,10 +83,6 @@ public class ServiciosMeteorologicos {
 	}
 
 	private void checkInstalationes(WeatherDto weather, LocalDateTime day) {
-//		Date date = Date.from(Instant.parse(weather.hora));
-//		Calendar calendar = Calendar.getInstance();
-//		calendar.setTime(date);
-//		int hour = calendar.get(Calendar.HOUR_OF_DAY);
 		int hour = weather.hora.getHour();
 		if(hour > 8 && hour < 23) {
 			List<Object[]> instalaciones = vp.getDb().executeQueryArray(CARGAINSTALACIONES);
