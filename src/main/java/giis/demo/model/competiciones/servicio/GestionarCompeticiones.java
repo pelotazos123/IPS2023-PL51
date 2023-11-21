@@ -7,6 +7,7 @@ import java.util.List;
 
 import giis.demo.model.Socio;
 import giis.demo.model.TiposCuotas;
+import giis.demo.model.TiposDeportes;
 import giis.demo.model.competiciones.Competicion;
 import giis.demo.util.Database;
 import giis.demo.util.FileUtil;
@@ -14,14 +15,16 @@ import giis.demo.util.FileUtil;
 public class GestionarCompeticiones {
 	
 	private final static String SQL_OBTENER_COMPETICIONES = "select * from competiciones";
+	private final static String SQL_OBTENER_DEPORTE_COMPETICION = "select deporte from competiciones where id=?";
 	private final static String SQL_OBTENER_FECHA_COMPETICION = "select competition_date from competiciones where id=?";
 	private final static String SQL_OBTENER_SOCIOS_INSCRITOS_COMPETICION = "select socio_id from inscripcion_competiciones where competicion_id=?";
 	private final static String SQL_OBTENER_SOCIO_INSCRITO = "select * from inscripcion_competiciones where competicion_id=? and socio_id=?";
 	private final static String SQL_OBTENER_COMPETICIONES_DE_SOCIO = "select competicion_id from inscripcion_competiciones where socio_id=?";
 	private final static String SQL_OBTENER_IDS= "select id from competiciones";
+	private final static String SQL_OBTENER_DEPORTES_SOCIO= "select deporte from licencias where owner_id=?";
 	
 	private final static String SQL_INSCRIBIR_SOCIO = "insert into inscripcion_competiciones (competicion_id, socio_id) values(?, ?)";
-	private final static String SQL_AÑADIR_COMPETICIONES = "insert into competiciones (id, name, competition_date, place, categories) values(?, ?, ?, ?, ?)";
+	private final static String SQL_AÑADIR_COMPETICIONES = "insert into competiciones (id, name, competition_date, place, categories, deporte) values(?, ?, ?, ?, ?, ?)";
 	
 	private Database db;
 	private List<Competicion> listaCompeticiones;
@@ -41,7 +44,7 @@ public class GestionarCompeticiones {
 					categorias += "-";
 				}
 			}
-			db.executeUpdate(SQL_AÑADIR_COMPETICIONES, competicion.getId(), competicion.getNombre(), competicion.getFecha().toString(), competicion.getLugar(),categorias);
+			db.executeUpdate(SQL_AÑADIR_COMPETICIONES, competicion.getId(), competicion.getNombre(), competicion.getFecha().toString(), competicion.getLugar(),categorias, competicion.getDeporte());
 		}
 	}
 
@@ -56,12 +59,15 @@ public class GestionarCompeticiones {
 			String fecha = (String) competicion[2];
 			String lugar = (String) competicion[3];
 			String categorias = (String) competicion[4];
+			String deporte = (String) competicion[5];
 			
 			String[] str = fecha.split("-");
 			int año = Integer.parseInt(str[0]);
 			int mes = Integer.parseInt(str[1]);
 			int dia = Integer.parseInt(str[2]);
 			LocalDate fechaCompe = LocalDate.of(año, mes, dia);
+			
+			TiposDeportes deporteCompeticion = getTipoDeporte(deporte);
 			
 			List<TiposCuotas> listaCategorias = new ArrayList<TiposCuotas>();
 			String[] aux= categorias.split("-");
@@ -74,7 +80,7 @@ public class GestionarCompeticiones {
 					listaCategorias.add(TiposCuotas.VETERANO);
 				}
 			}
-			listaCompeticiones.add(new Competicion(id, nombre, fechaCompe, lugar, listaCategorias));
+			listaCompeticiones.add(new Competicion(id, nombre, fechaCompe, lugar, listaCategorias, deporteCompeticion));
 		}
 	}
 	
@@ -123,9 +129,37 @@ public class GestionarCompeticiones {
 			}
 		}
 		
+		
 		return true;
 	}
 	
+	public boolean comprobarSiEstaFederado(int idCompeticion, int idSocio) {
+		
+		TiposDeportes deporteCompeticion = getTipoDeporte((String) db.executeQueryArray(SQL_OBTENER_DEPORTE_COMPETICION,idCompeticion).get(0)[0]);
+		
+		List<Object[]> licenciasSocio =  db.executeQueryArray(SQL_OBTENER_DEPORTES_SOCIO,idSocio);
+		
+		for (Object[] licencia : licenciasSocio) {
+			TiposDeportes deporteSocio =  getTipoDeporte((String) licencia[0]);
+			if(deporteCompeticion.equals(deporteSocio)) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	private TiposDeportes getTipoDeporte(String deporte) {
+		if(deporte.equals("FUTBOL")) {
+			return TiposDeportes.FUTBOL;
+		}else if(deporte.equals("TENNIS")) {
+			return TiposDeportes.TENNIS;
+		}else if(deporte.equals("TIRO_CON_ARCO")) {
+			return TiposDeportes.TIRO_CON_ARCO;
+		}else {
+			return TiposDeportes.NATACION;
+		}
+	}
+
 	public void generarListaSocios(int idCompeticion,File archivo) {
 		List<Object[]> result = db.executeQueryArray(SQL_OBTENER_SOCIOS_INSCRITOS_COMPETICION,idCompeticion);
 		

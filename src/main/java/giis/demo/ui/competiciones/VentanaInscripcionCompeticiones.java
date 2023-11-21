@@ -57,7 +57,7 @@ public class VentanaInscripcionCompeticiones extends JFrame {
 		setBackground(Color.WHITE);
 		setTitle("Club Deportivo");
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-		setBounds(100, 100, 870, 618);
+		setBounds(100, 100, 1149, 618);
 		pnPrincipal = new JPanel();
 		pnPrincipal.setBorder(new TitledBorder(null, "Competiciones", TitledBorder.LEADING, TitledBorder.TOP, null, null));
 		pnPrincipal.setBackground(Color.WHITE);
@@ -128,7 +128,12 @@ public class VentanaInscripcionCompeticiones extends JFrame {
 		Socio socio = tramitarLicencia.getSocio();
 		
 		if(gestorCompeticiones.comprobarSiSePuedeInscribir(competicionId, socio.getId())) {
-			mostrarVentanaSeleccionarCategoria(compe,socio);
+			if(gestorCompeticiones.comprobarSiEstaFederado(competicionId, socio.getId())) {
+				mostrarVentanaSeleccionarCategoria(compe,socio);
+			}else {
+				JOptionPane.showMessageDialog(this,"No esta federado en ese deporte",
+						"Competiciones", JOptionPane.INFORMATION_MESSAGE);
+			}
 		}else {
 			JOptionPane.showMessageDialog(this,"No se puede inscribir a dos competiciones en un mismo dia",
 					"Competiciones", JOptionPane.INFORMATION_MESSAGE);

@@ -30,6 +30,7 @@ import javax.swing.border.TitledBorder;
 import com.toedter.calendar.JDateChooser;
 
 import giis.demo.model.Generos;
+import giis.demo.model.TiposDeportes;
 import giis.demo.model.CrearLicencias.TiposLicencia;
 import giis.demo.model.CrearLicencias.servicio.TramitarLicencia;
 import giis.demo.model.loggin.servicio.GestionarLoggin;
@@ -120,7 +121,9 @@ public class VentanaTramitarLicencia extends JFrame {
 	private JPanel pnDniTutor;
 	private JLabel lbDniTutor;
 	private JTextField txDniTutor;
-	private JPanel pnTipoLicencia;
+	private JPanel pnSeleccionarDeporte;
+	private JLabel lbSeleccionarDeporte;
+	private JComboBox<TiposDeportes> cbDeporte;
 	private JLabel lbTipoLicencia;
 	private JComboBox<TiposLicencia> cbTipoLicencia;
 
@@ -129,13 +132,13 @@ public class VentanaTramitarLicencia extends JFrame {
 	 * Create the frame.
 	 */
 	public VentanaTramitarLicencia(TramitarLicencia tramitarLicencia, GestionarLoggin loggin) {
-		setMinimumSize(new Dimension(1050, 477));
+		setMinimumSize(new Dimension(1400, 477));
 		setBackground(Color.WHITE);
 		this.tramitarLicencia = tramitarLicencia;
 		this.loggin = loggin;
 		setTitle("Club Deportivo");
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-		setBounds(100, 100, 870, 618);
+		setBounds(100, 100, 1288, 658);
 		pnPrincipal = new JPanel();
 		pnPrincipal.setBackground(Color.WHITE);
 		pnPrincipal.setBorder(new EmptyBorder(5, 5, 5, 5));
@@ -164,6 +167,8 @@ public class VentanaTramitarLicencia extends JFrame {
 			TiposLicencia[] licencias = tramitarLicencia.getLicenciasDisponibles(true);
 			cbTipoLicencia.setModel(new DefaultComboBoxModel<TiposLicencia>(licencias));
 		}
+		TiposDeportes[] deportes = TiposDeportes.values();
+		getCbDeporte().setModel(new DefaultComboBoxModel<TiposDeportes>(deportes));
 	}
 	private JPanel getPnTramitarLicencia() {
 		if (pnTramitarLicencia == null) {
@@ -429,6 +434,7 @@ public class VentanaTramitarLicencia extends JFrame {
 			pnDatosFacturacionYLicencia.add(getPnDireccionFacturacion());
 			pnDatosFacturacionYLicencia.add(getPnInfoFacturacion());
 			pnDatosFacturacionYLicencia.add(getPnLicencia());
+			pnDatosFacturacionYLicencia.add(getPnSeleccionarDeporte());
 		}
 		return pnDatosFacturacionYLicencia;
 	}
@@ -480,7 +486,9 @@ public class VentanaTramitarLicencia extends JFrame {
 		if (pnLicencia == null) {
 			pnLicencia = new JPanel();
 			pnLicencia.setBackground(Color.WHITE);
-			pnLicencia.add(getPnTipoLicencia());
+			pnLicencia.setLayout(new FlowLayout(FlowLayout.CENTER, 5, 5));
+			pnLicencia.add(getLbTipoLicencia());
+			pnLicencia.add(getCbTipoLicencia());
 		}
 		return pnLicencia;
 	}
@@ -567,6 +575,7 @@ public class VentanaTramitarLicencia extends JFrame {
 		String direccionFacturacion = getTxDireccionFacturacion().getText();
 		String infoFacturacion = getTxInfoFacturacion().getText();
 		TiposLicencia licencia = (TiposLicencia) getCbTipoLicencia().getSelectedItem();
+		TiposDeportes deporte = (TiposDeportes) getCbDeporte().getSelectedItem();
 		
 		if(!tramitarLicencia.comprobarMayorEdad(diaSocio, mesSocio, añoSocio)) {
 			String dniTutor = getTxDniTutor().getText();
@@ -588,7 +597,7 @@ public class VentanaTramitarLicencia extends JFrame {
 				tramitarLicencia.modificarDatosSocio(dniSocio,nombreSocio, apellidoSocio, generoSocio,telfSocio,correoSocio, fechaNacimiento);
 				tramitarLicencia.guardarDatosModificadosSocio();
 			}
-			tramitarLicencia.crearLicencia(nombreTutor, apellidoTutor,dniTutor,telfTutor,correoTutor, fechaNacimientoTutor, generoTutor, direccionFacturacion, infoFacturacion, licencia);
+			tramitarLicencia.crearLicencia(nombreTutor, apellidoTutor,dniTutor,telfTutor,correoTutor, fechaNacimientoTutor, generoTutor, direccionFacturacion, infoFacturacion, licencia, deporte);
 		}else {
 			if(esDirectivo) {
 				tramitarLicencia.crearSocio(dniSocio, nombreSocio, apellidoSocio, correoSocio, telfSocio, generoSocio, fechaNacimiento);
@@ -600,7 +609,7 @@ public class VentanaTramitarLicencia extends JFrame {
 				tramitarLicencia.modificarDatosSocio(dniSocio,nombreSocio, apellidoSocio, generoSocio,telfSocio,correoSocio, fechaNacimiento);
 				tramitarLicencia.guardarDatosModificadosSocio();
 			}
-			tramitarLicencia.crearLicencia("noTutor", "noTutor", "noTutor",-1,"noTutor", null, null, direccionFacturacion, infoFacturacion, licencia);
+			tramitarLicencia.crearLicencia("noTutor", "noTutor", "noTutor",-1,"noTutor", null, null, direccionFacturacion, infoFacturacion, licencia, deporte);
 		}
 		
 	}
@@ -927,15 +936,28 @@ public class VentanaTramitarLicencia extends JFrame {
 		}
 		return txDniTutor;
 	}
-	private JPanel getPnTipoLicencia() {
-		if (pnTipoLicencia == null) {
-			pnTipoLicencia = new JPanel();
-			pnTipoLicencia.add(getLbTipoLicenci());
-			pnTipoLicencia.add(getCbTipoLicencia());
+	private JPanel getPnSeleccionarDeporte() {
+		if (pnSeleccionarDeporte == null) {
+			pnSeleccionarDeporte = new JPanel();
+			pnSeleccionarDeporte.setBackground(Color.WHITE);
+			pnSeleccionarDeporte.add(getLbSeleccionarDeporte());
+			pnSeleccionarDeporte.add(getCbDeporte());
 		}
-		return pnTipoLicencia;
+		return pnSeleccionarDeporte;
 	}
-	private JLabel getLbTipoLicenci() {
+	private JLabel getLbSeleccionarDeporte() {
+		if (lbSeleccionarDeporte == null) {
+			lbSeleccionarDeporte = new JLabel("Selecciona deporte:");
+		}
+		return lbSeleccionarDeporte;
+	}
+	private JComboBox<TiposDeportes> getCbDeporte() {
+		if (cbDeporte == null) {
+			cbDeporte = new JComboBox<TiposDeportes>();
+		}
+		return cbDeporte;
+	}
+	private JLabel getLbTipoLicencia() {
 		if (lbTipoLicencia == null) {
 			lbTipoLicencia = new JLabel("Tipo de licencia:");
 		}
