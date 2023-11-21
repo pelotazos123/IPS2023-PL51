@@ -17,8 +17,7 @@ public class ReservationController {
 	
 	private Database db;
 	
-	private final static String SQL_CARGAR_RESERVA = "SELECT id, fecha, instalation_code, extra FROM reservas "
-			+ "where tipo == 'NORMAÑ'";
+	private final static String SQL_CARGAR_RESERVA = "SELECT id, fecha, instalation_code, extra, tipo FROM reservas ";
 	private final static String SQL_CREAR_RESERVA = "INSERT INTO reservas(fecha, instalation_code, extra, tipo) VALUES (?, ?, ?, 'NORMAL')";
 	private final static String SQL_ID_RESERVA = "SELECT seq FROM sqlite_sequence where name='reservas'";
 	private final static String SQL_CARGAR_PARTICIPANTES = "SELECT * FROM participante_reserva";
@@ -113,6 +112,7 @@ public class ReservationController {
 		String fecha = "";
 		String hora = "";
 		boolean extra = false;
+		TIPO_RESERVA tipo = null;
 		
 		for (Object[] objects : resQuery) {
 			id = (int) objects[0];
@@ -122,8 +122,12 @@ public class ReservationController {
 			
 			fecha = reserva.split(" ")[0];
 			hora = reserva.split(" ")[1];
+			if(objects[4].equals("NORMAL"))
+				tipo = TIPO_RESERVA.NORMAL;
+			else if(objects[4].equals("ANULADA"))
+				tipo = TIPO_RESERVA.ANULADA;
 			
-			listaReservas.add(new Reserva(id, fecha, hora, instalacionId, extra, TIPO_RESERVA.NORMAL));
+			listaReservas.add(new Reserva(id, fecha, hora, instalacionId, extra, tipo));
 		}
 		
 		for (Reserva reservaS : listaReservas) {
@@ -160,7 +164,6 @@ public class ReservationController {
 	}
 
 	public void borraReserva(String idInst, String reserva) {
-		System.out.println("Reserva borrada");
 		db.executeUpdate(SQL_BORRA_RESERVA, reserva, idInst);
 	}
 

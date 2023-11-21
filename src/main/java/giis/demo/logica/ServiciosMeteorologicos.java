@@ -53,7 +53,7 @@ public class ServiciosMeteorologicos {
 			ObjectMapper om = new ObjectMapper();
 			JsonNode jsonNode = om.readTree(line);
 			
-			for(int i = 1; i < 50; i++) {
+			for(int i = 1; i < 72; i++) {
 				WeatherDto dto = new WeatherDto();
 				JsonNode jn = jsonNode.get(i);
 				String time = jn.get("time").asText();

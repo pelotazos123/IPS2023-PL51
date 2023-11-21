@@ -44,7 +44,8 @@ public class Reserva {
 	
 	@Override
 	public String toString() {
-		return "Reserva: " + id + " - " + fecha + " - " + hora + " - " + instalacionId + " - " + hasExtra() + this.tipo;
+		return "Reserva: " + id + " - " + fecha + " - " + hora + " - " + instalacionId + " - " + hasExtra() 
+		+ " - " + this.tipo;
 	}
 	
 }
