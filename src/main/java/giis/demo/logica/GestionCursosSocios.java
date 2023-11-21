@@ -16,8 +16,8 @@ import giis.demo.ui.VentanaGestionCursosSocios;
 public class GestionCursosSocios {
 	
 	// TODO RELLENAR CON LAS COLUMNAS Y CON EL ID DEL USUARIO
-	private static final String CARGADATOS = "SELECT  from cursos c, cursante r "
-			+ "where c.id = r.id_curso and r.id_socio = ?"; 
+	private static final String CARGADATOS = "SELECT id, nombre, code_instalacion, fecha_inicio, fecha_fin,"
+			+ " cost from cursos c"; 
 	private static final String ESTA_INSCRITO = "select * from inscritos where id_inscrito = ?";
 	// TODO RELLENAR EL ID DEL USUARIO Y CAMBIAR CURSO POR CURSANTE?
 	private static final String BORRADECURSO = "delete from cursos where id = ? "; 
@@ -111,7 +111,7 @@ public class GestionCursosSocios {
 	}
 	
 	public String[] cargaNomColumnas() {
-		return new String[]{"ID CURSO","NOMBRE CURSO","DEPORTE"}; 					//TODO CAMBIAR
+		return new String[]{"ID","NOMBRE", "INSTALACIÓN","FECHA INICIO", "FECHA FIN", "PRECIO", "DEPORTE", "ACCIÓN"};
 	}
 	
 }
