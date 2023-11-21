@@ -865,6 +865,14 @@ public class VentanaPrincipal extends JFrame {
 		return db;
 	}
 	
+	public TramitarLicencia getTramitarLicencia() {
+		return tramitarLicencia;
+	}
+	
+	public JDateChooser getDcFecha() {
+		return dcFechaAplicacion;
+	}
+	
 	private class PasswordPane {
 		
 		private JPanel pn;

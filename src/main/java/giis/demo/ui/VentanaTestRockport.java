@@ -1,8 +1,10 @@
 package giis.demo.ui;
 
+
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
+import javax.swing.text.MaskFormatter;
 
 import giis.demo.logica.TestsFisiologicos;
 
@@ -15,14 +17,13 @@ import javax.swing.DefaultComboBoxModel;
 import javax.swing.JTextField;
 import javax.swing.JButton;
 import java.awt.event.ActionListener;
+import java.text.ParseException;
 import java.awt.event.ActionEvent;
 import javax.swing.SwingConstants;
+import javax.swing.JFormattedTextField;
 
 public class VentanaTestRockport extends JFrame {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 1L;
 	private JPanel contentPane;
 	private JLabel lbTestRockport;
@@ -32,7 +33,6 @@ public class VentanaTestRockport extends JFrame {
 	private JLabel lblTiempo;
 	private JLabel lblPulsaciones;
 	private JComboBox<String> cbSexo;
-	private JTextField txTiempo;
 	private JTextField txPulsaciones;
 	private JComboBox<Integer> cbPeso;
 	private JButton btCalcular;
@@ -41,6 +41,7 @@ public class VentanaTestRockport extends JFrame {
 	private JComboBox<Integer> cbEdad;
 	private VentanaSeleccionTest vst;
 	private TestsFisiologicos tf;
+	private JFormattedTextField ftxTiempo;
 
 	/**
 	 * Create the frame.
@@ -56,7 +57,7 @@ public class VentanaTestRockport extends JFrame {
 		setTitle("Test de Rockport");
 		setResizable(false);
 		this.vst = ventanaSeleccionTest;
-		tf = new TestsFisiologicos(vst);
+		tf = vst.getTf();
 
 		setContentPane(contentPane);
 		contentPane.setLayout(null);
@@ -67,28 +68,26 @@ public class VentanaTestRockport extends JFrame {
 		contentPane.add(getLblTiempo());
 		contentPane.add(getLblPulsaciones());
 		contentPane.add(getCbSexo());
-		contentPane.add(getTxTiempo());
 		contentPane.add(getTxPulsaciones());
 		contentPane.add(getCbPeso());
 		contentPane.add(getBtCalcular());
 		contentPane.add(getLbResultado());
 		contentPane.add(getTxResultado());
 		contentPane.add(getCbEdad());
-//		cargaValores();
+		contentPane.add(getFtxTiempo());
+		cargaValores();
 	}
-//
-//	private void cargaValores() {
-//		String[] valores = tf.cargaValores();
-//		if (valores != null) {
-//			int edad = Integer.parseInt(valores[0]);
-//			int peso = Integer.parseInt(valores[1]);
-//			if (edad != 0 && peso != 0) {
-//				getCbEdad().setSelectedItem(edad);
-//				getCbPeso().setSelectedItem(peso);
-//				getCbSexo().setSelectedItem(valores[2]);
-//			}
-//		}
-//	}
+
+	private void cargaValores() {
+		getCbEdad().setSelectedItem(tf.cargaEdad(tf.getId()));
+		getCbEdad().setEnabled(false);
+		getCbSexo().setSelectedItem(tf.cargaSexo(tf.getId()));
+		getCbSexo().setEnabled(false);
+		if(tf.tieneTestTipo(tf.getId(), TestsFisiologicos.ROCKPORT)) {
+			int peso = tf.cargaPeso(tf.getId());
+			getCbPeso().setSelectedItem(peso);
+		}
+	}
 
 	private JLabel getLbTestRockport() {
 		if (lbTestRockport == null) {
@@ -134,7 +133,6 @@ public class VentanaTestRockport extends JFrame {
 		if (lblTiempo == null) {
 			lblTiempo = new JLabel("Tiempo para recorrer 1,6 km (en min):");
 			lblTiempo.setDisplayedMnemonic('t');
-			lblTiempo.setLabelFor(getTxTiempo());
 			lblTiempo.setBounds(10, 180, 215, 29);
 		}
 		return lblTiempo;
@@ -153,19 +151,10 @@ public class VentanaTestRockport extends JFrame {
 	private JComboBox<String> getCbSexo() {
 		if (cbSexo == null) {
 			cbSexo = new JComboBox<String>();
-			cbSexo.setModel(new DefaultComboBoxModel<String>(new String[] { "Hombre", "Mujer" }));
+			cbSexo.setModel(new DefaultComboBoxModel<String>(new String[] { "HOMBRE", "MUJER" }));
 			cbSexo.setBounds(245, 147, 97, 29);
 		}
 		return cbSexo;
-	}
-
-	private JTextField getTxTiempo() {
-		if (txTiempo == null) {
-			txTiempo = new JTextField();
-			txTiempo.setBounds(245, 180, 97, 29);
-			txTiempo.setColumns(10);
-		}
-		return txTiempo;
 	}
 
 	private JTextField getTxPulsaciones() {
@@ -198,9 +187,7 @@ public class VentanaTestRockport extends JFrame {
 			btCalcular.setMnemonic('c');
 			btCalcular.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
-					// Comprueba que hay datos
 					if (compruebaDatos()) {
-						// Calcula y habilita componentes
 						activaComponentes();
 						muestraResultado();
 					}
@@ -215,11 +202,14 @@ public class VentanaTestRockport extends JFrame {
 		int edad = (int) getCbEdad().getSelectedItem();
 		int peso = (int) getCbPeso().getSelectedItem();
 		int sexo = 0;
-		if (getCbSexo().getSelectedItem().equals("Hombre"))
+		if (getCbSexo().getSelectedItem().equals("HOMBRE"))
 			sexo = TestsFisiologicos.HOMBRE;
-		else if (getCbSexo().getSelectedItem().equals("Mujer"))
+		else if (getCbSexo().getSelectedItem().equals("MUJER"))
 			sexo = TestsFisiologicos.MUJER;
-		double tiempo = Double.parseDouble(getTxTiempo().getText());
+		String[] datos = getFtxTiempo().getText().split(":");
+		int minutos = Integer.parseInt(datos[0]);
+		int segundos = Integer.parseInt(datos[1]);
+		double tiempo = Double.parseDouble(minutos + "." + segundos);
 		int pulsaciones = Integer.parseInt(getTxPulsaciones().getText());
 		Double resultado = tf.getTestRockport(peso, edad, sexo, tiempo, pulsaciones);
 		getTxResultado().setText(resultado.toString() + " ml/kg/min");
@@ -232,9 +222,14 @@ public class VentanaTestRockport extends JFrame {
 
 	private boolean compruebaDatos() {
 		try {
-			Double.parseDouble(getTxTiempo().getText());
+			String[] datos = getFtxTiempo().getText().split(":");
+			Integer.parseInt(datos[0]);
+			int segundos = Integer.parseInt(datos[1]);
+			if(segundos >= 60)
+				throw new NumberFormatException();
 			Integer.parseInt(getTxPulsaciones().getText());
 		} catch (NumberFormatException | NullPointerException e) {
+			e.toString();
 			desactivaComponentes();
 			JOptionPane.showMessageDialog(null, "No se ha introducido ningún dato o no son de tipo correcto");
 			return false;
@@ -283,5 +278,17 @@ public class VentanaTestRockport extends JFrame {
 			nums[i - 15] = i;
 		return nums;
 	}
+	private JFormattedTextField getFtxTiempo() {
+		if (ftxTiempo == null) {
+			MaskFormatter maskFormatter = null;
+			try {
+				maskFormatter = new MaskFormatter("##:##");
+				maskFormatter.setPlaceholderCharacter('-');
+			} catch (ParseException e) {
+			}
+			ftxTiempo = new JFormattedTextField(maskFormatter);
+			ftxTiempo.setBounds(245, 184, 97, 25);
+		}
+		return ftxTiempo;
+	}
 }
-

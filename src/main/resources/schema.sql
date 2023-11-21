@@ -29,7 +29,7 @@ create table test(id int, fecha date, tipo varchar2(255), peso int, edad int, se
 -- create table asambleas (type varchar2(255), announcement varchar2(255), date_announcement1 date, date_announcement2 date);
 -- create table reservas (owner_id int, date date, instalation_code varchar2(255), foreign key(owner_id) references socios(id));
 create table recibos (owner_iban varchar2(255), number int, amount int, value_date date, charge_date date, type_recibo varchar2(255), state varchar2(255));
-create table asambleas (type varchar2(255), announcement varchar2(255), date_announcement1 date, date_announcement2 date, orderOfDay varchar2(255));
 create table competiciones (id int, name varchar2(255), competition_date date, place varchar2(255), categories varchar2(255), deporte varchar2(255));
+create table asambleas (type varchar2(255), announcement varchar2(255), date_announcement1 date, date_announcement2 date, orderOfDay varchar2(255), acta varchar2(255));
 create table inscripcion_competiciones(competicion_id int, socio_id int, foreign key(competicion_id) references competiciones(id), foreign key(socio_id) references socios(id));
 create table entrenados(entrenador_id int, entrenado_id);
