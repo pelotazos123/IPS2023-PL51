@@ -9,6 +9,7 @@ import javax.swing.JOptionPane;
 
 import giis.demo.model.Instalacion;
 import giis.demo.model.Reserva;
+import giis.demo.model.Reserva.TIPO_RESERVA;
 import giis.demo.util.Database;
 import giis.demo.util.Util;
 
@@ -122,7 +123,7 @@ public class ReservationController {
 			fecha = reserva.split(" ")[0];
 			hora = reserva.split(" ")[1];
 			
-			listaReservas.add(new Reserva(id, fecha, hora, instalacionId, extra));
+			listaReservas.add(new Reserva(id, fecha, hora, instalacionId, extra, TIPO_RESERVA.NORMAL));
 		}
 		
 		for (Reserva reservaS : listaReservas) {
@@ -151,7 +152,6 @@ public class ReservationController {
 	}
 	
 	private void createAnulation(String reserva, String instalacionId) {
-		// TODO Auto-generated method stub
 		db.executeUpdate(SQL_ANULAR, reserva, instalacionId, false);
 	}
 
