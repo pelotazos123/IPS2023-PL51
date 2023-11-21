@@ -21,6 +21,8 @@ public class ServiciosMeteorologicos {
 //	 private static final String API_KEY = "8RfHsl5zKwBjPPRndZRuyCbdDZsahX4C";
 	private static final String API_URL = "https://api.tomorrow.io/v4/weather/forecast?"
 			+ "location='Uvieu,Asturies,España'&apikey=8RfHsl5zKwBjPPRndZRuyCbdDZsahX4C";
+//	private static final String API_URL = "https://api.tomorrow.io/v4/weather/forecast?"
+//	+ "location='Brasilia'&apikey=8RfHsl5zKwBjPPRndZRuyCbdDZsahX4C";
 //	 TODO MODIFICAR LOCATION PARA PONERLO DONDE DIGA
 	
 	private static final String CARGAINSTALACIONES = "select code, name from instalaciones";
@@ -75,6 +77,7 @@ public class ServiciosMeteorologicos {
 //					+ dto.temperature + "  " + dto.temperatureApparent);
 				checkInstalationes(dto, day);
 			}
+			rc.getReservas();
 //			System.out.println(time.toString());
 //			System.out.println(linesAux.length);
 			String path = "src/main/resources/files/json.txt";
@@ -111,12 +114,13 @@ public class ServiciosMeteorologicos {
 		// TODO Añadir tipo a la tabla reserva?
 		DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
 		String reserva = day.format(dtf);
-		if(weather.rainAccumulationLwe >= 1.0 || weather.temperatureApparent >= 40.0 
+		if(weather.rainAccumulationLwe >= 0.10 || weather.temperatureApparent >= 40.0 
 				|| weather.snowAccumulationLwe >= 0.1) {
 //			if(HAY RESERVA Y NO ES ANULADA)
-			if(rc.getReservasNoAnuladasHora(reserva, idInst))
+			if(rc.getReservasNoAnuladasHora(reserva, idInst)) {
 				//BORRA DE RESERVAS 
 				rc.borraReserva(idInst, reserva);
+			}
 			//RESERVA PARA ANULAR
 			rc.anular(day, reserva, idInst);
 		//SI NO HAY CONDICIONES ADVERSAS Y HAY RESERVA ANULADA
@@ -135,7 +139,7 @@ public class ServiciosMeteorologicos {
 		String reserva = day.format(dtf);
 		//SI HAY CONDICIONES ADVERSAS...
 		if(weather.rainAccumulationLwe >= 1.0 || weather.temperatureApparent >= 40.0 
-				|| weather.snowAccumulationLwe >= 0.1) {
+				|| weather.snowAccumulationLwe >= 0.5) {
 //			if(HAY RESERVA Y NO ES ANULADA)
 			if(rc.getReservasNoAnuladasHora(reserva, idInst))
 				//BORRA DE RESERVAS 
@@ -156,16 +160,20 @@ public class ServiciosMeteorologicos {
 		DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
 		String reserva = day.format(dtf);
 		//SI HAY CONDICIONES ADVERSAS...
-		if(weather.rainAccumulationLwe >= 1.0 || weather.temperatureApparent >= 40.0 
-				|| weather.snowAccumulationLwe >= 0.1) 
+		if(weather.rainAccumulationLwe >= 0.05 || weather.temperatureApparent >= 40.0 
+				|| weather.snowAccumulationLwe >= 0.05 || weather.windSpeed >= 7) {
 //			if(HAY RESERVA Y NO ES ANULADA)
+			if(rc.getReservasNoAnuladasHora(reserva, idInst))
 				//BORRA DE RESERVAS 
+				rc.borraReserva(idInst, reserva);
 			//RESERVA PARA ANULAR
 			rc.anular(day, reserva, idInst);
 		//SI NO HAY CONDICIONES ADVERSAS Y HAY RESERVA ANULADA
-		else {
+		} else {
 //			if(HAY RESERVA ANULADA)
+			if(rc.getReservasAnuladasHora(reserva, idInst))
 //			BORRA RESERVA
+				rc.borraReserva(idInst, reserva);
 		}
 	}
 

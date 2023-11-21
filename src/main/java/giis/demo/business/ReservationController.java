@@ -44,7 +44,7 @@ public class ReservationController {
 	//TODO NECESARIO? CAMBIAR A VOID?
 	public boolean anular(LocalDateTime dia, String reserva, String instalacionId) {
 		createAnulation(reserva, instalacionId);
-		getReservas();
+//		getReservas();
 		return true;
 	}
 
