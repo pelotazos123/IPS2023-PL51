@@ -149,10 +149,14 @@ public class VentanaCrearCursillos extends JDialog {
 		
 		String toParseCost = getTxtCosteCurso().getText().substring(0, getTxtCosteCurso().getText().length() - 1);
 		
-		rC.creacionCurso(nombreCurso, diaInicio, diaFin, LocalTime.of(Integer.parseInt(horaInicio[0]),Integer.parseInt(horaInicio[1]))
+		if (!rC.creacionCurso(nombreCurso, diaInicio, diaFin, LocalTime.of(Integer.parseInt(horaInicio[0]),Integer.parseInt(horaInicio[1]))
 				, LocalTime.of(Integer.parseInt(horaFin[0]),Integer.parseInt(horaFin[1])), entrenadores, dias,
-				((Instalacion)getCbInstalaciones().getSelectedItem()), Double.parseDouble(toParseCost), (int)getSpnMaxSocios().getValue());
-				
+				((Instalacion)getCbInstalaciones().getSelectedItem()), Double.parseDouble(toParseCost), (int)getSpnMaxSocios().getValue())) {
+			return;
+		}
+		
+		JOptionPane.showMessageDialog(null, "Curso creado correctamente.", "Exito!", JOptionPane.INFORMATION_MESSAGE);
+		this.dispose();
 	}
 
 	private boolean checkTrainers(List<String> entrenadores) {

@@ -22,7 +22,7 @@ public class ReservationController {
 	
 	private Database db;
 	
-	private final static String SQL_CARGAR_RESERVA = "SELECT id, fecha_inicio, fecha_fin, instalation_code FROM reservas";
+	private final static String SQL_CARGAR_RESERVA = "SELECT id, fecha_inicio, fecha_fin, instalation_code, tipo FROM reservas";
 	private final static String SQL_CREAR_RESERVA = "INSERT INTO reservas(fecha_inicio, fecha_fin, instalation_code, tipo) VALUES (?, ?, ?, ?)";
 	private final static String SQL_ID_RESERVA = "SELECT seq FROM sqlite_sequence where name='reservas'";
 	private final static String SQL_ID_CURSO = "SELECT seq FROM sqlite_sequence where name='cursillos'";
@@ -46,8 +46,10 @@ public class ReservationController {
 	public final static int MAX_ENTRENADORES = 4;
 	public final static int EMPTY = 0;
 	
-	private final static String TIPO_CURSO = "curso";
-	private final static String TIPO_RESERVA = "reserva";
+	public final static String CURSO_OCUPADO = "RESERVADO PARA CURSO";
+	
+	public final static String TIPO_CURSO = "curso";
+	public final static String TIPO_RESERVA = "reserva";
 	
 	public final static Map<String,String> DIAS_SEMANA = new HashMap<String, String>(){
 		private static final long serialVersionUID = 1L;
@@ -81,7 +83,7 @@ public class ReservationController {
 		return true;
 	}
 	
-	public void creacionCurso(String nombreCurso, LocalDate diaInicio, LocalDate diaFin, LocalTime horaInicio, LocalTime horaFin,
+	public boolean creacionCurso(String nombreCurso, LocalDate diaInicio, LocalDate diaFin, LocalTime horaInicio, LocalTime horaFin,
 			List<String> entrenadores, List<DayOfWeek> dias, Instalacion instalacion, double coste, int numPlazas) {
 		
 		LocalDateTime inicioCurso = diaInicio.atTime(horaInicio);
@@ -92,7 +94,7 @@ public class ReservationController {
 		String finalCursoStr = finalCurso.format(dtf);
 		
 		if (!getDisponibilidadDeCursos(instalacion, inicioCursoStr, finalCursoStr)) 
-			return;
+			return false;
 		
 		// Se crea el curso
 		createCurso(nombreCurso, instalacion, coste, inicioCursoStr, finalCursoStr, numPlazas);
@@ -103,9 +105,10 @@ public class ReservationController {
 		List<LocalDate> fechas = diaInicio.datesUntil(diaFin).toList();		
 		for (LocalDate fecha: fechas) {
 			if (dias.contains(fecha.getDayOfWeek())) { // Solo si coinciden con los dias de la semana seleccionados para el curso
-				createReservation(fecha.atTime(horaInicio).format(dtf), fecha.atTime(horaInicio).format(dtf), instalacion.getCode(), TIPO_CURSO);
+				createReservation(fecha.atTime(horaInicio).format(dtf), fecha.atTime(horaFin).format(dtf), instalacion.getCode(), TIPO_CURSO);
 			}
 		}
+		return true;
 	}
 
 	private void createCurso(String nombreCurso, Instalacion instalacion, double coste, String inicioCursoStr,
@@ -192,12 +195,14 @@ public class ReservationController {
 		String horaInicio = "";
 		String fechaFin = "";
 		String horaFin = "";
+		String tipoCurso = "";
 		
 		for (Object[] objects : resQuery) {
 			id = (int) objects[0];
 			reservaInicio = (String) objects[1];
 			reservaFin = (String) objects[2];
 			instalacionId = (String) objects[3];
+			tipoCurso = (String) objects[4];
 			
 			fechaInicio = reservaInicio.split(" ")[0];
 			horaInicio = reservaInicio.split(" ")[1];
@@ -205,7 +210,7 @@ public class ReservationController {
 			fechaFin= reservaFin.split(" ")[0];
 			horaFin= reservaFin.split(" ")[1];
 			
-			listaReservas.add(new Reserva(id, fechaInicio, horaInicio, fechaFin, horaFin, instalacionId));
+			listaReservas.add(new Reserva(id, fechaInicio, horaInicio, fechaFin, horaFin, instalacionId, tipoCurso));
 		}
 		
 		for (Reserva reservaS : listaReservas) {

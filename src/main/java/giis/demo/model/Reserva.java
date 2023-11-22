@@ -8,14 +8,16 @@ public class Reserva {
 	private String horaInicio;
 	private String fechaFin;
 	private String horaFin;
+	private String tipo_curso;
 	
-	public Reserva(int id, String fechaInicio, String horaInicio, String fechaFin, String horaFin, String instalacionId) {
+	public Reserva(int id, String fechaInicio, String horaInicio, String fechaFin, String horaFin, String instalacionId, String tipo_curso) {
 		this.id = id;
 		this.fechaInicio = fechaInicio;
 		this.horaInicio = horaInicio;
 		this.instalacionId = instalacionId;
 		this.fechaFin = fechaFin;
 		this.horaFin = horaFin;
+		this.tipo_curso = tipo_curso;
 	}
 	
 	public String getFechaInicio() {
@@ -40,6 +42,10 @@ public class Reserva {
 
 	public String getInstalacionId() {
 		return instalacionId;
+	}
+	
+	public String getTipoCurso() {
+		return tipo_curso;
 	}
 	
 	@Override

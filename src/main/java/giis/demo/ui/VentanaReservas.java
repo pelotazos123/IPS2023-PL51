@@ -157,7 +157,8 @@ public class VentanaReservas extends JDialog {
 			calendar.getDayChooser().setDayBordersVisible(true);
 			calendar.setWeekOfYearVisible(false);
 			LocalDate actualDay = LocalDate.now();
-			calendar.setSelectableDateRange(java.sql.Date.valueOf(actualDay), java.sql.Date.valueOf(actualDay.plusDays(2)));
+			//calendar.setSelectableDateRange(java.sql.Date.valueOf(actualDay), java.sql.Date.valueOf(actualDay.plusDays(2)));
+			calendar.setSelectableDateRange(java.sql.Date.valueOf(actualDay), java.sql.Date.valueOf(actualDay.plusDays(100)));
 			calendar.addPropertyChangeListener("calendar", new PropertyChangeListener() {
 				@Override
 				public void propertyChange(PropertyChangeEvent evt) {
@@ -303,7 +304,15 @@ public class VentanaReservas extends JDialog {
 		JList<String> lista = (JList<String>) e.getSource();
 		if (lista.getSelectedValue() == null)
 			return;
-		getTxtInicio().setText(lista.getSelectedValue());
+		if (lista.getSelectedValue().equals(ReservationController.CURSO_OCUPADO)) {
+			getTxtInicio().setText("__:__");
+			getBtnSiguiente().setEnabled(false);
+			getTxtFin().setEnabled(false);
+		} else {
+			getTxtFin().setEnabled(true);
+			getBtnSiguiente().setEnabled(true);
+			getTxtInicio().setText(lista.getSelectedValue());
+		}		
 	}
 
 	private void generaHoras() {
@@ -322,13 +331,26 @@ public class VentanaReservas extends JDialog {
 							&& reserva.getInstalacionId().trim().equals(((Instalacion)getCbInstalaciones().getSelectedItem()).getCode().toString())) {
 				System.out.println("Ya hay una reserva");
 				
+				int posInicio = modeloListaHoras.indexOf(reserva.getHoraInicio());
+				int posFinal = reserva.getHoraFin().equals("23:00") ? modeloListaHoras.getSize()-1 : modeloListaHoras.indexOf(reserva.getHoraFin());
+				
 				int inicio = Integer.parseInt(reserva.getHoraInicio().trim().split(":")[0]);
 				int fin = Integer.parseInt(reserva.getHoraFin().trim().split(":")[0]);
 				
+				if (reserva.getTipoCurso().equals(ReservationController.TIPO_CURSO)) {
+					while (posFinal != posInicio) {
+						modeloListaHoras.add(posFinal-1, ReservationController.CURSO_OCUPADO);
+						posFinal--;
+					}
+					modeloListaHoras.add(posInicio, ReservationController.CURSO_OCUPADO);
+				} 
+				
 				while (fin != inicio) {
 					modeloListaHoras.removeElement(--fin+":00");
-				}
+				}	
+			
 				modeloListaHoras.removeElement(reserva.getHoraInicio().trim());
+				
 			}
 		}
 	}
