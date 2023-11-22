@@ -6,9 +6,9 @@ import javax.swing.JFormattedTextField;
 import giis.demo.business.InstalacionController;
 import giis.demo.business.ReservationController;
 import giis.demo.business.SociosController;
-import giis.demo.model.Cursillos;
 import giis.demo.model.Instalacion;
 import giis.demo.util.Database;
+import giis.demo.util.DbUtil;
 import giis.demo.util.Util;
 
 import java.awt.Color;
@@ -41,6 +41,7 @@ import java.time.ZoneId;
 import java.time.format.TextStyle;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Properties;
 import java.awt.event.ActionEvent;
 import java.awt.GridLayout;
 import javax.swing.JTextField;
@@ -87,9 +88,11 @@ public class VentanaCrearCursillos extends JDialog {
 	private List <DayOfWeek> dias;
 	private JTextField txtNombreCurso;
 	private JLabel lblNombreCurso;
+	private Properties props;
 
 	public VentanaCrearCursillos(Database db) {
 		this.db = db;
+		props = DbUtil.loadProperties();
 		dias = new ArrayList<DayOfWeek>();
 		rC = new ReservationController(db);
 		limiter = new CheckBoxLimiterListener();
@@ -102,7 +105,7 @@ public class VentanaCrearCursillos extends JDialog {
 		setBounds(100, 100, 596, 521);
 
 	}
-
+	
 	private JPanel getPnCreacion() {
 		if (pnCreacion == null) {
 			pnCreacion = new JPanel();
@@ -179,7 +182,7 @@ public class VentanaCrearCursillos extends JDialog {
 			return false;
 		}
 		
-		if (!Util.checkHourInserted(getTxtHoraInicio().getText(), getTxtHoraFin().getText(), ReservationController.HORA_MAXIMA_CURSO, ReservationController.HORA_MINIMA_CURSO)) 
+		if (!Util.checkHourInserted(getTxtHoraInicio().getText(), getTxtHoraFin().getText(),  Integer.parseInt(props.getProperty("reserva.hora.max")), Integer.parseInt(props.getProperty("reserva.hora.min")))) 
 			return false;
 		
 		if (listaTxtFields.size() == 0) {
@@ -360,7 +363,7 @@ public class VentanaCrearCursillos extends JDialog {
 	private JPanel getPnSur() {
 		if (pnSur == null) {
 			pnSur = new JPanel();
-			pnSur.setToolTipText("Máximo " + Cursillos.MAX_DIAS_SEMANA + " días a la semana.");
+			pnSur.setToolTipText("Máximo " + Integer.parseInt(props.getProperty("reserva.curso.max_dias")) + " días a la semana.");
 			TitledBorder border = new TitledBorder(null, "D\u00EDas de realizaci\u00F3n", TitledBorder.LEADING, TitledBorder.TOP, null, null);
 			Font fuente = border.getTitleFont();
 			border.setTitleFont(fuente.deriveFont(Font.BOLD, 13));
@@ -380,7 +383,7 @@ public class VentanaCrearCursillos extends JDialog {
 		if (chkLunes == null) {
 			chkLunes = new JCheckBox(DayOfWeek.MONDAY.getDisplayName(TextStyle.FULL, getLocale()));
 			chkLunes.addActionListener(limiter);
-			chkLunes.setToolTipText("Máximo " + Cursillos.MAX_DIAS_SEMANA + " días a la semana.");
+			chkLunes.setToolTipText("Máximo " + Integer.parseInt(props.getProperty("reserva.curso.max_dias")) + " días a la semana.");
 			chkLunes.setBackground(Color.WHITE);
 			chkLunes.setFont(new Font("Tahoma", Font.PLAIN, 13));
 		}
@@ -390,7 +393,7 @@ public class VentanaCrearCursillos extends JDialog {
 		if (chkMartes == null) {
 			chkMartes = new JCheckBox(DayOfWeek.TUESDAY.getDisplayName(TextStyle.FULL, getLocale()));
 			chkMartes.addActionListener(limiter);
-			chkMartes.setToolTipText("Máximo " + Cursillos.MAX_DIAS_SEMANA + " días a la semana.");
+			chkMartes.setToolTipText("Máximo " + Integer.parseInt(props.getProperty("reserva.curso.max_dias")) + " días a la semana.");
 			chkMartes.setBackground(Color.WHITE);
 			chkMartes.setFont(new Font("Tahoma", Font.PLAIN, 13));
 		}
@@ -400,7 +403,7 @@ public class VentanaCrearCursillos extends JDialog {
 		if (chkMiercoles == null) {
 			chkMiercoles = new JCheckBox(DayOfWeek.WEDNESDAY.getDisplayName(TextStyle.FULL, getLocale()));
 			chkMiercoles.addActionListener(limiter);
-			chkMiercoles.setToolTipText("Máximo " + Cursillos.MAX_DIAS_SEMANA + " días a la semana.");
+			chkMiercoles.setToolTipText("Máximo " + Integer.parseInt(props.getProperty("reserva.curso.max_dias")) + " días a la semana.");
 			chkMiercoles.setBackground(Color.WHITE);
 			chkMiercoles.setFont(new Font("Tahoma", Font.PLAIN, 13));
 		}
@@ -410,7 +413,7 @@ public class VentanaCrearCursillos extends JDialog {
 		if (chkJueves == null) {
 			chkJueves = new JCheckBox(DayOfWeek.THURSDAY.getDisplayName(TextStyle.FULL, getLocale()));
 			chkJueves.addActionListener(limiter);
-			chkJueves.setToolTipText("Máximo " + Cursillos.MAX_DIAS_SEMANA + " días a la semana.");
+			chkJueves.setToolTipText("Máximo " + Integer.parseInt(props.getProperty("reserva.curso.max_dias")) + " días a la semana.");
 			chkJueves.setBackground(Color.WHITE);
 			chkJueves.setFont(new Font("Tahoma", Font.PLAIN, 13));
 		}
@@ -420,7 +423,7 @@ public class VentanaCrearCursillos extends JDialog {
 		if (chkViernes == null) {
 			chkViernes = new JCheckBox(DayOfWeek.FRIDAY.getDisplayName(TextStyle.FULL, getLocale()));
 			chkViernes.addActionListener(limiter);
-			chkViernes.setToolTipText("Máximo " + Cursillos.MAX_DIAS_SEMANA + " días a la semana.");
+			chkViernes.setToolTipText("Máximo " + Integer.parseInt(props.getProperty("reserva.curso.max_dias")) + " días a la semana.");
 			chkViernes.setBackground(Color.WHITE);
 			chkViernes.setFont(new Font("Tahoma", Font.PLAIN, 13));
 		}
@@ -430,7 +433,7 @@ public class VentanaCrearCursillos extends JDialog {
 		if (chkSabado == null) {
 			chkSabado = new JCheckBox(DayOfWeek.SATURDAY.getDisplayName(TextStyle.FULL, getLocale()));
 			chkSabado.addActionListener(limiter);
-			chkSabado.setToolTipText("Máximo " + Cursillos.MAX_DIAS_SEMANA + " días a la semana.");
+			chkSabado.setToolTipText("Máximo " + Integer.parseInt(props.getProperty("reserva.curso.max_dias")) + " días a la semana.");
 			chkSabado.setBackground(Color.WHITE);
 			chkSabado.setFont(new Font("Tahoma", Font.PLAIN, 13));
 		}
@@ -461,7 +464,7 @@ public class VentanaCrearCursillos extends JDialog {
 	        			JCheckBox checkBox = (JCheckBox) component;
 	        			if (checkBox.isSelected()) {
 	        				selectedCount++;
-	        				if (selectedCount > Cursillos.MAX_DIAS_SEMANA) {
+	        				if (selectedCount > Integer.parseInt(props.getProperty("reserva.curso.max_dias"))) {
 	        					checkBox.setSelected(false);
 	        				}
 	        			}
@@ -555,7 +558,7 @@ public class VentanaCrearCursillos extends JDialog {
 	}
 	
 	private void añadirEntrenador() {
-		if (listaTxtFields.size() < ReservationController.MAX_ENTRENADORES) {
+		if (listaTxtFields.size() < Integer.parseInt(props.getProperty("reserva.hora.curso.max_entrenadores"))) {
 			JTextField nuevo = prepareTxtField();
 			listaTxtFields.add(nuevo);
 			getPnTxtEntrenadores().add(nuevo);
@@ -609,7 +612,7 @@ public class VentanaCrearCursillos extends JDialog {
 	}
 	
 	private void eliminaEntrenador() {
-		if (listaTxtFields.size() > ReservationController.EMPTY) {
+		if (listaTxtFields.size() > Integer.parseInt(props.getProperty("empty"))) {
 			JTextField txtBorrar = listaTxtFields.remove(listaTxtFields.size()-1);
 			getPnTxtEntrenadores().remove(txtBorrar);
 			getPnTxtEntrenadores().repaint();

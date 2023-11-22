@@ -29,6 +29,7 @@ import java.awt.BorderLayout;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Properties;
 
 import giis.demo.business.InstalacionController;
 import giis.demo.business.ReservationController;
@@ -36,6 +37,7 @@ import giis.demo.business.SociosController;
 import giis.demo.model.Instalacion;
 import giis.demo.model.Reserva;
 import giis.demo.util.Database;
+import giis.demo.util.DbUtil;
 import giis.demo.util.Util;
 
 import javax.swing.JList;
@@ -97,9 +99,11 @@ public class VentanaReservas extends JDialog {
 	private JTextField txtFin;
 	private JLabel lblTxtInicio;
 	private JLabel lblTxtFin;
+	private Properties props;
 	
 	public VentanaReservas(Database db) {
 		this.db = db;
+		props = DbUtil.loadProperties();
 		reMan = new ReservationController(this.db);
 		listaTxtFields = new ArrayList<>();
 		chosenDay = "";
@@ -383,7 +387,7 @@ public class VentanaReservas extends JDialog {
 	}
 	
 	private void siguiente() {		
-		if (!Util.checkHourInserted(getTxtInicio().getText(), getTxtFin().getText(), ReservationController.HORA_MAXIMA, ReservationController.HORA_MINIMA))
+		if (!Util.checkHourInserted(getTxtInicio().getText(), getTxtFin().getText(), Integer.parseInt(props.getProperty("reserva.hora.max")), Integer.parseInt(props.getProperty("reserva.hora.max"))))
 			return;
 		
 		((CardLayout) getContentPane().getLayout()).next(getContentPane());
