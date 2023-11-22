@@ -5,9 +5,12 @@ import javax.swing.JFormattedTextField;
 
 import giis.demo.business.InstalacionController;
 import giis.demo.business.ReservationController;
+import giis.demo.business.SociosController;
 import giis.demo.model.Cursillos;
 import giis.demo.model.Instalacion;
 import giis.demo.util.Database;
+import giis.demo.util.Util;
+
 import java.awt.Color;
 import java.awt.Component;
 
@@ -15,6 +18,7 @@ import javax.swing.JPanel;
 import java.awt.BorderLayout;
 import javax.swing.border.TitledBorder;
 import javax.swing.text.MaskFormatter;
+
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
 import com.toedter.calendar.JDateChooser;
@@ -30,6 +34,11 @@ import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.text.ParseException;
+import java.time.DayOfWeek;
+import java.time.LocalDate;
+import java.time.LocalTime;
+import java.time.ZoneId;
+import java.time.format.TextStyle;
 import java.util.ArrayList;
 import java.util.List;
 import java.awt.event.ActionEvent;
@@ -56,7 +65,7 @@ public class VentanaCrearCursillos extends JDialog {
 	private JTextField txtHoraFin;
 	private JTextField txtHoraInicio;
 	private JLabel lblHoraInicio;
-	private JLabel lblNewLabel_1;
+	private JLabel lblHoraFin;
 	private JPanel pnSur;
 	private JCheckBox chkLunes;
 	private JCheckBox chkMartes;
@@ -74,9 +83,15 @@ public class VentanaCrearCursillos extends JDialog {
 	private JPanel pnTxtEntrenadores;
 	private List<JTextField> listaTxtFields;
 	private CheckBoxLimiterListener limiter;
+	private ReservationController rC;
+	private List <DayOfWeek> dias;
+	private JTextField txtNombreCurso;
+	private JLabel lblNombreCurso;
 
 	public VentanaCrearCursillos(Database db) {
 		this.db = db;
+		dias = new ArrayList<DayOfWeek>();
+		rC = new ReservationController(db);
 		limiter = new CheckBoxLimiterListener();
 		listaTxtFields = new ArrayList<>();
 		getContentPane().setBackground(Color.WHITE);
@@ -116,8 +131,78 @@ public class VentanaCrearCursillos extends JDialog {
 	}
 	
 	private void crearCurso() {
+		String[] horaInicio = getTxtHoraInicio().getText().split(":");
+		String[] horaFin = getTxtHoraFin().getText().split(":");
+		
+		List<String> entrenadores = new ArrayList<String>();
+		
+		String nombreCurso = getTxtNombreCurso().getText();
+		
+		if (!checkCurso(nombreCurso))
+			return;
+		
+		LocalDate diaInicio = getDcInicio().getDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+		LocalDate diaFin = getDcFinal().getDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+		
+		if (!checkTrainers(entrenadores))
+			return;
+		
+		String toParseCost = getTxtCosteCurso().getText().substring(0, getTxtCosteCurso().getText().length() - 1);
+		
+		rC.creacionCurso(nombreCurso, diaInicio, diaFin, LocalTime.of(Integer.parseInt(horaInicio[0]),Integer.parseInt(horaInicio[1]))
+				, LocalTime.of(Integer.parseInt(horaFin[0]),Integer.parseInt(horaFin[1])), entrenadores, dias,
+				((Instalacion)getCbInstalaciones().getSelectedItem()), Double.parseDouble(toParseCost), (int)getSpnMaxSocios().getValue());
 				
 	}
+
+	private boolean checkTrainers(List<String> entrenadores) {
+		for (JTextField txtEntrenador : listaTxtFields) {
+			String dni = txtEntrenador.getText();
+			if (SociosController.isTrainer(dni, db))
+				entrenadores.add(dni);
+			else {
+				JOptionPane.showMessageDialog(null, "El DNI: " + dni + " no es de un entrenador o no existe.", "ERROR", JOptionPane.ERROR_MESSAGE);
+				return false;
+			}
+				
+		}
+		return true;
+	}
+
+	private boolean checkCurso(String nombreCurso) {
+		if (nombreCurso.isEmpty()) {
+			JOptionPane.showMessageDialog(null, "El nombre del curso no puede estar vacío.", "ERROR", JOptionPane.ERROR_MESSAGE);
+			return false;
+		}
+		
+		if (!Util.checkHourInserted(getTxtHoraInicio().getText(), getTxtHoraFin().getText(), ReservationController.HORA_MAXIMA_CURSO, ReservationController.HORA_MINIMA_CURSO)) 
+			return false;
+		
+		if (listaTxtFields.size() == 0) {
+			JOptionPane.showMessageDialog(null, "Hay que añadir al menos a un entrenador.", "ERROR", JOptionPane.ERROR_MESSAGE);
+			return false;
+		}
+		
+		if (getTxtCosteCurso().getText().equals("000,00€")) {
+			JOptionPane.showMessageDialog(null, "El coste del curso no puede estar vacío.", "ERROR", JOptionPane.ERROR_MESSAGE);
+			return false;
+		}
+		
+		if (limitSelection(null) == 0) {
+			JOptionPane.showMessageDialog(null, "Hay que seleccionar al menos un día de la semana.", "ERROR", JOptionPane.ERROR_MESSAGE);
+			return false;
+		}
+		
+		if (getDcInicio().getDate() == null || getDcFinal().getDate() == null) {
+			JOptionPane.showMessageDialog(null, "Los dias de inicio y fin de curso no pueden estar vacíos.", "ERROR", JOptionPane.ERROR_MESSAGE);
+			return false;
+		}
+		
+		return true;
+	}
+	
+	
+	
 	private JPanel getPnCentro() {
 		if (pnCentro == null) {
 			pnCentro = new JPanel();
@@ -157,10 +242,10 @@ public class VentanaCrearCursillos extends JDialog {
 	}
 	
 	private void prepareCursillo() {
-		spnMaxSocios.setValue(1);
 		Instalacion instalacion = ((Instalacion)cbInstalaciones.getSelectedItem());
-		spnMaxSocios.setModel(new SpinnerNumberModel(Integer.valueOf(1), Integer.valueOf(1), 
+		spnMaxSocios.setModel(new SpinnerNumberModel(Integer.valueOf(instalacion.getMinCurso()), Integer.valueOf(instalacion.getMinCurso()), 
 					Integer.valueOf(instalacion.getMaxCurso()), Integer.valueOf(1)));
+		spnMaxSocios.setValue(instalacion.getMinCurso());
 		spnMaxSocios.setToolTipText("Max: " + instalacion.getMaxCurso() + " - Min: " + instalacion.getMinCurso());
 		
 	}
@@ -169,6 +254,8 @@ public class VentanaCrearCursillos extends JDialog {
 			dcInicio = new JDateChooser();
 			dcInicio.setFont(new Font("Tahoma", Font.PLAIN, 15));
 			dcInicio.setDateFormatString("yyyy-MM-dd");
+			LocalDate minSelectable = LocalDate.now().plusDays(7);
+			dcInicio.setMinSelectableDate(java.sql.Date.valueOf(minSelectable));
 		}
 		return dcInicio;
 	}
@@ -177,6 +264,8 @@ public class VentanaCrearCursillos extends JDialog {
 			dcFinal = new JDateChooser();
 			dcFinal.setFont(new Font("Tahoma", Font.PLAIN, 15));
 			dcFinal.setDateFormatString("yyyy-MM-dd");
+			LocalDate minSelectable = LocalDate.now().plusDays(8);
+			dcFinal.setMinSelectableDate(java.sql.Date.valueOf(minSelectable));
 		}
 		return dcFinal;
 	}
@@ -191,6 +280,7 @@ public class VentanaCrearCursillos extends JDialog {
 	private JLabel getLblMaxSocios() {
 		if (lblMaxSocios == null) {
 			lblMaxSocios = new JLabel("Nº de plazas: ");
+			lblMaxSocios.setLabelFor(getSpnMaxSocios());
 			lblMaxSocios.setFont(new Font("Tahoma", Font.PLAIN, 13));
 		}
 		return lblMaxSocios;
@@ -198,6 +288,7 @@ public class VentanaCrearCursillos extends JDialog {
 	private JLabel getLblDiaInicio() {
 		if (lblDiaInicio == null) {
 			lblDiaInicio = new JLabel("Dia de inicio:");
+			lblDiaInicio.setLabelFor(getDcInicio());
 			lblDiaInicio.setFont(new Font("Tahoma", Font.PLAIN, 13));
 		}
 		return lblDiaInicio;
@@ -205,6 +296,7 @@ public class VentanaCrearCursillos extends JDialog {
 	private JLabel getLblDiaFinal() {
 		if (lblDiaFinal == null) {
 			lblDiaFinal = new JLabel("Dia de finalización:");
+			lblDiaFinal.setLabelFor(getDcFinal());
 			lblDiaFinal.setFont(new Font("Tahoma", Font.PLAIN, 13));
 		}
 		return lblDiaFinal;
@@ -220,6 +312,7 @@ public class VentanaCrearCursillos extends JDialog {
 	            System.err.println("Formato inválido");
 	        }
 	        txtHoraFin = new JFormattedTextField(maskFormatter);
+	        txtHoraFin.setHorizontalAlignment(SwingConstants.RIGHT);
 	        txtHoraFin.setFont(new Font("Tahoma", Font.PLAIN, 15));
 	        txtHoraFin.setToolTipText("HH:mm");
 	        txtHoraFin.setColumns(10);
@@ -237,6 +330,7 @@ public class VentanaCrearCursillos extends JDialog {
 	            System.err.println("Formato inválido");
 	        }
 	        txtHoraInicio = new JFormattedTextField(maskFormatter);
+	        txtHoraInicio.setHorizontalAlignment(SwingConstants.RIGHT);
 	        txtHoraInicio.setFont(new Font("Tahoma", Font.PLAIN, 15));
 	        txtHoraInicio.setToolTipText("HH:mm");
 			txtHoraInicio.setColumns(10);
@@ -246,16 +340,18 @@ public class VentanaCrearCursillos extends JDialog {
 	private JLabel getLblHoraInicio() {
 		if (lblHoraInicio == null) {
 			lblHoraInicio = new JLabel("Hora de inicio de la clase: ");
+			lblHoraInicio.setLabelFor(getTxtHoraInicio());
 			lblHoraInicio.setFont(new Font("Tahoma", Font.PLAIN, 13));
 		}
 		return lblHoraInicio;
 	}
-	private JLabel getLblNewLabel_1() {
-		if (lblNewLabel_1 == null) {
-			lblNewLabel_1 = new JLabel("Hora de finalización de la clase: ");
-			lblNewLabel_1.setFont(new Font("Tahoma", Font.PLAIN, 13));
+	private JLabel getLblHoraFin() {
+		if (lblHoraFin == null) {
+			lblHoraFin = new JLabel("Hora de finalización de la clase: ");
+			lblHoraFin.setLabelFor(getTxtHoraFin());
+			lblHoraFin.setFont(new Font("Tahoma", Font.PLAIN, 13));
 		}
-		return lblNewLabel_1;
+		return lblHoraFin;
 	}
 	private JPanel getPnSur() {
 		if (pnSur == null) {
@@ -278,7 +374,7 @@ public class VentanaCrearCursillos extends JDialog {
 	}
 	private JCheckBox getChkLunes() {
 		if (chkLunes == null) {
-			chkLunes = new JCheckBox("Lunes");
+			chkLunes = new JCheckBox(DayOfWeek.MONDAY.getDisplayName(TextStyle.FULL, getLocale()));
 			chkLunes.addActionListener(limiter);
 			chkLunes.setToolTipText("Máximo " + Cursillos.MAX_DIAS_SEMANA + " días a la semana.");
 			chkLunes.setBackground(Color.WHITE);
@@ -288,7 +384,7 @@ public class VentanaCrearCursillos extends JDialog {
 	}
 	private JCheckBox getChkMartes() {
 		if (chkMartes == null) {
-			chkMartes = new JCheckBox("Martes");
+			chkMartes = new JCheckBox(DayOfWeek.TUESDAY.getDisplayName(TextStyle.FULL, getLocale()));
 			chkMartes.addActionListener(limiter);
 			chkMartes.setToolTipText("Máximo " + Cursillos.MAX_DIAS_SEMANA + " días a la semana.");
 			chkMartes.setBackground(Color.WHITE);
@@ -298,7 +394,7 @@ public class VentanaCrearCursillos extends JDialog {
 	}
 	private JCheckBox getChkMiercoles() {
 		if (chkMiercoles == null) {
-			chkMiercoles = new JCheckBox("Miercoles");
+			chkMiercoles = new JCheckBox(DayOfWeek.WEDNESDAY.getDisplayName(TextStyle.FULL, getLocale()));
 			chkMiercoles.addActionListener(limiter);
 			chkMiercoles.setToolTipText("Máximo " + Cursillos.MAX_DIAS_SEMANA + " días a la semana.");
 			chkMiercoles.setBackground(Color.WHITE);
@@ -308,7 +404,7 @@ public class VentanaCrearCursillos extends JDialog {
 	}
 	private JCheckBox getChkJueves() {
 		if (chkJueves == null) {
-			chkJueves = new JCheckBox("Jueves");
+			chkJueves = new JCheckBox(DayOfWeek.THURSDAY.getDisplayName(TextStyle.FULL, getLocale()));
 			chkJueves.addActionListener(limiter);
 			chkJueves.setToolTipText("Máximo " + Cursillos.MAX_DIAS_SEMANA + " días a la semana.");
 			chkJueves.setBackground(Color.WHITE);
@@ -318,7 +414,7 @@ public class VentanaCrearCursillos extends JDialog {
 	}
 	private JCheckBox getChkViernes() {
 		if (chkViernes == null) {
-			chkViernes = new JCheckBox("Viernes");
+			chkViernes = new JCheckBox(DayOfWeek.FRIDAY.getDisplayName(TextStyle.FULL, getLocale()));
 			chkViernes.addActionListener(limiter);
 			chkViernes.setToolTipText("Máximo " + Cursillos.MAX_DIAS_SEMANA + " días a la semana.");
 			chkViernes.setBackground(Color.WHITE);
@@ -328,7 +424,7 @@ public class VentanaCrearCursillos extends JDialog {
 	}
 	private JCheckBox getChkSabado() {
 		if (chkSabado == null) {
-			chkSabado = new JCheckBox("Sábado");
+			chkSabado = new JCheckBox(DayOfWeek.SATURDAY.getDisplayName(TextStyle.FULL, getLocale()));
 			chkSabado.addActionListener(limiter);
 			chkSabado.setToolTipText("Máximo " + Cursillos.MAX_DIAS_SEMANA + " días a la semana.");
 			chkSabado.setBackground(Color.WHITE);
@@ -340,25 +436,39 @@ public class VentanaCrearCursillos extends JDialog {
 	private class CheckBoxLimiterListener implements ActionListener {
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			limitSelection();			
+			limitSelection(e);			
 		}
 		
 	}
 	
-	private void limitSelection() {
+	private int limitSelection(ActionEvent e) {
 	        int selectedCount = 0;
-
-	        for (Component component : getPnSur().getComponents()) {
-	            if (component instanceof JCheckBox) {
-	                JCheckBox checkBox = (JCheckBox) component;
-	                if (checkBox.isSelected()) {
-	                    selectedCount++;
-	                    if (selectedCount > Cursillos.MAX_DIAS_SEMANA) {
-	                        checkBox.setSelected(false);
-	                    }
-	                }
-	            }
+	        
+	        if (e != null) {
+	        	JCheckBox chkBox = (JCheckBox) e.getSource();
+	        	System.out.println(DayOfWeek.valueOf(ReservationController.DIAS_SEMANA.get(chkBox.getText()))+" Dia");
+	        	if (chkBox.isSelected()) 
+	        		dias.add(DayOfWeek.valueOf(ReservationController.DIAS_SEMANA.get(chkBox.getText())));
+	        	else
+	        		dias.remove(DayOfWeek.valueOf(ReservationController.DIAS_SEMANA.get(chkBox.getText())));	        	
+	        } else {
+	        	for (Component component : getPnSur().getComponents()) {
+	        		if (component instanceof JCheckBox) {
+	        			JCheckBox checkBox = (JCheckBox) component;
+	        			if (checkBox.isSelected()) {
+	        				selectedCount++;
+	        				if (selectedCount > Cursillos.MAX_DIAS_SEMANA) {
+	        					checkBox.setSelected(false);
+	        				}
+	        			}
+	        		}
+	        	}	        	
 	        }
+	        
+	        
+	        
+	        
+	        return selectedCount;
 	    }
 	 
 	private JTextField getTxtCosteCurso() {
@@ -366,12 +476,13 @@ public class VentanaCrearCursillos extends JDialog {
 			MaskFormatter maskFormatter = null;
 	        
 	        try {
-	            maskFormatter = new MaskFormatter("###,##€");
+	            maskFormatter = new MaskFormatter("###.##€");
 	            maskFormatter.setPlaceholderCharacter('0');
 	        } catch (ParseException e) {
 	            System.err.println("Formato inválido");
 	        }
 			txtCosteCurso = new JFormattedTextField(maskFormatter);
+			txtCosteCurso.setHorizontalAlignment(SwingConstants.RIGHT);
 			txtCosteCurso.setToolTipText("Sólo números");
 			txtCosteCurso.setFont(new Font("Tahoma", Font.PLAIN, 15));
 			txtCosteCurso.setColumns(10);
@@ -381,6 +492,7 @@ public class VentanaCrearCursillos extends JDialog {
 	private JLabel getLblImporteCurso() {
 		if (lblImporteCurso == null) {
 			lblImporteCurso = new JLabel("Coste del curso: ");
+			lblImporteCurso.setLabelFor(getTxtCosteCurso());
 			lblImporteCurso.setFont(new Font("Tahoma", Font.PLAIN, 13));
 		}
 		return lblImporteCurso;
@@ -409,6 +521,8 @@ public class VentanaCrearCursillos extends JDialog {
 			border.setTitleFont(fuente.deriveFont(Font.BOLD, 13));
 			pnCentroCentro.setBorder(border);
 			pnCentroCentro.setLayout(new GridLayout(0, 2, 0, 0));
+			pnCentroCentro.add(getLblNombreCurso());
+			pnCentroCentro.add(getTxtNombreCurso());
 			pnCentroCentro.add(getLblDiaInicio());
 			pnCentroCentro.add(getDcInicio());
 			pnCentroCentro.add(getLblDiaFinal());
@@ -417,7 +531,7 @@ public class VentanaCrearCursillos extends JDialog {
 			pnCentroCentro.add(getSpnMaxSocios());
 			pnCentroCentro.add(getLblHoraInicio());
 			pnCentroCentro.add(getTxtHoraInicio());
-			pnCentroCentro.add(getLblNewLabel_1());
+			pnCentroCentro.add(getLblHoraFin());
 			pnCentroCentro.add(getTxtHoraFin());
 			pnCentroCentro.add(getLblImporteCurso());
 			pnCentroCentro.add(getTxtCosteCurso());
@@ -515,5 +629,21 @@ public class VentanaCrearCursillos extends JDialog {
 			pnTxtEntrenadores.setLayout(new GridLayout(0, 4, 0, 0));
 		}
 		return pnTxtEntrenadores;
+	}
+	private JTextField getTxtNombreCurso() {
+		if (txtNombreCurso == null) {
+			txtNombreCurso = new JTextField();
+			txtNombreCurso.setFont(new Font("Tahoma", Font.PLAIN, 13));
+			txtNombreCurso.setColumns(10);
+		}
+		return txtNombreCurso;
+	}
+	private JLabel getLblNombreCurso() {
+		if (lblNombreCurso == null) {
+			lblNombreCurso = new JLabel("Nombre del curso: ");
+			lblNombreCurso.setLabelFor(getTxtNombreCurso());
+			lblNombreCurso.setFont(new Font("Tahoma", Font.PLAIN, 13));
+		}
+		return lblNombreCurso;
 	}
 }

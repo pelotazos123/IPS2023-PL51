@@ -16,6 +16,8 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import giis.demo.business.ReservationController;
+
 /**
  * Utilidades varias con metodos generales de serializacion, conversion a csv y conversion de fechas
  */
@@ -33,22 +35,39 @@ public class Util {
 			return false;
 		}
 		
+		if (Integer.parseInt(horaInicioStr[0]) >= 24 || Integer.parseInt(horaFinStr[0]) >= 24) {
+			JOptionPane.showMessageDialog(null, "Hora inválida", "Error", JOptionPane.ERROR_MESSAGE);
+			return false;
+		}
+		
+		if (Integer.parseInt(horaInicioStr[0]) < 0 || Integer.parseInt(horaFinStr[0]) < 0) {
+			JOptionPane.showMessageDialog(null, "Hora inválida", "Error", JOptionPane.ERROR_MESSAGE);
+			return false;
+		}
+		
 		LocalTime horaInicio = LocalTime.of(Integer.parseInt(horaInicioStr[0]),Integer.parseInt(horaInicioStr[1]));
 		LocalTime horaFin = LocalTime.of(Integer.parseInt(horaFinStr[0]),Integer.parseInt(horaFinStr[1]));
+		
+		if (horaInicio.isBefore(LocalTime.of(ReservationController.HORARIO_INICIO, 00)) || horaFin.isAfter(LocalTime.of(ReservationController.HORARIO_FIN, 00))) {
+			JOptionPane.showMessageDialog(null, "El horario de reservas es de " + LocalTime.of(ReservationController.HORARIO_INICIO, 00).toString()
+					+ " a " + LocalTime.of(ReservationController.HORARIO_FIN, 00),
+					"Error", JOptionPane.ERROR_MESSAGE);
+			return false;
+		}			
 		
 		if (horaInicio.equals(LocalTime.of(22, 00)) && horaFin.equals(LocalTime.of(00, 00))) {
 			JOptionPane.showMessageDialog(null, "A partir de las 22:00 solo se puede reservar durante " + horaMin + " hora.", "Error", JOptionPane.ERROR_MESSAGE);
 			return false;
 		}
 		
-		if (horaFin.isBefore(horaInicio)) {
+		if (horaFin.isBefore(horaInicio) && !horaFin.equals(LocalTime.of(00, 00))) {
 			JOptionPane.showMessageDialog(null, "La hora de finalización no puede ser anterior a la de inicio", "Error", JOptionPane.ERROR_MESSAGE);
 			return false;
 		}
 		
 		LocalTime horaSumada = horaInicio.plusHours(horaMax);
 		
-		if (!horaSumada.equals(horaFin) && horaSumada.isBefore(horaFin)) {
+		if (!horaSumada.equals(horaFin) && (horaSumada.isBefore(horaFin) && !horaSumada.equals(LocalTime.of(00, 00)))) {
 			JOptionPane.showMessageDialog(null, "La instalación solo se puede reservar por " + horaMax + " horas como máximo.", "Error", JOptionPane.ERROR_MESSAGE);
 			return false;
 		}

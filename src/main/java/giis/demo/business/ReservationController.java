@@ -1,9 +1,15 @@
 package giis.demo.business;
 
+import java.time.DayOfWeek;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.swing.JOptionPane;
 
@@ -16,12 +22,17 @@ public class ReservationController {
 	
 	private Database db;
 	
-	private final static String SQL_CARGAR_RESERVA = "SELECT id, fecha, instalation_code, extra FROM reservas";
-	private final static String SQL_CREAR_RESERVA = "INSERT INTO reservas(fecha, instalation_code, extra) VALUES (?, ?, ?)";
+	private final static String SQL_CARGAR_RESERVA = "SELECT id, fecha_inicio, fecha_fin, instalation_code FROM reservas";
+	private final static String SQL_CREAR_RESERVA = "INSERT INTO reservas(fecha_inicio, fecha_fin, instalation_code, tipo) VALUES (?, ?, ?, ?)";
 	private final static String SQL_ID_RESERVA = "SELECT seq FROM sqlite_sequence where name='reservas'";
+	private final static String SQL_ID_CURSO = "SELECT seq FROM sqlite_sequence where name='cursillos'";
 	private final static String SQL_CARGAR_PARTICIPANTES = "SELECT * FROM participante_reserva";
 	private final static String SQL_CREAR_PARTICIPANTE = "INSERT INTO participante_reserva (reserva_id, dni) VALUES (?, ?)";
-	private final static String SQL_CARGAR_FECHAS_RESERVA = "SELECT DISTINCT fecha FROM reservas, participante_reserva WHERE participante_reserva.dni=? and reservas.instalation_code=?";
+	private final static String SQL_CARGAR_FECHAS_RESERVA = "SELECT DISTINCT fecha_inicio FROM reservas, participante_reserva WHERE participante_reserva.dni=? and reservas.instalation_code=? and reservas.tipo=?";
+	
+	private final static String SQL_CREAR_CURSO = "INSERT INTO cursillos(nombre, code_instalacion, fecha_inicio, fecha_fin, price, plazas) VALUES (?, ?, ?, ?, ?, ?)";
+	private final static String SQL_AÑADIR_ENTRENADORES = "INSERT INTO entrenadores_cursillos (id_curso, dni) VALUES (?,?)";
+	private final static String SQL_CARGAR_CURSOS = "SELECT id FROM cursillos WHERE fecha_inicio <= ? and fecha_fin >= ? and code_instalacion = ?";
 	
 	public final static int HORA_MAXIMA = 2;
 	public final static int HORA_MINIMA = 1;
@@ -29,8 +40,28 @@ public class ReservationController {
 	public final static int HORA_MAXIMA_CURSO = 4;
 	public final static int HORA_MINIMA_CURSO = 2;
 	
+	public final static int HORARIO_INICIO = 9;
+	public final static int HORARIO_FIN = 23;
+	
 	public final static int MAX_ENTRENADORES = 4;
 	public final static int EMPTY = 0;
+	
+	private final static String TIPO_CURSO = "curso";
+	private final static String TIPO_RESERVA = "reserva";
+	
+	public final static Map<String,String> DIAS_SEMANA = new HashMap<String, String>(){
+		private static final long serialVersionUID = 1L;
+
+		{
+			this.put("lunes", "MONDAY");
+		    this.put("martes", "TUESDAY");
+		    this.put("miércoles", "WEDNESDAY");
+		    this.put("jueves", "THURSDAY");
+		    this.put("viernes", "FRIDAY");
+		    this.put("sábado", "SATURDAY");
+		    this.put("domingo", "SUNDAY");
+		}
+	};
 	
 	private List<Object[]> resQuery;
 	
@@ -40,13 +71,60 @@ public class ReservationController {
 		this.db = db;
 	}
 	
-	public boolean reservar(LocalDateTime dia, String reserva, Instalacion instalacion, List<String> listaParticipantes, boolean extra) {
-		if (!checkParticipantsAvailability(dia, instalacion, listaParticipantes))
+	public boolean reservar(LocalDateTime diaInicio, String reservaInicio, String reservaFin, Instalacion instalacion, List<String> listaParticipantes) {
+		if (!checkParticipantsAvailability(diaInicio, instalacion, listaParticipantes))
 			return false;
-		createReservation(reserva, instalacion.getCode(), extra);
+		createReservation(reservaInicio, reservaFin, instalacion.getCode(), TIPO_RESERVA);
 		createQueryParticipants(listaParticipantes);
 		getReservas();
 		getParticipantes();
+		return true;
+	}
+	
+	public void creacionCurso(String nombreCurso, LocalDate diaInicio, LocalDate diaFin, LocalTime horaInicio, LocalTime horaFin,
+			List<String> entrenadores, List<DayOfWeek> dias, Instalacion instalacion, double coste, int numPlazas) {
+		
+		LocalDateTime inicioCurso = diaInicio.atTime(horaInicio);
+		LocalDateTime finalCurso = diaFin.atTime(horaFin);
+		
+		DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+		String inicioCursoStr = inicioCurso.format(dtf);
+		String finalCursoStr = finalCurso.format(dtf);
+		
+		if (!getDisponibilidadDeCursos(instalacion, inicioCursoStr, finalCursoStr)) 
+			return;
+		
+		// Se crea el curso
+		createCurso(nombreCurso, instalacion, coste, inicioCursoStr, finalCursoStr, numPlazas);
+		
+		createQueryTrainers(entrenadores);
+		
+		// Se reservan los dias que habrá en el rango entre la fecha de inicio y fecha final del curso
+		List<LocalDate> fechas = diaInicio.datesUntil(diaFin).toList();		
+		for (LocalDate fecha: fechas) {
+			if (dias.contains(fecha.getDayOfWeek())) { // Solo si coinciden con los dias de la semana seleccionados para el curso
+				createReservation(fecha.atTime(horaInicio).format(dtf), fecha.atTime(horaInicio).format(dtf), instalacion.getCode(), TIPO_CURSO);
+			}
+		}
+	}
+
+	private void createCurso(String nombreCurso, Instalacion instalacion, double coste, String inicioCursoStr,
+			String finalCursoStr, int plazas) {
+		db.executeUpdate(SQL_CREAR_CURSO, nombreCurso, instalacion.getCode(), inicioCursoStr, finalCursoStr, coste, plazas);
+	}
+	
+	/**
+	 * Comprueba la disponibilidad de la instalacion pasada por parametro
+	 * @param instalacion seleccionada para el curso
+	 * @return true si está disponible, false si no
+	 */
+	private boolean getDisponibilidadDeCursos(Instalacion instalacion, String fechaInicio, String fechaFinal){
+		List<Object[]> queryRes = db.executeQueryArray(SQL_CARGAR_CURSOS, fechaInicio, fechaFinal, instalacion.getCode());
+		
+		if (queryRes.size() != 0) {
+			JOptionPane.showMessageDialog(null, "Ya hay un curso en esta instalación.", "ERROR", JOptionPane.ERROR_MESSAGE);
+			return false;
+		}
 		return true;
 	}
 	
@@ -58,7 +136,7 @@ public class ReservationController {
 		LocalDateTime tomorrow = null;
 				
 		for (String dni: participantes) {
-			queryRes = db.executeQueryArray(SQL_CARGAR_FECHAS_RESERVA, dni, instalacion.getCode());
+			queryRes = db.executeQueryArray(SQL_CARGAR_FECHAS_RESERVA, dni, instalacion.getCode(), "");
 			for (Object[] objects : queryRes) {
 				reserva = Util.isoStringToDate((String) objects[0]).toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
 				dates.add(reserva);
@@ -79,6 +157,15 @@ public class ReservationController {
 		
 		return true;
 	}
+	
+	private void createQueryTrainers(List<String> listaEntrenadores) {
+		int id_curso = (int) db.executeQueryArray(SQL_ID_CURSO).get(0)[0];
+		
+		for (String dni: listaEntrenadores) {
+			System.out.println("id curso: " + id_curso + " - dni part: " + dni);
+			db.executeUpdate(SQL_AÑADIR_ENTRENADORES, id_curso, dni);
+		}
+	}
 
 	private void createQueryParticipants(List<String> listaParticipantes) {
 		int id_reserva = (int) db.executeQueryArray(SQL_ID_RESERVA).get(0)[0];
@@ -98,22 +185,27 @@ public class ReservationController {
 		resQuery = db.executeQueryArray(SQL_CARGAR_RESERVA);
 		
 		int id = 0;
-		String reserva = "";
+		String reservaInicio = "";
+		String reservaFin = "";
 		String instalacionId = "";
-		String fecha = "";
-		String hora = "";
-		boolean extra = false;
+		String fechaInicio = "";
+		String horaInicio = "";
+		String fechaFin = "";
+		String horaFin = "";
 		
 		for (Object[] objects : resQuery) {
 			id = (int) objects[0];
-			reserva = (String) objects[1];
-			instalacionId = (String) objects[2];
-			extra = ((int) objects[3]) == 1;			
+			reservaInicio = (String) objects[1];
+			reservaFin = (String) objects[2];
+			instalacionId = (String) objects[3];
 			
-			fecha = reserva.split(" ")[0];
-			hora = reserva.split(" ")[1];
+			fechaInicio = reservaInicio.split(" ")[0];
+			horaInicio = reservaInicio.split(" ")[1];
 			
-			listaReservas.add(new Reserva(id, fecha, hora, instalacionId, extra));
+			fechaFin= reservaFin.split(" ")[0];
+			horaFin= reservaFin.split(" ")[1];
+			
+			listaReservas.add(new Reserva(id, fechaInicio, horaInicio, fechaFin, horaFin, instalacionId));
 		}
 		
 		for (Reserva reservaS : listaReservas) {
@@ -137,8 +229,9 @@ public class ReservationController {
 		}
 	}
 	
-	private void createReservation(String reserva, String instalacionId, boolean extra) {
-		db.executeUpdate(SQL_CREAR_RESERVA, reserva, instalacionId, extra);
+	private void createReservation(String reservaInicio, String reservaFin, String instalacionId, String tipoReserva) {
+		db.executeUpdate(SQL_CREAR_RESERVA, reservaInicio, reservaFin, instalacionId, tipoReserva);
 	}
 
 }
+

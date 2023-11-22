@@ -183,38 +183,28 @@ public class VentanaReservas extends JDialog {
 		
 		int selectedVal = getList().getSelectedIndex();
 		
-		boolean hasExtra = hasExtraHour();
+		String horaInicio = modeloListaHoras.get(selectedVal);
+		String horaFin = getTxtFin().getText();
 		
-		String hora = modeloListaHoras.get(selectedVal);
 		LocalDate selectedDate = getCalendar().getDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();;
-		LocalTime horaSel = LocalTime.of(Integer.parseInt(hora.split(":")[0]), 00);
+		LocalTime hInicio = LocalTime.of(Integer.parseInt(horaInicio.split(":")[0]), 00);
+		LocalTime hFin = LocalTime.of(Integer.parseInt(horaFin.split(":")[0]), 00);
 		
-		LocalDateTime finalDate = selectedDate.atTime(horaSel); 
+		LocalDateTime startingDate = selectedDate.atTime(hInicio);
+		LocalDateTime finishingDate = selectedDate.atTime(hFin);
 		
 		DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
-		String reserva = finalDate.format(dtf);
-
+		String reservaInicio = startingDate.format(dtf);
+		String reservaFin = finishingDate.format(dtf);
+		
 		selInstalacion = ((Instalacion)getCbInstalaciones().getSelectedItem());
 		
 		List<String> listaParticipantes = getTxtFromDniFields();
 		
-		if (!reMan.reservar(finalDate, reserva, selInstalacion, listaParticipantes, hasExtra)) return;
+		if (!reMan.reservar(startingDate, reservaInicio, reservaFin, selInstalacion, listaParticipantes)) return;
 		
-		JOptionPane.showMessageDialog(null, "Reserva confirmada de " + selInstalacion.toString() +": " + reserva);
+		JOptionPane.showMessageDialog(null, "Reserva confirmada de " + selInstalacion.toString() +": " + reservaInicio);
 		this.dispose();
-	}
-
-	private boolean hasExtraHour() {
-		String[] horaInicioStr = getTxtInicio().getText().split(":");
-		String[] horaFinStr = getTxtFin().getText().split(":");
-		
-		LocalTime horaInicio = LocalTime.of(Integer.parseInt(horaInicioStr[0]),Integer.parseInt(horaInicioStr[1]));
-		LocalTime horaFin = LocalTime.of(Integer.parseInt(horaFinStr[0]),Integer.parseInt(horaFinStr[1]));
-		
-		boolean hasExtra = (horaFin.minusHours(horaInicio.getHour()) == LocalTime.of(02, 00));
-		
-		System.out.println("Resta: " + horaFin.minusHours(horaInicio.getHour()) +  "bool: " + hasExtra);
-		return hasExtra;
 	}
 
 	private boolean completeCheckToSocios() {
@@ -320,18 +310,25 @@ public class VentanaReservas extends JDialog {
 		getBtnSiguiente().setEnabled(false);
 		modeloListaHoras.removeAllElements();
 		for (int i = 9; i < 23; i++) {
-			modeloListaHoras.addElement(i+":00");
+			if (i != 9)
+				modeloListaHoras.addElement(i+":00");
+			else
+				modeloListaHoras.addElement("0"+i+":00");
 		}		
 		
 		for (Reserva reserva : reMan.getReservas()) {	
-			if (reserva.getFecha().trim().equals(chosenDay)
-					&& modeloListaHoras.contains(reserva.getHora().trim())
+			if (reserva.getFechaInicio().trim().equals(chosenDay)
+					&& modeloListaHoras.contains(reserva.getHoraInicio().trim())
 							&& reserva.getInstalacionId().trim().equals(((Instalacion)getCbInstalaciones().getSelectedItem()).getCode().toString())) {
 				System.out.println("Ya hay una reserva");
-				modeloListaHoras.removeElement(reserva.getHora().trim());
-				int horaSig = Integer.parseInt(reserva.getHora().split(":")[0]);
-				if (horaSig + 1 <= 23 && reserva.hasExtra()) // Si la hora fue reservada con una extra, se elimina la sig tmb
-					modeloListaHoras.removeElement((horaSig+1)+":00");
+				
+				int inicio = Integer.parseInt(reserva.getHoraInicio().trim().split(":")[0]);
+				int fin = Integer.parseInt(reserva.getHoraFin().trim().split(":")[0]);
+				
+				while (fin != inicio) {
+					modeloListaHoras.removeElement(--fin+":00");
+				}
+				modeloListaHoras.removeElement(reserva.getHoraInicio().trim());
 			}
 		}
 	}
@@ -384,12 +381,14 @@ public class VentanaReservas extends JDialog {
 		}
 		return pnNorth;
 	}
+	
 	private JLabel getLblHorasDisp() {
 		if (lblHorasDisp == null) {
 			lblHorasDisp = new JLabel("Horas disponibles:");
 		}
 		return lblHorasDisp;
 	}
+	
 	private JPanel getPnSouth() {
 		if (pnSouth == null) {
 			pnSouth = new JPanel();
@@ -412,6 +411,7 @@ public class VentanaReservas extends JDialog {
 		}
 		return pnSecundarioReservas;
 	}
+	
 	private JPanel getPnTxtContainer() {
 		if (pnTxtContainer == null) {
 			pnTxtContainer = new JPanel();
@@ -421,6 +421,7 @@ public class VentanaReservas extends JDialog {
 		}
 		return pnTxtContainer;
 	}
+	
 	private JButton getBtnNuevoSocio() {
 		if (btnNuevoSocio == null) {
 			btnNuevoSocio = new JButton("+");
@@ -474,13 +475,12 @@ public class VentanaReservas extends JDialog {
 		});
 		nuevo.setEditable(true);
 		nuevo.setEnabled(true);
-		//nuevo.setBounds(30, 96, 427, 35);
 		nuevo.setColumns(20);
-		//nuevo.setPreferredSize(new Dimension(424, 35));
 		nuevo.setFont(new Font("Tahoma", Font.PLAIN, 25));
 		nuevo.setHorizontalAlignment(SwingConstants.CENTER);
 		return nuevo;
 	}
+	
 	private JPanel getPnBotones() {
 		if (pnBotones == null) {
 			pnBotones = new JPanel();
@@ -490,6 +490,7 @@ public class VentanaReservas extends JDialog {
 		}
 		return pnBotones;
 	}
+	
 	private JButton getBtnBorrarSocio() {
 		if (btnBorrarSocio == null) {
 			btnBorrarSocio = new JButton("-");
@@ -504,6 +505,7 @@ public class VentanaReservas extends JDialog {
 		}
 		return btnBorrarSocio;
 	}
+	
 	private void eliminaSocio() {
 		if (listaTxtFields.size() > ReservationController.EMPTY) {
 			JPanel txtBorrar = listaTxtFields.remove(listaTxtFields.size()-1);
@@ -521,6 +523,7 @@ public class VentanaReservas extends JDialog {
 		}
 		return pnTxtFields;
 	}
+	
 	private JButton getBtnVolver() {
 		if (btnVolver == null) {
 			btnVolver = new JButton("Volver");
@@ -540,6 +543,7 @@ public class VentanaReservas extends JDialog {
 		((CardLayout)getContentPane().getLayout()).show(getContentPane(), "principal");
 		selInstalacion = null;
 	}
+	
 	private JButton getBtnReservar() {
 		if (btnReservar == null) {
 			btnReservar = new JButton("Reservar");
@@ -575,16 +579,18 @@ public class VentanaReservas extends JDialog {
 		}
 		return scrlTxts;
 	}
+	
 	private JPanel getPanel() {
 		if (panel == null) {
 			panel = new JPanel();
 			panel.setLayout(new BorderLayout(0, 0));
-			panel.add(getLblTxtAñadeSocio_1(), BorderLayout.CENTER);
+			panel.add(getLblTxtAñadeSocio(), BorderLayout.CENTER);
 			panel.add(getLblInstalacion(), BorderLayout.SOUTH);
 		}
 		return panel;
 	}
-	private JLabel getLblTxtAñadeSocio_1() {
+	
+	private JLabel getLblTxtAñadeSocio() {
 		if (lblTxtAñadeSocio == null) {
 			lblTxtAñadeSocio = new JLabel("Introduzca el DNI de los socios que participarán en la reserva:");
 			lblTxtAñadeSocio.setFont(new Font("Tahoma", Font.BOLD, 20));

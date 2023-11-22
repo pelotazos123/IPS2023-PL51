@@ -21,6 +21,9 @@ public abstract class SociosController {
 	
 	private final static String SQL_CARGAR_TODOS_SOCIOS = "SELECT id, dni, name, surname, email, telf, cuota_type, iban, gender, birth_date, directive FROM socios ";
 	private final static String SQL_CARGAR_DNI_SOCIOS = "SELECT dni FROM socios";
+	
+	private final static String SQL_CARGAR_DNI_ENTRENADORES = "SELECT DISTINCT dni FROM socios, licencias WHERE socios.id=licencias.owner_id and licence_type='MONITOR'";
+	
 	private final static String WHERE = "WHERE";
 	
 	private final static int NAME = 2;
@@ -81,6 +84,30 @@ public abstract class SociosController {
 	
 	public static List<String> getDni(Database db) {
 		List<Object[]> result = db.executeQueryArray(SQL_CARGAR_DNI_SOCIOS);
+		List<String> dnis = new ArrayList<String>();
+		
+		String dni = "";
+		
+		for (Object[] objects : result) {
+			dni = (String) objects[0];
+			dnis.add(dni);
+		}		
+		
+		return dnis;
+	}
+	
+	/**
+	 * Comprueba si el dni es de un entrenador
+	 * @param dni a comprobar
+	 * @param db
+	 * @return true si es entrenador, false si no
+	 */
+	public static boolean isTrainer(String dni, Database db) {
+		return getDniFromTrainers(db).contains(dni);
+	}
+	
+	private static List<String> getDniFromTrainers(Database db) {
+		List<Object[]> result = db.executeQueryArray(SQL_CARGAR_DNI_ENTRENADORES);
 		List<String> dnis = new ArrayList<String>();
 		
 		String dni = "";

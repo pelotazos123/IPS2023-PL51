@@ -31,8 +31,8 @@ insert into licencias (owner_id, tutor_dni, tutor_name, tutor_surname, tutor_ema
 	(105,'noTutor','noTutor','noTutor','noTutor',null,null,null,'pagado',30,'JUEZ','Gijon','Segundo A'),
 	(106,'123456789L','Pedro','Garcia','pedro@gmail.com',654873691,'1983-6-8','HOMBRE','pagado',30,'DEPORTISTA','Oviedo','Segundo A');
 	
-INSERT INTO reservas (id, fecha, instalation_code, extra) VALUES 
-	(0, "2023-11-20 20:00", "13410", true);
+INSERT INTO reservas (id, fecha_inicio, fecha_fin, instalation_code, tipo) VALUES 
+	(0, "2023-11-20 20:00", "2023-11-20 22:00", "13410", "reserva");
 
 INSERT INTO participante_reserva (reserva_id, dni) VALUES
 	(0, "123456789A");
