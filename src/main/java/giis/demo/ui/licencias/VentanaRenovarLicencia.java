@@ -32,6 +32,7 @@ import javax.swing.border.TitledBorder;
 import com.toedter.calendar.JDateChooser;
 
 import giis.demo.model.Generos;
+import giis.demo.model.TiposDeportes;
 import giis.demo.model.CrearLicencias.Licencia;
 import giis.demo.model.CrearLicencias.servicio.TramitarLicencia;
 import giis.demo.util.FileUtil;
@@ -59,6 +60,7 @@ public class VentanaRenovarLicencia extends JFrame {
 	
 	private String direccionFacturacion;
 	private String infoFacturacion;
+	private TiposDeportes deporte;
 
 	
 	
@@ -143,6 +145,9 @@ public class VentanaRenovarLicencia extends JFrame {
 	private JPanel pnCorreoTutor;
 	private JLabel lbCorreoTutor;
 	private JTextField txCorreoTutor;
+	private JPanel pnSeleccionarDeporte;
+	private JLabel lbSeleccionarDeporte;
+	private JComboBox<TiposDeportes> cbDeporte;
 
 	/**
 	 * Create the frame.
@@ -272,6 +277,10 @@ public class VentanaRenovarLicencia extends JFrame {
 		}
 		getTxDireccionFacturacion().setText(tramitarLicencia.getLicenciaSeleccionada().getDireccionFacturacion());
 		getTxInfoFacturacion().setText(tramitarLicencia.getLicenciaSeleccionada().getInfoFacturacion());
+		
+		TiposDeportes[] deportes = TiposDeportes.values();
+		getCbDeporte().setModel(new DefaultComboBoxModel<TiposDeportes>(deportes));
+		getCbDeporte().setSelectedItem(tramitarLicencia.getLicenciaSeleccionada().getDeporte());
 	}
 	
 	private JButton getBtRenovarLicencia() {
@@ -470,6 +479,7 @@ public class VentanaRenovarLicencia extends JFrame {
 		
 		direccionFacturacion = getTxDireccionFacturacion().getText();
 		infoFacturacion = getTxInfoFacturacion().getText();
+		deporte = (TiposDeportes) getCbDeporte().getSelectedItem();
 		
 		if(!tramitarLicencia.comprobarMayorEdad(diaSocio, mesSocio, añoSocio)) {
 			nombreTutor = getTxNombreTutor().getText();
@@ -481,10 +491,10 @@ public class VentanaRenovarLicencia extends JFrame {
 			
 			fechaTutor = getDcFechaNacimientoTutor().getDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
 			
-			tramitarLicencia.modificarDatosLicencia(dniTutor, nombreTutor, apellidoTutor, correoTutor, telfTutor, fechaTutor, generoTutor, direccionFacturacion, infoFacturacion);
+			tramitarLicencia.modificarDatosLicencia(dniTutor, nombreTutor, apellidoTutor, correoTutor, telfTutor, fechaTutor, generoTutor, direccionFacturacion, infoFacturacion, deporte);
 			tramitarLicencia.modificarDatosSocio(dniSocio,nombreSocio, apellidoSocio, generoSocio,telfSocio,correoSocio, fechaSocio);
 		}else {
-			tramitarLicencia.modificarDatosLicencia("noTutor", "noTutor", "noTutor","noTutor",-1, null, null, direccionFacturacion, infoFacturacion);
+			tramitarLicencia.modificarDatosLicencia("noTutor", "noTutor", "noTutor","noTutor",-1, null, null, direccionFacturacion, infoFacturacion, deporte);
 			tramitarLicencia.modificarDatosSocio(dniSocio,nombreSocio, apellidoSocio, generoSocio,telfSocio,correoSocio, fechaSocio);
 		}
 	}
@@ -736,6 +746,7 @@ public class VentanaRenovarLicencia extends JFrame {
 			pnDatosFacturacionYLicencia.setLayout(new GridLayout(1, 0, 0, 0));
 			pnDatosFacturacionYLicencia.add(getPnDireccionFacturacion());
 			pnDatosFacturacionYLicencia.add(getPnInfoFacturacion());
+			pnDatosFacturacionYLicencia.add(getPnSeleccionarDeporte());
 		}
 		return pnDatosFacturacionYLicencia;
 	}
@@ -1048,5 +1059,26 @@ public class VentanaRenovarLicencia extends JFrame {
 			txCorreoTutor.setColumns(10);
 		}
 		return txCorreoTutor;
+	}
+	private JPanel getPnSeleccionarDeporte() {
+		if (pnSeleccionarDeporte == null) {
+			pnSeleccionarDeporte = new JPanel();
+			pnSeleccionarDeporte.setBackground(Color.WHITE);
+			pnSeleccionarDeporte.add(getLbSeleccionarDeporte());
+			pnSeleccionarDeporte.add(getCbDeporte());
+		}
+		return pnSeleccionarDeporte;
+	}
+	private JLabel getLbSeleccionarDeporte() {
+		if (lbSeleccionarDeporte == null) {
+			lbSeleccionarDeporte = new JLabel("Selecciona deporte:");
+		}
+		return lbSeleccionarDeporte;
+	}
+	private JComboBox<TiposDeportes> getCbDeporte() {
+		if (cbDeporte == null) {
+			cbDeporte = new JComboBox<TiposDeportes>();
+		}
+		return cbDeporte;
 	}
 }
