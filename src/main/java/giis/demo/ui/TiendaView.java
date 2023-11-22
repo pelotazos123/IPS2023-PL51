@@ -1,17 +1,17 @@
 package giis.demo.ui;
 
+import java.awt.Color;
 import java.awt.Font;
 
 import javax.swing.DefaultComboBoxModel;
+import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.border.EmptyBorder;
-import javax.swing.JButton;
-import java.awt.Color;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
+import javax.swing.border.EmptyBorder;
 
 public class TiendaView {
 	
@@ -21,16 +21,18 @@ public class TiendaView {
 	private JLabel lblEquipacion;
 	private JLabel lblChandal;
 	private JLabel lblChaqueta;
+	private JLabel lblTalla;
 	private JComboBox<String> cbTallaEq;
 	private JComboBox<String> cbTallaChd;
 	private JComboBox<String> cbTallaChq;
+	private JLabel lblUds;
 	private JTextField txtUdsEq;
 	private JTextField txtUdsChd;
 	private JTextField txtUdsChq;
 	private JLabel lblPrecioEq;
 	private JLabel lblPrecioChd;
 	private JLabel lblPrecioChq;
-	private JLabel lblTotal;
+	private JButton btnTotal;
 	private JLabel lblPrecioTotal;
 	private JButton btnComprar;
 
@@ -56,17 +58,21 @@ public class TiendaView {
 		contentPanel.add(getLblEquipacion());
 		contentPanel.add(getLblChandal());
 		contentPanel.add(getLblChaqueta());
+		
+		contentPanel.add(getLblTalla());
 		contentPanel.add(getCbTallaEq());
 		contentPanel.add(getCbTallaChd());
 		contentPanel.add(getCbTallaChq());
-		
+
+		contentPanel.add(getLblUds());
 		contentPanel.add(getTxtUdsEq());
 		contentPanel.add(getTxtUdsChd());
 		contentPanel.add(getTxtUdsChq());
+		
 		contentPanel.add(getLblPrecioEq());
 		contentPanel.add(getLblPrecioChd());
 		contentPanel.add(getLblPrecioChq());
-		contentPanel.add(getLblTotal());
+		contentPanel.add(getBtnTotal());
 		contentPanel.add(getLblPrecioTotal());
 
 		contentPanel.add(getBtnComprar());
@@ -138,7 +144,7 @@ public class TiendaView {
 		}
 		return cbTallaChq;
 	}
-	private JTextField getTxtUdsEq() {
+	public JTextField getTxtUdsEq() {
 		if (txtUdsEq == null) {
 			txtUdsEq = new JTextField();
 			txtUdsEq.setHorizontalAlignment(SwingConstants.CENTER);
@@ -148,7 +154,7 @@ public class TiendaView {
 		}
 		return txtUdsEq;
 	}
-	private JTextField getTxtUdsChd() {
+	public JTextField getTxtUdsChd() {
 		if (txtUdsChd == null) {
 			txtUdsChd = new JTextField();
 			txtUdsChd.setHorizontalAlignment(SwingConstants.CENTER);
@@ -158,7 +164,7 @@ public class TiendaView {
 		}
 		return txtUdsChd;
 	}
-	private JTextField getTxtUdsChq() {
+	public JTextField getTxtUdsChq() {
 		if (txtUdsChq == null) {
 			txtUdsChq = new JTextField();
 			txtUdsChq.setHorizontalAlignment(SwingConstants.CENTER);
@@ -189,19 +195,35 @@ public class TiendaView {
 		}
 		return lblPrecioChq;
 	}
-	private JLabel getLblTotal() {
-		if (lblTotal == null) {
-			lblTotal = new JLabel("Total:");
-			lblTotal.setFont(new Font("Tahoma", Font.PLAIN, 15));
-			lblTotal.setBounds(300, 333, 55, 29);
+	private JLabel getLblTalla() {
+		if (lblTalla == null) {
+			lblTalla = new JLabel("Talla:");
+			lblTalla.setFont(new Font("Tahoma", Font.PLAIN, 15));
+			lblTalla.setBounds(386, 112, 47, 29);
 		}
-		return lblTotal;
+		return lblTalla;
+	}
+	private JLabel getLblUds() {
+		if (lblUds == null) {
+			lblUds = new JLabel("Unidades:");
+			lblUds.setFont(new Font("Tahoma", Font.PLAIN, 15));
+			lblUds.setBounds(473, 112, 84, 29);
+		}
+		return lblUds;
+	}
+	public JButton getBtnTotal() {
+		if (btnTotal == null) {
+			btnTotal = new JButton("Calcular total");
+			btnTotal.setFont(new Font("Tahoma", Font.PLAIN, 12));
+			btnTotal.setBounds(279, 333, 120, 29);
+		}
+		return btnTotal;
 	}
 	public JLabel getLblPrecioTotal() {
 		if (lblPrecioTotal == null) {
 			lblPrecioTotal = new JLabel("");
 			lblPrecioTotal.setFont(new Font("Tahoma", Font.PLAIN, 15));
-			lblPrecioTotal.setBounds(365, 333, 84, 29);
+			lblPrecioTotal.setBounds(426, 333, 84, 29);
 		}
 		return lblPrecioTotal;
 	}
@@ -214,5 +236,4 @@ public class TiendaView {
 		}
 		return btnComprar;
 	}
-	
 }
