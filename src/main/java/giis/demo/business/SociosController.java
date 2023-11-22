@@ -5,6 +5,7 @@ import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.swing.JOptionPane;
 import javax.swing.JTable;
@@ -14,6 +15,7 @@ import javax.swing.table.AbstractTableModel;
 import javax.swing.table.TableModel;
 
 import giis.demo.business.entities.SocioEntity;
+import giis.demo.model.Instalacion;
 import giis.demo.util.Database;
 import giis.demo.util.SwingUtil;
 
@@ -22,7 +24,7 @@ public abstract class SociosController {
 	private final static String SQL_CARGAR_TODOS_SOCIOS = "SELECT id, dni, name, surname, email, telf, cuota_type, iban, gender, birth_date, directive FROM socios ";
 	private final static String SQL_CARGAR_DNI_SOCIOS = "SELECT dni FROM socios";
 	
-	private final static String SQL_CARGAR_DNI_ENTRENADORES = "SELECT DISTINCT dni FROM socios, licencias WHERE socios.id=licencias.owner_id and licence_type='MONITOR'";
+	private final static String SQL_CARGAR_DNI_ENTRENADORES = "SELECT DISTINCT dni FROM socios, licencias WHERE socios.id=licencias.owner_id and licencias.licence_type='MONITOR' and licencias.deporte=?";
 	
 	private final static String WHERE = "WHERE";
 	
@@ -40,7 +42,8 @@ public abstract class SociosController {
 	
 	private static String selectedValue = "";
 	
-	private static HashMap<Integer, String> columnas = new HashMap<Integer, String>(){
+	// Mapeo de columnas con sus querys correspondientes y la posición a la que corresponden en la tabla Socios
+	private static Map<Integer, String> columnas = new HashMap<Integer, String>(){
 		private static final long serialVersionUID = -2242980961209539019L;
 		{
 			put(NAME, "UPDATE socios SET name=? WHERE id=?");
@@ -52,6 +55,17 @@ public abstract class SociosController {
 			put(GENDER, "UPDATE socios SET gender=? WHERE id=?");
 			put(BIRTH_DATE, "UPDATE socios SET birth_date= WHERE id=?");
 			put(DIRECTIVE, "UPDATE socios SET directive=? WHERE id=?");
+		}
+	};
+	
+	// Mapeo de instalaciones con los deportes federados del entrenador
+	private static Map<String, String> deportes = new HashMap<String, String>(){
+		private static final long serialVersionUID = -2232980961209539019L;
+		{
+			put("Tiro con arco", "TIRO_CON_ARCO");
+			put("Piscina", "NATACION");
+			put("Campo de fútbol", "FUTBOL");
+			put("Pista de tenis", "TENIS");
 		}
 	};
 	
@@ -102,12 +116,12 @@ public abstract class SociosController {
 	 * @param db
 	 * @return true si es entrenador, false si no
 	 */
-	public static boolean isTrainer(String dni, Database db) {
-		return getDniFromTrainers(db).contains(dni);
+	public static boolean isTrainer(String dni, Database db, Instalacion instalacion) {
+		return getDniFromTrainers(db, instalacion).contains(dni);
 	}
 	
-	private static List<String> getDniFromTrainers(Database db) {
-		List<Object[]> result = db.executeQueryArray(SQL_CARGAR_DNI_ENTRENADORES);
+	private static List<String> getDniFromTrainers(Database db, Instalacion instalacion) {
+		List<Object[]> result = db.executeQueryArray(SQL_CARGAR_DNI_ENTRENADORES, deportes.get(instalacion.getName()));
 		List<String> dnis = new ArrayList<String>();
 		
 		String dni = "";

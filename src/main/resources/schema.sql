@@ -30,5 +30,5 @@ create table competiciones (id int, name varchar2(255), competition_date date, p
 create table asambleas (type varchar2(255), announcement varchar2(255), date_announcement1 date, date_announcement2 date, orderOfDay varchar2(255), acta varchar2(255));
 create table inscripcion_competiciones(competicion_id int, socio_id int, foreign key(competicion_id) references competiciones(id), foreign key(socio_id) references socios(id));
 create table entrenados(entrenador_id int, entrenado_id);
-CREATE TABLE IF NOT EXISTS cursillos (id integer PRIMARY KEY AUTOINCREMENT, nombre varchar2(255) UNIQUE, code_instalacion varchar2(255), fecha_inicio date, fecha_fin date, price real, plazas int, foreign key(code_instalacion) REFERENCES instalaciones(code));
+CREATE TABLE IF NOT EXISTS cursillos (id integer PRIMARY KEY AUTOINCREMENT, nombre varchar2(255), code_instalacion varchar2(255), fecha_inicio date, fecha_fin date, price real, plazas int, foreign key(code_instalacion) REFERENCES instalaciones(code));
 CREATE TABLE IF NOT EXISTS entrenadores_cursillos (id integer PRIMARY KEY AUTOINCREMENT, id_curso int, dni varchar2(255), foreign key(id_curso) REFERENCES cursillos(id));

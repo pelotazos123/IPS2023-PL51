@@ -346,7 +346,6 @@ public class VentanaReservas extends JDialog {
 						modeloListaHoras.add(posFinal-1, ReservationController.CURSO_OCUPADO);
 						posFinal--;
 					}
-					modeloListaHoras.add(posInicio, ReservationController.CURSO_OCUPADO);
 				} 
 				
 				while (fin != inicio) {

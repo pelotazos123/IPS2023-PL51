@@ -165,10 +165,15 @@ public class VentanaCrearCursillos extends JDialog {
 	private boolean checkTrainers(List<String> entrenadores) {
 		for (JTextField txtEntrenador : listaTxtFields) {
 			String dni = txtEntrenador.getText();
-			if (SociosController.isTrainer(dni, db))
+			if (dni.isEmpty()) {
+				JOptionPane.showMessageDialog(null, "El dni no puede estar vacío", "ERROR", JOptionPane.ERROR_MESSAGE);
+				return false;
+			}
+			if (SociosController.isTrainer(dni, db, (Instalacion)getCbInstalaciones().getSelectedItem()))
 				entrenadores.add(dni);
 			else {
-				JOptionPane.showMessageDialog(null, "El DNI: " + dni + " no es de un entrenador o no existe.", "ERROR", JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(null, "El DNI: " + dni + " no es de un entrenador válido o no existe.\nComprueba que el "
+						+ "DNI pertenece a un socio o a un monitor federado en el deporte correspondiente.", "ERROR", JOptionPane.ERROR_MESSAGE);
 				return false;
 			}
 				
@@ -182,7 +187,7 @@ public class VentanaCrearCursillos extends JDialog {
 			return false;
 		}
 		
-		if (!Util.checkHourInserted(getTxtHoraInicio().getText(), getTxtHoraFin().getText(),  Integer.parseInt(props.getProperty("reserva.hora.max")), Integer.parseInt(props.getProperty("reserva.hora.min")))) 
+		if (!Util.checkHourInserted(getTxtHoraInicio().getText(), getTxtHoraFin().getText(),  Integer.parseInt(props.getProperty("reserva.hora.curso.max")), Integer.parseInt(props.getProperty("reserva.hora.curso.min")))) 
 			return false;
 		
 		if (listaTxtFields.size() == 0) {

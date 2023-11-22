@@ -99,7 +99,7 @@ public class ReservationController {
 		// Se crea el curso
 		createCurso(nombreCurso, instalacion, coste, inicioCursoStr, finalCursoStr, numPlazas);
 		
-		createQueryTrainers(entrenadores);
+		createQueryTrainers(entrenadores, nombreCurso);
 		
 		// Se reservan los dias que habrá en el rango entre la fecha de inicio y fecha final del curso
 		List<LocalDate> fechas = diaInicio.datesUntil(diaFin).toList();		
@@ -161,11 +161,11 @@ public class ReservationController {
 		return true;
 	}
 	
-	private void createQueryTrainers(List<String> listaEntrenadores) {
+	private void createQueryTrainers(List<String> listaEntrenadores, String nameCurso) {
 		int id_curso = (int) db.executeQueryArray(SQL_ID_CURSO).get(0)[0];
 		
 		for (String dni: listaEntrenadores) {
-			System.out.println("id curso: " + id_curso + " - dni part: " + dni);
+			System.out.println("id curso: " + id_curso + " - nombre curso: " + nameCurso + " - dni entrenador: " + dni);
 			db.executeUpdate(SQL_AÑADIR_ENTRENADORES, id_curso, dni);
 		}
 	}

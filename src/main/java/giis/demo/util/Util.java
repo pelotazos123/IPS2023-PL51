@@ -8,6 +8,7 @@ import java.time.LocalTime;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 
 import javax.swing.JOptionPane;
 
@@ -15,8 +16,6 @@ import org.apache.commons.beanutils.BeanUtils;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-
-import giis.demo.business.ReservationController;
 
 /**
  * Utilidades varias con metodos generales de serializacion, conversion a csv y conversion de fechas
@@ -30,6 +29,51 @@ public class Util {
 		String[] horaInicioStr = txtInicio.split(":");
 		String[] horaFinStr = txtFinal.split(":");
 		
+		Properties props = DbUtil.loadProperties();
+		
+		if (!checkStringHour(horaInicioStr, horaFinStr)) return false;
+			
+		LocalTime horaInicio = LocalTime.of(Integer.parseInt(horaInicioStr[0]),Integer.parseInt(horaInicioStr[1]));
+		LocalTime horaFin = LocalTime.of(Integer.parseInt(horaFinStr[0]),Integer.parseInt(horaFinStr[1]));
+		
+		if (!checkLogicalHourOrder(horaMin, props, horaInicio, horaFin)) return false;
+		
+		LocalTime horaSumada = horaInicio.plusHours(horaMax);
+		
+		if (!horaSumada.equals(horaFin) && (horaSumada.isBefore(horaFin) && !horaSumada.equals(LocalTime.of(00, 00)))) {
+			JOptionPane.showMessageDialog(null, "La instalación solo se puede reservar por " + horaMax + " horas como máximo.", "Error", JOptionPane.ERROR_MESSAGE);
+			return false;
+		}
+		
+		if (horaInicio.equals(horaFin)) {
+			JOptionPane.showMessageDialog(null, "La duración minima de la reserva es de " + horaMin + " hora.", "Error", JOptionPane.ERROR_MESSAGE);
+			return false;
+		}
+		
+		return true;
+	}
+
+	private static boolean checkLogicalHourOrder(int horaMin, Properties props, LocalTime horaInicio, LocalTime horaFin) {
+		if (horaInicio.isBefore(LocalTime.of(Integer.parseInt(props.getProperty("club.horario.apertura")), 00)) || horaFin.isAfter(LocalTime.of(Integer.parseInt(props.getProperty("club.horario.cierre")), 00))) {
+			JOptionPane.showMessageDialog(null, "El horario de reservas es de " + LocalTime.of(Integer.parseInt(props.getProperty("club.horario.apertura")), 00).toString()
+					+ " a " + LocalTime.of(Integer.parseInt(props.getProperty("club.horario.cierre")), 00),
+					"Error", JOptionPane.ERROR_MESSAGE);
+			return false;
+		}			
+		
+		if (horaInicio.equals(LocalTime.of(22, 00)) && horaFin.equals(LocalTime.of(00, 00))) {
+			JOptionPane.showMessageDialog(null, "A partir de las 22:00 solo se puede reservar durante " + horaMin + " hora.", "Error", JOptionPane.ERROR_MESSAGE);
+			return false;
+		}
+		
+		if (horaFin.isBefore(horaInicio) && !horaFin.equals(LocalTime.of(00, 00))) {
+			JOptionPane.showMessageDialog(null, "La hora de finalización no puede ser anterior a la de inicio", "Error", JOptionPane.ERROR_MESSAGE);
+			return false;
+		}
+		return true;
+	}
+
+	private static boolean checkStringHour(String[] horaInicioStr, String[] horaFinStr) {
 		if (horaFinStr[0].equals("__")) {
 			JOptionPane.showMessageDialog(null, "No puedes dejar la hora de finalización vacía.", "Error", JOptionPane.ERROR_MESSAGE);
 			return false;
@@ -44,39 +88,6 @@ public class Util {
 			JOptionPane.showMessageDialog(null, "Hora inválida", "Error", JOptionPane.ERROR_MESSAGE);
 			return false;
 		}
-		
-		LocalTime horaInicio = LocalTime.of(Integer.parseInt(horaInicioStr[0]),Integer.parseInt(horaInicioStr[1]));
-		LocalTime horaFin = LocalTime.of(Integer.parseInt(horaFinStr[0]),Integer.parseInt(horaFinStr[1]));
-		
-		if (horaInicio.isBefore(LocalTime.of(ReservationController.HORARIO_INICIO, 00)) || horaFin.isAfter(LocalTime.of(ReservationController.HORARIO_FIN, 00))) {
-			JOptionPane.showMessageDialog(null, "El horario de reservas es de " + LocalTime.of(ReservationController.HORARIO_INICIO, 00).toString()
-					+ " a " + LocalTime.of(ReservationController.HORARIO_FIN, 00),
-					"Error", JOptionPane.ERROR_MESSAGE);
-			return false;
-		}			
-		
-		if (horaInicio.equals(LocalTime.of(22, 00)) && horaFin.equals(LocalTime.of(00, 00))) {
-			JOptionPane.showMessageDialog(null, "A partir de las 22:00 solo se puede reservar durante " + horaMin + " hora.", "Error", JOptionPane.ERROR_MESSAGE);
-			return false;
-		}
-		
-		if (horaFin.isBefore(horaInicio) && !horaFin.equals(LocalTime.of(00, 00))) {
-			JOptionPane.showMessageDialog(null, "La hora de finalización no puede ser anterior a la de inicio", "Error", JOptionPane.ERROR_MESSAGE);
-			return false;
-		}
-		
-		LocalTime horaSumada = horaInicio.plusHours(horaMax);
-		
-		if (!horaSumada.equals(horaFin) && (horaSumada.isBefore(horaFin) && !horaSumada.equals(LocalTime.of(00, 00)))) {
-			JOptionPane.showMessageDialog(null, "La instalación solo se puede reservar por " + horaMax + " horas como máximo.", "Error", JOptionPane.ERROR_MESSAGE);
-			return false;
-		}
-		
-		if (horaInicio.equals(horaFin)) {
-			JOptionPane.showMessageDialog(null, "La duración minima de la reserva es de " + horaMin + " hora.", "Error", JOptionPane.ERROR_MESSAGE);
-			return false;
-		}
-		
 		return true;
 	}
 
