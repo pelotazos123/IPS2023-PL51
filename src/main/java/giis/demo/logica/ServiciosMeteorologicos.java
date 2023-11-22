@@ -1,8 +1,5 @@
 package giis.demo.logica;
 import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.FileWriter;
-import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -23,7 +20,6 @@ public class ServiciosMeteorologicos {
 			+ "location='Uvieu,Asturies,España'&apikey=8RfHsl5zKwBjPPRndZRuyCbdDZsahX4C";
 //	private static final String API_URL = "https://api.tomorrow.io/v4/weather/forecast?"
 //	+ "location='Brasilia'&apikey=8RfHsl5zKwBjPPRndZRuyCbdDZsahX4C";
-//	 TODO MODIFICAR LOCATION PARA PONERLO DONDE DIGA
 	
 	private static final String CARGAINSTALACIONES = "select code, name from instalaciones";
 	
@@ -70,13 +66,11 @@ public class ServiciosMeteorologicos {
 				checkInstalationes(dto, day);
 			}
 			rc.getReservas();
-			// TODO Borrar
-			String path = "src/main/resources/files/json.txt";
-			writeToTxt(linesAux, path);
 			
 		} catch (Exception e/*IOException e*/) {
 			e.printStackTrace();
 			e.toString();
+			System.out.println("Localización no encontrada");
 		} finally {
 			connection.disconnect();
 		}
@@ -87,104 +81,81 @@ public class ServiciosMeteorologicos {
 		if(hour > 8 && hour < 23) {
 			List<Object[]> instalaciones = vp.getDb().executeQueryArray(CARGAINSTALACIONES);
 			for(Object[] instalacion: instalaciones) {
-			if(instalacion[1].equals("Tiro con arco"))
-				checkTiroConArco(weather, instalacion[0].toString(), day);
-			else if(instalacion[1].equals("Campo de fútbol"))
-				checkFutbol(weather, instalacion[0].toString(), day);
-			else if(instalacion[1].equals("Pista de tenis"))
-				checkTenis(weather, instalacion[0].toString(), day);
+				switch (instalacion[1].toString()) {
+				case "Tiro con arco":
+					checkTiroConArco(weather, instalacion[0].toString(), day);
+					break;
+				case "Pista de tenis":
+					checkTenis(weather, instalacion[0].toString(), day);
+					break;
+				case "Campo de fútbol":
+					checkFutbol(weather, instalacion[0].toString(), day);
+					break;
+				default:
+					break;
+				}
 			}
 		}
 	}
-
+	
+	
+	/*
+	 * SI HAY CONDICIONES ADVERSAS if(HAY RESERVA Y NO ES ANULADA) BORRA DE RESERVAS
+	 * RESERVA PARA ANULAR SI NO HAY CONDICIONES ADVERSAS Y HAY RESERVA ANULADA
+	 * if(HAY RESERVA ANULADA) BORRA RESERVA
+	 */
 	private void checkTenis(WeatherDto weather, String idInst, LocalDateTime day) {
-		// TODO Añadir tipo a la tabla reserva?
 		DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
 		String reserva = day.format(dtf);
 		if(weather.rainAccumulationLwe >= 0.10 || weather.temperatureApparent >= 40.0 
 				|| weather.snowAccumulationLwe >= 0.1) {
-//			if(HAY RESERVA Y NO ES ANULADA)
 			if(rc.getReservasNoAnuladasHora(reserva, idInst)) {
-				//BORRA DE RESERVAS 
 				rc.borraReserva(idInst, reserva);
 			}
-			//RESERVA PARA ANULAR
 			rc.anular(day, reserva, idInst);
-		//SI NO HAY CONDICIONES ADVERSAS Y HAY RESERVA ANULADA
 		} else {
-//			if(HAY RESERVA ANULADA)
 			if(rc.getReservasAnuladasHora(reserva, idInst))
-//			BORRA RESERVA
 				rc.borraReserva(idInst, reserva);
 		}
 			
 	}
 
 	private void checkFutbol(WeatherDto weather, String idInst, LocalDateTime day) {
-		//TODO y cambiar condiciones para anular
 		DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
 		String reserva = day.format(dtf);
-		//SI HAY CONDICIONES ADVERSAS...
 		if(weather.rainAccumulationLwe >= 1.0 || weather.temperatureApparent >= 40.0 
 				|| weather.snowAccumulationLwe >= 0.5) {
-//			if(HAY RESERVA Y NO ES ANULADA)
-			if(rc.getReservasNoAnuladasHora(reserva, idInst))
-				//BORRA DE RESERVAS 
+			if(rc.getReservasNoAnuladasHora(reserva, idInst)) 
 				rc.borraReserva(idInst, reserva);
-			//RESERVA PARA ANULAR
 			rc.anular(day, reserva, idInst);
-		//SI NO HAY CONDICIONES ADVERSAS Y HAY RESERVA ANULADA
 		} else {
-//			if(HAY RESERVA ANULADA)
 			if(rc.getReservasAnuladasHora(reserva, idInst))
-//			BORRA RESERVA
 				rc.borraReserva(idInst, reserva);
 		}
 	}
 
 	private void checkTiroConArco(WeatherDto weather, String idInst, LocalDateTime day) {
-		//TODO y cambiar condiciones de anulación
 		DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
 		String reserva = day.format(dtf);
-		//SI HAY CONDICIONES ADVERSAS...
 		if(weather.rainAccumulationLwe >= 0.05 || weather.temperatureApparent >= 40.0 
 				|| weather.snowAccumulationLwe >= 0.05 || weather.windSpeed >= 7) {
-//			if(HAY RESERVA Y NO ES ANULADA)
 			if(rc.getReservasNoAnuladasHora(reserva, idInst))
-				//BORRA DE RESERVAS 
 				rc.borraReserva(idInst, reserva);
-			//RESERVA PARA ANULAR
 			rc.anular(day, reserva, idInst);
-		//SI NO HAY CONDICIONES ADVERSAS Y HAY RESERVA ANULADA
 		} else {
-//			if(HAY RESERVA ANULADA)
 			if(rc.getReservasAnuladasHora(reserva, idInst))
-//			BORRA RESERVA
 				rc.borraReserva(idInst, reserva);
 		}
 	}
 
-	public static void writeToTxt(String[] array, String filePath) {
-		try (BufferedWriter writer = new BufferedWriter(new FileWriter(filePath))) {
-			// Iterar sobre el array y escribir cada elemento en una línea del archivo
-			for (String element : array) {
-				writer.write(element + "\n");
-				writer.newLine(); // Agregar un salto de línea después de cada elemento
-			}
-//			System.out.println("Datos escritos en el archivo correctamente.");
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-	}
-	
 	class WeatherDto {
 		LocalDateTime hora;
 		double temperature;
 		double precipitationProbability;
 		double windSpeed;			
-		double rainIntensity;		//MAYOR QUE 10
+		double rainIntensity;
 		double rainAccumulationLwe;
-		double temperatureApparent;		//MAYOR QUE 40
+		double temperatureApparent;			
 		double humidity;
 		double iceAccumulationLwe;
 		double snowAccumulationLwe;
