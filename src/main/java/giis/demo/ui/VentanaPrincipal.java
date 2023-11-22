@@ -30,6 +30,7 @@ import javax.swing.border.TitledBorder;
 
 import com.toedter.calendar.JDateChooser;
 
+import giis.demo.business.ActasController;
 import giis.demo.business.AsambleasController;
 import giis.demo.business.AsambleasModel;
 import giis.demo.business.GestionRecibosController;
@@ -65,6 +66,7 @@ public class VentanaPrincipal extends JFrame {
 	private VentanaListaSocios vLS;
 	private JButton btnReservas;
 	private JButton btnAsambleas;
+	private JButton btnActas;
 	private JButton btnListadoSocios;
 	private JButton btnAñadirCompeticiones;
 	private Database db;
@@ -298,6 +300,22 @@ public class VentanaPrincipal extends JFrame {
 		}
 		return btnAsambleas;
 	}
+	private JButton getBtnActas() {
+		if (btnActas == null) {
+			btnActas = new JButton("Añadir actas");
+			btnActas.addActionListener(new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					ActasView view = new ActasView();
+					AsambleasModel model = new AsambleasModel(db);
+					ActasController controller = new ActasController(model, view);
+
+					controller.initController();
+				}
+			});
+		}
+		return btnActas;
+	}
 	private JButton getBtnListadoSocios() {
 		if (btnListadoSocios == null) {
 			btnListadoSocios = new JButton("Ver socios");
@@ -469,6 +487,7 @@ public class VentanaPrincipal extends JFrame {
 			pnBotonesDeportivoDirectivo.add(getBtTestsFisiologicos());
 			pnBotonesDeportivoDirectivo.add(getBtInscripcionCompeticiones());
 			pnSeccionDirectivoAdministracion.add(getBtnAsambleas());
+			pnSeccionDirectivoAdministracion.add(getBtnActas());
 			pnSeccionDirectivoAdministracion.add(getBtnGeneracionRecibos());
 			pnSeccionDirectivoAdministracion.add(getBtnGestionRecibos());
 			pnSeccionDirectivoAdministracion.add(getBtnListadoSocios());
