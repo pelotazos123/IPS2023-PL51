@@ -17,7 +17,6 @@ public class ReservationController {
 	
 	private Database db;
 	
-//	private final static String SQL_CARGAR_RESERVA = "SELECT id, fecha, instalation_code, extra, tipo FROM reservas ";
 	private final static String SQL_CREAR_RESERVA = "INSERT INTO reservas(fecha, instalation_code, extra, tipo) VALUES (?, ?, ?, 'NORMAL')";
 	private final static String SQL_ID_RESERVA = "SELECT seq FROM sqlite_sequence where name='reservas'";
 	private final static String SQL_CARGAR_PARTICIPANTES = "SELECT * FROM participante_reserva";
