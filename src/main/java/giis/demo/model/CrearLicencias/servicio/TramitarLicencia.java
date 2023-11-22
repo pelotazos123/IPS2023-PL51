@@ -6,6 +6,7 @@ import java.util.List;
 
 import giis.demo.model.Generos;
 import giis.demo.model.Socio;
+import giis.demo.model.TiposDeportes;
 import giis.demo.model.CrearLicencias.EstadosLicencia;
 import giis.demo.model.CrearLicencias.Licencia;
 import giis.demo.model.CrearLicencias.TiposLicencia;
@@ -65,9 +66,9 @@ public class TramitarLicencia {
 		socio.insertarSocio();
 	}
 	
-	public void crearLicencia(String nombre,String apellido,String dni,int telf,String correo, LocalDate fecha, Generos genero, String direccion, String info, TiposLicencia licencia) {
+	public void crearLicencia(String nombre,String apellido,String dni,int telf,String correo, LocalDate fecha, Generos genero, String direccion, String info, TiposLicencia licencia, TiposDeportes deporte) {
 		licenciaSeleccionada = new Licencia(socio.getId(), db);
-		this.licenciaSeleccionada.crearLicencia(dni, nombre, apellido, correo, telf, fecha, genero, direccion, info, licencia);
+		this.licenciaSeleccionada.crearLicencia(dni, nombre, apellido, correo, telf, fecha, genero, direccion, info, licencia, deporte);
 		licenciasDelSocio.add(licenciaSeleccionada);
 	}
 	
@@ -161,8 +162,8 @@ public class TramitarLicencia {
 	
 
 	
-	public void modificarDatosLicencia(String dni, String nombre,String apellido, String correo, int telf, LocalDate fecha, Generos genero, String direccion, String info) {
-		this.licenciaSeleccionada.modificarDatos(dni, nombre, apellido, correo, telf, fecha, genero, direccion, info);
+	public void modificarDatosLicencia(String dni, String nombre,String apellido, String correo, int telf, LocalDate fecha, Generos genero, String direccion, String info, TiposDeportes deporte) {
+		this.licenciaSeleccionada.modificarDatos(dni, nombre, apellido, correo, telf, fecha, genero, direccion, info, deporte);
 	}
 	
 	public void modificarDatosSocio(String dni, String nombre, String apellido, Generos genero, int telfSocio, String correoSocio, LocalDate fecha) {
@@ -272,5 +273,14 @@ public class TramitarLicencia {
 	
 	public Socio getUsuario() {
 		return esDirectivo()? getDirectivo():getSocio();
+	}
+	
+	public boolean estaFederado(TiposDeportes tipo) {
+		for (Licencia licencia : licenciasDelSocio) {
+			if(licencia.getDeporte().equals(tipo)) {
+				return true;
+			}
+		}
+		return false;
 	}
 }

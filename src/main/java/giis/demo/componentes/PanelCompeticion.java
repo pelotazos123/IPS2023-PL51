@@ -38,7 +38,7 @@ public class PanelCompeticion extends JPanel{
 	private JButton btInscribirse;
 	private JButton btSacarListado;
 	
-	public PanelCompeticion(VentanaInscripcionCompeticiones vC, Competicion c) {
+	public PanelCompeticion(VentanaInscripcionCompeticiones vC, Competicion c, boolean inscrito) {
 		setBackground(Color.WHITE);
 		setBorder(new LineBorder(Color.BLACK));
 		this.vC = vC;
@@ -49,10 +49,10 @@ public class PanelCompeticion extends JPanel{
 		add(getTxCategorias());
 		add(getPnBoton());
 		compe = c;
-		cargarDatos();
+		cargarDatos(inscrito);
 	}
 
-	private void cargarDatos() {
+	private void cargarDatos(boolean inscrito) {
 		getLbNombre().setText(compe.getNombre());
 		getLbFecha().setText(compe.getFecha().toString());
 		getLbLugar().setText(compe.getLugar());
@@ -66,6 +66,9 @@ public class PanelCompeticion extends JPanel{
 			getPnBoton().add(getBtSacarListado());
 		}else {
 			getPnBoton().add(getBtInscribirse());
+			if(inscrito) {
+				getBtInscribirse().setEnabled(false);
+			}
 		}
 	}
 
@@ -143,12 +146,18 @@ public class PanelCompeticion extends JPanel{
 			btInscribirse.setFont(new Font("Tahoma", Font.PLAIN, 15));
 			btInscribirse.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
-					vC.inscribirseEnCompeticion(compe);
+					inscribirse();
 				}
 			});
 		}
 		return btInscribirse;
 	}
+	
+	private void inscribirse() {
+		vC.inscribirseEnCompeticion(compe);
+		getBtInscribirse().setEnabled(false);
+	}
+	
 	private JButton getBtSacarListado() {
 		if (btSacarListado == null) {
 			btSacarListado = new JButton("Sacar listado");

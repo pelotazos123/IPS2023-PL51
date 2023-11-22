@@ -41,7 +41,7 @@ public class GestionarLoggin {
 		String contraseña = loggin.generarLoggin(dniUsuario);
 		String correoUsuario = getCorreoDeUsuario(dniUsuario);
 		String textoCorreo = "Contraseña generada: "+contraseña+"\nPara modificarla acceda a su cuenta , pulse cambiar contraseña e introduzca la nueva contraseña";
-		return enviarCorreos.enviarCorreo(correoUsuario, textoCorreo);
+		return enviarCorreos.enviarCorreo(correoUsuario, "Nueva contraseña", textoCorreo);
 	}
 	
 	public boolean restablecerContraseña(String dniUsuario,String correoUsuario) {
@@ -50,7 +50,7 @@ public class GestionarLoggin {
 		}
 		String contraseña = loggin.restablecerContraseña(dniUsuario);
 		String textoCorreo = "Contraseña restablecida: "+contraseña+"\nPara modificarla acceda a su cuenta , pulse cambiar contraseña e introduzca la nueva contraseña";
-		return enviarCorreos.enviarCorreo(getCorreoDeUsuario(dniUsuario), textoCorreo);
+		return enviarCorreos.enviarCorreo(getCorreoDeUsuario(dniUsuario), "Nueva contraseña", textoCorreo);
 	}
 
 	public void cambiarContraseña(String dniUsuario, char[] nuevaContraseña) {
