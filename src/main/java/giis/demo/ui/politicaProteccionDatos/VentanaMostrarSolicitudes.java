@@ -14,6 +14,8 @@ import javax.swing.border.EmptyBorder;
 
 import giis.demo.componentes.PanelSolicitudes;
 import giis.demo.model.politicaDeDatos.PoliticaDeDatos;
+import java.awt.BorderLayout;
+import javax.swing.border.LineBorder;
 
 public class VentanaMostrarSolicitudes extends JFrame {
 
@@ -23,6 +25,17 @@ public class VentanaMostrarSolicitudes extends JFrame {
 	
 	private JPanel pnPrincipal;
 	private JLabel lbSolicitudes;
+	private JPanel pnSolicitudes;
+	private JPanel pnLellenda;
+	private JPanel pnNombre;
+	private JLabel lblDni;
+	private JPanel pnFecha;
+	private JLabel lblNombre;
+	private JPanel pnLugar;
+	private JLabel lblApellidos;
+	private JPanel pnCategorias;
+	private JLabel lblCorreo;
+	private JPanel pnBoton;
 
 	/**
 	 * Create the frame.
@@ -33,28 +46,30 @@ public class VentanaMostrarSolicitudes extends JFrame {
 		setTitle("Club Deportivo");
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		setBackground(Color.WHITE);
-		setLocationRelativeTo(null);
-		setMinimumSize(new Dimension(1400, 477));
+		setMinimumSize(new Dimension(800, 517));
 		setBounds(100, 100, 450, 300);
 		pnPrincipal = new JPanel();
 		pnPrincipal.setBackground(Color.WHITE);
 		pnPrincipal.setBorder(new EmptyBorder(5, 5, 5, 5));
 
 		setContentPane(pnPrincipal);
-		pnPrincipal.setLayout(new GridLayout(0, 1, 0, 0));
+		pnPrincipal.setLayout(new BorderLayout(0, 0));
+		pnPrincipal.add(getPnSolicitudes());
+		pnPrincipal.add(getPnLellenda(), BorderLayout.NORTH);
+		setLocationRelativeTo(null);
 		crearPanelesSolicitudes();
 	}
 	
 	private void crearPanelesSolicitudes() {
-		pnPrincipal.removeAll();
+		getPnSolicitudes().removeAll();
 		PanelSolicitudes elemento;
 		List<Object[]> solicitudes = politicaDeDatos.cargarSolicitudesDeModificacionDeDatos();
 		if(solicitudes.isEmpty()) {
-			pnPrincipal.add(getLbSolicitudes());
+			getPnSolicitudes().add(getLbSolicitudes());
 		}
 		for (Object[] solicitud : solicitudes) {
 			elemento = new PanelSolicitudes(this,solicitud);
-			pnPrincipal.add(elemento);
+			getPnSolicitudes().add(elemento);
 		}
 		validate();
 	}
@@ -71,5 +86,94 @@ public class VentanaMostrarSolicitudes extends JFrame {
 			lbSolicitudes.setHorizontalAlignment(SwingConstants.CENTER);
 		}
 		return lbSolicitudes;
+	}
+	private JPanel getPnSolicitudes() {
+		if (pnSolicitudes == null) {
+			pnSolicitudes = new JPanel();
+			pnSolicitudes.setBackground(Color.WHITE);
+			pnSolicitudes.setLayout(new GridLayout(0, 1, 0, 0));
+		}
+		return pnSolicitudes;
+	}
+	private JPanel getPnLellenda() {
+		if (pnLellenda == null) {
+			pnLellenda = new JPanel();
+			pnLellenda.setBorder(new LineBorder(new Color(0, 0, 0)));
+			pnLellenda.setBackground(Color.WHITE);
+			pnLellenda.setLayout(new GridLayout(1, 1, 0, 0));
+			pnLellenda.add(getPnNombre());
+			pnLellenda.add(getPnFecha());
+			pnLellenda.add(getPnLugar());
+			pnLellenda.add(getPnCategorias());
+			pnLellenda.add(getPnBoton());
+		}
+		return pnLellenda;
+	}
+	private JPanel getPnNombre() {
+		if (pnNombre == null) {
+			pnNombre = new JPanel();
+			pnNombre.setBackground(Color.WHITE);
+			pnNombre.add(getLblDni());
+		}
+		return pnNombre;
+	}
+	private JLabel getLblDni() {
+		if (lblDni == null) {
+			lblDni = new JLabel("Dni");
+			lblDni.setFont(new Font("Tahoma", Font.PLAIN, 15));
+		}
+		return lblDni;
+	}
+	private JPanel getPnFecha() {
+		if (pnFecha == null) {
+			pnFecha = new JPanel();
+			pnFecha.setBackground(Color.WHITE);
+			pnFecha.add(getLblNombre());
+		}
+		return pnFecha;
+	}
+	private JLabel getLblNombre() {
+		if (lblNombre == null) {
+			lblNombre = new JLabel("Nombre");
+			lblNombre.setFont(new Font("Tahoma", Font.PLAIN, 15));
+		}
+		return lblNombre;
+	}
+	private JPanel getPnLugar() {
+		if (pnLugar == null) {
+			pnLugar = new JPanel();
+			pnLugar.setBackground(Color.WHITE);
+			pnLugar.add(getLblApellidos());
+		}
+		return pnLugar;
+	}
+	private JLabel getLblApellidos() {
+		if (lblApellidos == null) {
+			lblApellidos = new JLabel("Apellidos");
+			lblApellidos.setFont(new Font("Tahoma", Font.PLAIN, 15));
+		}
+		return lblApellidos;
+	}
+	private JPanel getPnCategorias() {
+		if (pnCategorias == null) {
+			pnCategorias = new JPanel();
+			pnCategorias.setBackground(Color.WHITE);
+			pnCategorias.add(getLblCorreo());
+		}
+		return pnCategorias;
+	}
+	private JLabel getLblCorreo() {
+		if (lblCorreo == null) {
+			lblCorreo = new JLabel("Correo");
+			lblCorreo.setFont(new Font("Tahoma", Font.PLAIN, 15));
+		}
+		return lblCorreo;
+	}
+	private JPanel getPnBoton() {
+		if (pnBoton == null) {
+			pnBoton = new JPanel();
+			pnBoton.setBackground(Color.WHITE);
+		}
+		return pnBoton;
 	}
 }

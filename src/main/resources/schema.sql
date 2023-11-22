@@ -15,6 +15,7 @@ drop table competiciones;
 drop table inscripcion_competiciones;
 drop table test;
 DROP TABLE entrenados;
+drop table solicitudesModificacionDatos;
 
 
 create table socios (id int, dni varchar2(255), name varchar2(255),surname varchar2(255), email varchar2(255), telf int, cuota_type varchar2(255), iban varchar2(255), height real, weight real, birth_date date, gender varchar2(255), directive bool);
