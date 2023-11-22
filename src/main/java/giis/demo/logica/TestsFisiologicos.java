@@ -37,12 +37,16 @@ public class TestsFisiologicos {
 		this.vst = vst;
 		this.db = vst.getVp().getDb();
 		this.tl = vst.getVp().getTramitarLicencia();
+		asignaId();
+		if (esEntrenador())
+			this.idEntrenados = getEntrenados();
+	}
+
+	private void asignaId() {
 		if (tl.esDirectivo())
 			this.id = tl.getDirectivo().getId();
 		else
 			this.id = tl.getSocio().getId();
-		if (esEntrenador())
-			this.idEntrenados = getEntrenados();
 	}
 
 	private int[] getEntrenados() {
