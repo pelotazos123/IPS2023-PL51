@@ -38,9 +38,12 @@ import giis.demo.business.RecibosModel;
 import giis.demo.model.CrearLicencias.servicio.TramitarLicencia;
 import giis.demo.model.competiciones.servicio.GestionarCompeticiones;
 import giis.demo.model.loggin.servicio.GestionarLoggin;
+import giis.demo.model.politicaDeDatos.PoliticaDeDatos;
 import giis.demo.ui.competiciones.VentanaInscripcionCompeticiones;
 import giis.demo.ui.licencias.VentanaRenovarLicencia;
 import giis.demo.ui.licencias.VentanaTramitarLicencia;
+import giis.demo.ui.politicaProteccionDatos.VentanaMostrarSolicitudes;
+import giis.demo.ui.politicaProteccionDatos.VentanaVerDatos;
 import giis.demo.util.Database;
 
 public class VentanaPrincipal extends JFrame {
@@ -53,6 +56,7 @@ public class VentanaPrincipal extends JFrame {
 	private TramitarLicencia tramitarLicencia;
 	private GestionarLoggin loggin;
 	private GestionarCompeticiones gestorCompeticiones;
+	private PoliticaDeDatos politicaDeDatos;
 	
 	private JPanel pnPrincipal;
 	private JPanel pnPrincipalSocio;
@@ -90,6 +94,8 @@ public class VentanaPrincipal extends JFrame {
 	private JLabel lblDniDelUsuario;
 	private JTextField txDniUsuario;
 	private JButton btCambiarContraseña;
+	private JButton btVerDatos;
+	private JButton btVerSolicitudes;
 	private JPanel pnSelectorFechaSocio;
 	private JLabel lbSeleccionarFechaSocio;
 	private JPanel pnSeccionSocio;
@@ -131,6 +137,7 @@ public class VentanaPrincipal extends JFrame {
 		tramitarLicencia = new TramitarLicencia(db);
 		loggin = new GestionarLoggin(db);
 		gestorCompeticiones = new GestionarCompeticiones(db);
+		politicaDeDatos = new PoliticaDeDatos(db);
 		cargarFecha();
 		setMinimumSize(new Dimension(517, 517));
 	}
@@ -471,6 +478,7 @@ public class VentanaPrincipal extends JFrame {
 			pnSeccionDirectivoAdministracion.add(getBtnGestionRecibos());
 			pnSeccionDirectivoAdministracion.add(getBtnListadoSocios());
 			pnSeccionDirectivoAdministracion.add(getBtnAñadirCompeticiones());
+			pnSeccionDirectivoAdministracion.add(getBtVerSolicitudes());
 			
 			getLbBienvenidoDirectivo().setText("Bienvenido al club "+tramitarLicencia.getDirectivo().getNombre());
 			
@@ -485,6 +493,7 @@ public class VentanaPrincipal extends JFrame {
 			pnSeccionSocioPersonal.add(getBtCambiarContraseña());
 			pnSelectorFechaSocio.add(getDcFechaAplicacion());
 			pnBotonesDeportiva.add(getBtTestsFisiologicos());
+			pnSeccionSocioPersonal.add(getBtVerDatos());
 			getLbBienvenidoSocio().setText("Bienvenido al club "+tramitarLicencia.getSocio().getNombre());
 			((CardLayout)pnPrincipal.getLayout()).show(pnPrincipal,"PrincipalSocio");
 			setMinimumSize(new Dimension(800, 517));
@@ -643,6 +652,7 @@ public class VentanaPrincipal extends JFrame {
 		}
 		return txDniUsuario;
 	}
+	
 	private JButton getBtCambiarContraseña() {
 		if (btCambiarContraseña == null) {
 			btCambiarContraseña = new JButton("Cambiar Contraseña");
@@ -873,6 +883,34 @@ public class VentanaPrincipal extends JFrame {
 		return dcFechaAplicacion;
 	}
 	
+	private JButton getBtVerDatos() {
+		if (btVerDatos == null) {
+			btVerDatos = new JButton("Ver Datos");
+			btVerDatos.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					VentanaVerDatos frame = new VentanaVerDatos(tramitarLicencia, politicaDeDatos);
+					frame.setVisible(true);
+				}
+			});
+			btVerDatos.setBounds(584, 269, 134, 54);
+		}
+		return btVerDatos;
+	}
+	
+	private JButton getBtVerSolicitudes() {
+		if (btVerSolicitudes == null) {
+			btVerSolicitudes = new JButton("Ver Solicitudes");
+			btVerSolicitudes.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					VentanaMostrarSolicitudes frame = new VentanaMostrarSolicitudes(politicaDeDatos);
+					frame.setVisible(true);
+				}
+			});
+			btVerSolicitudes.setBounds(584, 269, 134, 54);
+		}
+		return btVerSolicitudes;
+	}
+	
 	private class PasswordPane {
 		
 		private JPanel pn;
@@ -894,5 +932,6 @@ public class VentanaPrincipal extends JFrame {
 		public JPanel getPn() {
 			return pn;
 		}
+
 	}
 }

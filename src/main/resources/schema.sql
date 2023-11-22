@@ -33,3 +33,4 @@ create table competiciones (id int, name varchar2(255), competition_date date, p
 create table asambleas (type varchar2(255), announcement varchar2(255), date_announcement1 date, date_announcement2 date, orderOfDay varchar2(255), acta varchar2(255));
 create table inscripcion_competiciones(competicion_id int, socio_id int, foreign key(competicion_id) references competiciones(id), foreign key(socio_id) references socios(id));
 create table entrenados(entrenador_id int, entrenado_id);
+create table solicitudesModificacionDatos(id integer PRIMARY KEY AUTOINCREMENT, dni varchar2(255) NOT NULL, name varchar2(255), surname varchar2(255), email varchar2(255));
