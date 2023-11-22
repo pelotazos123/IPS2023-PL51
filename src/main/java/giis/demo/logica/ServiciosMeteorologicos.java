@@ -1,20 +1,25 @@
 package giis.demo.logica;
 import java.io.BufferedReader;
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.Properties;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import giis.demo.business.ReservationController;
 import giis.demo.ui.VentanaPrincipal;
+import giis.demo.util.ApplicationException;
 
 public class ServiciosMeteorologicos {
 
+	private static final String APP_PROPERTIES = "src/main/resources/application.properties";
 //	 private static final String API_KEY = "8RfHsl5zKwBjPPRndZRuyCbdDZsahX4C";
 	private static final String API_URL = "https://api.tomorrow.io/v4/weather/forecast?"
 			+ "location='Uvieu,Asturies,España'&apikey=8RfHsl5zKwBjPPRndZRuyCbdDZsahX4C";
@@ -23,12 +28,24 @@ public class ServiciosMeteorologicos {
 	
 	private static final String CARGAINSTALACIONES = "select code, name from instalaciones";
 	
+	
 	private VentanaPrincipal vp;
 	private ReservationController rc;
+	private Properties prop;
 	
 	public ServiciosMeteorologicos(VentanaPrincipal vp) {
 		this.vp = vp;
 		this.rc = new ReservationController(vp.getDb());
+		cargaProperties();
+	}
+
+	private void cargaProperties() {
+		prop = new Properties();
+		try (FileInputStream fs=new FileInputStream(APP_PROPERTIES)) {
+			prop.load(fs);
+		} catch (IOException e) {
+			throw new ApplicationException(e);
+		}
 	}
 
 	public void checkTiempo() {
@@ -76,9 +93,11 @@ public class ServiciosMeteorologicos {
 		}
 	}
 
-	private void checkInstalationes(WeatherDto weather, LocalDateTime day) {
+	private void checkInstalationes(WeatherDto weather, LocalDateTime day) {		
+		int horaApertura = Integer.parseInt(prop.getProperty("club.horaApertura"));
+		int horaCierre = Integer.parseInt(prop.getProperty("club.horaCierre"));
 		int hour = weather.hora.getHour();
-		if(hour > 8 && hour < 23) {
+		if(hour >= horaApertura && hour < horaCierre) {
 			List<Object[]> instalaciones = vp.getDb().executeQueryArray(CARGAINSTALACIONES);
 			for(Object[] instalacion: instalaciones) {
 				switch (instalacion[1].toString()) {
@@ -107,8 +126,11 @@ public class ServiciosMeteorologicos {
 	private void checkTenis(WeatherDto weather, String idInst, LocalDateTime day) {
 		DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
 		String reserva = day.format(dtf);
-		if(weather.rainAccumulationLwe >= 0.10 || weather.temperatureApparent >= 40.0 
-				|| weather.snowAccumulationLwe >= 0.1) {
+		double rain = Double.parseDouble(prop.getProperty("weather.tenis.rain"));
+		double temperature = Double.parseDouble(prop.getProperty("weather.temperature"));
+		double snow = Double.parseDouble(prop.getProperty("weather.tenis.snow"));
+		if(weather.rainAccumulationLwe >= rain || weather.temperatureApparent >= temperature
+				|| weather.snowAccumulationLwe >= snow) {
 			if(rc.getReservasNoAnuladasHora(reserva, idInst)) {
 				rc.borraReserva(idInst, reserva);
 			}
@@ -123,8 +145,11 @@ public class ServiciosMeteorologicos {
 	private void checkFutbol(WeatherDto weather, String idInst, LocalDateTime day) {
 		DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
 		String reserva = day.format(dtf);
-		if(weather.rainAccumulationLwe >= 1.0 || weather.temperatureApparent >= 40.0 
-				|| weather.snowAccumulationLwe >= 0.5) {
+		double rain = Double.parseDouble(prop.getProperty("weather.futbol.rain")); 
+		double temperature = Double.parseDouble(prop.getProperty("weather.temperature"));
+		double snow = Double.parseDouble(prop.getProperty("weather.futbol.snow")); 
+		if(weather.rainAccumulationLwe >= rain || weather.temperatureApparent >= temperature 
+				|| weather.snowAccumulationLwe >= snow) {
 			if(rc.getReservasNoAnuladasHora(reserva, idInst)) 
 				rc.borraReserva(idInst, reserva);
 			rc.anular(day, reserva, idInst);
@@ -137,8 +162,12 @@ public class ServiciosMeteorologicos {
 	private void checkTiroConArco(WeatherDto weather, String idInst, LocalDateTime day) {
 		DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
 		String reserva = day.format(dtf);
-		if(weather.rainAccumulationLwe >= 0.05 || weather.temperatureApparent >= 40.0 
-				|| weather.snowAccumulationLwe >= 0.05 || weather.windSpeed >= 7) {
+		double rain = Double.parseDouble(prop.getProperty("weather.arco.rain"));
+		double temperature = Double.parseDouble(prop.getProperty("weather.temperature"));
+		double snow = Double.parseDouble(prop.getProperty("weather.arco.snow"));
+		double wind = Double.parseDouble(prop.getProperty("weather.arco.wind"));
+		if(weather.rainAccumulationLwe >= rain || weather.temperatureApparent >= temperature
+				|| weather.snowAccumulationLwe >= snow || weather.windSpeed >= wind) {
 			if(rc.getReservasNoAnuladasHora(reserva, idInst))
 				rc.borraReserva(idInst, reserva);
 			rc.anular(day, reserva, idInst);

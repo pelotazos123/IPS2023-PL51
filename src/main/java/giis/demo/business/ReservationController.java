@@ -17,19 +17,12 @@ public class ReservationController {
 	
 	private Database db;
 	
-	private final static String SQL_CARGAR_RESERVA = "SELECT id, fecha, instalation_code, extra, tipo FROM reservas ";
+//	private final static String SQL_CARGAR_RESERVA = "SELECT id, fecha, instalation_code, extra, tipo FROM reservas ";
 	private final static String SQL_CREAR_RESERVA = "INSERT INTO reservas(fecha, instalation_code, extra, tipo) VALUES (?, ?, ?, 'NORMAL')";
 	private final static String SQL_ID_RESERVA = "SELECT seq FROM sqlite_sequence where name='reservas'";
 	private final static String SQL_CARGAR_PARTICIPANTES = "SELECT * FROM participante_reserva";
 	private final static String SQL_CREAR_PARTICIPANTE = "INSERT INTO participante_reserva (reserva_id, dni) VALUES (?, ?)";
 	private final static String SQL_CARGAR_FECHAS_RESERVA = "SELECT DISTINCT fecha FROM reservas, participante_reserva WHERE participante_reserva.dni=? and reservas.instalation_code=?";
-	private final static String SQL_ANULAR = "INSERT INTO reservas(fecha, instalation_code, extra, tipo) "
-			+ "VALUES (?, ?, ?, 'ANULADA')"; 
-	private final static String SQL_CARGA_NO_ANULADAS = "select * from reservas where tipo == 'NORMAL' "
-			+ "and fecha = ? and instalation_code = ?";
-	private final static String SQL_BORRA_RESERVA = "delete from reservas where fecha = ? and instalation_code = ?";
-	private final static String SQL_CARGA_ANULADAS = "select * from reservas where tipo == 'ANULADA' "
-			+ "and fecha = ? and instalation_code = ?";
 	
 	public final static int HORA_MAXIMA = 2;
 	public final static int HORA_MINIMA = 1;
@@ -42,7 +35,6 @@ public class ReservationController {
 		this.db = db;
 	}
 	
-	//TODO NECESARIO? CAMBIAR A VOID?
 	public boolean anular(LocalDateTime dia, String reserva, String instalacionId) {
 		createAnulation(reserva, instalacionId);
 //		getReservas();
@@ -103,6 +95,7 @@ public class ReservationController {
 	}
 	
 	public List<Reserva> getReservas() {
+		String SQL_CARGAR_RESERVA = "SELECT id, fecha, instalation_code, extra, tipo FROM reservas ";
 		listaReservas.removeAll(listaReservas);
 		resQuery = db.executeQueryArray(SQL_CARGAR_RESERVA);
 		
@@ -156,18 +149,25 @@ public class ReservationController {
 	}
 	
 	private void createAnulation(String reserva, String instalacionId) {
+		String SQL_ANULAR = "INSERT INTO reservas(fecha, instalation_code, extra, tipo) "
+				+ "VALUES (?, ?, ?, 'ANULADA')"; 
 		db.executeUpdate(SQL_ANULAR, reserva, instalacionId, false);
 	}
 
 	public boolean getReservasNoAnuladasHora(String reserva, String idInst) {
+		String SQL_CARGA_NO_ANULADAS = "select * from reservas where tipo == 'NORMAL' "
+				+ "and fecha = ? and instalation_code = ?";
 		return !db.executeQueryArray(SQL_CARGA_NO_ANULADAS, reserva, idInst).isEmpty();
 	}
 
 	public void borraReserva(String idInst, String reserva) {
+		String SQL_BORRA_RESERVA = "delete from reservas where fecha = ? and instalation_code = ?";
 		db.executeUpdate(SQL_BORRA_RESERVA, reserva, idInst);
 	}
 
 	public boolean getReservasAnuladasHora(String reserva, String idInst) {
+		String SQL_CARGA_ANULADAS = "select * from reservas where tipo == 'ANULADA' "
+				+ "and fecha = ? and instalation_code = ?";
 		return !db.executeQueryArray(SQL_CARGA_ANULADAS, reserva, idInst).isEmpty();
 	}
 
