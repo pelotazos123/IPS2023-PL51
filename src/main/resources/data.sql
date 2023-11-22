@@ -76,3 +76,11 @@ insert into entrenados(entrenador_id, entrenado_id) values
 	(100, 104),
 	(100, 103),
 	(101, 105);
+	
+insert into asambleas(type, date, hour_conv1, hour_conv2, orderOfDay, acta) values 
+	('Ordinaria', '2023-12-01', '8:00', '8:30', 'Eleccion de presidente', 'Sin acta'),
+	('Ordinaria', '2023-11-01', '8:00', '8:30', 'Gestion de gastos', 'Sin acta'),
+	('Extraordinaria', '2023-10-10', '10:00', '11:00', 'Problemas de horarios', 'Sin acta'),
+	('Ordinaria', '2023-12-10', '8:00', '8:30', 'Gestion de gastos', 'Sin acta'),
+	('Extraordinaria', '2023-12-10', '14:00', '16:00', 'Nuevos entrenadores', 'Sin acta'),
+	('Extraordinaria', '2022-06-14', '10:00', '11:00', 'Problemas de horarios', 'Sin acta');
