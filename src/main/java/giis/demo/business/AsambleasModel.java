@@ -2,6 +2,7 @@ package giis.demo.business;
 
 import java.util.List;
 
+import giis.demo.business.entities.AsambleaEntity;
 import giis.demo.util.Database;
 
 public class AsambleasModel {
@@ -13,6 +14,9 @@ public class AsambleasModel {
 			+ "values (?,?,?,?,?, ?)";
 	
 	public static final String SQL_FIND_ASAMBLEAS =
+			"select * from asambleas";
+	
+	public static final String SQL_FIND_ASAMBLEAS_DAY =
 			"select * from asambleas where type = ? and announcement = ?";
 	
 	public static final String SQL_GET_CORREOS =
@@ -28,12 +32,16 @@ public class AsambleasModel {
 	}
 	
 	public boolean hasAsamblea(String type, String announcement) {
-		List<Object[]> list = db.executeQueryArray(SQL_FIND_ASAMBLEAS, type, announcement);
+		List<Object[]> list = db.executeQueryArray(SQL_FIND_ASAMBLEAS_DAY, type, announcement);
 		return !list.isEmpty();
 	}
 	
 	public List<Object[]> getCorreos() {
 		return db.executeQueryArray(SQL_GET_CORREOS);
+	}
+	
+	public List<AsambleaEntity> getListaAsambleas() {
+		return db.executeQueryPojo(AsambleaEntity.class, SQL_FIND_ASAMBLEAS);
 	}
 	
 }
