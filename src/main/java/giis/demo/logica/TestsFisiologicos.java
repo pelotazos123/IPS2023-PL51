@@ -25,21 +25,6 @@ public class TestsFisiologicos {
 	public static final String COOPER = "COOPER";
 	public static final String ROCKPORT = "ROCKPORT";
 
-	private static final String CARGAPESO = "select peso from test where id = ? and " + "tipo = 'ROCKPORT'";
-	private static final String CARGAEDAD = "select birth_date from socios where id = ?";
-	private static final String CARGASEXO = "select gender from socios where id = ? ";
-	private static final String INSERTROCKPORT = "insert into test(id, fecha, tipo, peso, "
-			+ "edad, sexo, tiempo, pulsaciones, resultado) values (?,?,'ROCKPORT',?,?,?,?,?,?)";
-	private static final String INSERTCOOPER = "insert into test(id, fecha, tipo, distance, "
-			+ "resultado) values (?,?,'COOPER',?,?)";
-	private static final String SELECTALL = "select fecha, resultado from test where id = ? and tipo = ? ";
-	private static final String ES_ENTRENADOR = "select * from licencias where "
-			+ "owner_id = ? and licence_type = 'MONITOR' ";
-	private static final String SELECT_ENTRENADOS = "select entrenado_id from entrenados where entrenador_id = ? ";
-	private static final String TIENE_TEST = "select * from test where id = ?";
-	private static final String TIENE_TEST_TIPO = "select * from test where id = ? and tipo = ? ";
-	private static final String GETNOMBREWITHID = "select name, surname from socios where id = ? ";
-
 	private Database db;
 	private int id;
 	private List<LocalDate> fechas;
@@ -61,6 +46,7 @@ public class TestsFisiologicos {
 	}
 
 	private int[] getEntrenados() {
+		String SELECT_ENTRENADOS = "select entrenado_id from entrenados where entrenador_id = ? ";
 		List<Object[]> entrenados = db.executeQueryArray(SELECT_ENTRENADOS, id);
 		int[] ids = new int[entrenados.size()];
 		for (int i = 0; i < entrenados.size(); i++) {
@@ -71,6 +57,8 @@ public class TestsFisiologicos {
 	}
 
 	public boolean esEntrenador() {
+		String ES_ENTRENADOR = "select * from licencias where "
+				+ "owner_id = ? and licence_type = 'MONITOR' ";
 		List<Object[]> esEntrenador = db.executeQueryArray(ES_ENTRENADOR, id);
 		return esEntrenador.size() != 0;
 	}
@@ -84,6 +72,8 @@ public class TestsFisiologicos {
 		int month = calendar.get(Calendar.MONTH) + 1;
 		int day = calendar.get(Calendar.DAY_OF_MONTH);
 		LocalDate date = LocalDate.of(year, month, day);
+		String INSERTCOOPER = "insert into test(id, fecha, tipo, distance, "
+				+ "resultado) values (?,?,'COOPER',?,?)";
 		db.executeUpdate(INSERTCOOPER, id, date.toString(), distance, resultado);
 		return resultado;
 	}
@@ -103,11 +93,14 @@ public class TestsFisiologicos {
 		int month = calendar.get(Calendar.MONTH) + 1;
 		int day = calendar.get(Calendar.DAY_OF_MONTH);
 		LocalDate date = LocalDate.of(year, month, day);
+		String INSERTROCKPORT = "insert into test(id, fecha, tipo, peso, "
+				+ "edad, sexo, tiempo, pulsaciones, resultado) values (?,?,'ROCKPORT',?,?,?,?,?,?)";
 		db.executeUpdate(INSERTROCKPORT, id, date.toString(), peso, edad, sexoAux, tiempo, pulsaciones, resultado);
 		return resultado;
 	}
 
 	public int cargaEdad(int id) {
+		String CARGAEDAD = "select birth_date from socios where id = ?";
 		List<Object[]> edad = db.executeQueryArray(CARGAEDAD, id);
 		LocalDate birth = LocalDate.parse(edad.get(0)[0].toString());
 		Date fecha = vst.getVp().getDcFecha().getDate();
@@ -121,16 +114,19 @@ public class TestsFisiologicos {
 	}
 
 	public String cargaSexo(int id) {
+		String CARGASEXO = "select gender from socios where id = ? ";
 		List<Object[]> sexo = db.executeQueryArray(CARGASEXO, id);
 		return sexo.get(0)[0].toString();
 	}
 
 	public int cargaPeso(int id) {
+		String CARGAPESO = "select peso from test where id = ? and " + "tipo = 'ROCKPORT'";
 		List<Object[]> peso = db.executeQueryArray(CARGAPESO, id);
 		return Integer.parseInt(peso.get(peso.size() - 1)[0] + "");
 	}
 
 	private void selectValores(int id, String tipo) {
+		String SELECTALL = "select fecha, resultado from test where id = ? and tipo = ? ";
 		List<Object[]> datos = db.executeQueryArray(SELECTALL, id, tipo);
 		int fechaAnterior = -1;
 		int añoAnterior = -1;
@@ -201,11 +197,13 @@ public class TestsFisiologicos {
 	}
 
 	public boolean tieneTest(int id) {
+		String TIENE_TEST = "select * from test where id = ?";
 		List<Object[]> testEntrenado = db.executeQueryArray(TIENE_TEST, id);
 		return testEntrenado.size() != 0;
 	}
 
 	public boolean tieneTestTipo(int id, String tipo) {
+		String TIENE_TEST_TIPO = "select * from test where id = ? and tipo = ? ";
 		List<Object[]> testEntrenado = db.executeQueryArray(TIENE_TEST_TIPO, id, tipo);
 		return testEntrenado.size() != 0;
 	}
@@ -215,14 +213,9 @@ public class TestsFisiologicos {
 	}
 
 	public String getNombre(int id) {
+		String GETNOMBREWITHID = "select name, surname from socios where id = ? ";
 		List<Object[]> name = db.executeQueryArray(GETNOMBREWITHID, id);
 		return name.get(0)[0].toString() + " " + name.get(0)[1].toString();
 	}
-	/*
-	 * TODO DESCOMENTAR SI ES NECESARIO O BORRAR SI NO LO ES public boolean
-	 * tieneEntrenados() { return getEntrenados().length != 0; }
-	 * 
-	 * public boolean entrenadoTieneTest() { for(int i = 0; i < idEntrenados.length;
-	 * i++) { if(tieneTest(idEntrenados[i])) return true; } return false; }
-	 */
+	
 }
