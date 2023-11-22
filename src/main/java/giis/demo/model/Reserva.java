@@ -3,42 +3,54 @@ package giis.demo.model;
 public class Reserva {
 
 	private int id;
-	private String fecha;
+	private String fechaInicio;
 	private String instalacionId;	
-	private String hora;
-	private boolean extra;
+	private String horaInicio;
+	private String fechaFin;
+	private String horaFin;
+	private String tipo_curso;
 	
-	public Reserva(int id, String fecha, String hora, String instalacionId, boolean extra) {
+	public Reserva(int id, String fechaInicio, String horaInicio, String fechaFin, String horaFin, String instalacionId, String tipo_curso) {
 		this.id = id;
-		this.fecha = fecha;
-		this.hora = hora;
+		this.fechaInicio = fechaInicio;
+		this.horaInicio = horaInicio;
 		this.instalacionId = instalacionId;
-		this.extra = extra;
+		this.fechaFin = fechaFin;
+		this.horaFin = horaFin;
+		this.tipo_curso = tipo_curso;
 	}
 	
+	public String getFechaInicio() {
+		return fechaInicio;
+	}
+
+	public String getHoraInicio() {
+		return horaInicio;
+	}
+
+	public String getFechaFin() {
+		return fechaFin;
+	}
+
+	public String getHoraFin() {
+		return horaFin;
+	}
+
 	public int getId() {
 		return id;
-	}
-
-	public String getFecha() {
-		return fecha;
-	}
-
-	public String getHora() {
-		return hora;
 	}
 
 	public String getInstalacionId() {
 		return instalacionId;
 	}
 	
-	public boolean hasExtra() {
-		return extra;
+	public String getTipoCurso() {
+		return tipo_curso;
 	}
 	
 	@Override
 	public String toString() {
-		return "Reserva: " + id + " - " + fecha + " - " + hora + " - " + instalacionId + " - " + hasExtra();
+		return "Reserva: " + id + " - " + fechaInicio + " - " + horaInicio + " - " + instalacionId;
 	}
 	
 }

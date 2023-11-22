@@ -107,8 +107,8 @@ public class Licencia {
 			deporte = TiposDeportes.FUTBOL;
 		}else if(tipoDeporte.equals("NATACION")) {
 			deporte = TiposDeportes.NATACION;
-		}else if(tipoDeporte.equals("TENNIS")) {
-			deporte = TiposDeportes.TENNIS;
+		}else if(tipoDeporte.equals("TENIS")) {
+			deporte = TiposDeportes.TENIS;
 		}else if(tipoDeporte.equals("TIRO_CON_ARCO")) {
 			deporte = TiposDeportes.TIRO_CON_ARCO;
 		}
