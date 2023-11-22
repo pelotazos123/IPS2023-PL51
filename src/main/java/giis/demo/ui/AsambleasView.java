@@ -13,11 +13,8 @@ import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JScrollPane;
 import javax.swing.JTextField;
-import javax.swing.JTextPane;
 import javax.swing.border.EmptyBorder;
-import javax.swing.border.LineBorder;
 
 /**
  * Vista de la pantalla que muestra las carreras activas y permite interactuar con ellas.
@@ -54,11 +51,6 @@ public class AsambleasView {
 	private JTextField txtOrdenDiaExt;
 	private JLabel lblOrdenDelDiaOrd;
 	private JLabel lblOrdenDelDiaExt;
-	private JLabel lblActaOrd;
-	private JLabel lblActaExt;
-	private JTextPane txtActaExt;
-	private JTextPane txtActaOrd;
-	private JScrollPane scrollPaneExt;
 
 	/**
 	 * Create the application.
@@ -76,7 +68,7 @@ public class AsambleasView {
 		frame.setResizable(false);
 		frame.setTitle("Asambleas");
 		frame.setName("Asambleas");
-		frame.setBounds(100, 100, 800, 600);
+		frame.setBounds(100, 100, 800, 360);
 		frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		frame.setLocationRelativeTo(null);
 		
@@ -118,13 +110,6 @@ public class AsambleasView {
 			pnFormularioAsambleaOrd.add(getTxtOrdenDiaOrd());
 			pnFormularioAsambleaOrd.add(getLblOrdenDelDiaOrd());
 			pnFormularioAsambleaOrd.add(getBtnConvocarOrd());
-			
-			pnFormularioAsambleaOrd.add(getLblActaOrd());
-			
-			JScrollPane scrollPaneOrd = new JScrollPane();
-			scrollPaneOrd.setBounds(342, 165, 363, 305);
-			pnFormularioAsambleaOrd.add(scrollPaneOrd);
-			scrollPaneOrd.setViewportView(getTxtActaOrd());
 		}
 		return pnFormularioAsambleaOrd;
 	}
@@ -143,9 +128,6 @@ public class AsambleasView {
 			pnFormularioAsambleaExt.add(getTxtOrdenDiaExt());
 			pnFormularioAsambleaExt.add(getLblOrdenDelDiaExt());
 			pnFormularioAsambleaExt.add(getBtnConvocarExt());
-			
-			pnFormularioAsambleaExt.add(getLblActaExt());
-			pnFormularioAsambleaExt.add(getScrollPaneExt());
 		}
 		return pnFormularioAsambleaExt;
 	}
@@ -163,7 +145,7 @@ public class AsambleasView {
 					((CardLayout)contentPanel.getLayout()).show(contentPanel,"FormularioAsambleaOrd");
 				}
 			});
-			btnOrdinaria.setBounds(85, 218, 250, 106);
+			btnOrdinaria.setBounds(114, 105, 208, 87);
 		}
 		return btnOrdinaria;
 	}
@@ -177,7 +159,7 @@ public class AsambleasView {
 					((CardLayout)contentPanel.getLayout()).show(contentPanel,"FormularioAsambleaExt");
 				}
 			});
-			btnExtraordinaria.setBounds(436, 218, 250, 106);
+			btnExtraordinaria.setBounds(439, 105, 208, 87);
 		}
 		return btnExtraordinaria;
 	}
@@ -185,7 +167,7 @@ public class AsambleasView {
 	public JLabel getLblFecha() {
 		if (lblFecha == null) {
 			lblFecha = new JLabel("Fecha:");
-			lblFecha.setBounds(189, 37, 69, 24);
+			lblFecha.setBounds(159, 51, 69, 24);
 		}
 		return lblFecha;
 	}
@@ -203,31 +185,17 @@ public class AsambleasView {
 		}
 		return lblYear;
 	}
-	public JLabel getLblActaOrd() {
-		if (lblActaOrd == null) {
-			lblActaOrd = new JLabel("Acta anterior:");
-			lblActaOrd.setBounds(184, 159, 92, 39);
-		}
-		return lblActaOrd;
-	}
-	public JLabel getLblActaExt() {
-		if (lblActaExt == null) {
-			lblActaExt = new JLabel("Acta anterior:");
-			lblActaExt.setBounds(189, 158, 153, 39);
-		}
-		return lblActaExt;
-	}
 	public JLabel getLblConvocatoria1() {
 		if (lblConvocatoria1 == null) {
 			lblConvocatoria1 = new JLabel("Hora de 1° convocatoria:");
-			lblConvocatoria1.setBounds(189, 62, 153, 39);
+			lblConvocatoria1.setBounds(159, 76, 153, 39);
 		}
 		return lblConvocatoria1;
 	}
 	public JLabel getLblConvocatoria2() {
 		if (lblConvocatoria2 == null) {
 			lblConvocatoria2 = new JLabel("Hora de 2° convocatoria:");
-			lblConvocatoria2.setBounds(189, 91, 153, 39);
+			lblConvocatoria2.setBounds(159, 105, 153, 39);
 		}
 		return lblConvocatoria2;
 	}
@@ -241,7 +209,7 @@ public class AsambleasView {
 	private JLabel getLblOrdenDelDiaExt() {
 		if (lblOrdenDelDiaExt == null) {
 			lblOrdenDelDiaExt = new JLabel("Orden del día:");
-			lblOrdenDelDiaExt.setBounds(189, 126, 153, 39);
+			lblOrdenDelDiaExt.setBounds(159, 140, 153, 39);
 		}
 		return lblOrdenDelDiaExt;
 	}
@@ -249,7 +217,7 @@ public class AsambleasView {
 		if (txtFecha == null) {
 			txtFecha = new JTextField();
 			txtFecha.setText(new SimpleDateFormat("yyyy-MM-dd").format(getDate().getTime()));
-			txtFecha.setBounds(347, 39, 86, 20);
+			txtFecha.setBounds(317, 53, 86, 20);
 			txtFecha.setColumns(10);
 		}
 		return txtFecha;
@@ -284,7 +252,7 @@ public class AsambleasView {
 		if (txtConv1 == null) {
 			txtConv1 = new JTextField();
 			txtConv1.setColumns(10);
-			txtConv1.setBounds(347, 71, 86, 20);
+			txtConv1.setBounds(317, 85, 86, 20);
 		}
 		return txtConv1;
 	}
@@ -292,7 +260,7 @@ public class AsambleasView {
 		if (txtConv2 == null) {
 			txtConv2 = new JTextField();
 			txtConv2.setColumns(10);
-			txtConv2.setBounds(347, 100, 86, 20);
+			txtConv2.setBounds(317, 114, 86, 20);
 		}
 		return txtConv2;
 	}
@@ -308,30 +276,16 @@ public class AsambleasView {
 		if (txtOrdenDiaExt == null) {
 			txtOrdenDiaExt = new JTextField();
 			txtOrdenDiaOrd.setColumns(10);
-			txtOrdenDiaExt.setBounds(347, 135, 363, 20);
+			txtOrdenDiaExt.setBounds(317, 149, 363, 20);
 		}
 		return txtOrdenDiaExt;
-	}
-	public JTextPane getTxtActaOrd() {
-		if (txtActaOrd == null) {
-			txtActaOrd = new JTextPane();
-			txtActaOrd.setBorder(new LineBorder(new Color(0, 0, 0)));
-		}
-		return txtActaOrd;
-	}
-	public JTextPane getTxtActaExt() {
-		if (txtActaExt == null) {
-			txtActaExt = new JTextPane();
-			txtActaExt.setBorder(new LineBorder(new Color(0, 0, 0)));
-		}
-		return txtActaExt;
 	}
 	public JButton getBtnConvocarOrd() {
 		if (btnConvocarOrd == null) {
 			btnConvocarOrd = new JButton("Convocar");
 			btnConvocarOrd.setForeground(new Color(255, 255, 255));
 			btnConvocarOrd.setBackground(new Color(0, 128, 0));
-			btnConvocarOrd.setBounds(300, 483, 175, 57);
+			btnConvocarOrd.setBounds(294, 211, 175, 57);
 		}
 		return btnConvocarOrd;
 	}
@@ -340,16 +294,8 @@ public class AsambleasView {
 			btnConvocarExt = new JButton("Convocar");
 			btnConvocarExt.setForeground(new Color(255, 255, 255));
 			btnConvocarExt.setBackground(new Color(0, 128, 0));
-			btnConvocarExt.setBounds(301, 483, 175, 57);
+			btnConvocarExt.setBounds(284, 216, 175, 57);
 		}
 		return btnConvocarExt;
-	}
-	private JScrollPane getScrollPaneExt() {
-		if (scrollPaneExt == null) {
-			scrollPaneExt = new JScrollPane();
-			scrollPaneExt.setBounds(347, 166, 363, 306);
-			scrollPaneExt.setViewportView(getTxtActaExt());
-		}
-		return scrollPaneExt;
 	}
 }
