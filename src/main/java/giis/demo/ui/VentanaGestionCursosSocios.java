@@ -51,7 +51,7 @@ public class VentanaGestionCursosSocios extends JFrame {
 		setContentPane(contentPane);
 		contentPane.setLayout(null);
 		contentPane.add(getSpCursos());
-		contentPane.add(getBtConfirmar());
+//		contentPane.add(getBtConfirmar());
 	}
 
 	private void creaTablaPrueba() {
@@ -91,24 +91,24 @@ public class VentanaGestionCursosSocios extends JFrame {
 		return tableCursos;
 	}
 
-	private JButton getBtConfirmar() {
-		if (btConfirmar == null) {
-			btConfirmar = new JButton("Borrar de curso");
-			btConfirmar.addActionListener(new ActionListener() {
-				public void actionPerformed(ActionEvent e) {
-					borrarDeCurso();
-				}
-			});
-			btConfirmar.setMnemonic('b');
-			btConfirmar.setEnabled(false); //TODO CAMBIAR
-			btConfirmar.setBounds(248, 391, 156, 33);
-		}
-		return btConfirmar;
-	}
-
-	protected void borrarDeCurso() {
-		gestionCursos.borrar();
-	}
+//	private JButton getBtConfirmar() {
+//		if (btConfirmar == null) {
+//			btConfirmar = new JButton("Borrar de curso");
+//			btConfirmar.addActionListener(new ActionListener() {
+//				public void actionPerformed(ActionEvent e) {
+//					borrarDeCurso();
+//				}
+//			});
+//			btConfirmar.setMnemonic('b');
+//			btConfirmar.setEnabled(false); //TODO CAMBIAR
+//			btConfirmar.setBounds(248, 391, 156, 33);
+//		}
+//		return btConfirmar;
+//	}
+//
+//	protected void borrarDeCurso() {
+//		gestionCursos.borrar();
+//	}
 
 	public VentanaPrincipal getVp() {
 		return vp;

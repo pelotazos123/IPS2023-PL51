@@ -25,6 +25,9 @@ public class GestionCursosSocios {
 	private static final String ACTUALIZAPRECIOBORRARSE = "update from cuotas set price = price - ?";
 	private static final String INSCRIBIRSE = "insert into inscritos(id_curso, id_inscrito) "
 			+ "values (?,?)";
+	private static final String GET_ENTRENADORES_CURSO = "";
+	private static final String ASIGNA_ENTRENADOR  = "insert into entrenados(entrenador_id, entrenado_id) values"
+			+ " (?,?)";
 
 	private VentanaGestionCursosSocios vgcs;
 	private int id;
@@ -71,6 +74,11 @@ public class GestionCursosSocios {
 		int precio= Integer.parseInt(vgcs.getDatos()[row][0].toString());		// TODO CAMBIAR POR LA COLUMNA DEL PRECIO
 		vgcs.getVp().getDb().executeUpdate(INSCRIBIRSE, idCurso, id);
 		vgcs.getVp().getDb().executeUpdate(ACTUALIZAPRECIOINSCRIBIRSE, precio);
+		
+		List<Object[]> entrenadores = vgcs.getVp().getDb().executeQueryArray(GET_ENTRENADORES_CURSO, idCurso);
+		for(Object[] entrenador: entrenadores) {
+			vgcs.getVp().getDb().executeUpdate(ASIGNA_ENTRENADOR, entrenador[0], id);
+		}
 	}
 
 	private JButton creaBotonBorrarse() {
