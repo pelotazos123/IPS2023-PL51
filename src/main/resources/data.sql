@@ -77,3 +77,8 @@ insert into entrenados(entrenador_id, entrenado_id) values
 	(100, 104),
 	(100, 103),
 	(101, 105);
+	
+insert into articulos(id, name, price) values 
+	(100, 'equipacion', 80.0),
+	(100, 'chandal', 65.0),
+	(101, 'chaqueta', 40.0);

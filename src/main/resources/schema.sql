@@ -34,3 +34,4 @@ create table asambleas (type varchar2(255), announcement varchar2(255), date_ann
 create table competiciones (id int, name varchar2(255), competition_date date, place varchar2(255), categories varchar2(255));
 create table inscripcion_competiciones(competicion_id int, socio_id int, foreign key(competicion_id) references competiciones(id), foreign key(socio_id) references socios(id));
 create table entrenados(entrenador_id int, entrenado_id);
+create table articulos(id int, name varchar2(255), price double);

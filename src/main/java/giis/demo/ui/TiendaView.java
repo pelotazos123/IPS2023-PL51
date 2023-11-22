@@ -10,6 +10,8 @@ import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 import javax.swing.JButton;
 import java.awt.Color;
+import javax.swing.JTextField;
+import javax.swing.SwingConstants;
 
 public class TiendaView {
 	
@@ -22,9 +24,15 @@ public class TiendaView {
 	private JComboBox<String> cbTallaEq;
 	private JComboBox<String> cbTallaChd;
 	private JComboBox<String> cbTallaChq;
-	private JComboBox<String> cbUdsEq;
-	private JComboBox<String> cbUdsChd;
-	private JComboBox<String> cbUdsChq;
+	private JTextField txtUdsEq;
+	private JTextField txtUdsChd;
+	private JTextField txtUdsChq;
+	private JLabel lblPrecioEq;
+	private JLabel lblPrecioChd;
+	private JLabel lblPrecioChq;
+	private JLabel lblTotal;
+	private JLabel lblPrecioTotal;
+	private JButton btnComprar;
 
 	public TiendaView() {
 		initialize();
@@ -51,16 +59,17 @@ public class TiendaView {
 		contentPanel.add(getCbTallaEq());
 		contentPanel.add(getCbTallaChd());
 		contentPanel.add(getCbTallaChq());
-		contentPanel.add(getCbUdsEq());
-		contentPanel.add(getCbUdsChd());
-		contentPanel.add(getCbUdsChq());
 		
-		JButton btnComprar = new JButton("Comprar");
-		btnComprar.setBackground(new Color(0, 128, 0));
-		btnComprar.setForeground(new Color(255, 255, 255));
-		btnComprar.setBounds(300, 373, 189, 45);
-		contentPanel.add(btnComprar);
-		
+		contentPanel.add(getTxtUdsEq());
+		contentPanel.add(getTxtUdsChd());
+		contentPanel.add(getTxtUdsChq());
+		contentPanel.add(getLblPrecioEq());
+		contentPanel.add(getLblPrecioChd());
+		contentPanel.add(getLblPrecioChq());
+		contentPanel.add(getLblTotal());
+		contentPanel.add(getLblPrecioTotal());
+
+		contentPanel.add(getBtnComprar());
 	}
 
 	public JFrame getFrame() {
@@ -106,7 +115,7 @@ public class TiendaView {
 	public JComboBox<String> getCbTallaEq() {
 		if (cbTallaEq == null) {
 			cbTallaEq = new JComboBox<String>();
-			cbTallaEq.setModel(new DefaultComboBoxModel<String>(new String[] {"XS","S","M","L","XL","XXL"}));
+			cbTallaEq.setModel(new DefaultComboBoxModel<String>(new String[] {"S","M","L","XL"}));
 			cbTallaEq.setBounds(378, 152, 55, 22);
 		}
 		return cbTallaEq;
@@ -115,7 +124,7 @@ public class TiendaView {
 	public JComboBox<String> getCbTallaChd() {
 		if (cbTallaChd == null) {
 			cbTallaChd = new JComboBox<String>();
-			cbTallaChd.setModel(new DefaultComboBoxModel<String>(new String[] {"XS","S","M","L","XL","XXL"}));
+			cbTallaChd.setModel(new DefaultComboBoxModel<String>(new String[] {"S","M","L","XL"}));
 			cbTallaChd.setBounds(378, 212, 55, 22);
 		}
 		return cbTallaChd;
@@ -124,34 +133,86 @@ public class TiendaView {
 	public JComboBox<String> getCbTallaChq() {
 		if (cbTallaChq == null) {
 			cbTallaChq = new JComboBox<String>();
-			cbTallaChq.setModel(new DefaultComboBoxModel<String>(new String[] {"XS","S","M","L","XL","XXL"}));
+			cbTallaChq.setModel(new DefaultComboBoxModel<String>(new String[] {"S","M","L","XL"}));
 			cbTallaChq.setBounds(378, 270, 55, 22);
 		}
 		return cbTallaChq;
 	}
+	private JTextField getTxtUdsEq() {
+		if (txtUdsEq == null) {
+			txtUdsEq = new JTextField();
+			txtUdsEq.setHorizontalAlignment(SwingConstants.CENTER);
+			txtUdsEq.setText("0");
+			txtUdsEq.setBounds(479, 152, 55, 22);
+			txtUdsEq.setColumns(10);
+		}
+		return txtUdsEq;
+	}
+	private JTextField getTxtUdsChd() {
+		if (txtUdsChd == null) {
+			txtUdsChd = new JTextField();
+			txtUdsChd.setHorizontalAlignment(SwingConstants.CENTER);
+			txtUdsChd.setText("0");
+			txtUdsChd.setColumns(10);
+			txtUdsChd.setBounds(479, 213, 55, 22);
+		}
+		return txtUdsChd;
+	}
+	private JTextField getTxtUdsChq() {
+		if (txtUdsChq == null) {
+			txtUdsChq = new JTextField();
+			txtUdsChq.setHorizontalAlignment(SwingConstants.CENTER);
+			txtUdsChq.setText("0");
+			txtUdsChq.setColumns(10);
+			txtUdsChq.setBounds(479, 271, 55, 22);
+		}
+		return txtUdsChq;
+	}
+	public JLabel getLblPrecioEq() {
+		if (lblPrecioEq == null) {
+			lblPrecioEq = new JLabel("");
+			lblPrecioEq.setBounds(569, 152, 63, 23);
+		}
+		return lblPrecioEq;
+	}
+	public JLabel getLblPrecioChd() {
+		if (lblPrecioChd == null) {
+			lblPrecioChd = new JLabel("");
+			lblPrecioChd.setBounds(569, 212, 63, 23);
+		}
+		return lblPrecioChd;
+	}
+	public JLabel getLblPrecioChq() {
+		if (lblPrecioChq == null) {
+			lblPrecioChq = new JLabel("");
+			lblPrecioChq.setBounds(569, 270, 63, 23);
+		}
+		return lblPrecioChq;
+	}
+	private JLabel getLblTotal() {
+		if (lblTotal == null) {
+			lblTotal = new JLabel("Total:");
+			lblTotal.setFont(new Font("Tahoma", Font.PLAIN, 15));
+			lblTotal.setBounds(300, 333, 55, 29);
+		}
+		return lblTotal;
+	}
+	public JLabel getLblPrecioTotal() {
+		if (lblPrecioTotal == null) {
+			lblPrecioTotal = new JLabel("");
+			lblPrecioTotal.setFont(new Font("Tahoma", Font.PLAIN, 15));
+			lblPrecioTotal.setBounds(365, 333, 84, 29);
+		}
+		return lblPrecioTotal;
+	}
+	public JButton getBtnComprar() {
+		if (btnComprar == null) {
+			btnComprar = new JButton("Comprar");
+			btnComprar.setBackground(new Color(0, 128, 0));
+			btnComprar.setForeground(new Color(255, 255, 255));
+			btnComprar.setBounds(300, 373, 189, 45);
+		}
+		return btnComprar;
+	}
 	
-	private JComboBox<String> getCbUdsEq() {
-		if (cbUdsEq == null) {
-			cbUdsEq = new JComboBox<String>();
-			cbUdsEq.setModel(new DefaultComboBoxModel<String>(new String[] {"0","1","2","3","4","5","6","7","8","9"}));
-			cbUdsEq.setBounds(479, 152, 55, 22);
-		}
-		return cbUdsEq;
-	}
-	private JComboBox<String> getCbUdsChd() {
-		if (cbUdsChd == null) {
-			cbUdsChd = new JComboBox<String>();
-			cbUdsChd.setModel(new DefaultComboBoxModel<String>(new String[] {"0","1","2","3","4","5","6","7","8","9"}));
-			cbUdsChd.setBounds(479, 212, 55, 22);
-		}
-		return cbUdsChd;
-	}
-	private JComboBox<String> getCbUdsChq() {
-		if (cbUdsChq == null) {
-			cbUdsChq = new JComboBox<String>();
-			cbUdsChq.setModel(new DefaultComboBoxModel<String>(new String[] {"0","1","2","3","4","5","6","7","8","9"}));
-			cbUdsChq.setBounds(479, 270, 55, 22);
-		}
-		return cbUdsChq;
-	}
 }
