@@ -75,8 +75,8 @@ public class ReservationController {
 		this.db = db;
 	}
 	
-	public boolean anular(String hora_Inicio, String hora_fin , String instalacionId) {
-		createAnulation(hora_Inicio, hora_fin, instalacionId);
+	public boolean anular(String hora_Inicio, String instalacionId) {
+		createAnulation(hora_Inicio, instalacionId);
 //		getReservas();
 		return true;
 	}
@@ -246,14 +246,13 @@ public class ReservationController {
 		db.executeUpdate(SQL_CREAR_RESERVA, reservaInicio, reservaFin, instalacionId, tipoReserva);
 	}
 	
-	private void createAnulation(String hora_Inicio, String hora_fin, String instalacionId) {
-		String SQL_ANULAR = "INSERT INTO reservas(fecha_inicio, fecha_fin, instalation_code, tipo) "
-				+ "VALUES (?, ?, ?, 'ANULADA')"; 
-		db.executeUpdate(SQL_ANULAR, hora_Inicio, hora_fin, instalacionId);
+	private void createAnulation(String hora_Inicio, String instalacionId) {
+		String SQL_ANULAR = "UPDATE reservas SET tipo='ANULADA' WHERE fecha_inicio=? AND instalation_code=? AND (tipo='NORMAL' OR tipo='')"; 
+		db.executeUpdate(SQL_ANULAR, hora_Inicio, instalacionId);
 	}
 
 	public boolean getReservasNoAnuladasHora(String fechaInicio, String idInst) {
-		String SQL_CARGA_NO_ANULADAS = "select * from reservas where tipo == 'NORMAL' "
+		String SQL_CARGA_NO_ANULADAS = "select fecha_inicio from reservas where tipo == 'NORMAL' "
 				+ "and fecha_inicio = ? and instalation_code = ?";
 		return !db.executeQueryArray(SQL_CARGA_NO_ANULADAS, fechaInicio, idInst).isEmpty();
 	}
@@ -264,7 +263,7 @@ public class ReservationController {
 	}
 
 	public boolean getReservasAnuladasHora(String horaInicio, String idInst) {
-		String SQL_CARGA_ANULADAS = "select * from reservas where tipo == 'ANULADA' "
+		String SQL_CARGA_ANULADAS = "select fecha_inicio from reservas where tipo == 'ANULADA' "
 				+ "and fecha_inicio = ? and instalation_code = ?";
 		return !db.executeQueryArray(SQL_CARGA_ANULADAS, horaInicio, idInst).isEmpty();
 	}

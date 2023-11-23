@@ -1,7 +1,6 @@
 package giis.demo.logica;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
-import java.io.FileInputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -17,11 +16,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import giis.demo.business.ReservationController;
 import giis.demo.ui.VentanaPrincipal;
-import giis.demo.util.ApplicationException;
+import giis.demo.util.DbUtil;
 
 public class ServiciosMeteorologicos {
 
-	private static final String APP_PROPERTIES = "src/main/resources/application.properties";
 //	 private static final String API_KEY = "8RfHsl5zKwBjPPRndZRuyCbdDZsahX4C";
 //	private static final String API_URL = "https://api.tomorrow.io/v4/weather/forecast?"
 //			+ "location='Uvieu,Asturies,España'&apikey=8RfHsl5zKwBjPPRndZRuyCbdDZsahX4C";
@@ -40,16 +38,7 @@ public class ServiciosMeteorologicos {
 	public ServiciosMeteorologicos(VentanaPrincipal vp) {
 		this.vp = vp;
 		this.rc = new ReservationController(vp.getDb());
-		cargaProperties();
-	}
-
-	private void cargaProperties() {
-		prop = new Properties();
-		try (FileInputStream fs=new FileInputStream(APP_PROPERTIES)) {
-			prop.load(fs);
-		} catch (IOException e) {
-			throw new ApplicationException(e);
-		}
+		prop = DbUtil.loadProperties(); 
 	}
 
 	public void checkTiempo() {
@@ -90,9 +79,6 @@ public class ServiciosMeteorologicos {
 			}
 			rc.getReservas();
 			
-			String filePath = "src/main/resources/json.txt";
-			writeToTxt(linesAux, filePath);
-			
 		} catch (Exception e/*IOException e*/) {
 			e.printStackTrace();
 			e.toString();
@@ -120,87 +106,83 @@ public class ServiciosMeteorologicos {
 		int horaCierre = Integer.parseInt(prop.getProperty("club.horario.cierre"));
 		int hour = weather.hora.getHour();
 		if(hour >= horaApertura && hour < horaCierre) {
-			List<Object[]> instalaciones = vp.getDb().executeQueryArray(CARGAINSTALACIONES);
-			for(Object[] instalacion: instalaciones) {
-				switch (instalacion[1].toString()) {
-				case "Tiro con arco":
-					checkTiroConArco(weather, instalacion[0].toString(), day);
-					break;
-				case "Pista de tenis":
-					checkTenis(weather, instalacion[0].toString(), day);
-					break;
-				case "Campo de fútbol":
-					checkFutbol(weather, instalacion[0].toString(), day);
-					break;
-				default:
-					break;
-				}
+			anulacionReservas(weather, day);
+			anulacionCompeticiones(weather, day);
+		}
+	}
+
+	private void anulacionCompeticiones(WeatherDto weather, LocalDateTime day) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	private void anulacionReservas(WeatherDto weather, LocalDateTime day) {
+		List<Object[]> instalaciones = vp.getDb().executeQueryArray(CARGAINSTALACIONES);
+		for(Object[] instalacion: instalaciones) {
+			switch (instalacion[1].toString()) {
+			case "Tiro con arco":
+				checkAnulaciones(weather, instalacion[0].toString(), day, 
+						Double.parseDouble(prop.getProperty("weather.arco.rain")), 
+						Double.parseDouble(prop.getProperty("weather.temperature")), 
+						Double.parseDouble(prop.getProperty("weather.arco.snow")),
+						Double.parseDouble(prop.getProperty("weather.arco.wind")));
+				break;
+			case "Pista de tenis":
+				checkAnulaciones(weather, instalacion[0].toString(), day, 
+						Double.parseDouble(prop.getProperty("weather.tenis.rain")), 
+						Double.parseDouble(prop.getProperty("weather.temperature")), 
+						Double.parseDouble(prop.getProperty("weather.tenis.snow")),
+						1000); // Se mete 1000 para que en actividades donde el viento no importa no afecte a la decision
+				break;
+			case "Campo de fútbol":
+				checkAnulaciones(weather, instalacion[0].toString(), day, 
+						Double.parseDouble(prop.getProperty("weather.futbol.rain")), 
+						Double.parseDouble(prop.getProperty("weather.temperature")), 
+						Double.parseDouble(prop.getProperty("weather.futbol.snow")),
+						1000); // Se mete 1000 para que en actividades donde el viento no importa no afecte a la decision
+				break;
+			default:
+				break;
 			}
 		}
 	}
 	
+	private void checkAnulaciones(WeatherDto weather, String idInst, LocalDateTime day, double rain, double temperature, double snow, double wind) {
+		DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+		String horaInicio = day.format(dtf);
+		
+		if(weather.rainAccumulationLwe >= rain || weather.temperatureApparent >= temperature
+				|| weather.snowAccumulationLwe >= snow || weather.windSpeed >= wind) {
+			rc.anular(horaInicio, idInst);
+		} else {
+			if(rc.getReservasAnuladasHora(horaInicio, idInst))
+				rc.borraReserva(idInst, horaInicio);
+		}
+	}
 	
 	/*
 	 * SI HAY CONDICIONES ADVERSAS if(HAY RESERVA Y NO ES ANULADA) BORRA DE RESERVAS
 	 * RESERVA PARA ANULAR SI NO HAY CONDICIONES ADVERSAS Y HAY RESERVA ANULADA
 	 * if(HAY RESERVA ANULADA) BORRA RESERVA
 	 */
-	private void checkTenis(WeatherDto weather, String idInst, LocalDateTime day) {
-		DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
-		String horaInicio = day.format(dtf);
-		String horaFin = day.plusHours(1).format(dtf);
-		double rain = Double.parseDouble(prop.getProperty("weather.tenis.rain"));
-		double temperature = Double.parseDouble(prop.getProperty("weather.temperature"));
-		double snow = Double.parseDouble(prop.getProperty("weather.tenis.snow"));
-		if(weather.rainAccumulationLwe >= rain || weather.temperatureApparent >= temperature
-				|| weather.snowAccumulationLwe >= snow) {
-			if(rc.getReservasNoAnuladasHora(horaInicio, idInst)) {
-				rc.borraReserva(idInst, horaInicio);
-			}
-			rc.anular(horaInicio, horaFin, idInst);
-		} else {
-			if(rc.getReservasAnuladasHora(horaInicio, idInst))
-				rc.borraReserva(idInst, horaInicio);
-		}
-			
-	}
-
-	private void checkFutbol(WeatherDto weather, String idInst, LocalDateTime day) {
-		DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
-		String horaInicio = day.format(dtf);
-		String horaFin = day.plusHours(1).format(dtf);
-		double rain = Double.parseDouble(prop.getProperty("weather.futbol.rain")); 
-		double temperature = Double.parseDouble(prop.getProperty("weather.temperature"));
-		double snow = Double.parseDouble(prop.getProperty("weather.futbol.snow")); 
-		if(weather.rainAccumulationLwe >= rain || weather.temperatureApparent >= temperature 
-				|| weather.snowAccumulationLwe >= snow) {
-			if(rc.getReservasNoAnuladasHora(horaInicio, idInst)) 
-				rc.borraReserva(idInst, horaInicio);
-			rc.anular(horaInicio, horaFin, idInst);
-		} else {
-			if(rc.getReservasAnuladasHora(horaInicio, idInst))
-				rc.borraReserva(idInst, horaInicio);
-		}
-	}
-
-	private void checkTiroConArco(WeatherDto weather, String idInst, LocalDateTime day) {
-		DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
-		String horaInicio = day.format(dtf);
-		String horaFin = day.plusHours(1).format(dtf);
-		double rain = Double.parseDouble(prop.getProperty("weather.arco.rain"));
-		double temperature = Double.parseDouble(prop.getProperty("weather.temperature"));
-		double snow = Double.parseDouble(prop.getProperty("weather.arco.snow"));
-		double wind = Double.parseDouble(prop.getProperty("weather.arco.wind"));
-		if(weather.rainAccumulationLwe >= rain || weather.temperatureApparent >= temperature
-				|| weather.snowAccumulationLwe >= snow || weather.windSpeed >= wind) {
-			if(rc.getReservasNoAnuladasHora(horaInicio, idInst))
-				rc.borraReserva(idInst, horaInicio);
-			rc.anular(horaInicio, horaFin, idInst);
-		} else {
-			if(rc.getReservasAnuladasHora(horaInicio, idInst))
-				rc.borraReserva(idInst, horaInicio);
-		}
-	}
+//	private void checkTiroConArco(WeatherDto weather, String idInst, LocalDateTime day) {
+//		DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+//		String horaInicio = day.format(dtf);
+//		String horaFin = day.plusHours(1).format(dtf);
+//		double rain = Double.parseDouble(prop.getProperty("weather.arco.rain"));
+//		double temperature = Double.parseDouble(prop.getProperty("weather.temperature"));
+//		double snow = Double.parseDouble(prop.getProperty("weather.arco.snow"));
+//		double wind = Double.parseDouble(prop.getProperty("weather.arco.wind"));
+//		if(weather.rainAccumulationLwe >= rain || weather.temperatureApparent >= temperature
+//				|| weather.snowAccumulationLwe >= snow || weather.windSpeed >= wind) {
+//			if(rc.getReservasNoAnuladasHora(horaInicio, idInst))
+//				rc.borraReserva(idInst, horaInicio);
+//			rc.anular(horaInicio, horaFin, idInst);
+//		} else {
+//			if(rc.getReservasAnuladasHora(horaInicio, idInst))
+//				rc.borraReserva(idInst, horaInicio);
+//		}
+//	}
 
 	class WeatherDto {
 		LocalDateTime hora;

@@ -1,7 +1,7 @@
-Torneo Bernabeu de futbol;2023-11-20;Madrid;SUB18-SENIOR-VETERANO;FUTBOL
-Torneo Benefico de tennis;2023-11-20;Barcelona;SUB18-VETERANO;TENNIS
-Campeonato nacional tiro con arco;2024-01-12;Sevilla;SUB18-SENIOR;TIRO_CON_ARCO
-Torneo Tenis;2024-01-25;Gijon;SUB18;TENNIS
-Copa Cristo de futbol;2024-01-12;Oviedo;SENIOR-VETERANO;FUTBOL
-Torneo natacion;2024-02-05;Valencia;SENIOR;NATACION
-Campeonato Tiro con arco;2023-12-15;Coruña;VETERANO;TIRO_CON_ARCO
+Torneo Bernabeu de futbol;2023-11-20;Madrid;SUB18-SENIOR-VETERANO;FUTBOL;ABIERTA
+Torneo Benefico de tennis;2023-11-20;Barcelona;SUB18-VETERANO;TENNIS;ABIERTA
+Campeonato nacional tiro con arco;2024-01-12;Sevilla;SUB18-SENIOR;TIRO_CON_ARCO;ABIERTA
+Torneo Tenis;2024-01-25;Gijon;SUB18;TENNIS;ABIERTA
+Copa Cristo de futbol;2024-01-12;Oviedo;SENIOR-VETERANO;FUTBOL;ABIERTA
+Torneo natacion;2024-02-05;Valencia;SENIOR;NATACION;ABIERTA
+Campeonato Tiro con arco;2023-12-15;Coruña;VETERANO;TIRO_CON_ARCO;ABIERTA
