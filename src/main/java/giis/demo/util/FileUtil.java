@@ -12,6 +12,7 @@ import java.util.List;
 
 import giis.demo.model.Socio;
 import giis.demo.model.TiposCuotas;
+import giis.demo.model.TiposDeportes;
 import giis.demo.model.competiciones.Competicion;
 
 public abstract class FileUtil {
@@ -53,7 +54,7 @@ public abstract class FileUtil {
 			String texto="";
 			for(int i = 0; i < socios.size(); i++) {
 				Socio socio = socios.get(i);
-				texto += socio.getDni()+"#"+socio.getNombre()+"#"+socio.getApellidos()+"#"+socio.getCorreo()+"#"+socio.getTelefono()+"#"+socio.getFechaNacimiento().toString()+"\n";
+				texto += socio.getNombre()+";"+socio.getApellidos()+";"+socio.getTipoCuota()+"\n";
 			}
 			escribir.write(texto);
 			escribir.close();
@@ -65,7 +66,7 @@ public abstract class FileUtil {
 			new RuntimeException("Error de entrada/salida");
 		}
 	}
-	
+
 	public static List<Competicion> loadFileCompeticiones(File archivo,int ultimoId) {
 
 		String linea;
@@ -75,7 +76,7 @@ public abstract class FileUtil {
 			BufferedReader fichero = new BufferedReader(new FileReader(archivo.getAbsolutePath()));
 			while (fichero.ready()) {
 				linea = fichero.readLine();
-				String[] texto = linea.split("#");
+				String[] texto = linea.split(";");
 				lista.add(crearCompeticion(texto,ultimoId++));
 			}
 			fichero.close();
@@ -93,6 +94,18 @@ public abstract class FileUtil {
 		String fecha = competicion[1];
 		String lugar = competicion[2];
 		String categorias = competicion[3];
+		String deporte = competicion[4];
+		
+		TiposDeportes deporteCompeticion = null;
+		if(deporte.equals("FUTBOL")) {
+			deporteCompeticion = TiposDeportes.FUTBOL;
+		}else if(deporte.equals("TENNIS")) {
+			deporteCompeticion = TiposDeportes.TENIS;
+		}else if(deporte.equals("TIRO_CON_ARCO")) {
+			deporteCompeticion = TiposDeportes.TIRO_CON_ARCO;
+		}else {
+			deporteCompeticion = TiposDeportes.NATACION;
+		}
 		
 		String[] aux = fecha.split("-");
 		int año = Integer.parseInt(aux[0]);
@@ -111,6 +124,6 @@ public abstract class FileUtil {
 				listaCategorias.add(TiposCuotas.VETERANO);
 			}
 		}
-		return new Competicion(id, nombre, fechaCompe, lugar, listaCategorias);
+		return new Competicion(id, nombre, fechaCompe, lugar, listaCategorias, deporteCompeticion);
 	}
 }

@@ -68,7 +68,7 @@ public class AsambleasView {
 		frame.setResizable(false);
 		frame.setTitle("Asambleas");
 		frame.setName("Asambleas");
-		frame.setBounds(100, 100, 584, 381);
+		frame.setBounds(100, 100, 800, 360);
 		frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		frame.setLocationRelativeTo(null);
 		
@@ -145,7 +145,7 @@ public class AsambleasView {
 					((CardLayout)contentPanel.getLayout()).show(contentPanel,"FormularioAsambleaOrd");
 				}
 			});
-			btnOrdinaria.setBounds(100, 124, 150, 55);
+			btnOrdinaria.setBounds(114, 105, 208, 87);
 		}
 		return btnOrdinaria;
 	}
@@ -159,7 +159,7 @@ public class AsambleasView {
 					((CardLayout)contentPanel.getLayout()).show(contentPanel,"FormularioAsambleaExt");
 				}
 			});
-			btnExtraordinaria.setBounds(300, 124, 150, 55);
+			btnExtraordinaria.setBounds(439, 105, 208, 87);
 		}
 		return btnExtraordinaria;
 	}
@@ -167,49 +167,49 @@ public class AsambleasView {
 	public JLabel getLblFecha() {
 		if (lblFecha == null) {
 			lblFecha = new JLabel("Fecha:");
-			lblFecha.setBounds(149, 37, 69, 24);
+			lblFecha.setBounds(159, 51, 69, 24);
 		}
 		return lblFecha;
 	}
 	public JLabel getLblMonth() {
 		if (lblMonth == null) {
 			lblMonth = new JLabel("Mes:");
-			lblMonth.setBounds(149, 111, 69, 24);
+			lblMonth.setBounds(184, 90, 69, 24);
 		}
 		return lblMonth;
 	}
 	public JLabel getLblYear() {
 		if (lblYear == null) {
 			lblYear = new JLabel("Año:");
-			lblYear.setBounds(149, 58, 69, 24);
+			lblYear.setBounds(184, 55, 69, 24);
 		}
 		return lblYear;
 	}
 	public JLabel getLblConvocatoria1() {
 		if (lblConvocatoria1 == null) {
 			lblConvocatoria1 = new JLabel("Hora de 1° convocatoria:");
-			lblConvocatoria1.setBounds(149, 83, 153, 39);
+			lblConvocatoria1.setBounds(159, 76, 153, 39);
 		}
 		return lblConvocatoria1;
 	}
 	public JLabel getLblConvocatoria2() {
 		if (lblConvocatoria2 == null) {
 			lblConvocatoria2 = new JLabel("Hora de 2° convocatoria:");
-			lblConvocatoria2.setBounds(149, 144, 153, 39);
+			lblConvocatoria2.setBounds(159, 105, 153, 39);
 		}
 		return lblConvocatoria2;
 	}
 	private JLabel getLblOrdenDelDiaOrd() {
 		if (lblOrdenDelDiaOrd == null) {
 			lblOrdenDelDiaOrd = new JLabel("Orden del día:");
-			lblOrdenDelDiaOrd.setBounds(149, 163, 153, 39);
+			lblOrdenDelDiaOrd.setBounds(184, 125, 92, 39);
 		}
 		return lblOrdenDelDiaOrd;
 	}
 	private JLabel getLblOrdenDelDiaExt() {
 		if (lblOrdenDelDiaExt == null) {
 			lblOrdenDelDiaExt = new JLabel("Orden del día:");
-			lblOrdenDelDiaExt.setBounds(149, 194, 153, 39);
+			lblOrdenDelDiaExt.setBounds(159, 140, 153, 39);
 		}
 		return lblOrdenDelDiaExt;
 	}
@@ -217,7 +217,7 @@ public class AsambleasView {
 		if (txtFecha == null) {
 			txtFecha = new JTextField();
 			txtFecha.setText(new SimpleDateFormat("yyyy-MM-dd").format(getDate().getTime()));
-			txtFecha.setBounds(307, 39, 86, 20);
+			txtFecha.setBounds(317, 53, 86, 20);
 			txtFecha.setColumns(10);
 		}
 		return txtFecha;
@@ -231,7 +231,7 @@ public class AsambleasView {
 				años[i] = "" + (getDate().get(Calendar.YEAR) + i);
 			}
 			cbYear.setModel(new DefaultComboBoxModel<String>(años));
-			cbYear.setBounds(307, 59, 106, 22);
+			cbYear.setBounds(342, 56, 106, 22);
 		}
 		return cbYear;
 	}
@@ -244,7 +244,7 @@ public class AsambleasView {
 		            "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"
 		    };
 			cbMonth.setModel(new DefaultComboBoxModel<String>(meses));
-			cbMonth.setBounds(307, 112, 106, 22);
+			cbMonth.setBounds(342, 89, 106, 22);
 		}
 		return cbMonth;
 	}
@@ -252,7 +252,7 @@ public class AsambleasView {
 		if (txtConv1 == null) {
 			txtConv1 = new JTextField();
 			txtConv1.setColumns(10);
-			txtConv1.setBounds(307, 92, 86, 20);
+			txtConv1.setBounds(317, 85, 86, 20);
 		}
 		return txtConv1;
 	}
@@ -260,7 +260,7 @@ public class AsambleasView {
 		if (txtConv2 == null) {
 			txtConv2 = new JTextField();
 			txtConv2.setColumns(10);
-			txtConv2.setBounds(307, 153, 86, 20);
+			txtConv2.setBounds(317, 114, 86, 20);
 		}
 		return txtConv2;
 	}
@@ -268,7 +268,7 @@ public class AsambleasView {
 		if (txtOrdenDiaOrd == null) {
 			txtOrdenDiaOrd = new JTextField();
 			txtOrdenDiaOrd.setColumns(10);
-			txtOrdenDiaOrd.setBounds(307, 172, 153, 20);
+			txtOrdenDiaOrd.setBounds(342, 134, 363, 20);
 		}
 		return txtOrdenDiaOrd;
 	}
@@ -276,7 +276,7 @@ public class AsambleasView {
 		if (txtOrdenDiaExt == null) {
 			txtOrdenDiaExt = new JTextField();
 			txtOrdenDiaOrd.setColumns(10);
-			txtOrdenDiaExt.setBounds(307, 203, 153, 20);
+			txtOrdenDiaExt.setBounds(317, 149, 363, 20);
 		}
 		return txtOrdenDiaExt;
 	}
@@ -285,7 +285,7 @@ public class AsambleasView {
 			btnConvocarOrd = new JButton("Convocar");
 			btnConvocarOrd.setForeground(new Color(255, 255, 255));
 			btnConvocarOrd.setBackground(new Color(0, 128, 0));
-			btnConvocarOrd.setBounds(221, 282, 120, 39);
+			btnConvocarOrd.setBounds(294, 211, 175, 57);
 		}
 		return btnConvocarOrd;
 	}
@@ -294,7 +294,7 @@ public class AsambleasView {
 			btnConvocarExt = new JButton("Convocar");
 			btnConvocarExt.setForeground(new Color(255, 255, 255));
 			btnConvocarExt.setBackground(new Color(0, 128, 0));
-			btnConvocarExt.setBounds(221, 282, 120, 39);
+			btnConvocarExt.setBounds(284, 216, 175, 57);
 		}
 		return btnConvocarExt;
 	}

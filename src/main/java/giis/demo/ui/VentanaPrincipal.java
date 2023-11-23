@@ -30,6 +30,7 @@ import javax.swing.border.TitledBorder;
 
 import com.toedter.calendar.JDateChooser;
 
+import giis.demo.business.ActasController;
 import giis.demo.business.AsambleasController;
 import giis.demo.business.AsambleasModel;
 import giis.demo.business.GestionRecibosController;
@@ -66,6 +67,7 @@ public class VentanaPrincipal extends JFrame {
 	private VentanaListaSocios vLS;
 	private JButton btnReservas;
 	private JButton btnAsambleas;
+	private JButton btnActas;
 	private JButton btnListadoSocios;
 	private JButton btnAñadirCompeticiones;
 	private Database db;
@@ -109,6 +111,8 @@ public class VentanaPrincipal extends JFrame {
 	private JPanel pnBotonesDeportivoDirectivo;
 	private JPanel pnSeccionDirectivoAdministracion;
 	private JButton btInscripcionCompeticiones;
+	private JButton btnCrearCursillos;
+	private VentanaCrearCursillos vcc;
 
 
 	/**
@@ -297,6 +301,22 @@ public class VentanaPrincipal extends JFrame {
 		}
 		return btnAsambleas;
 	}
+	private JButton getBtnActas() {
+		if (btnActas == null) {
+			btnActas = new JButton("Añadir actas");
+			btnActas.addActionListener(new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					ActasView view = new ActasView();
+					AsambleasModel model = new AsambleasModel(db);
+					ActasController controller = new ActasController(model, view);
+
+					controller.initController();
+				}
+			});
+		}
+		return btnActas;
+	}
 	private JButton getBtnListadoSocios() {
 		if (btnListadoSocios == null) {
 			btnListadoSocios = new JButton("Ver socios");
@@ -468,13 +488,14 @@ public class VentanaPrincipal extends JFrame {
 			pnBotonesDeportivoDirectivo.add(getBtTestsFisiologicos());
 			pnBotonesDeportivoDirectivo.add(getBtInscripcionCompeticiones());
 			pnSeccionDirectivoAdministracion.add(getBtnAsambleas());
+			pnSeccionDirectivoAdministracion.add(getBtnActas());
 			pnSeccionDirectivoAdministracion.add(getBtnGeneracionRecibos());
 			pnSeccionDirectivoAdministracion.add(getBtnGestionRecibos());
 			pnSeccionDirectivoAdministracion.add(getBtnListadoSocios());
 			pnSeccionDirectivoAdministracion.add(getBtnAñadirCompeticiones());
-			//TODO AQUÍ ESTÁN LOS SM
 			ServiciosMeteorologicos sm = new ServiciosMeteorologicos(this);
 			sm.checkTiempo();
+			pnSeccionDirectivoAdministracion.add(getBtnCrearCursillos());
 			
 			getLbBienvenidoDirectivo().setText("Bienvenido al club "+tramitarLicencia.getDirectivo().getNombre());
 			
@@ -495,6 +516,25 @@ public class VentanaPrincipal extends JFrame {
 		}
 	}
 	
+	private JButton getBtnCrearCursillos() {
+		if (btnCrearCursillos == null) {
+			btnCrearCursillos = new JButton("Crear cursillos");
+			btnCrearCursillos.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					openCrearCursillos();
+				}
+			});
+		}
+		return btnCrearCursillos;
+	}
+	
+	private void openCrearCursillos() {
+		vcc = new VentanaCrearCursillos(db);
+		vcc.setModal(true);
+		vcc.setLocationRelativeTo(this);
+		vcc.setVisible(true);
+	}
+
 	private boolean comprobarUsuario() {
 		String dniUsuario = getTxDniUsuario().getText();
 		if( loggin.existeUsuario(dniUsuario)) {

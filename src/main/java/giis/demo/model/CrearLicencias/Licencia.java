@@ -4,6 +4,7 @@ import java.time.LocalDate;
 import java.util.List;
 
 import giis.demo.model.Generos;
+import giis.demo.model.TiposDeportes;
 import giis.demo.util.Database;
 
 public class Licencia {
@@ -13,10 +14,10 @@ public class Licencia {
 	public final static int PRECIO_LICENCIA_JUEZ = 30;
 	
 	private final static String SQL_CREAR_LICENCIA = "insert into licencias(owner_id, tutor_dni, tutor_name, tutor_surname, tutor_email, tutor_telf, tutor_birth_date, tutor_gender, state, price, licence_type,"
-			+ " facturation_direction,facturation_info) values(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-	private final static String SQL_CARGAR_LICENCIA = "select owner_id, tutor_dni, tutor_name, tutor_surname, tutor_email, tutor_telf, tutor_birth_date, tutor_gender, state, price, licence_type,facturation_direction,facturation_info from licencias where owner_id = ? and licence_type = ?";
+			+ " facturation_direction,facturation_info, deporte) values(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+	private final static String SQL_CARGAR_LICENCIA = "select owner_id, tutor_dni, tutor_name, tutor_surname, tutor_email, tutor_telf, tutor_birth_date, tutor_gender, state, price, licence_type,facturation_direction,facturation_info, deporte from licencias where owner_id = ? and licence_type = ?";
 	private final static String SQL_MODIFICAR_LICENCIA = "update licencias set tutor_dni=?, tutor_name=?, tutor_surname=?, tutor_email=?, tutor_telf=?, tutor_birth_date=?, tutor_gender=?,"
-			+ "state=?, price=?,facturation_direction=?,facturation_info=? where owner_id = ? and licence_type = ?";
+			+ "state=?, price=?,facturation_direction=?,facturation_info=?, deporte=? where owner_id = ? and licence_type = ?";
 	
 	private Database db;
 	
@@ -33,13 +34,14 @@ public class Licencia {
 	private TiposLicencia tipoLicencia;
 	private String direccionFacturacion;
 	private String infoFacturacion;
+	private TiposDeportes deporte;
 	
 	public Licencia(int id, Database db) {
 		idPropietario = id;
 		this.db = db;
 	}
 
-	public void crearLicencia(String dni,String nombre,String apellido, String correo, int telf, LocalDate fecha, Generos genero, String direccion, String info, TiposLicencia licencia) {
+	public void crearLicencia(String dni,String nombre,String apellido, String correo, int telf, LocalDate fecha, Generos genero, String direccion, String info, TiposLicencia licencia, TiposDeportes deporte) {
 		nombreTutor = nombre;
 		apellidosTutor = apellido;
 		dniTutor = dni;
@@ -67,8 +69,9 @@ public class Licencia {
 		direccionFacturacion = direccion;
 		infoFacturacion = info;
 		tipoLicencia = licencia;
+		this.deporte = deporte;
 		
-		db.executeUpdate(SQL_CREAR_LICENCIA, idPropietario,dniTutor,nombreTutor,apellidosTutor,correoTutor,telefonoTutor,fechaTutor,generoTutor,estado,precio,tipoLicencia,direccionFacturacion,infoFacturacion);
+		db.executeUpdate(SQL_CREAR_LICENCIA, idPropietario,dniTutor,nombreTutor,apellidosTutor,correoTutor,telefonoTutor,fechaTutor,generoTutor,estado,precio,tipoLicencia,direccionFacturacion,infoFacturacion,this.deporte);
 		comprobarInsertado();
 	}
 	
@@ -88,6 +91,7 @@ public class Licencia {
 		String licencia = (String) result[10];
 		direccionFacturacion = (String) result[11];
 		infoFacturacion = (String) result[12];
+		String tipoDeporte = (String) result[13];
 		
 		if(genero == null) {
 			generoTutor = Generos.OTRO;
@@ -97,6 +101,16 @@ public class Licencia {
 			generoTutor = Generos.MUJER;
 		}else {
 			generoTutor = Generos.OTRO;
+		}
+		
+		if(tipoDeporte.equals("FUTBOL")) {
+			deporte = TiposDeportes.FUTBOL;
+		}else if(tipoDeporte.equals("NATACION")) {
+			deporte = TiposDeportes.NATACION;
+		}else if(tipoDeporte.equals("TENIS")) {
+			deporte = TiposDeportes.TENIS;
+		}else if(tipoDeporte.equals("TIRO_CON_ARCO")) {
+			deporte = TiposDeportes.TIRO_CON_ARCO;
 		}
 		
 		
@@ -143,15 +157,16 @@ public class Licencia {
 		String licencia = (String) result[10];
 		String direccion = (String) result[11];
 		String info = (String) result[12];
+		String deporte = (String) result[13];
 		
 		System.out.println("\n"+"Id del socio: "+id+", dni del tutor: "+dni+", nombre del tutor: "+nombre+", apellidos del tutor: "+apellido+
 				", correo del tutor: "+correo+", telefono del tutor: "+telefono+", edad del tutor: "+fechaTutor+" ,genero del tutor: "+genero+
 				", estado de la licencia: "+estado+", precio de la licencia: "+precio+", tipo de licencia: "+licencia+
-				", direccion de facturacion: "+direccion+", informacion de facturacion: "+info);
+				", direccion de facturacion: "+direccion+", informacion de facturacion: "+info+", deporte:"+deporte);
 	}
 	
 	public void modificarDatos(String dni, String nombre, String apellido, String correo, int telf, LocalDate fecha, Generos genero, String direccion,
-			String info) {
+			String info, TiposDeportes deporte) {
 		dniTutor = dni;
 		nombreTutor = nombre;
 		apellidosTutor = apellido;
@@ -163,6 +178,7 @@ public class Licencia {
 		
 		direccionFacturacion = direccion;
 		infoFacturacion = info;
+		this.deporte = deporte;
 	}
 	
 	public void guardarDatos() {
@@ -172,7 +188,7 @@ public class Licencia {
 		}
 		estado = EstadosLicencia.PENDIENTE;
 		db.executeUpdate(SQL_MODIFICAR_LICENCIA,dniTutor, nombreTutor, apellidosTutor, correoTutor, telefonoTutor, fechaTutor, generoTutor, estado, precio, direccionFacturacion
-				,infoFacturacion, idPropietario, tipoLicencia);
+				,infoFacturacion, idPropietario, tipoLicencia,deporte);
 		System.out.println("Datos Licencia modificados:\n"+getDatosLicencia());
 	}
 	
@@ -243,5 +259,9 @@ public class Licencia {
 
 	public int getTelefonoTutor() {
 		return telefonoTutor;
+	}
+
+	public TiposDeportes getDeporte() {
+		return deporte;
 	}
 }

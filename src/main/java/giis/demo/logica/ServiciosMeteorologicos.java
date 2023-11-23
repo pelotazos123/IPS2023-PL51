@@ -1,6 +1,8 @@
 package giis.demo.logica;
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.FileInputStream;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
@@ -21,10 +23,12 @@ public class ServiciosMeteorologicos {
 
 	private static final String APP_PROPERTIES = "src/main/resources/application.properties";
 //	 private static final String API_KEY = "8RfHsl5zKwBjPPRndZRuyCbdDZsahX4C";
-	private static final String API_URL = "https://api.tomorrow.io/v4/weather/forecast?"
-			+ "location='Uvieu,Asturies,España'&apikey=8RfHsl5zKwBjPPRndZRuyCbdDZsahX4C";
+//	private static final String API_URL = "https://api.tomorrow.io/v4/weather/forecast?"
+//			+ "location='Uvieu,Asturies,España'&apikey=8RfHsl5zKwBjPPRndZRuyCbdDZsahX4C";
 //	private static final String API_URL = "https://api.tomorrow.io/v4/weather/forecast?"
 //	+ "location='Brasilia'&apikey=8RfHsl5zKwBjPPRndZRuyCbdDZsahX4C";
+	private static final String API_URL = "https://api.tomorrow.io/v4/weather/forecast?"
+			+ "location='Helsinki'&apikey=8RfHsl5zKwBjPPRndZRuyCbdDZsahX4C";
 	
 	private static final String CARGAINSTALACIONES = "select code, name from instalaciones";
 	
@@ -80,9 +84,14 @@ public class ServiciosMeteorologicos {
 						.get("temperatureApparent").asDouble();
 				dto.rainAccumulationLwe = jn.path("values")
 						.get("rainAccumulationLwe").asDouble();
+				dto.snowAccumulationLwe = jn.path("values")
+						.get("snowAccumulationLwe").asDouble();
 				checkInstalationes(dto, day);
 			}
 			rc.getReservas();
+			
+			String filePath = "src/main/resources/json.txt";
+			writeToTxt(linesAux, filePath);
 			
 		} catch (Exception e/*IOException e*/) {
 			e.printStackTrace();
@@ -93,9 +102,22 @@ public class ServiciosMeteorologicos {
 		}
 	}
 
+	public static void writeToTxt(String[] array, String filePath) {
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(filePath))) {
+            // Iterar sobre el array y escribir cada elemento en una línea del archivo
+            for (String element : array) {
+                writer.write(element);
+                writer.newLine(); // Agregar un salto de línea después de cada elemento
+            }
+//            System.out.println("Datos escritos en el archivo correctamente.");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+	
 	private void checkInstalationes(WeatherDto weather, LocalDateTime day) {		
-		int horaApertura = Integer.parseInt(prop.getProperty("club.horaApertura"));
-		int horaCierre = Integer.parseInt(prop.getProperty("club.horaCierre"));
+		int horaApertura = Integer.parseInt(prop.getProperty("club.horario.apertura"));
+		int horaCierre = Integer.parseInt(prop.getProperty("club.horario.cierre"));
 		int hour = weather.hora.getHour();
 		if(hour >= horaApertura && hour < horaCierre) {
 			List<Object[]> instalaciones = vp.getDb().executeQueryArray(CARGAINSTALACIONES);
@@ -125,55 +147,58 @@ public class ServiciosMeteorologicos {
 	 */
 	private void checkTenis(WeatherDto weather, String idInst, LocalDateTime day) {
 		DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
-		String reserva = day.format(dtf);
+		String horaInicio = day.format(dtf);
+		String horaFin = day.plusHours(1).format(dtf);
 		double rain = Double.parseDouble(prop.getProperty("weather.tenis.rain"));
 		double temperature = Double.parseDouble(prop.getProperty("weather.temperature"));
 		double snow = Double.parseDouble(prop.getProperty("weather.tenis.snow"));
 		if(weather.rainAccumulationLwe >= rain || weather.temperatureApparent >= temperature
 				|| weather.snowAccumulationLwe >= snow) {
-			if(rc.getReservasNoAnuladasHora(reserva, idInst)) {
-				rc.borraReserva(idInst, reserva);
+			if(rc.getReservasNoAnuladasHora(horaInicio, idInst)) {
+				rc.borraReserva(idInst, horaInicio);
 			}
-			rc.anular(day, reserva, idInst);
+			rc.anular(horaInicio, horaFin, idInst);
 		} else {
-			if(rc.getReservasAnuladasHora(reserva, idInst))
-				rc.borraReserva(idInst, reserva);
+			if(rc.getReservasAnuladasHora(horaInicio, idInst))
+				rc.borraReserva(idInst, horaInicio);
 		}
 			
 	}
 
 	private void checkFutbol(WeatherDto weather, String idInst, LocalDateTime day) {
 		DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
-		String reserva = day.format(dtf);
+		String horaInicio = day.format(dtf);
+		String horaFin = day.plusHours(1).format(dtf);
 		double rain = Double.parseDouble(prop.getProperty("weather.futbol.rain")); 
 		double temperature = Double.parseDouble(prop.getProperty("weather.temperature"));
 		double snow = Double.parseDouble(prop.getProperty("weather.futbol.snow")); 
 		if(weather.rainAccumulationLwe >= rain || weather.temperatureApparent >= temperature 
 				|| weather.snowAccumulationLwe >= snow) {
-			if(rc.getReservasNoAnuladasHora(reserva, idInst)) 
-				rc.borraReserva(idInst, reserva);
-			rc.anular(day, reserva, idInst);
+			if(rc.getReservasNoAnuladasHora(horaInicio, idInst)) 
+				rc.borraReserva(idInst, horaInicio);
+			rc.anular(horaInicio, horaFin, idInst);
 		} else {
-			if(rc.getReservasAnuladasHora(reserva, idInst))
-				rc.borraReserva(idInst, reserva);
+			if(rc.getReservasAnuladasHora(horaInicio, idInst))
+				rc.borraReserva(idInst, horaInicio);
 		}
 	}
 
 	private void checkTiroConArco(WeatherDto weather, String idInst, LocalDateTime day) {
 		DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
-		String reserva = day.format(dtf);
+		String horaInicio = day.format(dtf);
+		String horaFin = day.plusHours(1).format(dtf);
 		double rain = Double.parseDouble(prop.getProperty("weather.arco.rain"));
 		double temperature = Double.parseDouble(prop.getProperty("weather.temperature"));
 		double snow = Double.parseDouble(prop.getProperty("weather.arco.snow"));
 		double wind = Double.parseDouble(prop.getProperty("weather.arco.wind"));
 		if(weather.rainAccumulationLwe >= rain || weather.temperatureApparent >= temperature
 				|| weather.snowAccumulationLwe >= snow || weather.windSpeed >= wind) {
-			if(rc.getReservasNoAnuladasHora(reserva, idInst))
-				rc.borraReserva(idInst, reserva);
-			rc.anular(day, reserva, idInst);
+			if(rc.getReservasNoAnuladasHora(horaInicio, idInst))
+				rc.borraReserva(idInst, horaInicio);
+			rc.anular(horaInicio, horaFin, idInst);
 		} else {
-			if(rc.getReservasAnuladasHora(reserva, idInst))
-				rc.borraReserva(idInst, reserva);
+			if(rc.getReservasAnuladasHora(horaInicio, idInst))
+				rc.borraReserva(idInst, horaInicio);
 		}
 	}
 
