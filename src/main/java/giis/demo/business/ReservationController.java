@@ -22,7 +22,7 @@ public class ReservationController {
 	
 	private Database db;
 	
-	private final static String SQL_CARGAR_RESERVA = "SELECT id, fecha_inicio, fecha_fin, instalation_code, tipo FROM reservas";
+//	private final static String SQL_CARGAR_RESERVA = "SELECT id, fecha_inicio, fecha_fin, instalation_code, tipo FROM reservas";
 	private final static String SQL_CREAR_RESERVA = "INSERT INTO reservas(fecha_inicio, fecha_fin, instalation_code, tipo) VALUES (?, ?, ?, ?)";
 	private final static String SQL_ID_RESERVA = "SELECT seq FROM sqlite_sequence where name='reservas'";
 	private final static String SQL_ID_CURSO = "SELECT seq FROM sqlite_sequence where name='cursillos'";
@@ -47,9 +47,11 @@ public class ReservationController {
 	public final static int EMPTY = 0;
 	
 	public final static String CURSO_OCUPADO = "RESERVADO PARA CURSO";
+	public final static String METEOROLOGIA = "ANULADO METEOROLOGÍA";
 	
 	public final static String TIPO_CURSO = "curso";
 	public final static String TIPO_RESERVA = "reserva";
+	public final static String TIPO_ANULADA = "ANULADA";
 	
 	public final static Map<String,String> DIAS_SEMANA = new HashMap<String, String>(){
 		private static final long serialVersionUID = 1L;
@@ -73,6 +75,12 @@ public class ReservationController {
 		this.db = db;
 	}
 	
+	public boolean anular(String hora_Inicio, String hora_fin , String instalacionId) {
+		createAnulation(hora_Inicio, hora_fin, instalacionId);
+//		getReservas();
+		return true;
+	}
+
 	public boolean reservar(LocalDateTime diaInicio, String reservaInicio, String reservaFin, Instalacion instalacion, List<String> listaParticipantes) {
 		if (!checkParticipantsAvailability(diaInicio, instalacion, listaParticipantes))
 			return false;
@@ -184,6 +192,7 @@ public class ReservationController {
 	}
 	
 	public List<Reserva> getReservas() {
+		String SQL_CARGAR_RESERVA = "SELECT id, fecha_inicio, fecha_fin, instalation_code, tipo FROM reservas";
 		listaReservas.removeAll(listaReservas);
 		resQuery = db.executeQueryArray(SQL_CARGAR_RESERVA);
 		
@@ -206,7 +215,6 @@ public class ReservationController {
 			
 			fechaInicio = reservaInicio.split(" ")[0];
 			horaInicio = reservaInicio.split(" ")[1];
-			
 			fechaFin= reservaFin.split(" ")[0];
 			horaFin= reservaFin.split(" ")[1];
 			
@@ -236,6 +244,29 @@ public class ReservationController {
 	
 	private void createReservation(String reservaInicio, String reservaFin, String instalacionId, String tipoReserva) {
 		db.executeUpdate(SQL_CREAR_RESERVA, reservaInicio, reservaFin, instalacionId, tipoReserva);
+	}
+	
+	private void createAnulation(String hora_Inicio, String hora_fin, String instalacionId) {
+		String SQL_ANULAR = "INSERT INTO reservas(fecha_inicio, fecha_fin, instalation_code, tipo) "
+				+ "VALUES (?, ?, ?, 'ANULADA')"; 
+		db.executeUpdate(SQL_ANULAR, hora_Inicio, hora_fin, instalacionId);
+	}
+
+	public boolean getReservasNoAnuladasHora(String fechaInicio, String idInst) {
+		String SQL_CARGA_NO_ANULADAS = "select * from reservas where tipo == 'NORMAL' "
+				+ "and fecha_inicio = ? and instalation_code = ?";
+		return !db.executeQueryArray(SQL_CARGA_NO_ANULADAS, fechaInicio, idInst).isEmpty();
+	}
+
+	public void borraReserva(String idInst, String horaInicio) {
+		String SQL_BORRA_RESERVA = "delete from reservas where fecha_inicio = ? and instalation_code = ?";
+		db.executeUpdate(SQL_BORRA_RESERVA, horaInicio, idInst);
+	}
+
+	public boolean getReservasAnuladasHora(String horaInicio, String idInst) {
+		String SQL_CARGA_ANULADAS = "select * from reservas where tipo == 'ANULADA' "
+				+ "and fecha_inicio = ? and instalation_code = ?";
+		return !db.executeQueryArray(SQL_CARGA_ANULADAS, horaInicio, idInst).isEmpty();
 	}
 
 }
