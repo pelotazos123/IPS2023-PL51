@@ -53,6 +53,7 @@ public class ReservationController {
 	public final static String TIPO_RESERVA = "reserva";
 	public final static String TIPO_ANULADA = "ANULADA";
 	
+	// Mapeo de dias para trabajar con los dias en español de el ENUM DaysOfWeek
 	public final static Map<String,String> DIAS_SEMANA = new HashMap<String, String>(){
 		private static final long serialVersionUID = 1L;
 
@@ -106,7 +107,7 @@ public class ReservationController {
 		
 		// Se crea el curso
 		createCurso(nombreCurso, instalacion, coste, inicioCursoStr, finalCursoStr, numPlazas);
-		
+		// Añade los entrenadores al curso
 		createQueryTrainers(entrenadores, nombreCurso);
 		
 		// Se reservan los dias que habrá en el rango entre la fecha de inicio y fecha final del curso
@@ -153,7 +154,7 @@ public class ReservationController {
 				dates.add(reserva);
 			}
 			
-			for (LocalDateTime reservao : dates) {
+			for (LocalDateTime reservao : dates) { // Comprueba que en las 24h siguientes y anteriores ninguno de los participantes está en otra reserva
 				yesterday = reservao.minusDays(1);
 				tomorrow = reservao.plusDays(1);
 				

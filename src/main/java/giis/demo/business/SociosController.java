@@ -181,6 +181,12 @@ public abstract class SociosController {
 		}	
 	}
 	
+	/**
+	 * Devuelve el modelo con los datos sacados de la query para darlos a una JTable directamente.
+	 * @param db
+	 * @param filter
+	 * @return
+	 */
 	private static List<SocioEntity> getSociosForTabla(Database db, String filter){
 		return db.executeQueryPojo(SocioEntity.class, buildQuery(filter));
 	}
