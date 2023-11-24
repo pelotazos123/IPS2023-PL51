@@ -141,20 +141,20 @@ public class VentanaCrearCursillos extends JDialog {
 		
 		String nombreCurso = getTxtNombreCurso().getText();
 		
-		if (!checkCurso(nombreCurso))
+		if (!checkCurso(nombreCurso)) // Comprueba cada parametro del curso introducido
 			return;
 		
 		LocalDate diaInicio = getDcInicio().getDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
 		LocalDate diaFin = getDcFinal().getDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
 		
-		if (!checkTrainers(entrenadores))
+		if (!checkTrainers(entrenadores)) // Comprueba la existencia de los entrenadores
 			return;
 		
-		String toParseCost = getTxtCosteCurso().getText().substring(0, getTxtCosteCurso().getText().length() - 1);
+		double toParseCost = Double.parseDouble(getTxtCosteCurso().getText().substring(0, getTxtCosteCurso().getText().length() - 1)); // Elimina el simbolo de € del String y lo convierte en double
 		
 		if (!rC.creacionCurso(nombreCurso, diaInicio, diaFin, LocalTime.of(Integer.parseInt(horaInicio[0]),Integer.parseInt(horaInicio[1]))
 				, LocalTime.of(Integer.parseInt(horaFin[0]),Integer.parseInt(horaFin[1])), entrenadores, dias,
-				((Instalacion)getCbInstalaciones().getSelectedItem()), Double.parseDouble(toParseCost), (int)getSpnMaxSocios().getValue())) {
+				((Instalacion)getCbInstalaciones().getSelectedItem()), toParseCost, (int)getSpnMaxSocios().getValue())) {
 			return;
 		}
 		
@@ -162,6 +162,11 @@ public class VentanaCrearCursillos extends JDialog {
 		this.dispose();
 	}
 
+	/**
+	 * Comprueba cada texto introducido en los JTextField para saber si es entrenador o no
+	 * @param entrenadores
+	 * @return
+	 */
 	private boolean checkTrainers(List<String> entrenadores) {
 		for (JTextField txtEntrenador : listaTxtFields) {
 			String dni = txtEntrenador.getText();
@@ -459,11 +464,11 @@ public class VentanaCrearCursillos extends JDialog {
 	        if (e != null) {
 	        	JCheckBox chkBox = (JCheckBox) e.getSource();
 	        	System.out.println(DayOfWeek.valueOf(ReservationController.DIAS_SEMANA.get(chkBox.getText()))+" Dia");
-	        	if (chkBox.isSelected()) 
+	        	if (chkBox.isSelected()) // Añade los dias seleccionados a una lista 
 	        		dias.add(DayOfWeek.valueOf(ReservationController.DIAS_SEMANA.get(chkBox.getText())));
 	        	else
 	        		dias.remove(DayOfWeek.valueOf(ReservationController.DIAS_SEMANA.get(chkBox.getText())));	        	
-	        } else {
+	        } else { // Limita la seleccion de dias, si el máximo fuese 3, solo permitiría marcar 3 checkboxes
 	        	for (Component component : getPnSur().getComponents()) {
 	        		if (component instanceof JCheckBox) {
 	        			JCheckBox checkBox = (JCheckBox) component;
