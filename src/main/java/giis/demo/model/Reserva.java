@@ -1,10 +1,10 @@
 package giis.demo.model;
 
 public class Reserva {
-
+	
 	private int id;
 	private String fechaInicio;
-	private String instalacionId;	
+	private String instalacionId;
 	private String horaInicio;
 	private String fechaFin;
 	private String horaFin;

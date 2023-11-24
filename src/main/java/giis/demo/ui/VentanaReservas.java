@@ -352,6 +352,13 @@ public class VentanaReservas extends JDialog {
 					}
 				} 
 				
+				if(reserva.getTipoCurso().equals(ReservationController.TIPO_ANULADA)) {
+					while (posFinal != posInicio) {
+						modeloListaHoras.add(posFinal-1, ReservationController.METEOROLOGIA);
+						posFinal--;
+					}
+				} 
+				
 				while (fin != inicio) {
 					modeloListaHoras.removeElement(--fin+":00");
 				}	
@@ -390,6 +397,8 @@ public class VentanaReservas extends JDialog {
 	}
 	
 	private void siguiente() {		
+		if(getTxtInicio().getText().equals(ReservationController.METEOROLOGIA) ) 
+			JOptionPane.showMessageDialog(null, "NO SE PUEDE RESERVAR POR METEOROLOGÍA");
 		if (!Util.checkHourInserted(getTxtInicio().getText(), getTxtFin().getText(), Integer.parseInt(props.getProperty("reserva.hora.max")), Integer.parseInt(props.getProperty("reserva.hora.max"))))
 			return;
 		
