@@ -189,8 +189,9 @@ public class VentanaReservas extends JDialog {
 		int selectedVal = getList().getSelectedIndex();
 		
 		String horaInicio = modeloListaHoras.get(selectedVal);
-		String horaFin = getTxtFin().getText();
+		String horaFin = getTxtFin().getText();	
 		
+		// Se parsean las horas a un formato adaptado a SQLite		
 		LocalDate selectedDate = getCalendar().getDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();;
 		LocalTime hInicio = LocalTime.of(Integer.parseInt(horaInicio.split(":")[0]), 00);
 		LocalTime hFin = LocalTime.of(Integer.parseInt(horaFin.split(":")[0]), 00);
@@ -295,7 +296,7 @@ public class VentanaReservas extends JDialog {
 			list.addListSelectionListener(new ListSelectionListener() {
 				@Override
 				public void valueChanged(ListSelectionEvent e) {
-					setTimeSelected(e); // Si la reserva se puede ampliar una hora, se habilita el check
+					setTimeSelected(e); // Escucha las selecciones de la lista
 				}
 			});
 			list.setModel(modeloListaHoras);
@@ -308,8 +309,8 @@ public class VentanaReservas extends JDialog {
 		JList<String> lista = (JList<String>) e.getSource();
 		if (lista.getSelectedValue() == null)
 			return;
-		if (lista.getSelectedValue().equals(ReservationController.CURSO_OCUPADO)) {
-			getTxtInicio().setText("__:__");
+		if (lista.getSelectedValue().equals(ReservationController.CURSO_OCUPADO)) { // Comprueba que, si hay un curso en esas horas, 
+			getTxtInicio().setText("__:__");										// se muestre pero no se permita reservar
 			getBtnSiguiente().setEnabled(false);
 			getTxtFin().setEnabled(false);
 		} else {
@@ -319,6 +320,9 @@ public class VentanaReservas extends JDialog {
 		}		
 	}
 
+	/**
+	 * Genera horas en la JList
+	 */
 	private void generaHoras() {
 		getBtnSiguiente().setEnabled(false);
 		modeloListaHoras.removeAllElements();
@@ -331,7 +335,7 @@ public class VentanaReservas extends JDialog {
 		
 		for (Reserva reserva : reMan.getReservas()) {	
 			if (reserva.getFechaInicio().trim().equals(chosenDay)
-					&& modeloListaHoras.contains(reserva.getHoraInicio().trim())
+					&& modeloListaHoras.contains(reserva.getHoraInicio().trim())	// Se comprueba cada reserva, con cada dia, hora e instalacion seleccionada
 							&& reserva.getInstalacionId().trim().equals(((Instalacion)getCbInstalaciones().getSelectedItem()).getCode().toString())) {
 				System.out.println("Ya hay una reserva");
 				
@@ -341,8 +345,8 @@ public class VentanaReservas extends JDialog {
 				int inicio = Integer.parseInt(reserva.getHoraInicio().trim().split(":")[0]);
 				int fin = Integer.parseInt(reserva.getHoraFin().trim().split(":")[0]);
 				
-				if (reserva.getTipoCurso().equals(ReservationController.TIPO_CURSO)) {
-					while (posFinal != posInicio) {
+				if (reserva.getTipoCurso().equals(ReservationController.TIPO_CURSO)) {	// Si hay una reserva para un curso, cambia el texto por 
+					while (posFinal != posInicio) {										// ocupado por un curso o similar
 						modeloListaHoras.add(posFinal-1, ReservationController.CURSO_OCUPADO);
 						posFinal--;
 					}
@@ -470,6 +474,9 @@ public class VentanaReservas extends JDialog {
 		return btnNuevoSocio;
 	}
 
+	/**
+	 * Añade un nuevo JTextField para cada socio que se vaya a añadir a la reserva
+	 */
 	private void addNewSocio() {
 		if (listaTxtFields.size() < selInstalacion.getMaxReserva()) {
 			JPanel pnlController = new JPanel();
@@ -491,7 +498,7 @@ public class VentanaReservas extends JDialog {
 		nuevo.setForeground(Color.LIGHT_GRAY);
 		nuevo.addFocusListener(new FocusListener() {
 			
-			@Override
+			@Override	// Placeholder para los jtextfields de dni de los socios
 			public void focusLost(FocusEvent e) {
 				if (nuevo.getText().isEmpty()) {
 					nuevo.setForeground(Color.LIGHT_GRAY);
@@ -571,6 +578,9 @@ public class VentanaReservas extends JDialog {
 		return btnVolver;
 	}
 
+	/**
+	 * Vuelve a la pantalla anterior de seleccion de dia
+	 */
 	private void cancelarOperacion() {	
 		listaTxtFields.removeAll(listaTxtFields);
 		getPnTxtFields().removeAll();
@@ -584,7 +594,7 @@ public class VentanaReservas extends JDialog {
 			btnReservar.setFont(new Font("Tahoma", Font.PLAIN, 18));
 			btnReservar.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
-					if (listaTxtFields.size() >= selInstalacion.getMinReserva())
+					if (listaTxtFields.size() >= selInstalacion.getMinReserva()) // Comprueba que hay un minimo de socios
 						reservar();
 					else
 						JOptionPane.showMessageDialog(null, "No llegas al mínimo de participantes.", "Error", JOptionPane.ERROR_MESSAGE);
@@ -659,7 +669,7 @@ public class VentanaReservas extends JDialog {
 	}
 	private JTextField getTxtFin() {
 		if (txtFin == null) {
-			MaskFormatter maskFormatter = null;
+			MaskFormatter maskFormatter = null; // Establece un formato para añadir solo horas
 	        
 	        try {
 	            maskFormatter = new MaskFormatter("##:00");
