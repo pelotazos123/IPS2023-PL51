@@ -31,7 +31,6 @@ public class TramitarLicencia {
 	private final static int ID_DIRECTIVO_PRUEBAS = 100;
 	
 	
-	private final static String SQL_OBTENER_IDS= "select id from socios";
 	private final static String SQL_OBTENER_SI_ES_DIRECTIVO = "select directive from socios where dni=?";
 	private final static String SQL_OBTENER_ID_SOCIO = "select id from socios where dni=?";
 	
@@ -62,7 +61,7 @@ public class TramitarLicencia {
 	}
 
 	public void crearSocio(String dni, String nombre, String apellidos, String correo, int telf, Generos genero, LocalDate fecha) {
-		socio = new Socio(db,generarId(),dni,nombre, apellidos, correo, telf,null,-1,-1,genero,fecha);
+		socio = new Socio(db,dni,nombre, apellidos, correo, telf,null,-1,-1,genero,fecha);
 		socio.insertarSocio();
 	}
 	
@@ -264,11 +263,6 @@ public class TramitarLicencia {
 			//menor de edad
 			return false;
 		}
-	}
-	
-	private int generarId() {
-		List<Object[]> result = db.executeQueryArray(SQL_OBTENER_IDS);
-		return ((int) result.get(result.size()-1)[0])+1;
 	}
 	
 	public Socio getUsuario() {

@@ -1,5 +1,6 @@
 package giis.demo.ui.politicaProteccionDatos;
 
+import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
@@ -9,13 +10,13 @@ import java.util.List;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
+import javax.swing.border.LineBorder;
 
 import giis.demo.componentes.PanelSolicitudes;
 import giis.demo.model.politicaDeDatos.PoliticaDeDatos;
-import java.awt.BorderLayout;
-import javax.swing.border.LineBorder;
 
 public class VentanaMostrarSolicitudes extends JFrame {
 
@@ -25,7 +26,6 @@ public class VentanaMostrarSolicitudes extends JFrame {
 	
 	private JPanel pnPrincipal;
 	private JLabel lbSolicitudes;
-	private JPanel pnSolicitudes;
 	private JPanel pnLellenda;
 	private JPanel pnNombre;
 	private JLabel lblDni;
@@ -36,6 +36,8 @@ public class VentanaMostrarSolicitudes extends JFrame {
 	private JPanel pnCategorias;
 	private JLabel lblCorreo;
 	private JPanel pnBoton;
+	private JScrollPane scSolicitudes;
+	private JPanel pnSolicitudes;
 
 	/**
 	 * Create the frame.
@@ -54,15 +56,15 @@ public class VentanaMostrarSolicitudes extends JFrame {
 
 		setContentPane(pnPrincipal);
 		pnPrincipal.setLayout(new BorderLayout(0, 0));
-		pnPrincipal.add(getPnSolicitudes());
 		pnPrincipal.add(getPnLellenda(), BorderLayout.NORTH);
+		pnPrincipal.add(getScSolicitudes(), BorderLayout.CENTER);
 		setLocationRelativeTo(null);
 		crearPanelesSolicitudes();
 	}
 	
 	private void crearPanelesSolicitudes() {
-		getPnSolicitudes().removeAll();
 		PanelSolicitudes elemento;
+		getPnSolicitudes().removeAll();
 		List<Object[]> solicitudes = politicaDeDatos.cargarSolicitudesDeModificacionDeDatos();
 		if(solicitudes.isEmpty()) {
 			getPnSolicitudes().add(getLbSolicitudes());
@@ -86,14 +88,6 @@ public class VentanaMostrarSolicitudes extends JFrame {
 			lbSolicitudes.setHorizontalAlignment(SwingConstants.CENTER);
 		}
 		return lbSolicitudes;
-	}
-	private JPanel getPnSolicitudes() {
-		if (pnSolicitudes == null) {
-			pnSolicitudes = new JPanel();
-			pnSolicitudes.setBackground(Color.WHITE);
-			pnSolicitudes.setLayout(new GridLayout(0, 1, 0, 0));
-		}
-		return pnSolicitudes;
 	}
 	private JPanel getPnLellenda() {
 		if (pnLellenda == null) {
@@ -164,7 +158,7 @@ public class VentanaMostrarSolicitudes extends JFrame {
 	}
 	private JLabel getLblCorreo() {
 		if (lblCorreo == null) {
-			lblCorreo = new JLabel("Correo");
+			lblCorreo = new JLabel("Contenido solicitud");
 			lblCorreo.setFont(new Font("Tahoma", Font.PLAIN, 15));
 		}
 		return lblCorreo;
@@ -175,5 +169,20 @@ public class VentanaMostrarSolicitudes extends JFrame {
 			pnBoton.setBackground(Color.WHITE);
 		}
 		return pnBoton;
+	}
+	private JScrollPane getScSolicitudes() {
+		if (scSolicitudes == null) {
+			scSolicitudes = new JScrollPane();
+			scSolicitudes.setViewportView(getPnSolicitudes());
+		}
+		return scSolicitudes;
+	}
+	private JPanel getPnSolicitudes() {
+		if (pnSolicitudes == null) {
+			pnSolicitudes = new JPanel();
+			pnSolicitudes.setBackground(Color.WHITE);
+			pnSolicitudes.setLayout(new GridLayout(0, 1, 0, 0));
+		}
+		return pnSolicitudes;
 	}
 }

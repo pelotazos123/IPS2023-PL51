@@ -398,6 +398,8 @@ public class VentanaRenovarLicencia extends JFrame {
 	private JTextArea getTxPoliticaDeDatos() {
 		if (txPoliticaDeDatos == null) {
 			txPoliticaDeDatos = new JTextArea();
+			txPoliticaDeDatos.setLineWrap(true);
+			txPoliticaDeDatos.setWrapStyleWord(true);
 			txPoliticaDeDatos.setText(cargarPoliticaDeDatos());
 			txPoliticaDeDatos.setEditable(false);
 		}

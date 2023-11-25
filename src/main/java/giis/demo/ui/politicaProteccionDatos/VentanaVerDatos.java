@@ -1,6 +1,7 @@
 package giis.demo.ui.politicaProteccionDatos;
 
 import java.awt.BorderLayout;
+import java.awt.CardLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
@@ -10,22 +11,22 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 import javax.swing.JButton;
-import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
 import javax.swing.JTextField;
+import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
+import javax.swing.border.LineBorder;
 
-import giis.demo.componentes.PanelEnviarSolicitud;
 import giis.demo.model.Socio;
 import giis.demo.model.CrearLicencias.servicio.TramitarLicencia;
 import giis.demo.model.politicaDeDatos.PoliticaDeDatos;
+import giis.demo.ui.VentanaPrincipal;
 import giis.demo.util.FileUtil;
-
-import java.awt.CardLayout;
-import javax.swing.JScrollPane;
-import javax.swing.JTextArea;
 
 public class VentanaVerDatos extends JFrame {
 
@@ -34,6 +35,7 @@ public class VentanaVerDatos extends JFrame {
 	
 	private TramitarLicencia tramitarLicencia;
 	private PoliticaDeDatos politicaDeDatos;
+	private VentanaPrincipal ventana;
 	
 	private JPanel pnPrincipal;
 	private JPanel pnBotones;
@@ -89,14 +91,23 @@ public class VentanaVerDatos extends JFrame {
 	private JLabel lbPoliticaDeDatos;
 	private JScrollPane scrPoliticaDeDatos;
 	private JTextArea txPoliticaDeDatos;
+	private JPanel pnEnviarSolicitud;
+	private JPanel pnEspecificar;
+	private JLabel lbEspecificar;
+	private JScrollPane scEscribirModificacion;
+	private JTextArea txModificacionDatos;
+	private JPanel pnBotonesEnviarSolicitud;
+	private JButton btCerrarSolicitud;
+	private JButton btAceptar;
 
 	/**
 	 * Create the frame.
 	 * @param politicaDeDatos 
 	 */
-	public VentanaVerDatos(TramitarLicencia t, PoliticaDeDatos p) {
+	public VentanaVerDatos(TramitarLicencia t, PoliticaDeDatos p,VentanaPrincipal v) {
 		tramitarLicencia = t;
 		politicaDeDatos = p;
+		ventana = v;
 		setMinimumSize(new Dimension(1400, 477));
 		setBackground(Color.WHITE);
 		setTitle("Club Deportivo");
@@ -111,6 +122,7 @@ public class VentanaVerDatos extends JFrame {
 		pnPrincipal.setLayout(new CardLayout(0, 0));
 		pnPrincipal.add(getPnVerDatos(), "pnVerDatos");
 		pnPrincipal.add(getPnPoliticaDatos(), "pnPoliticaDeDatos");
+		pnPrincipal.add(getPnEnviarSolicitud(), "pnSolicitud");
 		cargarDatos();
 	}
 
@@ -146,7 +158,7 @@ public class VentanaVerDatos extends JFrame {
 			btSolicitarModificarDatos = new JButton("Solicitar modificacion de datos");
 			btSolicitarModificarDatos.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
-					solicitarModificacion();
+					((CardLayout) getContentPane().getLayout()).show(getContentPane(),"pnSolicitud");
 				}
 			});
 			btSolicitarModificarDatos.setBounds(584, 269, 134, 54);
@@ -154,21 +166,28 @@ public class VentanaVerDatos extends JFrame {
 		return btSolicitarModificarDatos;
 	}
 	
-	private void solicitarModificacion() {
-		PanelEnviarSolicitud dialog = new PanelEnviarSolicitud();
-		dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
-		dialog.setVisible(true);
-		politicaDeDatos.enviarSolicitudDeModificacionDeDatos(tramitarLicencia.getUsuario());
-		btSolicitarModificarDatos.setEnabled(false);
-		
-	}
-	
 	private JButton getBtDarseBaja() {
 		if (btDarseBaja == null) {
 			btDarseBaja = new JButton("Darse de baja");
+			btDarseBaja.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					darseDeBaja();
+				}
+			});
 		}
 		return btDarseBaja;
 	}
+	
+	private void darseDeBaja() {
+		int respuesta = JOptionPane.showConfirmDialog(this, "¿Estás seguro que quieres darte de baja?");
+		if(respuesta == JOptionPane.YES_OPTION) {
+			politicaDeDatos.darseDeBaja(tramitarLicencia.getSocio());
+			ventana.darseDeBaja();
+			dispose();
+		}
+		
+	}
+	
 	private JPanel getPnDatos() {
 		if (pnDatos == null) {
 			pnDatos = new JPanel();
@@ -570,7 +589,7 @@ public class VentanaVerDatos extends JFrame {
 			btCerrar = new JButton("Cerrar");
 			btCerrar.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
-					dispose();
+					((CardLayout) getContentPane().getLayout()).show(getContentPane(),"pnVerDatos");
 				}
 			});
 			btCerrar.setForeground(Color.WHITE);
@@ -605,9 +624,102 @@ public class VentanaVerDatos extends JFrame {
 	private JTextArea getTxPoliticaDeDatos() {
 		if (txPoliticaDeDatos == null) {
 			txPoliticaDeDatos = new JTextArea();
+			txPoliticaDeDatos.setLineWrap(true);
+			txPoliticaDeDatos.setWrapStyleWord(true);
 			txPoliticaDeDatos.setText(FileUtil.loadFilePoliticaDatos(FICHERO_POLITICA_PROTECCION_DATOS));
 			txPoliticaDeDatos.setEditable(false);
 		}
 		return txPoliticaDeDatos;
+	}
+	private JPanel getPnEnviarSolicitud() {
+		if (pnEnviarSolicitud == null) {
+			pnEnviarSolicitud = new JPanel();
+			pnEnviarSolicitud.setBackground(Color.WHITE);
+			pnEnviarSolicitud.setLayout(new BorderLayout(0, 0));
+			pnEnviarSolicitud.add(getPnEspecificar(), BorderLayout.NORTH);
+			pnEnviarSolicitud.add(getScEscribirModificacion(), BorderLayout.CENTER);
+			pnEnviarSolicitud.add(getPnBotonesEnviarSolicitud(), BorderLayout.SOUTH);
+		}
+		return pnEnviarSolicitud;
+	}
+	private JPanel getPnEspecificar() {
+		if (pnEspecificar == null) {
+			pnEspecificar = new JPanel();
+			pnEspecificar.setBackground(Color.WHITE);
+			FlowLayout flowLayout = (FlowLayout) pnEspecificar.getLayout();
+			flowLayout.setAlignment(FlowLayout.LEFT);
+			pnEspecificar.add(getLbEspecificar());
+		}
+		return pnEspecificar;
+	}
+	private JLabel getLbEspecificar() {
+		if (lbEspecificar == null) {
+			lbEspecificar = new JLabel("Especifice los datos a modificar");
+			lbEspecificar.setBackground(Color.WHITE);
+			lbEspecificar.setFont(new Font("Tahoma", Font.PLAIN, 20));
+			lbEspecificar.setHorizontalAlignment(SwingConstants.LEFT);
+		}
+		return lbEspecificar;
+	}
+	private JScrollPane getScEscribirModificacion() {
+		if (scEscribirModificacion == null) {
+			scEscribirModificacion = new JScrollPane();
+			scEscribirModificacion.setBorder(new LineBorder(Color.BLACK));
+			scEscribirModificacion.setViewportView(getTxModificacionDatos());
+		}
+		return scEscribirModificacion;
+	}
+	private JTextArea getTxModificacionDatos() {
+		if (txModificacionDatos == null) {
+			txModificacionDatos = new JTextArea();
+			txModificacionDatos.setWrapStyleWord(true);
+			txModificacionDatos.setLineWrap(true);
+		}
+		return txModificacionDatos;
+	}
+	private JPanel getPnBotonesEnviarSolicitud() {
+		if (pnBotonesEnviarSolicitud == null) {
+			pnBotonesEnviarSolicitud = new JPanel();
+			pnBotonesEnviarSolicitud.setBackground(Color.WHITE);
+			FlowLayout flowLayout = (FlowLayout) pnBotonesEnviarSolicitud.getLayout();
+			flowLayout.setAlignment(FlowLayout.RIGHT);
+			pnBotonesEnviarSolicitud.add(getBtAceptar());
+			pnBotonesEnviarSolicitud.add(getBtCerrarSolicitud());
+		}
+		return pnBotonesEnviarSolicitud;
+	}
+	private JButton getBtCerrarSolicitud() {
+		if (btCerrarSolicitud == null) {
+			btCerrarSolicitud = new JButton("Cerrar");
+			btCerrarSolicitud.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					((CardLayout) getContentPane().getLayout()).show(getContentPane(),"pnVerDatos");
+				}
+			});
+			btCerrarSolicitud.setForeground(Color.WHITE);
+			btCerrarSolicitud.setFocusPainted(false);
+			btCerrarSolicitud.setBackground(Color.RED);
+		}
+		return btCerrarSolicitud;
+	}
+	private JButton getBtAceptar() {
+		if (btAceptar == null) {
+			btAceptar = new JButton("Aceptar");
+			btAceptar.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					enviarSolicitud();
+				}
+			});
+			btAceptar.setForeground(Color.WHITE);
+			btAceptar.setFocusPainted(false);
+			btAceptar.setBackground(Color.GREEN);
+		}
+		return btAceptar;
+	}
+	
+	private void enviarSolicitud() {
+		((CardLayout) getContentPane().getLayout()).show(getContentPane(),"pnVerDatos");
+		politicaDeDatos.enviarSolicitudDeModificacionDeDatos(tramitarLicencia.getSocio(),getTxModificacionDatos().getText());
+		getTxModificacionDatos().setText("");
 	}
 }

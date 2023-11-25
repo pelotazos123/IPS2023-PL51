@@ -468,11 +468,15 @@ public class VentanaPrincipal extends JFrame {
 			pnSeccionDirectivoPersonal.add(getBtTramitarLicencia());
 			pnSeccionDirectivoPersonal.add(getBtPagoTransferencia());
 			pnSeccionDirectivoPersonal.add(getBtRenovarLicencia());
-			pnBotonesDeportivoDirectivo.add(getBtnReservas());
 			pnSeccionDirectivoPersonal.add(getBtCambiarContraseña());
+			pnSeccionDirectivoPersonal.add(getBtVerDatos());
+			
 			pnSelectorFechaDirectivo.add(getDcFechaAplicacion());
+			
+			pnBotonesDeportivoDirectivo.add(getBtnReservas());
 			pnBotonesDeportivoDirectivo.add(getBtTestsFisiologicos());
 			pnBotonesDeportivoDirectivo.add(getBtInscripcionCompeticiones());
+			
 			pnSeccionDirectivoAdministracion.add(getBtnAsambleas());
 			pnSeccionDirectivoAdministracion.add(getBtnGeneracionRecibos());
 			pnSeccionDirectivoAdministracion.add(getBtnGestionRecibos());
@@ -488,12 +492,14 @@ public class VentanaPrincipal extends JFrame {
 			pnSeccionSocioPersonal.add(getBtTramitarLicencia());
 			pnSeccionSocioPersonal.add(getBtPagoTransferencia());
 			pnSeccionSocioPersonal.add(getBtRenovarLicencia());
+			pnSeccionSocioPersonal.add(getBtCambiarContraseña());
+			pnSeccionSocioPersonal.add(getBtVerDatos());
+			
 			pnBotonesDeportiva.add(getBtnReservas());
 			pnBotonesDeportiva.add(getBtInscripcionCompeticiones());
-			pnSeccionSocioPersonal.add(getBtCambiarContraseña());
-			pnSelectorFechaSocio.add(getDcFechaAplicacion());
 			pnBotonesDeportiva.add(getBtTestsFisiologicos());
-			pnSeccionSocioPersonal.add(getBtVerDatos());
+			
+			pnSelectorFechaSocio.add(getDcFechaAplicacion());
 			getLbBienvenidoSocio().setText("Bienvenido al club "+tramitarLicencia.getSocio().getNombre());
 			((CardLayout)pnPrincipal.getLayout()).show(pnPrincipal,"PrincipalSocio");
 			setMinimumSize(new Dimension(800, 517));
@@ -888,13 +894,17 @@ public class VentanaPrincipal extends JFrame {
 			btVerDatos = new JButton("Ver Datos");
 			btVerDatos.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
-					VentanaVerDatos frame = new VentanaVerDatos(tramitarLicencia, politicaDeDatos);
-					frame.setVisible(true);
+					irVentanaVerDatos();
 				}
 			});
 			btVerDatos.setBounds(584, 269, 134, 54);
 		}
 		return btVerDatos;
+	}
+	
+	private void irVentanaVerDatos() {
+		VentanaVerDatos frame = new VentanaVerDatos(tramitarLicencia, politicaDeDatos,this);
+		frame.setVisible(true);
 	}
 	
 	private JButton getBtVerSolicitudes() {
@@ -910,6 +920,17 @@ public class VentanaPrincipal extends JFrame {
 		}
 		return btVerSolicitudes;
 	}
+	
+	public void darseDeBaja() {
+		tramitarLicencia = new TramitarLicencia(db);
+		loggin = new GestionarLoggin(db);
+		gestorCompeticiones = new GestionarCompeticiones(db);
+		politicaDeDatos = new PoliticaDeDatos(db);
+		getTxDniUsuario().setText("");
+		getPfContraseña().setText("");
+		((CardLayout) pnPrincipal.getLayout()).show(pnPrincipal, "inicio");
+	}
+	
 	
 	private class PasswordPane {
 		

@@ -9,6 +9,8 @@ import java.awt.event.ActionListener;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
 import javax.swing.SwingConstants;
 import javax.swing.border.LineBorder;
 
@@ -26,10 +28,10 @@ public class PanelSolicitudes extends JPanel {
 	private JLabel lbNombre;
 	private JPanel pnApellido;
 	private JLabel lbApellido;
-	private JPanel pnCorreo;
-	private JLabel lbCorreo;
 	private JPanel pnBoton;
 	private JButton btCerrarSolicitud;
+	private JScrollPane scSolicitud;
+	private JTextArea txSolicitud;
 	
 
 	/**
@@ -45,17 +47,16 @@ public class PanelSolicitudes extends JPanel {
 		add(getPnDni());
 		add(getPnNombre());
 		add(getPnApellido());
-		add(getPnCorreo());
+		add(getScSolicitud());
 		add(getPnBoton());
 		cargarDatos();
-
 	}
 
 	private void cargarDatos() {
 		getLbDni().setText((String) solicitud[1]);
 		getLbNombre().setText((String) solicitud[2]);
 		getLbApellido().setText((String) solicitud[3]);
-		getLbCorreo().setText((String) solicitud[4]);
+		getTxSolicitud().setText((String) solicitud[4]);
 	}
 
 	private JPanel getPnDni() {
@@ -109,23 +110,6 @@ public class PanelSolicitudes extends JPanel {
 		}
 		return lbApellido;
 	}
-	private JPanel getPnCorreo() {
-		if (pnCorreo == null) {
-			pnCorreo = new JPanel();
-			pnCorreo.setBackground(Color.WHITE);
-			pnCorreo.setLayout(new GridLayout(0, 1, 0, 0));
-			pnCorreo.add(getLbCorreo());
-		}
-		return pnCorreo;
-	}
-	private JLabel getLbCorreo() {
-		if (lbCorreo == null) {
-			lbCorreo = new JLabel("null");
-			lbCorreo.setHorizontalAlignment(SwingConstants.CENTER);
-			lbCorreo.setFont(new Font("Tahoma", Font.PLAIN, 15));
-		}
-		return lbCorreo;
-	}
 	private JPanel getPnBoton() {
 		if (pnBoton == null) {
 			pnBoton = new JPanel();
@@ -146,5 +130,21 @@ public class PanelSolicitudes extends JPanel {
 			btCerrarSolicitud.setFont(new Font("Tahoma", Font.PLAIN, 15));
 		}
 		return btCerrarSolicitud;
+	}
+	private JScrollPane getScSolicitud() {
+		if (scSolicitud == null) {
+			scSolicitud = new JScrollPane();
+			scSolicitud.setViewportView(getTxSolicitud());
+		}
+		return scSolicitud;
+	}
+	private JTextArea getTxSolicitud() {
+		if (txSolicitud == null) {
+			txSolicitud = new JTextArea();
+			txSolicitud.setWrapStyleWord(true);
+			txSolicitud.setLineWrap(true);
+			txSolicitud.setEditable(false);
+		}
+		return txSolicitud;
 	}
 }
