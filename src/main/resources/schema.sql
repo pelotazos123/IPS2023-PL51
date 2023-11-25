@@ -15,6 +15,7 @@ drop table competiciones;
 drop table inscripcion_competiciones;
 drop table test;
 DROP TABLE entrenados;
+drop table articulos;
 drop table solicitudesModificacionDatos;
 
 
@@ -33,5 +34,6 @@ create table inscripcion_competiciones(competicion_id integer PRIMARY KEY, socio
 create table solicitudesModificacionDatos(id integer PRIMARY KEY AUTOINCREMENT, dni varchar2(255) NOT NULL UNIQUE, name varchar2(255), surname varchar2(255), modificacion varchar2(255));
 create table asambleas (type varchar2(255), date varchar2(255), hour_conv1 varchar2(255), hour_conv2 varchar2(255), orderOfDay varchar2(255), acta varchar2(255));
 create table entrenados(entrenador_id int, entrenado_id);
+create table articulos(id int, name varchar2(255), price double);
 CREATE TABLE IF NOT EXISTS cursillos (id integer PRIMARY KEY AUTOINCREMENT, nombre varchar2(255), code_instalacion varchar2(255), fecha_inicio date, fecha_fin date, price real, plazas int, foreign key(code_instalacion) REFERENCES instalaciones(code));
 CREATE TABLE IF NOT EXISTS entrenadores_cursillos (id integer PRIMARY KEY AUTOINCREMENT, id_curso int, dni varchar2(255), foreign key(id_curso) REFERENCES cursillos(id));

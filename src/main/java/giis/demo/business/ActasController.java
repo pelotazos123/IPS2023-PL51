@@ -31,7 +31,7 @@ public class ActasController {
 
 	private void addActa() {
 		if(view.getTabAsambleas().getSelectedRow() == -1) {
-			JOptionPane.showMessageDialog(null, "Selecciona un acta.", "Error", JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(null, "Selecciona la asamblea a la que quieras añadir el acta.", "Error", JOptionPane.ERROR_MESSAGE);
 			return;
 		}
 		String type = view.getTabAsambleas().getValueAt(view.getTabAsambleas().getSelectedRow(), 0).toString();

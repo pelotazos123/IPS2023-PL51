@@ -87,3 +87,8 @@ insert into asambleas(type, date, hour_conv1, hour_conv2, orderOfDay, acta) valu
 	('Ordinaria', '2023-12-10', '8:00', '8:30', 'Gestion de gastos', 'Sin acta'),
 	('Extraordinaria', '2023-12-10', '14:00', '16:00', 'Nuevos entrenadores', 'Sin acta'),
 	('Extraordinaria', '2022-06-14', '10:00', '11:00', 'Problemas de horarios', 'Sin acta');
+	
+insert into articulos(id, name, price) values 
+	(100, 'equipacion', 80.0),
+	(100, 'chandal', 65.0),
+	(101, 'chaqueta', 40.0);
