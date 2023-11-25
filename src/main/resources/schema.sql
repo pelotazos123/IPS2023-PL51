@@ -32,7 +32,7 @@ create table recibos (owner_iban varchar2(255), number int, amount int, value_da
 create table competiciones (id integer PRIMARY KEY AUTOINCREMENT, name varchar2(255), competition_date date, place varchar2(255), categories varchar2(255), deporte varchar2(255));
 create table inscripcion_competiciones(competicion_id integer PRIMARY KEY, socio_id integer UNIQUE, foreign key(competicion_id) references competiciones(id), foreign key(socio_id) references socios(id));
 create table solicitudesModificacionDatos(id integer PRIMARY KEY AUTOINCREMENT, dni varchar2(255) NOT NULL UNIQUE, name varchar2(255), surname varchar2(255), modificacion varchar2(255));
-create table asambleas (type varchar2(255), date varchar2(255), hour_conv1 varchar2(255), hour_conv2 varchar2(255), orderOfDay varchar2(255), acta varchar2(255));
+create table asambleas (type varchar2(255), date varchar2(255), hour_conv1 varchar2(255), hour_conv2 varchar2(255), orderOfDay varchar2(255), acta varchar2(255), state varchar2(255));
 create table entrenados(entrenador_id int, entrenado_id);
 create table articulos(id int, name varchar2(255), price double);
 CREATE TABLE IF NOT EXISTS cursillos (id integer PRIMARY KEY AUTOINCREMENT, nombre varchar2(255), code_instalacion varchar2(255), fecha_inicio date, fecha_fin date, price real, plazas int, foreign key(code_instalacion) REFERENCES instalaciones(code));

@@ -313,7 +313,7 @@ public class VentanaPrincipal extends JFrame {
 	}
 	private JButton getBtnActas() {
 		if (btnActas == null) {
-			btnActas = new JButton("Añadir actas");
+			btnActas = new JButton("Actas");
 			btnActas.addActionListener(new ActionListener() {
 				@Override
 				public void actionPerformed(ActionEvent e) {

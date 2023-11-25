@@ -47,7 +47,7 @@ public class AsambleasController {
 		}
 		else {
 			String acta = model.lastActa(type);
-			model.addAsamblea(type, announcement, date1, date2, orderOfDay, "Sin acta");
+			model.addAsamblea(type, announcement, date1, date2, orderOfDay, "Sin acta", "No aprobada");
 			enviarAsamblea(type, announcement, date1, date2, orderOfDay, acta);
 			JOptionPane.showMessageDialog(null, "Se ha convocado correctamente.", "Correcto", JOptionPane.INFORMATION_MESSAGE);			
 			((CardLayout)view.getFrame().getContentPane().getLayout()).show(view.getFrame().getContentPane(),"EleccionAsambleas");
