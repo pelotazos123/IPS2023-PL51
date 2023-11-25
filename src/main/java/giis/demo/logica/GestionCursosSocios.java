@@ -11,8 +11,6 @@ import giis.demo.ui.VentanaGestionCursos;
 
 public class GestionCursosSocios {
 
-	// TODO RELLENAR CON LAS COLUMNAS Y CON EL ID DEL USUARIO
-
 	// TODO RELLENAR EL ID DEL USUARIO Y CAMBIAR CURSO POR CURSANTE?
 	private static final String ACTUALIZAPRECIOINSCRIBIRSE = "update from cuotas set price = price + ?";
 	private static final String ACTUALIZAPRECIOBORRARSE = "update from cuotas set price = price - ?";
