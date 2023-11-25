@@ -1,5 +1,6 @@
 package giis.demo.util;
 
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -11,6 +12,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 
 import org.apache.commons.dbutils.DbUtils;
 import org.apache.commons.dbutils.QueryRunner;
@@ -32,6 +34,7 @@ import org.apache.commons.dbutils.handlers.MapListHandler;
 public abstract class DbUtil {
 	/** Obtencion de la url de conexion que debe implementarse en la subclase */
 	public abstract String getUrl();
+	private static final String APP_PROPERTIES = "src/main/resources/application.properties";
 	
 	/** Obtiene un objeto conexion para esta base de datos */
 	public Connection getConnection() throws SQLException {
@@ -106,6 +109,17 @@ public abstract class DbUtil {
 		} finally {
 			DbUtils.closeQuietly(conn);
 		}
+	}
+	
+	public static Properties loadProperties() {
+		Properties prop=new Properties();
+		try (FileInputStream fs=new FileInputStream(APP_PROPERTIES)) {
+			prop.load(fs);
+		} catch (IOException e) {
+			throw new ApplicationException(e);
+		}
+		
+		return prop;
 	}
 	
 	/**

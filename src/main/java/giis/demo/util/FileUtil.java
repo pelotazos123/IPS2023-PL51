@@ -100,7 +100,7 @@ public abstract class FileUtil {
 		if(deporte.equals("FUTBOL")) {
 			deporteCompeticion = TiposDeportes.FUTBOL;
 		}else if(deporte.equals("TENNIS")) {
-			deporteCompeticion = TiposDeportes.TENNIS;
+			deporteCompeticion = TiposDeportes.TENIS;
 		}else if(deporte.equals("TIRO_CON_ARCO")) {
 			deporteCompeticion = TiposDeportes.TIRO_CON_ARCO;
 		}else {

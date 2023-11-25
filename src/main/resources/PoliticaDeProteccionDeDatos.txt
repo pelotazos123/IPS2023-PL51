@@ -2,11 +2,11 @@ Política de Protección de Datos
 
 1. Introducción
 
-Esta política establece los procedimientos y estándares que [Nombre de la Empresa] seguirá para proteger la privacidad y seguridad de los datos personales que recolectamos, procesamos y almacenamos. Esta política cumple con las regulaciones de protección de datos vigentes, incluyendo el Reglamento General de Protección de Datos (GDPR) y otras leyes locales de protección de datos.
+Esta política establece los procedimientos y estándares que Club Deportivo seguirá para proteger la privacidad y seguridad de los datos personales que recolectamos, procesamos y almacenamos. Esta política cumple con las regulaciones de protección de datos vigentes, incluyendo el Reglamento General de Protección de Datos (GDPR) y otras leyes locales de protección de datos.
 
 2. Alcance
 
-Esta política aplica a todos los empleados, contratistas, proveedores y terceros que manejen datos personales en nombre de [Nombre de la Empresa].
+Esta política aplica a todos los empleados, contratistas, proveedores y terceros que manejen datos personales en nombre de Club Deportivo.
 
 3. Principios de Protección de Datos
 
@@ -40,7 +40,7 @@ Solo transferiremos datos personales a terceros que ofrezcan garantías suficien
 
 6. Incumplimiento de la Política
 
-El incumplimiento de esta política puede resultar en acciones disciplinarias, incluyendo terminación de empleo o término de relación contractual, según corresponda. Además, [Nombre de la Empresa] puede estar sujeta a sanciones legales y multas por incumplimiento de las leyes de protección de datos.
+El incumplimiento de esta política puede resultar en acciones disciplinarias, incluyendo terminación de empleo o término de relación contractual, según corresponda. Además, Club Deportivo puede estar sujeta a sanciones legales y multas por incumplimiento de las leyes de protección de datos.
 
 7. Revisión de la Política
 
@@ -48,4 +48,4 @@ Esta política será revisada y actualizada periódicamente para asegurarse de q
 
 8. Contacto
 
-Para preguntas o inquietudes relacionadas con esta política, por favor comuníquese con el [Departamento de Privacidad/Responsable de Protección de Datos] a través de [información de contacto].
+Para preguntas o inquietudes relacionadas con esta política, por favor comuníquese con el Directivo Lucia Suarez a través de UO276220@uniovi.es

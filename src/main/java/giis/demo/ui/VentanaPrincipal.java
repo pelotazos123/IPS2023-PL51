@@ -36,12 +36,18 @@ import giis.demo.business.AsambleasModel;
 import giis.demo.business.GestionRecibosController;
 import giis.demo.business.RecibosController;
 import giis.demo.business.RecibosModel;
+import giis.demo.business.TiendaController;
+import giis.demo.business.TiendaModel;
+import giis.demo.logica.ServiciosMeteorologicos;
 import giis.demo.model.CrearLicencias.servicio.TramitarLicencia;
 import giis.demo.model.competiciones.servicio.GestionarCompeticiones;
 import giis.demo.model.loggin.servicio.GestionarLoggin;
+import giis.demo.model.politicaDeDatos.PoliticaDeDatos;
 import giis.demo.ui.competiciones.VentanaInscripcionCompeticiones;
 import giis.demo.ui.licencias.VentanaRenovarLicencia;
 import giis.demo.ui.licencias.VentanaTramitarLicencia;
+import giis.demo.ui.politicaProteccionDatos.VentanaMostrarSolicitudes;
+import giis.demo.ui.politicaProteccionDatos.VentanaVerDatos;
 import giis.demo.util.Database;
 
 public class VentanaPrincipal extends JFrame {
@@ -54,6 +60,7 @@ public class VentanaPrincipal extends JFrame {
 	private TramitarLicencia tramitarLicencia;
 	private GestionarLoggin loggin;
 	private GestionarCompeticiones gestorCompeticiones;
+	private PoliticaDeDatos politicaDeDatos;
 	
 	private JPanel pnPrincipal;
 	private JPanel pnPrincipalSocio;
@@ -62,6 +69,7 @@ public class VentanaPrincipal extends JFrame {
 	private JButton btRenovarLicencia;
 	private JButton btPagoTransferencia;
 	private JButton btTestsFisiologicos;
+	private JButton btTienda;
 	private VentanaReservas vr;
 	private VentanaListaSocios vLS;
 	private JButton btnReservas;
@@ -92,6 +100,8 @@ public class VentanaPrincipal extends JFrame {
 	private JLabel lblDniDelUsuario;
 	private JTextField txDniUsuario;
 	private JButton btCambiarContraseña;
+	private JButton btVerDatos;
+	private JButton btVerSolicitudes;
 	private JPanel pnSelectorFechaSocio;
 	private JLabel lbSeleccionarFechaSocio;
 	private JPanel pnSeccionSocio;
@@ -110,6 +120,8 @@ public class VentanaPrincipal extends JFrame {
 	private JPanel pnBotonesDeportivoDirectivo;
 	private JPanel pnSeccionDirectivoAdministracion;
 	private JButton btInscripcionCompeticiones;
+	private JButton btnCrearCursillos;
+	private VentanaCrearCursillos vcc;
 
 
 	/**
@@ -133,6 +145,7 @@ public class VentanaPrincipal extends JFrame {
 		tramitarLicencia = new TramitarLicencia(db);
 		loggin = new GestionarLoggin(db);
 		gestorCompeticiones = new GestionarCompeticiones(db);
+		politicaDeDatos = new PoliticaDeDatos(db);
 		cargarFecha();
 		setMinimumSize(new Dimension(517, 517));
 	}
@@ -479,17 +492,25 @@ public class VentanaPrincipal extends JFrame {
 			pnSeccionDirectivoPersonal.add(getBtTramitarLicencia());
 			pnSeccionDirectivoPersonal.add(getBtPagoTransferencia());
 			pnSeccionDirectivoPersonal.add(getBtRenovarLicencia());
-			pnBotonesDeportivoDirectivo.add(getBtnReservas());
 			pnSeccionDirectivoPersonal.add(getBtCambiarContraseña());
+			pnSeccionDirectivoPersonal.add(getBtVerDatos());
+			
 			pnSelectorFechaDirectivo.add(getDcFechaAplicacion());
+			
+			pnBotonesDeportivoDirectivo.add(getBtnReservas());
 			pnBotonesDeportivoDirectivo.add(getBtTestsFisiologicos());
 			pnBotonesDeportivoDirectivo.add(getBtInscripcionCompeticiones());
+			pnBotonesDeportivoDirectivo.add(getBtTienda());
 			pnSeccionDirectivoAdministracion.add(getBtnAsambleas());
 			pnSeccionDirectivoAdministracion.add(getBtnActas());
 			pnSeccionDirectivoAdministracion.add(getBtnGeneracionRecibos());
 			pnSeccionDirectivoAdministracion.add(getBtnGestionRecibos());
 			pnSeccionDirectivoAdministracion.add(getBtnListadoSocios());
 			pnSeccionDirectivoAdministracion.add(getBtnAñadirCompeticiones());
+			pnSeccionDirectivoAdministracion.add(getBtVerSolicitudes());
+			ServiciosMeteorologicos sm = new ServiciosMeteorologicos(this);
+			sm.checkTiempo();
+			pnSeccionDirectivoAdministracion.add(getBtnCrearCursillos());
 			
 			getLbBienvenidoDirectivo().setText("Bienvenido al club "+tramitarLicencia.getDirectivo().getNombre());
 			
@@ -499,17 +520,41 @@ public class VentanaPrincipal extends JFrame {
 			pnSeccionSocioPersonal.add(getBtTramitarLicencia());
 			pnSeccionSocioPersonal.add(getBtPagoTransferencia());
 			pnSeccionSocioPersonal.add(getBtRenovarLicencia());
+			pnSeccionSocioPersonal.add(getBtCambiarContraseña());
+			pnSeccionSocioPersonal.add(getBtVerDatos());
+			
 			pnBotonesDeportiva.add(getBtnReservas());
 			pnBotonesDeportiva.add(getBtInscripcionCompeticiones());
-			pnSeccionSocioPersonal.add(getBtCambiarContraseña());
+			pnBotonesDeportiva.add(getBtTestsFisiologicos());
+			
 			pnSelectorFechaSocio.add(getDcFechaAplicacion());
 			pnBotonesDeportiva.add(getBtTestsFisiologicos());
+			pnBotonesDeportiva.add(getBtTienda());
 			getLbBienvenidoSocio().setText("Bienvenido al club "+tramitarLicencia.getSocio().getNombre());
 			((CardLayout)pnPrincipal.getLayout()).show(pnPrincipal,"PrincipalSocio");
 			setMinimumSize(new Dimension(800, 517));
 		}
 	}
 	
+	private JButton getBtnCrearCursillos() {
+		if (btnCrearCursillos == null) {
+			btnCrearCursillos = new JButton("Crear cursillos");
+			btnCrearCursillos.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					openCrearCursillos();
+				}
+			});
+		}
+		return btnCrearCursillos;
+	}
+	
+	private void openCrearCursillos() {
+		vcc = new VentanaCrearCursillos(db);
+		vcc.setModal(true);
+		vcc.setLocationRelativeTo(this);
+		vcc.setVisible(true);
+	}
+
 	private boolean comprobarUsuario() {
 		String dniUsuario = getTxDniUsuario().getText();
 		if( loggin.existeUsuario(dniUsuario)) {
@@ -662,6 +707,7 @@ public class VentanaPrincipal extends JFrame {
 		}
 		return txDniUsuario;
 	}
+	
 	private JButton getBtCambiarContraseña() {
 		if (btCambiarContraseña == null) {
 			btCambiarContraseña = new JButton("Cambiar Contraseña");
@@ -858,6 +904,23 @@ public class VentanaPrincipal extends JFrame {
 		return btInscripcionCompeticiones;
 	}
 	
+	private JButton getBtTienda() {
+		if (btTienda == null) {
+			btTienda = new JButton("Tienda");
+			btTienda.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					TiendaView view = new TiendaView(getDcFechaAplicacion().getCalendar());
+					TiendaModel model = new TiendaModel(db);
+					TiendaController controller = new TiendaController(model,view, new RecibosModel(db), tramitarLicencia);
+					
+					controller.initController();
+				}
+			});
+			btTienda.setBounds(584, 269, 134, 54);
+		}
+		return btTienda;
+	}
+	
 	private void irCompeticiones() {
 		gestorCompeticiones.cargarCompeticiones();
 		VentanaInscripcionCompeticiones frame = new VentanaInscripcionCompeticiones(gestorCompeticiones,tramitarLicencia);
@@ -892,6 +955,49 @@ public class VentanaPrincipal extends JFrame {
 		return dcFechaAplicacion;
 	}
 	
+	private JButton getBtVerDatos() {
+		if (btVerDatos == null) {
+			btVerDatos = new JButton("Ver Datos");
+			btVerDatos.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					irVentanaVerDatos();
+				}
+			});
+			btVerDatos.setBounds(584, 269, 134, 54);
+		}
+		return btVerDatos;
+	}
+	
+	private void irVentanaVerDatos() {
+		VentanaVerDatos frame = new VentanaVerDatos(tramitarLicencia, politicaDeDatos,this);
+		frame.setVisible(true);
+	}
+	
+	private JButton getBtVerSolicitudes() {
+		if (btVerSolicitudes == null) {
+			btVerSolicitudes = new JButton("Ver Solicitudes");
+			btVerSolicitudes.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					VentanaMostrarSolicitudes frame = new VentanaMostrarSolicitudes(politicaDeDatos);
+					frame.setVisible(true);
+				}
+			});
+			btVerSolicitudes.setBounds(584, 269, 134, 54);
+		}
+		return btVerSolicitudes;
+	}
+	
+	public void darseDeBaja() {
+		tramitarLicencia = new TramitarLicencia(db);
+		loggin = new GestionarLoggin(db);
+		gestorCompeticiones = new GestionarCompeticiones(db);
+		politicaDeDatos = new PoliticaDeDatos(db);
+		getTxDniUsuario().setText("");
+		getPfContraseña().setText("");
+		((CardLayout) pnPrincipal.getLayout()).show(pnPrincipal, "inicio");
+	}
+	
+	
 	private class PasswordPane {
 		
 		private JPanel pn;
@@ -913,5 +1019,6 @@ public class VentanaPrincipal extends JFrame {
 		public JPanel getPn() {
 			return pn;
 		}
+
 	}
 }

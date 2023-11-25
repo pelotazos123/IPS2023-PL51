@@ -151,8 +151,8 @@ public class GestionarCompeticiones {
 	private TiposDeportes getTipoDeporte(String deporte) {
 		if(deporte.equals("FUTBOL")) {
 			return TiposDeportes.FUTBOL;
-		}else if(deporte.equals("TENNIS")) {
-			return TiposDeportes.TENNIS;
+		}else if(deporte.equals("TENIS")) {
+			return TiposDeportes.TENIS;
 		}else if(deporte.equals("TIRO_CON_ARCO")) {
 			return TiposDeportes.TIRO_CON_ARCO;
 		}else {

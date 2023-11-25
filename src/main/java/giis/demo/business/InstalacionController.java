@@ -7,7 +7,7 @@ import giis.demo.util.Database;
 
 public class InstalacionController {
 	
-	private final static String SQL_CARGAR_INSTALACION = "select code, name, min_users, max_users from instalaciones";	
+	private final static String SQL_CARGAR_INSTALACION = "select code, name, min_reserva, max_reserva, min_curso, max_curso from instalaciones";	
 	
 	public static Instalacion[] getInstalaciones(Database db){
 		List<Object[]> resQuery = db.executeQueryArray(SQL_CARGAR_INSTALACION);
@@ -17,6 +17,8 @@ public class InstalacionController {
 		String name = "";
 		int min = 0;
 		int max = 0;
+		int minC = 0;
+		int maxC = 0;
 		
 		int contador = 0;
 		
@@ -25,8 +27,10 @@ public class InstalacionController {
 			name = (String) objects[1];
 			min = (int) objects[2];
 			max = (int) objects[3];
+			minC = (int) objects[4];
+			maxC = (int) objects[5];
 			
-			listInstalacion[contador] = new Instalacion(name, code, min, max);
+			listInstalacion[contador] = new Instalacion(name, code, min, max, minC, maxC);
 			
 			contador++;
 		}
