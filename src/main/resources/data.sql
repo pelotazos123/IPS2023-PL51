@@ -4,6 +4,8 @@
 delete from socios;
 DELETE FROM participante_reserva;
 DELETE FROM reservas;
+DELETE FROM entrenadores_cursillos;
+DELETE FROM cursillos;
 
 insert into socios (id,dni,name,surname,email,telf,cuota_type,iban,height,weight,birth_date,gender,directive) values 
 	(100,'123456789A','Lucia','Suarez','UO276220@uniovi.es',684295304,'SENIOR','ES6000138500051234567523','1.72',70,'2000-10-24','MUJER',true),
@@ -22,26 +24,27 @@ insert into cuotas (owner_id, cuota_type, price, state) values
 
 insert into licencias (owner_id, tutor_dni, tutor_name, tutor_surname, tutor_email, tutor_telf, tutor_birth_date, tutor_gender, state, price, licence_type, facturation_direction, facturation_info, deporte) values 
 	(100,'noTutor','noTutor','noTutor','noTutor',null,null,null, 'PENDIENTE', 30, 'DEPORTISTA', "ESXX-XXXX-XXXX-XXXX-XXXX-XXXX", null, 'FUTBOL'),
-	(100,'noTutor','noTutor','noTutor','noTutor',null,null,null, 'PENDIENTE', 30, 'MONITOR', "ESXX-XXXX-XXXX-XXXX-XXXX-XXXX", null, 'TENNIS'),
-	(101,'noTutor','noTutor','noTutor','noTutor',null,null,null,'pagado',30,'DEPORTISTA','Aviles','Segundo A', 'TENNIS'),
+	(100,'noTutor','noTutor','noTutor','noTutor',null,null,null, 'PENDIENTE', 30, 'MONITOR', "ESXX-XXXX-XXXX-XXXX-XXXX-XXXX", null, 'TENIS'),
+	(101,'noTutor','noTutor','noTutor','noTutor',null,null,null,'pagado',30,'DEPORTISTA','Aviles','Segundo A', 'TENIS'),
 	(101,'noTutor','noTutor','noTutor','noTutor',null,null,null,'pagado',30,'JUEZ','Aviles','Tercero B', 'NATACION'),
 	(101,'noTutor','noTutor','noTutor','noTutor',null,null,null,'pagado',30,'MONITOR','Aviles','Tercero B', 'FUTBOL'),
 	(104,'noTutor','noTutor','noTutor','noTutor',null,null,null,'pagado',30,'JUEZ','Vega','Bajo A', 'NATACION'),
 	(105,'noTutor','noTutor','noTutor','noTutor',null,null,null,'pagado',30,'DEPORTISTA','Gijon','Segundo A', 'TIRO_CON_ARCO'),
 	(105,'noTutor','noTutor','noTutor','noTutor',null,null,null,'pagado',30,'JUEZ','Gijon','Segundo A', 'TIRO_CON_ARCO'),
 	(106,'123456789L','Pedro','Garcia','pedro@gmail.com',654873691,'1983-6-8','HOMBRE','pagado',30,'DEPORTISTA','Oviedo','Segundo A', 'FUTBOL');
-	
-INSERT INTO reservas (id, fecha, instalation_code, extra) VALUES 
-	(0, "2023-11-20 20:00", "13410", true);
+
+INSERT INTO reservas (id, fecha_inicio, fecha_fin, instalation_code, tipo) VALUES 
+	(0, "2023-11-20 20:00", "2023-11-20 22:00", "13410", "reserva"),
+	(1, "2023-11-21 11:00", "2023-11-21 12:00", "13413", "ANULADA");
 
 INSERT INTO participante_reserva (reserva_id, dni) VALUES
 	(0, "123456789A");
 
-INSERT INTO instalaciones (code, name, min_users, max_users) VALUES
-	("13410", "Tiro con arco", 1, 1),
-	("13411", "Piscina", 1, 1),
-	("13412", "Campo de fútbol", 1, 28),
-	("13413", "Pista de tenis",1, 4);
+INSERT INTO instalaciones (code, name, min_reserva, max_reserva, min_curso, max_curso) VALUES
+	("13410", "Tiro con arco", 1, 1, 5, 12),
+	("13411", "Piscina", 1, 1, 5, 15),
+	("13412", "Campo de fútbol", 1, 28, 10, 22),
+	("13413", "Pista de tenis",1, 4, 6, 10);
 
 insert into loggin (dni_socio, contrasena) values
 	('123456789A','c455eb6a355fd48b6ece6dee6fbd6b53'),
@@ -76,3 +79,11 @@ insert into entrenados(entrenador_id, entrenado_id) values
 	(100, 104),
 	(100, 103),
 	(101, 105);
+	
+insert into asambleas(type, date, hour_conv1, hour_conv2, orderOfDay, acta) values 
+	('Ordinaria', '2023-12-01', '8:00', '8:30', 'Eleccion de presidente', 'Sin acta'),
+	('Ordinaria', '2023-11-01', '8:00', '8:30', 'Gestion de gastos', 'Sin acta'),
+	('Extraordinaria', '2023-10-10', '10:00', '11:00', 'Problemas de horarios', 'Sin acta'),
+	('Ordinaria', '2023-12-10', '8:00', '8:30', 'Gestion de gastos', 'Sin acta'),
+	('Extraordinaria', '2023-12-10', '14:00', '16:00', 'Nuevos entrenadores', 'Sin acta'),
+	('Extraordinaria', '2022-06-14', '10:00', '11:00', 'Problemas de horarios', 'Sin acta');

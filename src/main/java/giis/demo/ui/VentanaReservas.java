@@ -27,9 +27,9 @@ import javax.swing.JFormattedTextField;
 
 import java.awt.BorderLayout;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Properties;
 
 import giis.demo.business.InstalacionController;
 import giis.demo.business.ReservationController;
@@ -37,6 +37,8 @@ import giis.demo.business.SociosController;
 import giis.demo.model.Instalacion;
 import giis.demo.model.Reserva;
 import giis.demo.util.Database;
+import giis.demo.util.DbUtil;
+import giis.demo.util.Util;
 
 import javax.swing.JList;
 import javax.swing.JOptionPane;
@@ -49,7 +51,6 @@ import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 
 import javax.swing.JLabel;
-import javax.swing.JCheckBox;
 import java.awt.CardLayout;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
@@ -58,7 +59,6 @@ import java.awt.GridLayout;
 import java.awt.Font;
 import javax.swing.JScrollPane;
 import javax.swing.ScrollPaneConstants;
-import javax.swing.border.LineBorder;
 
 public class VentanaReservas extends JDialog {
 	
@@ -99,9 +99,11 @@ public class VentanaReservas extends JDialog {
 	private JTextField txtFin;
 	private JLabel lblTxtInicio;
 	private JLabel lblTxtFin;
+	private Properties props;
 	
 	public VentanaReservas(Database db) {
 		this.db = db;
+		props = DbUtil.loadProperties();
 		reMan = new ReservationController(this.db);
 		listaTxtFields = new ArrayList<>();
 		chosenDay = "";
@@ -159,7 +161,8 @@ public class VentanaReservas extends JDialog {
 			calendar.getDayChooser().setDayBordersVisible(true);
 			calendar.setWeekOfYearVisible(false);
 			LocalDate actualDay = LocalDate.now();
-			calendar.setSelectableDateRange(java.sql.Date.valueOf(actualDay), java.sql.Date.valueOf(actualDay.plusDays(2)));
+			//calendar.setSelectableDateRange(java.sql.Date.valueOf(actualDay), java.sql.Date.valueOf(actualDay.plusDays(2)));
+			calendar.setSelectableDateRange(java.sql.Date.valueOf(actualDay), java.sql.Date.valueOf(actualDay.plusDays(100)));
 			calendar.addPropertyChangeListener("calendar", new PropertyChangeListener() {
 				@Override
 				public void propertyChange(PropertyChangeEvent evt) {
@@ -185,38 +188,29 @@ public class VentanaReservas extends JDialog {
 		
 		int selectedVal = getList().getSelectedIndex();
 		
-		boolean hasExtra = hasExtraHour();
+		String horaInicio = modeloListaHoras.get(selectedVal);
+		String horaFin = getTxtFin().getText();	
 		
-		String hora = modeloListaHoras.get(selectedVal);
+		// Se parsean las horas a un formato adaptado a SQLite		
 		LocalDate selectedDate = getCalendar().getDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();;
-		LocalTime horaSel = LocalTime.of(Integer.parseInt(hora.split(":")[0]), 00);
+		LocalTime hInicio = LocalTime.of(Integer.parseInt(horaInicio.split(":")[0]), 00);
+		LocalTime hFin = LocalTime.of(Integer.parseInt(horaFin.split(":")[0]), 00);
 		
-		LocalDateTime finalDate = selectedDate.atTime(horaSel); 
+		LocalDateTime startingDate = selectedDate.atTime(hInicio);
+		LocalDateTime finishingDate = selectedDate.atTime(hFin);
 		
 		DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
-		String reserva = finalDate.format(dtf);
-
+		String reservaInicio = startingDate.format(dtf);
+		String reservaFin = finishingDate.format(dtf);
+		
 		selInstalacion = ((Instalacion)getCbInstalaciones().getSelectedItem());
 		
 		List<String> listaParticipantes = getTxtFromDniFields();
 		
-		if (!reMan.reservar(finalDate, reserva, selInstalacion, listaParticipantes, hasExtra)) return;
+		if (!reMan.reservar(startingDate, reservaInicio, reservaFin, selInstalacion, listaParticipantes)) return;
 		
-		JOptionPane.showMessageDialog(null, "Reserva confirmada de " + selInstalacion.toString() +": " + reserva);
+		JOptionPane.showMessageDialog(null, "Reserva confirmada de " + selInstalacion.toString() +": " + reservaInicio);
 		this.dispose();
-	}
-
-	private boolean hasExtraHour() {
-		String[] horaInicioStr = getTxtInicio().getText().split(":");
-		String[] horaFinStr = getTxtFin().getText().split(":");
-		
-		LocalTime horaInicio = LocalTime.of(Integer.parseInt(horaInicioStr[0]),Integer.parseInt(horaInicioStr[1]));
-		LocalTime horaFin = LocalTime.of(Integer.parseInt(horaFinStr[0]),Integer.parseInt(horaFinStr[1]));
-		
-		boolean hasExtra = (horaFin.minusHours(horaInicio.getHour()) == LocalTime.of(02, 00));
-		
-		System.out.println("Resta: " + horaFin.minusHours(horaInicio.getHour()) +  "bool: " + hasExtra);
-		return hasExtra;
 	}
 
 	private boolean completeCheckToSocios() {
@@ -302,7 +296,7 @@ public class VentanaReservas extends JDialog {
 			list.addListSelectionListener(new ListSelectionListener() {
 				@Override
 				public void valueChanged(ListSelectionEvent e) {
-					setTimeSelected(e); // Si la reserva se puede ampliar una hora, se habilita el check
+					setTimeSelected(e); // Escucha las selecciones de la lista
 				}
 			});
 			list.setModel(modeloListaHoras);
@@ -315,25 +309,62 @@ public class VentanaReservas extends JDialog {
 		JList<String> lista = (JList<String>) e.getSource();
 		if (lista.getSelectedValue() == null)
 			return;
-		getTxtInicio().setText(lista.getSelectedValue());
+		if (lista.getSelectedValue().equals(ReservationController.CURSO_OCUPADO)) { // Comprueba que, si hay un curso en esas horas, 
+			getTxtInicio().setText("__:__");										// se muestre pero no se permita reservar
+			getBtnSiguiente().setEnabled(false);
+			getTxtFin().setEnabled(false);
+		} else {
+			getTxtFin().setEnabled(true);
+			getBtnSiguiente().setEnabled(true);
+			getTxtInicio().setText(lista.getSelectedValue());
+		}		
 	}
 
+	/**
+	 * Genera horas en la JList
+	 */
 	private void generaHoras() {
 		getBtnSiguiente().setEnabled(false);
 		modeloListaHoras.removeAllElements();
 		for (int i = 9; i < 23; i++) {
-			modeloListaHoras.addElement(i+":00");
+			if (i != 9)
+				modeloListaHoras.addElement(i+":00");
+			else
+				modeloListaHoras.addElement("0"+i+":00");
 		}		
 		
 		for (Reserva reserva : reMan.getReservas()) {	
-			if (reserva.getFecha().trim().equals(chosenDay)
-					&& modeloListaHoras.contains(reserva.getHora().trim())
+			if (reserva.getFechaInicio().trim().equals(chosenDay)
+					&& modeloListaHoras.contains(reserva.getHoraInicio().trim())	// Se comprueba cada reserva, con cada dia, hora e instalacion seleccionada
 							&& reserva.getInstalacionId().trim().equals(((Instalacion)getCbInstalaciones().getSelectedItem()).getCode().toString())) {
 				System.out.println("Ya hay una reserva");
-				modeloListaHoras.removeElement(reserva.getHora().trim());
-				int horaSig = Integer.parseInt(reserva.getHora().split(":")[0]);
-				if (horaSig + 1 <= 23 && reserva.hasExtra()) // Si la hora fue reservada con una extra, se elimina la sig tmb
-					modeloListaHoras.removeElement((horaSig+1)+":00");
+				
+				int posInicio = modeloListaHoras.indexOf(reserva.getHoraInicio());
+				int posFinal = reserva.getHoraFin().equals("23:00") ? modeloListaHoras.getSize()-1 : modeloListaHoras.indexOf(reserva.getHoraFin());
+				
+				int inicio = Integer.parseInt(reserva.getHoraInicio().trim().split(":")[0]);
+				int fin = Integer.parseInt(reserva.getHoraFin().trim().split(":")[0]);
+				
+				if (reserva.getTipoCurso().equals(ReservationController.TIPO_CURSO)) {	// Si hay una reserva para un curso, cambia el texto por 
+					while (posFinal != posInicio) {										// ocupado por un curso o similar
+						modeloListaHoras.add(posFinal-1, ReservationController.CURSO_OCUPADO);
+						posFinal--;
+					}
+				} 
+				
+				if(reserva.getTipoCurso().equals(ReservationController.TIPO_ANULADA)) {
+					while (posFinal != posInicio) {
+						modeloListaHoras.add(posFinal-1, ReservationController.METEOROLOGIA);
+						posFinal--;
+					}
+				} 
+				
+				while (fin != inicio) {
+					modeloListaHoras.removeElement(--fin+":00");
+				}	
+			
+				modeloListaHoras.removeElement(reserva.getHoraInicio().trim());
+				
 			}
 		}
 	}
@@ -366,51 +397,16 @@ public class VentanaReservas extends JDialog {
 	}
 	
 	private void siguiente() {		
-		if (!checkHourInserted())
+		if(getTxtInicio().getText().equals(ReservationController.METEOROLOGIA) ) 
+			JOptionPane.showMessageDialog(null, "NO SE PUEDE RESERVAR POR METEOROLOGÍA");
+		if (!Util.checkHourInserted(getTxtInicio().getText(), getTxtFin().getText(), Integer.parseInt(props.getProperty("reserva.hora.max")), Integer.parseInt(props.getProperty("reserva.hora.max"))))
 			return;
 		
 		((CardLayout) getContentPane().getLayout()).next(getContentPane());
 		selInstalacion = ((Instalacion)getCbInstalaciones().getSelectedItem());
-		getLblInstalacion().setText("Instalacion: " + selInstalacion.getName() + " | Nº max participantes: " + selInstalacion.getMax() +
-				" | Nº min participantes: " + selInstalacion.getMin());
+		getLblInstalacion().setText("Instalacion: " + selInstalacion.getName() + " | Nº max participantes: " + selInstalacion.getMaxReserva() +
+				" | Nº min participantes: " + selInstalacion.getMinReserva());
 
-	}
-
-	private boolean checkHourInserted() {
-		String[] horaInicioStr = getTxtInicio().getText().split(":");
-		String[] horaFinStr = getTxtFin().getText().split(":");
-		
-		if (horaFinStr[0].equals("__")) {
-			JOptionPane.showMessageDialog(null, "No puedes dejar la hora de finalización vacía.", "Error", JOptionPane.ERROR_MESSAGE);
-			return false;
-		}
-		
-		LocalTime horaInicio = LocalTime.of(Integer.parseInt(horaInicioStr[0]),Integer.parseInt(horaInicioStr[1]));
-		LocalTime horaFin = LocalTime.of(Integer.parseInt(horaFinStr[0]),Integer.parseInt(horaFinStr[1]));
-		
-		if (horaInicio.equals(LocalTime.of(22, 00)) && horaFin.equals(LocalTime.of(00, 00))) {
-			JOptionPane.showMessageDialog(null, "A partir de las 22:00 solo se puede reservar durante " + ReservationController.HORA_MINIMA + " hora.", "Error", JOptionPane.ERROR_MESSAGE);
-			return false;
-		}
-		
-		if (horaFin.isBefore(horaInicio)) {
-			JOptionPane.showMessageDialog(null, "La hora de finalización no puede ser anterior a la de inicio", "Error", JOptionPane.ERROR_MESSAGE);
-			return false;
-		}
-		
-		LocalTime horaSumada = horaInicio.plusHours(ReservationController.HORA_MAXIMA);
-		
-		if (!horaSumada.equals(horaFin) && horaSumada.isBefore(horaFin)) {
-			JOptionPane.showMessageDialog(null, "La instalación solo se puede reservar por " + ReservationController.HORA_MAXIMA + " horas como máximo.", "Error", JOptionPane.ERROR_MESSAGE);
-			return false;
-		}
-		
-		if (horaInicio.equals(horaFin)) {
-			JOptionPane.showMessageDialog(null, "La duración minima de la reserva es de " + ReservationController.HORA_MINIMA + " hora.", "Error", JOptionPane.ERROR_MESSAGE);
-			return false;
-		}
-		
-		return true;
 	}
 	
 	private JPanel getPnNorth() {
@@ -423,12 +419,14 @@ public class VentanaReservas extends JDialog {
 		}
 		return pnNorth;
 	}
+	
 	private JLabel getLblHorasDisp() {
 		if (lblHorasDisp == null) {
 			lblHorasDisp = new JLabel("Horas disponibles:");
 		}
 		return lblHorasDisp;
 	}
+	
 	private JPanel getPnSouth() {
 		if (pnSouth == null) {
 			pnSouth = new JPanel();
@@ -451,6 +449,7 @@ public class VentanaReservas extends JDialog {
 		}
 		return pnSecundarioReservas;
 	}
+	
 	private JPanel getPnTxtContainer() {
 		if (pnTxtContainer == null) {
 			pnTxtContainer = new JPanel();
@@ -460,6 +459,7 @@ public class VentanaReservas extends JDialog {
 		}
 		return pnTxtContainer;
 	}
+	
 	private JButton getBtnNuevoSocio() {
 		if (btnNuevoSocio == null) {
 			btnNuevoSocio = new JButton("+");
@@ -474,8 +474,11 @@ public class VentanaReservas extends JDialog {
 		return btnNuevoSocio;
 	}
 
+	/**
+	 * Añade un nuevo JTextField para cada socio que se vaya a añadir a la reserva
+	 */
 	private void addNewSocio() {
-		if (listaTxtFields.size() < selInstalacion.getMax()) {
+		if (listaTxtFields.size() < selInstalacion.getMaxReserva()) {
 			JPanel pnlController = new JPanel();
 			pnlController.setBackground(Color.WHITE);
 			JTextField nuevo = prepareTxtField();
@@ -495,7 +498,7 @@ public class VentanaReservas extends JDialog {
 		nuevo.setForeground(Color.LIGHT_GRAY);
 		nuevo.addFocusListener(new FocusListener() {
 			
-			@Override
+			@Override	// Placeholder para los jtextfields de dni de los socios
 			public void focusLost(FocusEvent e) {
 				if (nuevo.getText().isEmpty()) {
 					nuevo.setForeground(Color.LIGHT_GRAY);
@@ -513,13 +516,12 @@ public class VentanaReservas extends JDialog {
 		});
 		nuevo.setEditable(true);
 		nuevo.setEnabled(true);
-		//nuevo.setBounds(30, 96, 427, 35);
 		nuevo.setColumns(20);
-		//nuevo.setPreferredSize(new Dimension(424, 35));
 		nuevo.setFont(new Font("Tahoma", Font.PLAIN, 25));
 		nuevo.setHorizontalAlignment(SwingConstants.CENTER);
 		return nuevo;
 	}
+	
 	private JPanel getPnBotones() {
 		if (pnBotones == null) {
 			pnBotones = new JPanel();
@@ -529,6 +531,7 @@ public class VentanaReservas extends JDialog {
 		}
 		return pnBotones;
 	}
+	
 	private JButton getBtnBorrarSocio() {
 		if (btnBorrarSocio == null) {
 			btnBorrarSocio = new JButton("-");
@@ -543,8 +546,9 @@ public class VentanaReservas extends JDialog {
 		}
 		return btnBorrarSocio;
 	}
+	
 	private void eliminaSocio() {
-		if (listaTxtFields.size() > 0) {
+		if (listaTxtFields.size() > ReservationController.EMPTY) {
 			JPanel txtBorrar = listaTxtFields.remove(listaTxtFields.size()-1);
 			getPnTxtFields().remove(txtBorrar);
 			getPnTxtFields().repaint();
@@ -560,6 +564,7 @@ public class VentanaReservas extends JDialog {
 		}
 		return pnTxtFields;
 	}
+	
 	private JButton getBtnVolver() {
 		if (btnVolver == null) {
 			btnVolver = new JButton("Volver");
@@ -573,19 +578,23 @@ public class VentanaReservas extends JDialog {
 		return btnVolver;
 	}
 
+	/**
+	 * Vuelve a la pantalla anterior de seleccion de dia
+	 */
 	private void cancelarOperacion() {	
 		listaTxtFields.removeAll(listaTxtFields);
 		getPnTxtFields().removeAll();
 		((CardLayout)getContentPane().getLayout()).show(getContentPane(), "principal");
 		selInstalacion = null;
 	}
+	
 	private JButton getBtnReservar() {
 		if (btnReservar == null) {
 			btnReservar = new JButton("Reservar");
 			btnReservar.setFont(new Font("Tahoma", Font.PLAIN, 18));
 			btnReservar.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
-					if (listaTxtFields.size() >= selInstalacion.getMin())
+					if (listaTxtFields.size() >= selInstalacion.getMinReserva()) // Comprueba que hay un minimo de socios
 						reservar();
 					else
 						JOptionPane.showMessageDialog(null, "No llegas al mínimo de participantes.", "Error", JOptionPane.ERROR_MESSAGE);
@@ -614,16 +623,18 @@ public class VentanaReservas extends JDialog {
 		}
 		return scrlTxts;
 	}
+	
 	private JPanel getPanel() {
 		if (panel == null) {
 			panel = new JPanel();
 			panel.setLayout(new BorderLayout(0, 0));
-			panel.add(getLblTxtAñadeSocio_1(), BorderLayout.CENTER);
+			panel.add(getLblTxtAñadeSocio(), BorderLayout.CENTER);
 			panel.add(getLblInstalacion(), BorderLayout.SOUTH);
 		}
 		return panel;
 	}
-	private JLabel getLblTxtAñadeSocio_1() {
+	
+	private JLabel getLblTxtAñadeSocio() {
 		if (lblTxtAñadeSocio == null) {
 			lblTxtAñadeSocio = new JLabel("Introduzca el DNI de los socios que participarán en la reserva:");
 			lblTxtAñadeSocio.setFont(new Font("Tahoma", Font.BOLD, 20));
@@ -658,7 +669,7 @@ public class VentanaReservas extends JDialog {
 	}
 	private JTextField getTxtFin() {
 		if (txtFin == null) {
-			MaskFormatter maskFormatter = null;
+			MaskFormatter maskFormatter = null; // Establece un formato para añadir solo horas
 	        
 	        try {
 	            maskFormatter = new MaskFormatter("##:00");

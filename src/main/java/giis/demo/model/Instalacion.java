@@ -4,14 +4,18 @@ public class Instalacion {
 	
 	private String name;
 	private String code;
-	private int min;
-	private int max;
+	private int minReserva;
+	private int maxReserva;
+	private int minCurso;
+	private int maxCurso;	
 	
-	public Instalacion(String name, String code, int min, int max) {
+	public Instalacion(String name, String code, int min, int max, int minCurso, int maxCurso) {
 		this.name = name;
 		this.code = code;
-		this.min = min;
-		this.max = max;
+		this.minReserva = min;
+		this.maxReserva = max;
+		this.minCurso = minCurso;
+		this.maxCurso = maxCurso;
 	}
 	
 	public String getName() {
@@ -22,12 +26,20 @@ public class Instalacion {
 		return code;
 	}
 	
-	public int getMin() {
-		return min;
+	public int getMinReserva() {
+		return minReserva;
 	}
 	
-	public int getMax() {
-		return max;
+	public int getMaxReserva() {
+		return maxReserva;
+	}
+	
+	public int getMinCurso() {
+		return minCurso;
+	}
+	
+	public int getMaxCurso() {
+		return maxCurso;
 	}
 	
 	public String toString() {
@@ -36,3 +48,4 @@ public class Instalacion {
 	}
 
 }
+
