@@ -10,11 +10,14 @@ public class AsambleasModel {
 	private Database db = new Database();
 	
 	public static final String SQL_ADD_ASAMBLEA =
-			"insert into asambleas (type, date, hour_conv1, hour_conv2, orderOfDay, acta)"
-			+ "values (?,?,?,?,?,?)";
+			"insert into asambleas (type, date, hour_conv1, hour_conv2, orderOfDay, acta, state)"
+			+ "values (?,?,?,?,?,?,?)";
 	
-	public static final String SQL_FIND_ASAMBLEAS =
-			"select * from asambleas order by date desc";
+	public static final String SQL_FIND_ASAMBLEAS_NOAPROBADAS =
+			"select * from asambleas where state = 'No aprobada' order by date desc";
+	
+	public static final String SQL_APROBAR_ACTA = 
+			"update asambleas set state = 'Aprobada' where type = ? and date = ?";
 	
 	public static final String SQL_FIND_ASAMBLEAS_DAY =
 			"select * from asambleas where type = ? and date = ?";
@@ -32,8 +35,8 @@ public class AsambleasModel {
 		this.db = db;
 	}
 	
-	public void addAsamblea(String type, String announcement, String date1, String date2, String orderOfDay, String acta) {
-		db.executeUpdate(SQL_ADD_ASAMBLEA, type, announcement, date1, date2, orderOfDay, acta);
+	public void addAsamblea(String type, String announcement, String date1, String date2, String orderOfDay, String acta, String state) {
+		db.executeUpdate(SQL_ADD_ASAMBLEA, type, announcement, date1, date2, orderOfDay, acta, state);
 		System.out.println("Created asamblea " + type + " date: " + announcement + ", conv1: "+ date1 + ", conv2: "+ date2 + ", order of the day: "+ orderOfDay);
 	}
 	
@@ -47,11 +50,15 @@ public class AsambleasModel {
 	}
 	
 	public List<AsambleaEntity> getListaAsambleas() {
-		return db.executeQueryPojo(AsambleaEntity.class, SQL_FIND_ASAMBLEAS);
+		return db.executeQueryPojo(AsambleaEntity.class, SQL_FIND_ASAMBLEAS_NOAPROBADAS);
 	}
 	
 	public void addActa(String acta, String type, String announcement) {
 		db.executeUpdate(SQL_ADD_ACTA, acta, type, announcement);
+	}
+	
+	public void aprobarActa(String type, String announcement) {
+		db.executeUpdate(SQL_APROBAR_ACTA, type, announcement);
 	}
 	
 	public String lastActa(String type) {
