@@ -54,7 +54,6 @@ public class GestionCursosSocios {
 					datos[i][j] = columnas[j];
 			}
 			int idCurso = Integer.parseInt(columnas[0].toString());
-			// ASIGNAR A NUMERO ENTRENADORES
 			String GET_ENTRENADORES_CURSO = "select dni from entrenadores_cursillos where id_curso = ?";
 			List<Object[]> entrenadores = vgcs.getVp().getDb().executeQueryArray(GET_ENTRENADORES_CURSO, idCurso);
 			datos[i][columnas.length] = entrenadores.size();
