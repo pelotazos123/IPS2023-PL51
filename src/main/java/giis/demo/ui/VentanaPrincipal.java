@@ -493,8 +493,8 @@ public class VentanaPrincipal extends JFrame {
 			pnSeccionDirectivoAdministracion.add(getBtnGestionRecibos());
 			pnSeccionDirectivoAdministracion.add(getBtnListadoSocios());
 			pnSeccionDirectivoAdministracion.add(getBtnAñadirCompeticiones());
-			ServiciosMeteorologicos sm = new ServiciosMeteorologicos(this);
-			sm.checkTiempo();
+			ServiciosMeteorologicos sm = new ServiciosMeteorologicos(this, db);
+			sm.checkTiempoParallel();
 			pnSeccionDirectivoAdministracion.add(getBtnCrearCursillos());
 			
 			getLbBienvenidoDirectivo().setText("Bienvenido al club "+tramitarLicencia.getDirectivo().getNombre());

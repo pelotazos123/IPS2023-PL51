@@ -17,6 +17,7 @@ import javax.swing.border.LineBorder;
 
 import giis.demo.model.TiposCuotas;
 import giis.demo.model.competiciones.Competicion;
+import giis.demo.model.competiciones.EstadoCompeticion;
 import giis.demo.ui.competiciones.VentanaInscripcionCompeticiones;
 
 public class PanelCompeticion extends JPanel{
@@ -50,6 +51,9 @@ public class PanelCompeticion extends JPanel{
 		add(getPnBoton());
 		compe = c;
 		cargarDatos(inscrito);
+		if (compe.getEstado().equals(EstadoCompeticion.CANCELADA)) {
+			setBackground(Color.GRAY);
+		}
 	}
 
 	private void cargarDatos(boolean inscrito) {
@@ -62,14 +66,28 @@ public class PanelCompeticion extends JPanel{
 			texto+= categoria+"\n";
 		}
 		getTxCategorias().setText(texto);	
-		if(vC.getTramitarLicencia().esDirectivo()) {
-			getPnBoton().add(getBtSacarListado());
-		}else {
-			getPnBoton().add(getBtInscribirse());
-			if(inscrito) {
-				getBtInscribirse().setEnabled(false);
+		System.out.println(compe.getEstado());
+		if (compe.getEstado().equals(EstadoCompeticion.ABIERTA)) {
+			if(vC.getTramitarLicencia().esDirectivo()) {
+				getPnBoton().add(getBtSacarListado());
+			}else {
+				getPnBoton().add(getBtInscribirse());
+				if(inscrito) {
+					getBtInscribirse().setEnabled(false);
+				}
 			}
+		} else {
+			getPnBoton().add(getBtSacarListado());
+			getBtSacarListado().setEnabled(false);
+			getBtSacarListado().setText("CANCELADA");
+			getTxCategorias().setBackground(Color.GRAY);
+			getPnBoton().setBackground(Color.GRAY);
+			getPnFecha().setBackground(Color.GRAY);
+			getPnLugar().setBackground(Color.GRAY);
+			getPnNombre().setBackground(Color.GRAY);
+			
 		}
+		
 	}
 
 	private JPanel getPnNombre() {

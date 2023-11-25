@@ -3,7 +3,9 @@ package giis.demo.model.competiciones.servicio;
 import java.io.File;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import giis.demo.model.Socio;
 import giis.demo.model.TiposCuotas;
@@ -21,7 +23,7 @@ public class GestionarCompeticiones {
 	private final static String SQL_OBTENER_SOCIOS_INSCRITOS_COMPETICION = "select socio_id from inscripcion_competiciones where competicion_id=?";
 	private final static String SQL_OBTENER_SOCIO_INSCRITO = "select * from inscripcion_competiciones where competicion_id=? and socio_id=?";
 	private final static String SQL_OBTENER_COMPETICIONES_DE_SOCIO = "select competicion_id from inscripcion_competiciones where socio_id=?";
-	private final static String SQL_OBTENER_COMPETICIONES_NO_ANULADAS = "SELECT id FROM competiciones WHERE estado='ABIERTA'";
+	private final static String SQL_OBTENER_COMPETICIONES_NO_ANULADAS = "SELECT id, place, deporte FROM competiciones WHERE estado='ABIERTA'";
 	private final static String SQL_OBTENER_IDS= "select id from competiciones";
 	private final static String SQL_OBTENER_DEPORTES_SOCIO= "select deporte from licencias where owner_id=?";
 	
@@ -137,14 +139,15 @@ public class GestionarCompeticiones {
 		return true;
 	}
 	
-	public List<Integer> getCompeticionesNoAnuladas() {
+	public static List<Object[]> getCompeticionesNoAnuladas(Database db) {
 		List<Object[]> competiciones = db.executeQueryArray(SQL_OBTENER_COMPETICIONES_NO_ANULADAS);
-		List<Integer> idCompeticiones = new ArrayList<Integer>();
-		for (Object[] objects : competiciones) {
-			idCompeticiones.add((int)objects[0]);
-		}
+//		Map<Integer, String> lugarCompeticiones = new HashMap<Integer, String>();
+//		List<String[]> comps = new ArrayList<String[]>();
+//		for (Object[] objects : competiciones) {
+//			lugarCompeticiones.put((int)objects[0], (String)objects[1]);
+//		}
 		
-		return idCompeticiones;
+		return competiciones;
 	}
 	
 	public boolean comprobarSiEstaFederado(int idCompeticion, int idSocio) {
@@ -160,6 +163,11 @@ public class GestionarCompeticiones {
 			}
 		}
 		return false;
+	}
+	
+	public static void createAnulation(String hora_Inicio, Database db) {
+		String SQL_ANULAR = "UPDATE competiciones SET estado='CANCELADA' WHERE competition_date=? AND estado='ABIERTA'"; 
+		db.executeUpdate(SQL_ANULAR, hora_Inicio);
 	}
 
 	private TiposDeportes getTipoDeporte(String deporte) {

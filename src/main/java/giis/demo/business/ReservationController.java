@@ -150,7 +150,7 @@ public class ReservationController {
 		for (String dni: participantes) {
 			queryRes = db.executeQueryArray(SQL_CARGAR_FECHAS_RESERVA, dni, instalacion.getCode(), "");
 			for (Object[] objects : queryRes) {
-				reserva = Util.isoStringToDate((String) objects[0]).toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
+				reserva = Util.isoStringToDateHour((String) objects[0]).toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
 				dates.add(reserva);
 			}
 			
