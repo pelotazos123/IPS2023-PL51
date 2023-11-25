@@ -909,9 +909,9 @@ public class VentanaPrincipal extends JFrame {
 			btTienda = new JButton("Tienda");
 			btTienda.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
-					TiendaView view = new TiendaView();
+					TiendaView view = new TiendaView(getDcFechaAplicacion().getCalendar());
 					TiendaModel model = new TiendaModel(db);
-					TiendaController controller = new TiendaController(model,view);
+					TiendaController controller = new TiendaController(model,view, new RecibosModel(db), tramitarLicencia);
 					
 					controller.initController();
 				}

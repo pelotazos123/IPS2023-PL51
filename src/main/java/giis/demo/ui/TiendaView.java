@@ -2,6 +2,7 @@ package giis.demo.ui;
 
 import java.awt.Color;
 import java.awt.Font;
+import java.util.Calendar;
 
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
@@ -17,6 +18,7 @@ public class TiendaView {
 	
 	private JFrame frame;
 	private JPanel contentPanel;
+	private Calendar date;
 	private JLabel lblTienda;
 	private JLabel lblEquipacion;
 	private JLabel lblChandal;
@@ -36,8 +38,13 @@ public class TiendaView {
 	private JLabel lblPrecioTotal;
 	private JButton btnComprar;
 
-	public TiendaView() {
+	public TiendaView(Calendar date) {
+		this.date = date;
 		initialize();
+	}
+	
+	public Calendar getDate() {
+		return date;
 	}
 	
 	private void initialize() {
