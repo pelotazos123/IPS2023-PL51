@@ -4,10 +4,13 @@ import java.awt.CardLayout;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalTime;
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.List;
 
 import javax.swing.JOptionPane;
 
+import giis.demo.model.loggin.Correo;
 import giis.demo.ui.AsambleasView;
 import giis.demo.util.SwingUtil;
 
@@ -43,11 +46,14 @@ public class AsambleasController {
 			JOptionPane.showMessageDialog(null, "Orden del día necesaria.", "Error", JOptionPane.ERROR_MESSAGE);
 		}
 		else {
-			model.addAsamblea(type, announcement, date1, date2, orderOfDay);
-			JOptionPane.showMessageDialog(null, "Se ha convocado correctamente.", "Correcto", JOptionPane.INFORMATION_MESSAGE);
+			String acta = model.lastActa(type);
+			model.addAsamblea(type, announcement, date1, date2, orderOfDay, "Sin acta");
+			enviarAsamblea(type, announcement, date1, date2, orderOfDay, acta);
+			JOptionPane.showMessageDialog(null, "Se ha convocado correctamente.", "Correcto", JOptionPane.INFORMATION_MESSAGE);			
 			((CardLayout)view.getFrame().getContentPane().getLayout()).show(view.getFrame().getContentPane(),"EleccionAsambleas");
 		}
 	}
+
 	private boolean hasAsamblea(String type, String announcement) {
 		return model.hasAsamblea(type, announcement);
 	}
@@ -152,6 +158,19 @@ public class AsambleasController {
         }
 
         return false;
+	}
+	
+	private void enviarAsamblea(String type, String announcement, String date1, String date2, String orderOfDay, String acta) {
+		String asamblea = "Asamblea " + type + "\nFecha: " + announcement + "\nHora de primera convocatoria: " + date1 + "\nHora de segunda convocatoria: " + date2 + "\nOrden del dia: "+ orderOfDay+ "\nActa anterior:\n"+ acta;
+		List<String> correos = new ArrayList<>();
+		for(Object[] correo : model.getCorreos()) {
+			correos.add((String)correo[0]);
+		}		
+		
+		for (String correo : correos) {
+            Thread thread = new Thread(new Correo(correo,"Asamblea convocada", asamblea));
+            thread.start();
+        }
 	}
 	
 }

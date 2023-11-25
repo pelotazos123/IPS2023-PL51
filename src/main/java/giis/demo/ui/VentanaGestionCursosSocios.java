@@ -22,7 +22,7 @@ public class VentanaGestionCursosSocios extends JFrame {
 	private static final long serialVersionUID = 1L;
 	private VentanaPrincipal vp;
 	private Object[][] datos;
-	private String[] columnas; // TODO CREAR AQUÍ CON LOS NOMBRES DE LAS COLUMNAS
+	private String[] columnas;
 
 	private JPanel contentPane;
 	private JScrollPane spCursos;
@@ -36,14 +36,13 @@ public class VentanaGestionCursosSocios extends JFrame {
 	public VentanaGestionCursosSocios(VentanaPrincipal vp) {
 		// TODO TÍTULO Y ESAS COSAS
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-		setBounds(100, 100, 730, 474);
+		setBounds(100, 100, 1200, 600);
 		setLocationRelativeTo(null);
 		this.vp = vp;
 		this.gestionCursos = new GestionCursosSocios(this);
 
-		creaTablaPrueba();
-//		this.datos = gestionCursos.cargaFilas();
-//		this.columnas = gestionCursos.cargaNomColumnas();
+		this.datos = gestionCursos.cargaFilas();
+		this.columnas = gestionCursos.cargaNomColumnas();
 		
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
@@ -66,7 +65,7 @@ public class VentanaGestionCursosSocios extends JFrame {
 	private JScrollPane getSpCursos() {
 		if (spCursos == null) {
 			spCursos = new JScrollPane();
-			spCursos.setBounds(67, 33, 559, 347);
+			spCursos.setBounds(67, 33, 1000, 500);
 			spCursos.setViewportView(getTableCursos());
 		}
 		return spCursos;
@@ -77,34 +76,39 @@ public class VentanaGestionCursosSocios extends JFrame {
 //			cargaDatos();
 			tableCursos = new JTable(datos, columnas);
 			tableCursos.setRowSelectionAllowed(true);
-			tableCursos.getColumnModel().getColumn(3).setCellRenderer(new BotonRenderer());		// TODO CAMBIAR EL GETCOLUMN
-			tableCursos.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);					// TODO PREGUNTAR 
+			tableCursos.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);		// TODO PREGUNTAR 
 			tableCursos.getSelectionModel().addListSelectionListener(
 					new ListSelectionListener() {	
 				@Override
 				public void valueChanged(ListSelectionEvent e) {
 					System.out.println(tableCursos.getSelectedRow());
-//					btConfirmar.setEnabled(true);					
+					btConfirmar.setEnabled(true);					
 				}
 			});
 		}
 		return tableCursos;
 	}
 
-//	private JButton getBtConfirmar() {
-//		if (btConfirmar == null) {
-//			btConfirmar = new JButton("Borrar de curso");
-//			btConfirmar.addActionListener(new ActionListener() {
-//				public void actionPerformed(ActionEvent e) {
-//					borrarDeCurso();
-//				}
-//			});
-//			btConfirmar.setMnemonic('b');
-//			btConfirmar.setEnabled(false); //TODO CAMBIAR
-//			btConfirmar.setBounds(248, 391, 156, 33);
-//		}
-//		return btConfirmar;
-//	}
+	private JButton getBtConfirmar() {
+		if (btConfirmar == null) {
+			btConfirmar = new JButton("Borrar de curso");
+			btConfirmar.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					compruebaFilas();
+				}
+			});
+			btConfirmar.setMnemonic('b');
+			btConfirmar.setEnabled(false); //TODO CAMBIAR
+			btConfirmar.setBounds(248, 391, 156, 33);
+		}
+		return btConfirmar;
+	}
+	
+	protected void compruebaFilas() {
+		// TODO Auto-generated method stub
+		
+	}
+
 //
 //	protected void borrarDeCurso() {
 //		gestionCursos.borrar();
@@ -122,17 +126,4 @@ public class VentanaGestionCursosSocios extends JFrame {
 		return tableCursos;
 	}
 	
-	class BotonRenderer extends DefaultTableCellRenderer {
-
-		private static final long serialVersionUID = 1L;
-
-		@Override
-        public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
-            if (value instanceof Component) {
-                return (Component) value;
-            } else {
-                return super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
-            }
-        }
-    }
 }

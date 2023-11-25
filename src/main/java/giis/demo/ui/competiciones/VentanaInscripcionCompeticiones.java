@@ -21,6 +21,7 @@ import javax.swing.border.LineBorder;
 import javax.swing.border.TitledBorder;
 
 import giis.demo.componentes.PanelCompeticion;
+import giis.demo.model.Socio;
 import giis.demo.model.CrearLicencias.servicio.TramitarLicencia;
 import giis.demo.model.competiciones.Competicion;
 import giis.demo.model.competiciones.servicio.GestionarCompeticiones;
@@ -56,7 +57,7 @@ public class VentanaInscripcionCompeticiones extends JFrame {
 		setBackground(Color.WHITE);
 		setTitle("Club Deportivo");
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-		setBounds(100, 100, 870, 618);
+		setBounds(100, 100, 1149, 618);
 		pnPrincipal = new JPanel();
 		pnPrincipal.setBorder(new TitledBorder(null, "Competiciones", TitledBorder.LEADING, TitledBorder.TOP, null, null));
 		pnPrincipal.setBackground(Color.WHITE);
@@ -112,7 +113,8 @@ public class VentanaInscripcionCompeticiones extends JFrame {
 			competicionesDisponibles = gestorCompeticiones.getCompeticionesDisponibles(tramitarLicencia.getSocio().getTipoCuota());
 		}
 		for(int i = 0; i < competicionesDisponibles.size(); i++) {
-			elemento = new PanelCompeticion(this,competicionesDisponibles.get(i));
+			Competicion compe = competicionesDisponibles.get(i);
+			elemento = new PanelCompeticion(this,compe,gestorCompeticiones.comprobarSocioYaInscrito(compe.getId(), tramitarLicencia.getUsuario().getId()));
 			getPnCompeticiones().add(elemento);
 		}
 	}
@@ -123,19 +125,27 @@ public class VentanaInscripcionCompeticiones extends JFrame {
 	
 	public void inscribirseEnCompeticion(Competicion compe) {
 		int competicionId = compe.getId();
-		int socioId = tramitarLicencia.getSocio().getId();
+		Socio socio = tramitarLicencia.getSocio();
 		
-		if(gestorCompeticiones.comprobarSocioYaInscrito(competicionId, socioId)) {
-			JOptionPane.showMessageDialog(this,"Ya estas inscrito",
-					"Competiciones", JOptionPane.INFORMATION_MESSAGE);
-		}else if(gestorCompeticiones.comprobarSiSePuedeInscribir(competicionId, socioId)) {
-			gestorCompeticiones.inscribirSocio(competicionId, socioId);
-			JOptionPane.showMessageDialog(this,"Ha sido inscrito en "+compe.getNombre(),
-					"Competiciones", JOptionPane.INFORMATION_MESSAGE);
+		if(gestorCompeticiones.comprobarSiSePuedeInscribir(competicionId, socio.getId())) {
+			if(gestorCompeticiones.comprobarSiEstaFederado(competicionId, socio.getId())) {
+				mostrarVentanaSeleccionarCategoria(compe,socio);
+			}else {
+				JOptionPane.showMessageDialog(this,"No esta federado en ese deporte",
+						"Competiciones", JOptionPane.INFORMATION_MESSAGE);
+			}
 		}else {
 			JOptionPane.showMessageDialog(this,"No se puede inscribir a dos competiciones en un mismo dia",
 					"Competiciones", JOptionPane.INFORMATION_MESSAGE);
 		}
+	}
+	
+	private void mostrarVentanaSeleccionarCategoria(Competicion compe, Socio socio) {
+		VentanaSeleccionarCategoria vC = new VentanaSeleccionarCategoria(gestorCompeticiones,compe,socio);
+		vC.setLocationRelativeTo(this);
+		vC.setModal(true);
+		vC.setVisible(true);
+		
 	}
 	
 	public void sacarListadoCompeticion(Competicion compe) {
@@ -242,7 +252,8 @@ public class VentanaInscripcionCompeticiones extends JFrame {
 		PanelCompeticion elemento;
 		List<Competicion> competicionesDisponibles = competiciones;
 		for(int i = 0; i < competicionesDisponibles.size(); i++) {
-			elemento = new PanelCompeticion(this,competicionesDisponibles.get(i));
+			Competicion compe = competicionesDisponibles.get(i);
+			elemento = new PanelCompeticion(this,compe,gestorCompeticiones.comprobarSocioYaInscrito(compe.getId(), tramitarLicencia.getUsuario().getId()));
 			getPnCompeticiones().add(elemento);
 		}
 		validate();
