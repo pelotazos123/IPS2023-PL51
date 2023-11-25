@@ -20,9 +20,7 @@ public class GestionCursosSocios {
 	public static final String INSCRITO = "INSCRITO";
 	public static final String NO_INSCRITO = "NO INSCRITO";
 	private static final int COLUMNA_PRECIO = 5;
-//	private static final String ASIGNA_ENTRENADOR  = "insert into entrenados(entrenador_id, entrenado_id) values"
-//			+ " (?,?)";
-
+	
 	private VentanaGestionCursos vgcs;
 	private int id;
 
