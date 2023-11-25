@@ -49,8 +49,8 @@ public class ReservationController {
 	public final static String CURSO_OCUPADO = "RESERVADO PARA CURSO";
 	public final static String METEOROLOGIA = "ANULADO METEOROLOGÍA";
 	
-	public final static String TIPO_CURSO = "curso";
-	public final static String TIPO_RESERVA = "reserva";
+	public final static String TIPO_CURSO = "CURSO";
+	public final static String TIPO_RESERVA = "RESERVA";
 	public final static String TIPO_ANULADA = "ANULADA";
 	
 	// Mapeo de dias para trabajar con los dias en español de el ENUM DaysOfWeek
@@ -248,7 +248,7 @@ public class ReservationController {
 	}
 	
 	private void createAnulation(String hora_Inicio, String instalacionId) {
-		String SQL_ANULAR = "UPDATE reservas SET tipo='ANULADA' WHERE fecha_inicio=? AND instalation_code=? AND (tipo='NORMAL' OR tipo='')"; 
+		String SQL_ANULAR = "UPDATE reservas SET tipo='ANULADA' WHERE fecha_inicio=? AND instalation_code=? AND tipo!='ANULADA'";
 		db.executeUpdate(SQL_ANULAR, hora_Inicio, instalacionId);
 	}
 
