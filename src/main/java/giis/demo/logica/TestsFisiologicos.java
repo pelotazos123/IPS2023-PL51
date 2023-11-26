@@ -66,6 +66,13 @@ public class TestsFisiologicos {
 		List<Object[]> esEntrenador = db.executeQueryArray(ES_ENTRENADOR, id);
 		return esEntrenador.size() != 0;
 	}
+	
+	public static boolean esEntrenador(String id, Database db) {
+		String ES_ENTRENADOR = "select * from licencias where "
+				+ "owner_id = ? and licence_type = 'MONITOR' ";
+		List<Object[]> esEntrenador = db.executeQueryArray(ES_ENTRENADOR, id);
+		return esEntrenador.size() != 0;
+	}
 
 	public Double getTestCooper(double distance) {
 		Double resultado = (22.351 * distance) + 11.288;

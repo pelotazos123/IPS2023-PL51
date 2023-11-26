@@ -11,13 +11,8 @@ import giis.demo.ui.VentanaGestionCursos;
 
 public class GestionCursosSocios {
 
-	// TODO RELLENAR EL ID DEL USUARIO Y CAMBIAR CURSO POR CURSANTE?
-	private static final String ACTUALIZAPRECIOINSCRIBIRSE = "update from cuotas set price = price + ?";
-	private static final String ACTUALIZAPRECIOBORRARSE = "update from cuotas set price = price - ?";
-
 	public static final String INSCRITO = "INSCRITO";
 	public static final String NO_INSCRITO = "NO INSCRITO";
-	private static final int COLUMNA_PRECIO = 5;
 	
 	private VentanaGestionCursos vgcs;
 	private int id;
@@ -51,10 +46,19 @@ public class GestionCursosSocios {
 			String GET_ENTRENADORES_CURSO = "select dni from entrenadores_cursillos where id_curso = ?";
 			List<Object[]> entrenadores = vgcs.getVp().getDb().executeQueryArray(GET_ENTRENADORES_CURSO, idCurso);
 			datos[i][columnas.length] = entrenadores.size();
+			boolean esEntrenador = TestsFisiologicos.esEntrenador(id + "", vgcs.getVp().getDb());
+			String GETDNI = "select dni from socios where id = ?";
+			String ENTRENACURSO = "select * from entrenadores_cursillos where dni = ? and id_curso = ?";
 			if (vgcs.getVp().getDb().executeQueryArray(ESTA_INSCRITO, id, idCurso).isEmpty())
 				datos[i][columnas.length + 1] = NO_INSCRITO;
 			else
 				datos[i][columnas.length + 1] = INSCRITO;
+			if (esEntrenador) {
+				String dni = vgcs.getVp().getDb().executeQueryArray(GETDNI, id).get(0)[0].toString();
+				if(!vgcs.getVp().getDb().executeQueryArray(ENTRENACURSO, dni, idCurso).isEmpty()) {
+					datos[i][columnas.length + 1] = "ENTRENADOR";
+				} 
+			} 
 		}
 		return datos;
 	}
@@ -64,10 +68,8 @@ public class GestionCursosSocios {
 				+ "values (?,?,'INSCRITO', null)";
 		int row = vgcs.getTableCursos().getSelectedRow();
 		int idCurso = Integer.parseInt(vgcs.getDatos()[row][0].toString());
-		double precio = Double.parseDouble(vgcs.getDatos()[row][COLUMNA_PRECIO].toString());
 		
 		vgcs.getVp().getDb().executeUpdate(INSCRIBIRSE, idCurso, id);
-//		vgcs.getVp().getDb().executeUpdate(ACTUALIZAPRECIOINSCRIBIRSE, precio);
 
 		String GET_ENTRENADORES_CURSO = "select dni from entrenadores_cursillos where id_curso = ?";
 		String GET_ID_ENTRENADOR = "select id from socios where dni = ?";
@@ -101,7 +103,6 @@ public class GestionCursosSocios {
 			List<Object[]> idEntrenador = vgcs.getVp().getDb().executeQueryArray(GET_ID_ENTRENADOR, entrenador[0]);
 			vgcs.getVp().getDb().executeUpdate(BORRA_ENTRENADOR, idEntrenador.get(0)[0], id);
 		}
-		double precio = Double.parseDouble(vgcs.getDatos()[row][0].toString());
 		if (day <= 15) {
 			String BORRADECURSOANTES = "delete from inscritos where id_cursante = ? and id_curso = ? ";	
 			vgcs.getVp().getDb().executeUpdate(BORRADECURSOANTES, id, idCurso);
@@ -120,13 +121,15 @@ public class GestionCursosSocios {
 				"ENTRENADORES", "ESTADO" };
 	}
 
-	public boolean realizaAccion(String accion) {
+	public void realizaAccion(String accion) {
 		if (accion.equals(INSCRITO)) {
 			borrar();
-			return true;
-		} else {
+			vgcs.dispose();
+		} else if (accion.equals(NO_INSCRITO)) {
 			inscribirse();
-			return false;
+			vgcs.dispose();
+		} else {
+			JOptionPane.showMessageDialog(null, "No puede realizar ninguna acción en un curso en el que es entrenador");
 		}
 	}
 

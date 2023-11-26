@@ -1,14 +1,18 @@
 package giis.demo.business;
 
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 import giis.demo.business.entities.CuotaEntity;
 import giis.demo.business.entities.ReciboEntity;
 import giis.demo.business.entities.SocioEntity;
+import giis.demo.ui.VentanaPrincipal;
 import giis.demo.util.Database;
 
 public class RecibosModel {
 	private Database db = new Database();
+	private VentanaPrincipal vp;
 	
 	public static final String SQL_LISTA_SOCIOS = 
 			"select * from socios";
@@ -33,8 +37,9 @@ public class RecibosModel {
 	public static final String SQL_CLAIM_RECIBO = 
 			"update recibos set state = 'Reclamado' where state = 'Devuelto' and number = ?";
 	
-	public RecibosModel(Database db) {
+	public RecibosModel(Database db, VentanaPrincipal vp) {
 		this.db = db;
+		this.vp = vp;
 	}
 	
 	public List<SocioEntity> getListaSocios() {
@@ -70,10 +75,24 @@ public class RecibosModel {
 		db.executeUpdate(SQL_UPDATE_CUOTAS, id);
 	}
 	
-	public int getAmount(String id) {
-		return (int) db.executeQueryArray(SQL_GETAMOUNT, id).get(0)[0];
+	public double getAmount(String id) {
+		Date fecha = vp.getDcFecha().getDate();
+		Calendar calendar = Calendar.getInstance();
+		calendar.setTime(fecha);
+		
+		String INSCRITOACURSO = "select * from inscritos where ";
+		
+		double amount = 0.0;
+		amount += Double.parseDouble(db.executeQueryArray(SQL_GETAMOUNT, id).get(0)[0].toString());
+		amount += calculaAmountCursos();
+		return amount;
 	}
 	
+	private double calculaAmountCursos() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
 	public int getLastNumber() {
 		if(getListaRecibos().isEmpty())
 			return 0;

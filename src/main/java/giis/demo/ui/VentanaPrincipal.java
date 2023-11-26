@@ -196,11 +196,12 @@ public class VentanaPrincipal extends JFrame {
 	 private JButton getBtnGeneracionRecibos() {
 			if (btnGeneracionRecibos == null) {
 				btnGeneracionRecibos = new JButton("Generar Recibos");
+				VentanaPrincipal vp = this;
 				btnGeneracionRecibos.addActionListener(new ActionListener() {
 					@Override
 					public void actionPerformed(ActionEvent e) {
 						RecibosView view = new RecibosView(getDcFechaAplicacion().getCalendar());
-						RecibosModel model = new RecibosModel(db);
+						RecibosModel model = new RecibosModel(db, vp);
 						RecibosController controller = new RecibosController(model,view);
 						
 						controller.initController();
@@ -894,10 +895,11 @@ public class VentanaPrincipal extends JFrame {
 	private JButton getBtnGestionRecibos() {
 		if (btnGestionRecibos == null) {
 			btnGestionRecibos = new JButton("Gestionar Recibos");
+			VentanaPrincipal vp = this;
 			btnGestionRecibos.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
 					GestionRecibosView view = new GestionRecibosView(getDcFechaAplicacion().getCalendar());
-					RecibosModel model = new RecibosModel(db);
+					RecibosModel model = new RecibosModel(db, vp);
 					GestionRecibosController controller = new GestionRecibosController(model,view);
 					
 					controller.initController();

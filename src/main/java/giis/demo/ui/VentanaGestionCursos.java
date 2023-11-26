@@ -66,6 +66,8 @@ public class VentanaGestionCursos extends JFrame {
 			this.datos = gestionCursos.cargaFilas();
 			this.columnas = gestionCursos.cargaNomColumnas();
 			DefaultTableModel modelo = new DefaultTableModel(datos, columnas) {
+				private static final long serialVersionUID = 1L;
+
 				@Override
 				public boolean isCellEditable(int row, int column) {
 					// Hacer todas las celdas no editables
