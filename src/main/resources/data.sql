@@ -22,16 +22,16 @@ insert into cuotas (owner_id, cuota_type, price, state) values
 	(102, 'Adulto', 200, 'Pendiente'),
 	(103, 'Jubilado', 150, 'Pendiente');
 
-insert into licencias (owner_id, tutor_dni, tutor_name, tutor_surname, tutor_email, tutor_telf, tutor_birth_date, tutor_gender, state, price, licence_type, facturation_direction, facturation_info, deporte) values 
-	(100,'noTutor','noTutor','noTutor','noTutor',null,null,null, 'PENDIENTE', 30, 'DEPORTISTA', "ESXX-XXXX-XXXX-XXXX-XXXX-XXXX", null, 'FUTBOL'),
-	(100,'noTutor','noTutor','noTutor','noTutor',null,null,null, 'PENDIENTE', 30, 'MONITOR', "ESXX-XXXX-XXXX-XXXX-XXXX-XXXX", null, 'TENIS'),
-	(101,'noTutor','noTutor','noTutor','noTutor',null,null,null,'pagado',30,'DEPORTISTA','Aviles','Segundo A', 'TENIS'),
-	(101,'noTutor','noTutor','noTutor','noTutor',null,null,null,'pagado',30,'JUEZ','Aviles','Tercero B', 'NATACION'),
-	(101,'noTutor','noTutor','noTutor','noTutor',null,null,null,'pagado',30,'MONITOR','Aviles','Tercero B', 'FUTBOL'),
-	(104,'noTutor','noTutor','noTutor','noTutor',null,null,null,'pagado',30,'JUEZ','Vega','Bajo A', 'NATACION'),
-	(105,'noTutor','noTutor','noTutor','noTutor',null,null,null,'pagado',30,'DEPORTISTA','Gijon','Segundo A', 'TIRO_CON_ARCO'),
-	(105,'noTutor','noTutor','noTutor','noTutor',null,null,null,'pagado',30,'JUEZ','Gijon','Segundo A', 'TIRO_CON_ARCO'),
-	(106,'123456789L','Pedro','Garcia','pedro@gmail.com',654873691,'1983-6-8','HOMBRE','pagado',30,'DEPORTISTA','Oviedo','Segundo A', 'FUTBOL');
+insert into licencias (owner_id, tutor_dni, tutor_name, tutor_surname, tutor_email, tutor_telf, tutor_birth_date, tutor_gender, state, price, licence_type, facturation_direction, facturation_info, facturation_date, validation_date, deporte) values 
+	(100,'noTutor','noTutor','noTutor','noTutor',null,null,null, 'PENDIENTE', 30, 'DEPORTISTA', "ESXX-XXXX-XXXX-XXXX-XXXX-XXXX", null, null, null, 'FUTBOL'),
+	(100,'noTutor','noTutor','noTutor','noTutor',null,null,null, 'PENDIENTE', 30, 'MONITOR', "ESXX-XXXX-XXXX-XXXX-XXXX-XXXX", null, null, null, 'TENIS'),
+	(101,'noTutor','noTutor','noTutor','noTutor',null,null,null,'pagado',30,'DEPORTISTA','Aviles','Segundo A', "2023-11-21", "2023-11-21", 'TENIS'),
+	(101,'noTutor','noTutor','noTutor','noTutor',null,null,null,'pagado',30,'JUEZ','Aviles','Tercero B', "2023-11-21", "2023-11-21", 'NATACION'),
+	(101,'noTutor','noTutor','noTutor','noTutor',null,null,null,'pagado',30,'MONITOR','Aviles','Tercero B', "2023-11-21", "2023-11-21", 'FUTBOL'),
+	(104,'noTutor','noTutor','noTutor','noTutor',null,null,null,'pagado',30,'JUEZ','Vega','Bajo A', "2023-11-21", "2023-11-21", 'NATACION'),
+	(105,'noTutor','noTutor','noTutor','noTutor',null,null,null,'pagado',30,'DEPORTISTA','Gijon','Segundo A', "2023-11-21", "2023-11-21", 'TIRO_CON_ARCO'),
+	(105,'noTutor','noTutor','noTutor','noTutor',null,null,null,'pagado',30,'JUEZ','Gijon','Segundo A', "2023-11-21", "2023-11-21", 'TIRO_CON_ARCO'),
+	(106,'123456789L','Pedro','Garcia','pedro@gmail.com',654873691,'1983-6-8','HOMBRE','pagado',30,'DEPORTISTA','Oviedo','Segundo A', "2023-11-21", "2023-11-21", 'FUTBOL');
 
 INSERT INTO reservas (id, fecha_inicio, fecha_fin, instalation_code, tipo) VALUES 
 	(0, "2023-11-20 20:00", "2023-11-20 22:00", "13410", "reserva"),

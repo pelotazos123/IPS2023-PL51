@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -11,7 +12,8 @@ import giis.demo.util.Database;
 
 public class CheckFichero {
 
-	private static final String SQL_LICENCIA_PAGADO = "update licencias set state = 'PAGADO' where owner_id = ? ";
+	private static final String SQL_LICENCIA_PAGADO = "update licencias set state = 'PAGADO', facturation_date = ?,"
+			+ "validation_date = ? where owner_id = ? ";
 	private static final String SQL_COMPRUEBA_PAGADO = "select * from licencias where owner_id = ? "
 			+ "and state = 'PAGADO' ";
 	
@@ -21,6 +23,7 @@ public class CheckFichero {
 	
 	private Database db = new Database();
 	private String id;
+	private String facturation_date;
 	
 	public boolean checkFichero(File f) {
 		boolean valido = false;
@@ -62,7 +65,8 @@ public class CheckFichero {
 	}
 
 	private void estableceLicenciaPagada() {	
-		db.executeUpdate(SQL_LICENCIA_PAGADO, id);
+		db.executeUpdate(SQL_LICENCIA_PAGADO,facturation_date, 
+				LocalDate.now().toString(), id);
 //		System.out.println(resQuery.get(0).toString());
 	}
 
@@ -115,7 +119,8 @@ public class CheckFichero {
 				return false;
 		} else if(numLinea == 7) {
 			if(line[0].equals("Fecha:")) {
-				
+				//TODO ESTO FECHA DE REALIZACIÓN Y FECHA DE VALIDACIÓN HOY
+				this.facturation_date = line[1];
 			} else 
 				return false;
 		} else if(numLinea == 8) {
