@@ -378,7 +378,8 @@ public class VentanaReservas extends JDialog {
 					generaHoras();
 				}
 			});
-			cbInstalaciones.setModel(new DefaultComboBoxModel<Instalacion>(InstalacionController.getInstalaciones(db)));
+			Instalacion[] modeloCbInstalaciones = ((Instalacion[])InstalacionController.getInstalaciones(db).toArray());
+			cbInstalaciones.setModel(new DefaultComboBoxModel<Instalacion>(modeloCbInstalaciones));
 		}
 		return cbInstalaciones;
 	}

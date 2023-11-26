@@ -22,18 +22,6 @@ public class ReservationController {
 	
 	private Database db;
 	
-//	private final static String SQL_CARGAR_RESERVA = "SELECT id, fecha_inicio, fecha_fin, instalation_code, tipo FROM reservas";
-	private final static String SQL_CREAR_RESERVA = "INSERT INTO reservas(fecha_inicio, fecha_fin, instalation_code, tipo) VALUES (?, ?, ?, ?)";
-	private final static String SQL_ID_RESERVA = "SELECT seq FROM sqlite_sequence where name='reservas'";
-	private final static String SQL_ID_CURSO = "SELECT seq FROM sqlite_sequence where name='cursillos'";
-	private final static String SQL_CARGAR_PARTICIPANTES = "SELECT * FROM participante_reserva";
-	private final static String SQL_CREAR_PARTICIPANTE = "INSERT INTO participante_reserva (reserva_id, dni) VALUES (?, ?)";
-	private final static String SQL_CARGAR_FECHAS_RESERVA = "SELECT DISTINCT fecha_inicio FROM reservas, participante_reserva WHERE participante_reserva.dni=? and reservas.instalation_code=? and reservas.tipo=?";
-	
-	private final static String SQL_CREAR_CURSO = "INSERT INTO cursillos(nombre, code_instalacion, fecha_inicio, fecha_fin, price, plazas) VALUES (?, ?, ?, ?, ?, ?)";
-	private final static String SQL_AÑADIR_ENTRENADORES = "INSERT INTO entrenadores_cursillos (id_curso, dni) VALUES (?,?)";
-	private final static String SQL_CARGAR_CURSOS = "SELECT id FROM cursillos WHERE fecha_inicio <= ? and fecha_fin >= ? and code_instalacion = ?";
-	
 	public final static int HORA_MAXIMA = 2;
 	public final static int HORA_MINIMA = 1;
 	
@@ -122,6 +110,7 @@ public class ReservationController {
 
 	private void createCurso(String nombreCurso, Instalacion instalacion, double coste, String inicioCursoStr,
 			String finalCursoStr, int plazas) {
+		String SQL_CREAR_CURSO = "INSERT INTO cursillos(nombre, code_instalacion, fecha_inicio, fecha_fin, price, plazas) VALUES (?, ?, ?, ?, ?, ?)";
 		db.executeUpdate(SQL_CREAR_CURSO, nombreCurso, instalacion.getCode(), inicioCursoStr, finalCursoStr, coste, plazas);
 	}
 	
@@ -131,6 +120,7 @@ public class ReservationController {
 	 * @return true si está disponible, false si no
 	 */
 	private boolean getDisponibilidadDeCursos(Instalacion instalacion, String fechaInicio, String fechaFinal){
+		String SQL_CARGAR_CURSOS = "SELECT id FROM cursillos WHERE fecha_inicio <= ? and fecha_fin >= ? and code_instalacion = ?";
 		List<Object[]> queryRes = db.executeQueryArray(SQL_CARGAR_CURSOS, fechaInicio, fechaFinal, instalacion.getCode());
 		
 		if (queryRes.size() != 0) {
@@ -146,6 +136,7 @@ public class ReservationController {
 		LocalDateTime reserva = null;
 		LocalDateTime yesterday = null;
 		LocalDateTime tomorrow = null;
+		String SQL_CARGAR_FECHAS_RESERVA = "SELECT DISTINCT fecha_inicio FROM reservas, participante_reserva WHERE participante_reserva.dni=? and reservas.instalation_code=? and reservas.tipo=?";
 				
 		for (String dni: participantes) {
 			queryRes = db.executeQueryArray(SQL_CARGAR_FECHAS_RESERVA, dni, instalacion.getCode(), "");
@@ -171,6 +162,9 @@ public class ReservationController {
 	}
 	
 	private void createQueryTrainers(List<String> listaEntrenadores, String nameCurso) {
+		String SQL_ID_CURSO = "SELECT seq FROM sqlite_sequence where name='cursillos'";
+		String SQL_AÑADIR_ENTRENADORES = "INSERT INTO entrenadores_cursillos (id_curso, dni) VALUES (?,?)";
+		
 		int id_curso = (int) db.executeQueryArray(SQL_ID_CURSO).get(0)[0];
 		
 		for (String dni: listaEntrenadores) {
@@ -180,6 +174,9 @@ public class ReservationController {
 	}
 
 	private void createQueryParticipants(List<String> listaParticipantes) {
+		String SQL_ID_RESERVA = "SELECT seq FROM sqlite_sequence where name='reservas'";
+		String SQL_CREAR_PARTICIPANTE = "INSERT INTO participante_reserva (reserva_id, dni) VALUES (?, ?)";
+		
 		int id_reserva = (int) db.executeQueryArray(SQL_ID_RESERVA).get(0)[0];
 		
 		for (String dni: listaParticipantes) {
@@ -231,6 +228,7 @@ public class ReservationController {
 	
 	
 	public void getParticipantes() {
+		String SQL_CARGAR_PARTICIPANTES = "SELECT * FROM participante_reserva";
 		List<Object[]> resQuery = db.executeQueryArray(SQL_CARGAR_PARTICIPANTES);
 		int id = 0;
 		String dni = "";
@@ -244,6 +242,7 @@ public class ReservationController {
 	}
 	
 	private void createReservation(String reservaInicio, String reservaFin, String instalacionId, String tipoReserva) {
+		String SQL_CREAR_RESERVA = "INSERT INTO reservas(fecha_inicio, fecha_fin, instalation_code, tipo) VALUES (?, ?, ?, ?)";
 		db.executeUpdate(SQL_CREAR_RESERVA, reservaInicio, reservaFin, instalacionId, tipoReserva);
 	}
 	

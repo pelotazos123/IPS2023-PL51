@@ -15,6 +15,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import giis.demo.business.ReservationController;
 import giis.demo.model.competiciones.servicio.GestionarCompeticiones;
+import giis.demo.model.loggin.Correo;
 import giis.demo.ui.VentanaPrincipal;
 import giis.demo.util.Database;
 import giis.demo.util.DbUtil;
@@ -28,8 +29,6 @@ public class ServiciosMeteorologicos {
 //	+ "location='Brasilia'&apikey=8RfHsl5zKwBjPPRndZRuyCbdDZsahX4C";	
 //	private final String API_URL = "https://api.tomorrow.io/v4/weather/forecast?location='" + location + "'&apikey=8RfHsl5zKwBjPPRndZRuyCbdDZsahX4C";
 	
-	private static final String CARGAINSTALACIONES = "select code, name from instalaciones";
-	
 	private static final String TIPO_RESERVA = "RESERVA";
 	private static final String TIPO_COMPETICION = "COMPETICION";
 	
@@ -37,12 +36,13 @@ public class ServiciosMeteorologicos {
 	private ReservationController rc;
 	private Properties prop;
 	private Database db;
-	
+	private Correo correo;
 	
 	public ServiciosMeteorologicos(VentanaPrincipal vp, Database db) {
 		this.vp = vp;
 		this.db = db;
 		this.rc = new ReservationController(vp.getDb());
+		correo = new Correo();
 		prop = DbUtil.loadProperties(); 
 	}
 
@@ -69,7 +69,8 @@ public class ServiciosMeteorologicos {
      * Comprueba de manera paralela las anulaciones de reservas
      */
     public void checkTiempoParallelReservas() {
-    	List<Object[]> instalaciones = vp.getDb().executeQueryArray(CARGAINSTALACIONES);	
+    	String SQL_CARGAR_INSTALACIONES = "select code, name from instalaciones";
+    	List<Object[]> instalaciones = vp.getDb().executeQueryArray(SQL_CARGAR_INSTALACIONES);	
 		// Crear un pool de hilos
 		ExecutorService executorService = Executors.newFixedThreadPool(instalaciones.size());
 		// Iterar sobre las instalaciones y asigna cada una a un hilo
@@ -97,12 +98,12 @@ public class ServiciosMeteorologicos {
         @Override
         public void run() {
         	if (tipo.equals(TIPO_COMPETICION))
-        		checkWeatherReservas((String)objects[1], TIPO_COMPETICION, null); // Llamada para competiciones
+        		checkWeather((String)objects[1], TIPO_COMPETICION, null); // Llamada para competiciones
         	else
-        		checkWeatherReservas(location, TIPO_RESERVA, objects[1].toString()); // Llamada para reservas
+        		checkWeather(location, TIPO_RESERVA, objects[1].toString()); // Llamada para reservas
 		}
 
-		private void checkWeatherReservas(String location, String tipo, String instalacion) {
+		private void checkWeather(String location, String tipo, String instalacion) {
 			String API = "https://api.tomorrow.io/v4/weather/forecast?location=" + location + "&apikey=cPGU3YHhCPJhZwzPc2Lly68r6dGs7BwL";
 			String deporte = null;
     		int id = 0;
@@ -137,6 +138,7 @@ public class ServiciosMeteorologicos {
 				
 				checkAnulaciones(dto, day, deporte, id, instalacion);
 			}
+			
 			if (tipo.equals(TIPO_RESERVA))
 				rc.getReservas();
 		}
@@ -156,69 +158,74 @@ public class ServiciosMeteorologicos {
 		}
 
 		private void anulacionCompeticiones(WeatherDto weather, LocalDateTime day, String deporte, int id) {
+			double rain = 0;
+			double temp = 0;
+			double snow = 0;
+			double wind = 0;
 			switch (deporte) {
 				case "TENIS":
-					checkAnulaciones(TIPO_COMPETICION, weather, null, day, 
-							Double.parseDouble(prop.getProperty("weather.arco.rain")), 
-							Double.parseDouble(prop.getProperty("weather.temperature")), 
-							Double.parseDouble(prop.getProperty("weather.arco.snow")),
-							Double.parseDouble(prop.getProperty("weather.arco.wind")));
+					rain = Double.parseDouble(prop.getProperty("weather.tenis.rain"));
+					temp = Double.parseDouble(prop.getProperty("weather.temperature"));
+					snow = Double.parseDouble(prop.getProperty("weather.tenis.snow"));
+					wind = 1000;
 					break;
 				case "FUTBOL":
-					checkAnulaciones(TIPO_COMPETICION, weather, null, day, 
-							Double.parseDouble(prop.getProperty("weather.arco.rain")), 
-							Double.parseDouble(prop.getProperty("weather.temperature")), 
-							Double.parseDouble(prop.getProperty("weather.arco.snow")),
-							1000);
+					rain = Double.parseDouble(prop.getProperty("weather.futbol.rain"));
+					temp = Double.parseDouble(prop.getProperty("weather.temperature"));
+					snow = Double.parseDouble(prop.getProperty("weather.futbol.snow"));
+					wind = 1000;
 					break;
 				case "TIRO_CON_ARCO":
-					checkAnulaciones(TIPO_COMPETICION, weather, null, day, 
-							Double.parseDouble(prop.getProperty("weather.arco.rain")), 
-							Double.parseDouble(prop.getProperty("weather.temperature")), 
-							Double.parseDouble(prop.getProperty("weather.arco.snow")),
-							1000);
+					rain = Double.parseDouble(prop.getProperty("weather.arco.rain"));
+					temp = Double.parseDouble(prop.getProperty("weather.temperature"));
+					snow = Double.parseDouble(prop.getProperty("weather.arco.snow"));
+					wind = Double.parseDouble(prop.getProperty("weather.arco.wind"));
 					break;
 				default:
 					break;
 			}
-			
+			checkAnulaciones(TIPO_COMPETICION, weather, null, day, rain, temp, snow, wind, id);
 		}
 
 		private void anulacionReservas(WeatherDto weather, LocalDateTime day, String instalacion) {
+			double rain = 0;
+			double temp = 0;
+			double snow = 0;
+			double wind = 0;
 			switch (instalacion) {
 				case "Tiro con arco":
-					checkAnulaciones(TIPO_RESERVA,weather, instalacion, day, 
-							Double.parseDouble(prop.getProperty("weather.arco.rain")), 
-							Double.parseDouble(prop.getProperty("weather.temperature")), 
-							Double.parseDouble(prop.getProperty("weather.arco.snow")),
-							Double.parseDouble(prop.getProperty("weather.arco.wind")));
+					rain = Double.parseDouble(prop.getProperty("weather.arco.rain"));
+					temp = Double.parseDouble(prop.getProperty("weather.temperature"));
+					snow = Double.parseDouble(prop.getProperty("weather.arco.snow"));
+					wind = Double.parseDouble(prop.getProperty("weather.arco.wind"));
 					break;
 				case "Pista de tenis":
-					checkAnulaciones(TIPO_RESERVA,weather, instalacion, day, 
-							Double.parseDouble(prop.getProperty("weather.tenis.rain")), 
-							Double.parseDouble(prop.getProperty("weather.temperature")), 
-							Double.parseDouble(prop.getProperty("weather.tenis.snow")),
-							1000); // Se mete 1000 para que en actividades donde el viento no importa no afecte a la decision
+					rain = Double.parseDouble(prop.getProperty("weather.tenis.rain"));
+					temp = Double.parseDouble(prop.getProperty("weather.temperature"));
+					snow = Double.parseDouble(prop.getProperty("weather.tenis.snow"));
+					wind = 1000;
 					break;
 				case "Campo de fútbol":
-					checkAnulaciones(TIPO_RESERVA,weather, instalacion, day, 
-							Double.parseDouble(prop.getProperty("weather.futbol.rain")), 
-							Double.parseDouble(prop.getProperty("weather.temperature")), 
-							Double.parseDouble(prop.getProperty("weather.futbol.snow")),
-							1000); // Se mete 1000 para que en actividades donde el viento no importa no afecte a la decision
+					rain = Double.parseDouble(prop.getProperty("weather.futbol.rain"));
+					temp = Double.parseDouble(prop.getProperty("weather.temperature"));
+					snow = Double.parseDouble(prop.getProperty("weather.futbol.snow"));
+					wind = 1000;
 					break;
 				default:
 					break;
 			}	
+			checkAnulaciones(TIPO_RESERVA, weather, instalacion, day, rain, temp, snow, wind, -1);
 		}
 		
-		private void checkAnulaciones(String tipoAnulacion, WeatherDto weather, String idInst, LocalDateTime day, double rain, double temperature, double snow, double wind) {		
+		private void checkAnulaciones(String tipoAnulacion, WeatherDto weather, String idInst, LocalDateTime day, 
+									double rain, double temperature, double snow, double wind, int idCompeticion) {
+			
 			if(weather.rainAccumulationLwe >= rain || weather.temperatureApparent >= temperature
 					|| weather.snowAccumulationLwe >= snow || weather.windSpeed >= wind) {
 				if (tipoAnulacion.equals(TIPO_COMPETICION)) {
 					DateTimeFormatter dtfComp = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 					String horaInicioComp = day.format(dtfComp);
-					GestionarCompeticiones.createAnulation(horaInicioComp, db);				
+					GestionarCompeticiones.createAnulation(horaInicioComp, db, correo, idCompeticion);				
 				} else if (tipoAnulacion.equals(TIPO_RESERVA)) {
 					DateTimeFormatter dtfReserva = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
 					String horaInicioReserva = day.format(dtfReserva);
@@ -250,7 +257,7 @@ public class ServiciosMeteorologicos {
 				line = line.substring(2, line.length());
 				ObjectMapper om = new ObjectMapper();
 				jsonNode = om.readTree(line);
-			}  catch (Exception e/*IOException e*/) {
+			} catch (Exception e/*IOException e*/) {
 				e.printStackTrace();
 				e.toString();
 				System.out.println("Localización no encontrada");
@@ -274,17 +281,6 @@ public class ServiciosMeteorologicos {
 //            e.printStackTrace();
 //        }
 //    }
-	
-//	private void checkInstalationes(WeatherDto weather, LocalDateTime day) {		
-//		int horaApertura = Integer.parseInt(prop.getProperty("club.horario.apertura"));
-//		int horaCierre = Integer.parseInt(prop.getProperty("club.horario.cierre"));
-//		int hour = weather.hora.getHour();
-//		if(hour >= horaApertura && hour < horaCierre) {
-//			anulacionReservas(weather, day);
-//		}
-//	}
-
-	
 	
 	/*
 	 * SI HAY CONDICIONES ADVERSAS if(HAY RESERVA Y NO ES ANULADA) BORRA DE RESERVAS

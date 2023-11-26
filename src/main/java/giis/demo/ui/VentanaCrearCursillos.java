@@ -253,7 +253,8 @@ public class VentanaCrearCursillos extends JDialog {
 			});
 			cbInstalaciones.setFont(new Font("Tahoma", Font.PLAIN, 15));
 			cbInstalaciones.setBackground(Color.WHITE);
-			cbInstalaciones.setModel(new DefaultComboBoxModel<Instalacion>(InstalacionController.getInstalaciones(db)));
+			Instalacion[] modeloCbInstalaciones = ((Instalacion[])InstalacionController.getInstalaciones(db).toArray());
+			cbInstalaciones.setModel(new DefaultComboBoxModel<Instalacion>(modeloCbInstalaciones));
 		}
 		return cbInstalaciones;
 	}
