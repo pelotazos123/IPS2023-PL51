@@ -33,8 +33,8 @@ public class GestionCursosSocios {
 			id = vgcs.getVp().getTramitarLicencia().getSocio().getId();
 		String CARGADATOS = "SELECT id, nombre, code_instalacion, fecha_inicio, fecha_fin,"
 				+ " price, plazas from cursillos c";
-		String ESTA_INSCRITO = "select * from inscritos where id_cursante = ? and id_curso = ?";
-		String CARGAPLAZAS = "select * from inscritos where id_curso = ? ";
+		String ESTA_INSCRITO = "select * from inscritos where id_cursante = ? and id_curso = ? and estado = 'INSCRITO'";
+		String CARGAPLAZAS = "select * from inscritos where id_curso = ? and estado = 'INSCRITO' ";
 		List<Object[]> cursos = vgcs.getVp().getDb().executeQueryArray(CARGADATOS);
 		Object[][] datos = new Object[cursos.size()][cursos.get(0).length + 2];
 		for (int i = 0; i < cursos.size(); i++) {
@@ -42,8 +42,6 @@ public class GestionCursosSocios {
 			for (int j = 0; j < columnas.length; j++) {
 				if (j == columnas.length - 1) {
 					int plazas = vgcs.getVp().getDb().executeQueryArray(CARGAPLAZAS, columnas[0]).size();
-					System.out.println(columnas[0]);
-					System.out.println("Plazas: " + plazas);
 					datos[i][j] = (Integer.parseInt(columnas[j].toString()) - plazas) + "/"
 							+ Integer.parseInt(columnas[j].toString());
 				} else
@@ -62,10 +60,12 @@ public class GestionCursosSocios {
 	}
 
 	public void inscribirse() {
-		String INSCRIBIRSE = "insert into inscritos(id_curso, id_cursante) values (?,?)";
+		String INSCRIBIRSE = "insert into inscritos(id_curso, id_cursante, estado, fecha_eliminacion) "
+				+ "values (?,?,'INSCRITO', null)";
 		int row = vgcs.getTableCursos().getSelectedRow();
 		int idCurso = Integer.parseInt(vgcs.getDatos()[row][0].toString());
 		double precio = Double.parseDouble(vgcs.getDatos()[row][COLUMNA_PRECIO].toString());
+		
 		vgcs.getVp().getDb().executeUpdate(INSCRIBIRSE, idCurso, id);
 //		vgcs.getVp().getDb().executeUpdate(ACTUALIZAPRECIOINSCRIBIRSE, precio);
 
@@ -88,9 +88,8 @@ public class GestionCursosSocios {
 		int year = calendar.get(Calendar.YEAR);
 		int month = calendar.get(Calendar.MONTH) + 1;
 		int day = calendar.get(Calendar.DAY_OF_MONTH);
-		LocalDate date = LocalDate.of(year, month, day);
-
-		String BORRADECURSO = "delete from cursos where id = ? ";			//TODO AND DATE > ?
+		LocalDate date = LocalDate.of(year, month + 1, 1);
+		
 		String GET_ENTRENADORES_CURSO = "select dni from entrenadores_cursillos where id_curso = ?";
 		String GET_ID_ENTRENADOR = "select id from socios where dni = ?";
 		String BORRA_ENTRENADOR = "delete from Entrenados where entrenador_id = ? and entrenado_id = ? ";
@@ -102,14 +101,18 @@ public class GestionCursosSocios {
 			List<Object[]> idEntrenador = vgcs.getVp().getDb().executeQueryArray(GET_ID_ENTRENADOR, entrenador[0]);
 			vgcs.getVp().getDb().executeUpdate(BORRA_ENTRENADOR, idEntrenador.get(0)[0], id);
 		}
-		vgcs.getVp().getDb().executeUpdate(BORRADECURSO, id);
 		double precio = Double.parseDouble(vgcs.getDatos()[row][0].toString());
-		//BORRAR 
 		if (day <= 15) {
-			// TODO CAMBIAR EL 0 POR LA COLUMNA DEL PRECIO DEL CURSO
-			
-//			vp.getDb().executeUpdate(ACTUALIZAPRECIO, precio);
-		} 
+			String BORRADECURSOANTES = "delete from inscritos where id_cursante = ? and id_curso = ? ";	
+			vgcs.getVp().getDb().executeUpdate(BORRADECURSOANTES, id, idCurso);
+			JOptionPane.showMessageDialog(null, "Usted se ha borrado del curso");
+		} else {
+			String BORRADECURSODESPUES = "update inscritos set estado = 'BORRADO', "
+					+ "fecha_eliminacion = ? where id_cursante = ? and id_curso = ? ";
+			vgcs.getVp().getDb().executeUpdate(BORRADECURSODESPUES, date, id, idCurso);
+			JOptionPane.showMessageDialog(null, "Usted se ha borrado del curso, el mes siguiente se le "
+					+ "cobrará el importe del mismo al haberse borrado después del día 15.");
+		}
 	}
 
 	public String[] cargaNomColumnas() {
@@ -117,11 +120,14 @@ public class GestionCursosSocios {
 				"ENTRENADORES", "ESTADO" };
 	}
 
-	public void realizaAccion(String accion) {
-		if (accion.equals(INSCRITO))
+	public boolean realizaAccion(String accion) {
+		if (accion.equals(INSCRITO)) {
 			borrar();
-		else
+			return true;
+		} else {
 			inscribirse();
+			return false;
+		}
 	}
 
 }

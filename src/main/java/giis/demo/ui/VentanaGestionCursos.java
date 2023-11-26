@@ -43,9 +43,6 @@ public class VentanaGestionCursos extends JFrame {
 		this.vp = vp;
 		this.gestionCursos = new GestionCursosSocios(this);
 
-		this.datos = gestionCursos.cargaFilas();
-		this.columnas = gestionCursos.cargaNomColumnas();
-
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 
@@ -66,6 +63,8 @@ public class VentanaGestionCursos extends JFrame {
 
 	public JTable getTableCursos() {
 		if (tableCursos == null) {
+			this.datos = gestionCursos.cargaFilas();
+			this.columnas = gestionCursos.cargaNomColumnas();
 			DefaultTableModel modelo = new DefaultTableModel(datos, columnas) {
 				@Override
 				public boolean isCellEditable(int row, int column) {
@@ -137,5 +136,6 @@ public class VentanaGestionCursos extends JFrame {
 
 	protected void realizaAccion() {
 		gestionCursos.realizaAccion(datos[tableCursos.getSelectedRows()[0]][datos[0].length - 1].toString());
+		this.dispose();
 	}
 }

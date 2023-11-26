@@ -90,5 +90,5 @@ insert into cursillos(id, nombre, code_instalacion, fecha_inicio, fecha_fin, pri
 insert into entrenadores_cursillos (id, id_curso, dni) values 
 	(1, 1, '123456789A');
 
-insert into inscritos(id_cursante, id_curso) values 
-	(101, 1);
+insert into inscritos(id_cursante, id_curso, fecha_eliminacion, estado) values 
+	(101, 1, null, "INSCRITO");

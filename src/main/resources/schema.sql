@@ -15,6 +15,7 @@ drop table competiciones;
 drop table inscripcion_competiciones;
 drop table test;
 DROP TABLE entrenados;
+drop table inscritos;
 
 create table socios (id int, dni varchar2(255), name varchar2(255),surname varchar2(255), email varchar2(255), telf int, cuota_type varchar2(255), iban varchar2(255), height real, weight real, birth_date date, gender varchar2(255), directive bool);
 create table licencias (owner_id int,tutor_dni varchar2(255), tutor_name varchar2(255),tutor_surname varchar2(255), tutor_email varchar2(255), tutor_telf int, tutor_birth_date date, tutor_gender varchar2(255), state varchar2(255), price int, licence_type varchar2(255), facturation_direction varchar2(255),facturation_info varchar2(255), deporte varchar2(255), facturation_date date, validation_date date, foreign key(owner_id) references socios(id));
@@ -31,4 +32,4 @@ create table inscripcion_competiciones(competicion_id int, socio_id int, foreign
 create table entrenados(entrenador_id int, entrenado_id int);
 CREATE TABLE IF NOT EXISTS cursillos (id integer PRIMARY KEY AUTOINCREMENT, nombre varchar2(255), code_instalacion varchar2(255), fecha_inicio date, fecha_fin date, price real, plazas int, foreign key(code_instalacion) REFERENCES instalaciones(code));
 CREATE TABLE IF NOT EXISTS entrenadores_cursillos (id integer PRIMARY KEY AUTOINCREMENT, id_curso int, dni varchar2(255), foreign key(id_curso) REFERENCES cursillos(id));
-CREATE TABLE IF NOT EXISTS inscritos(id_cursante int, id_curso int);
+CREATE TABLE inscritos(id_cursante int, id_curso int, fecha_eliminacion date, estado varchar2(255));
