@@ -119,7 +119,6 @@ public class CheckFichero {
 				return false;
 		} else if(numLinea == 7) {
 			if(line[0].equals("Fecha:")) {
-				//TODO ESTO FECHA DE REALIZACIÓN Y FECHA DE VALIDACIÓN HOY
 				this.facturation_date = line[1];
 			} else 
 				return false;
