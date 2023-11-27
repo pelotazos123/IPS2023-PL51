@@ -1,5 +1,6 @@
 package giis.demo.business;
 
+import java.time.LocalDate;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -76,22 +77,43 @@ public class RecibosModel {
 	}
 	
 	public double getAmount(String id) {
-		Date fecha = vp.getDcFecha().getDate();
-		Calendar calendar = Calendar.getInstance();
-		calendar.setTime(fecha);
-		
-		String INSCRITOACURSO = "select * from inscritos where ";
-		
 		double amount = 0.0;
 		amount += Double.parseDouble(db.executeQueryArray(SQL_GETAMOUNT, id).get(0)[0].toString());
-		amount += calculaAmountCursos();
+//		amount += calculaAmountCursos(Integer.parseInt(id));
 		return amount;
 	}
-	
-	private double calculaAmountCursos() {
-		// TODO Auto-generated method stub
-		return 0;
-	}
+//TODO ELIMINAR
+//	private double calculaAmountCursos(int id) {
+//		Double amount = 0.0;
+//		Date fecha = vp.getDcFecha().getDate();
+//		Calendar calendar = Calendar.getInstance();
+//		calendar.setTime(fecha);
+//		int year = calendar.get(Calendar.YEAR);
+//		int month = calendar.get(Calendar.MONTH) + 1;
+//		int day = calendar.get(Calendar.DAY_OF_MONTH);
+//		LocalDate actual = LocalDate.of(year, month, day);
+//		
+//		String INSCRITOACURSO = "select id_curso, estado, fecha_eliminacion from inscritos where id_cursante = ?";
+//		List<Object[]> cursos = this.db.executeQueryArray(INSCRITOACURSO, id);
+//		for(Object[] curso: cursos) {
+//			int idCurso = Integer.parseInt(curso[0].toString());
+//			String estado = curso[1].toString();
+//			String GETAMOUNTCURSO = "select price from cursillos where id = ?";
+//			if(estado.equals("BORRADO")) {
+//				String fechaEliminacion = curso[2].toString();
+//				LocalDate eliminacion = LocalDate.parse(fechaEliminacion);
+//				if(eliminacion.isBefore(actual.plusMonths(1))) {
+//					amount += Double.parseDouble(db.executeQueryArray(GETAMOUNTCURSO, idCurso).get(0)[0].toString());
+//				}
+//			} else {
+//				String GETFINCURSO = "select fecha_fin, price from cursillos where id = ?";
+//				LocalDate fecha_fin = LocalDate.parse(db.executeQueryArray(GETFINCURSO, idCurso).get(0)[0].toString());
+//				if(actual.isBefore(fecha_fin))
+//					amount += Double.parseDouble(db.executeQueryArray(GETFINCURSO, idCurso).get(0)[1].toString());
+//			}
+//		}
+//		return amount;
+//	}
 
 	public int getLastNumber() {
 		if(getListaRecibos().isEmpty())
