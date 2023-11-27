@@ -11,6 +11,7 @@ import giis.demo.util.Database;
 public class GestionarLoggin {
 	
 	private final static String SQL_OBTENER_CORREO_USUARIO = "select email from socios where dni=?";
+	public final static String LOGGIN_AUDITOR = "auditor";
 	
 	private Database db;
 	private Correo enviarCorreos = new Correo();
@@ -119,5 +120,9 @@ public class GestionarLoggin {
 					"Cambiar contraseña", JOptionPane.INFORMATION_MESSAGE);
 			return false;
 		}
+	}
+	
+	public boolean esAuditor(String loggin) {
+		return loggin.equals(LOGGIN_AUDITOR);
 	}
 }

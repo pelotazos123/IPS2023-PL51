@@ -53,7 +53,7 @@ public class VentanaInscripcionCompeticiones extends JFrame {
 	public VentanaInscripcionCompeticiones(GestionarCompeticiones gestorCompeticiones, TramitarLicencia t) {
 		this.gestorCompeticiones = gestorCompeticiones;
 		tramitarLicencia = t;
-		setMinimumSize(new Dimension(1050, 477));
+		setMinimumSize(new Dimension(1550, 477));
 		setBackground(Color.WHITE);
 		setTitle("Club Deportivo");
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);

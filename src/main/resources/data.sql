@@ -53,7 +53,8 @@ insert into loggin (dni_socio, contrasena) values
 	('123456789D','26fa039217f63fbc3cb73242c7a8acd9'), 
 	('123456789E','7143807319c982cdcb00af7d92ba1ea8'), 
 	('123456789J','99eeb6fb14afe15448b972fad2bb6337'), 
-	('123456789K','4d1000ad38485563b550c7dc6f2221f1'); 
+	('123456789K','4d1000ad38485563b550c7dc6f2221f1'),
+	('auditor','fc11d6d41552a8a2139de723eecc3d46'); 
 	--Usuario: 123456789A contraseña:a5896
 	--Usuario: 123456789B contraseña:b8763
 	--Usuario: 123456789C contraseña:c9863
@@ -61,6 +62,7 @@ insert into loggin (dni_socio, contrasena) values
 	--Usuario: 123456789E contraseña:e4852
 	--Usuario: 123456789J contraseña:j1236
 	--Usuario: 123456789K contraseña:k2143
+	--Usuario: auditor contraseña:Auditor1
 
 insert into test(id, fecha, tipo, peso, edad, sexo, tiempo, pulsaciones, distance, resultado) values
 	(100, '2021-05-10','ROCKPORT', 55, 20, 'MUJER', '5.5', 170, null, '77.36'),

@@ -40,9 +40,11 @@ import giis.demo.business.TiendaController;
 import giis.demo.business.TiendaModel;
 import giis.demo.logica.ServiciosMeteorologicos;
 import giis.demo.model.CrearLicencias.servicio.TramitarLicencia;
+import giis.demo.model.auditoria.Auditoria;
 import giis.demo.model.competiciones.servicio.GestionarCompeticiones;
 import giis.demo.model.loggin.servicio.GestionarLoggin;
 import giis.demo.model.politicaDeDatos.PoliticaDeDatos;
+import giis.demo.ui.auditoria.VentanaAuditor;
 import giis.demo.ui.competiciones.VentanaInscripcionCompeticiones;
 import giis.demo.ui.licencias.VentanaRenovarLicencia;
 import giis.demo.ui.licencias.VentanaTramitarLicencia;
@@ -61,6 +63,7 @@ public class VentanaPrincipal extends JFrame {
 	private GestionarLoggin loggin;
 	private GestionarCompeticiones gestorCompeticiones;
 	private PoliticaDeDatos politicaDeDatos;
+	private Auditoria auditor;
 	
 	private JPanel pnPrincipal;
 	private JPanel pnPrincipalSocio;
@@ -146,6 +149,7 @@ public class VentanaPrincipal extends JFrame {
 		loggin = new GestionarLoggin(db);
 		gestorCompeticiones = new GestionarCompeticiones(db);
 		politicaDeDatos = new PoliticaDeDatos(db);
+		auditor = new Auditoria(db);
 		cargarFecha();
 		setMinimumSize(new Dimension(517, 517));
 	}
@@ -477,7 +481,7 @@ public class VentanaPrincipal extends JFrame {
 			btnEntrar.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
 					if(comprobarUsuario()) {
-						loggearSocio();
+						loggearUsuario();
 					}
 				}
 			});
@@ -486,54 +490,69 @@ public class VentanaPrincipal extends JFrame {
 		return btnEntrar;
 	}
 	
-	private void loggearSocio() {
-		tramitarLicencia.loggearSocio(getTxDniUsuario().getText());
-		if(tramitarLicencia.esDirectivo()) {
-			pnSeccionDirectivoPersonal.add(getBtTramitarLicencia());
-			pnSeccionDirectivoPersonal.add(getBtPagoTransferencia());
-			pnSeccionDirectivoPersonal.add(getBtRenovarLicencia());
-			pnSeccionDirectivoPersonal.add(getBtCambiarContraseña());
-			pnSeccionDirectivoPersonal.add(getBtVerDatos());
-			
-			pnSelectorFechaDirectivo.add(getDcFechaAplicacion());
-			
-			pnBotonesDeportivoDirectivo.add(getBtnReservas());
-			pnBotonesDeportivoDirectivo.add(getBtTestsFisiologicos());
-			pnBotonesDeportivoDirectivo.add(getBtInscripcionCompeticiones());
-			pnBotonesDeportivoDirectivo.add(getBtTienda());
-			pnSeccionDirectivoAdministracion.add(getBtnAsambleas());
-			pnSeccionDirectivoAdministracion.add(getBtnActas());
-			pnSeccionDirectivoAdministracion.add(getBtnGeneracionRecibos());
-			pnSeccionDirectivoAdministracion.add(getBtnGestionRecibos());
-			pnSeccionDirectivoAdministracion.add(getBtnListadoSocios());
-			pnSeccionDirectivoAdministracion.add(getBtnAñadirCompeticiones());
-			pnSeccionDirectivoAdministracion.add(getBtVerSolicitudes());
-			ServiciosMeteorologicos sm = new ServiciosMeteorologicos(this);
-			sm.checkTiempo();
-			pnSeccionDirectivoAdministracion.add(getBtnCrearCursillos());
-			
-			getLbBienvenidoDirectivo().setText("Bienvenido al club "+tramitarLicencia.getDirectivo().getNombre());
-			
-			((CardLayout) pnPrincipal.getLayout()).show(pnPrincipal, "PrincipalDirectivo");
-			setMinimumSize(new Dimension(800, 517));
+	private void loggearUsuario() {
+		if(loggin.esAuditor(getTxDniUsuario().getText())) {
+			VentanaAuditor frame = new VentanaAuditor(auditor);
+			frame.setVisible(true);
 		}else {
-			pnSeccionSocioPersonal.add(getBtTramitarLicencia());
-			pnSeccionSocioPersonal.add(getBtPagoTransferencia());
-			pnSeccionSocioPersonal.add(getBtRenovarLicencia());
-			pnSeccionSocioPersonal.add(getBtCambiarContraseña());
-			pnSeccionSocioPersonal.add(getBtVerDatos());
-			
-			pnBotonesDeportiva.add(getBtnReservas());
-			pnBotonesDeportiva.add(getBtInscripcionCompeticiones());
-			pnBotonesDeportiva.add(getBtTestsFisiologicos());
-			
-			pnSelectorFechaSocio.add(getDcFechaAplicacion());
-			pnBotonesDeportiva.add(getBtTestsFisiologicos());
-			pnBotonesDeportiva.add(getBtTienda());
-			getLbBienvenidoSocio().setText("Bienvenido al club "+tramitarLicencia.getSocio().getNombre());
-			((CardLayout)pnPrincipal.getLayout()).show(pnPrincipal,"PrincipalSocio");
-			setMinimumSize(new Dimension(800, 517));
+			tramitarLicencia.loggearSocio(getTxDniUsuario().getText());
+			if(tramitarLicencia.esDirectivo()) {
+				loggearDirectivo();
+			}else {
+				loggearSocio();
+			}
 		}
+	}
+
+	private void loggearSocio() {
+		pnSeccionSocioPersonal.add(getBtTramitarLicencia());
+		pnSeccionSocioPersonal.add(getBtPagoTransferencia());
+		pnSeccionSocioPersonal.add(getBtRenovarLicencia());
+		pnSeccionSocioPersonal.add(getBtCambiarContraseña());
+		pnSeccionSocioPersonal.add(getBtVerDatos());
+		
+		pnBotonesDeportiva.add(getBtnReservas());
+		pnBotonesDeportiva.add(getBtInscripcionCompeticiones());
+		pnBotonesDeportiva.add(getBtTestsFisiologicos());
+		
+		pnSelectorFechaSocio.add(getDcFechaAplicacion());
+		
+		pnBotonesDeportiva.add(getBtTestsFisiologicos());
+		pnBotonesDeportiva.add(getBtTienda());
+		getLbBienvenidoSocio().setText("Bienvenido al club "+tramitarLicencia.getSocio().getNombre());
+		((CardLayout)pnPrincipal.getLayout()).show(pnPrincipal,"PrincipalSocio");
+		setMinimumSize(new Dimension(920, 517));
+	}
+
+	private void loggearDirectivo() {
+		pnSeccionDirectivoPersonal.add(getBtTramitarLicencia());
+		pnSeccionDirectivoPersonal.add(getBtPagoTransferencia());
+		pnSeccionDirectivoPersonal.add(getBtRenovarLicencia());
+		pnSeccionDirectivoPersonal.add(getBtCambiarContraseña());
+		pnSeccionDirectivoPersonal.add(getBtVerDatos());
+		
+		pnSelectorFechaDirectivo.add(getDcFechaAplicacion());
+		
+		pnBotonesDeportivoDirectivo.add(getBtnReservas());
+		pnBotonesDeportivoDirectivo.add(getBtTestsFisiologicos());
+		pnBotonesDeportivoDirectivo.add(getBtInscripcionCompeticiones());
+		pnBotonesDeportivoDirectivo.add(getBtTienda());
+		
+		pnSeccionDirectivoAdministracion.add(getBtnAsambleas());
+		pnSeccionDirectivoAdministracion.add(getBtnActas());
+		pnSeccionDirectivoAdministracion.add(getBtnGeneracionRecibos());
+		pnSeccionDirectivoAdministracion.add(getBtnGestionRecibos());
+		pnSeccionDirectivoAdministracion.add(getBtnListadoSocios());
+		pnSeccionDirectivoAdministracion.add(getBtnAñadirCompeticiones());
+		pnSeccionDirectivoAdministracion.add(getBtVerSolicitudes());
+		ServiciosMeteorologicos sm = new ServiciosMeteorologicos(this);
+		sm.checkTiempo();
+		pnSeccionDirectivoAdministracion.add(getBtnCrearCursillos());
+		
+		getLbBienvenidoDirectivo().setText("Bienvenido al club "+tramitarLicencia.getDirectivo().getNombre());
+		
+		((CardLayout) pnPrincipal.getLayout()).show(pnPrincipal, "PrincipalDirectivo");
+		setMinimumSize(new Dimension(800, 517));
 	}
 	
 	private JButton getBtnCrearCursillos() {
