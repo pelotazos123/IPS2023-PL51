@@ -93,7 +93,7 @@ public class ServiciosMeteorologicos {
 //			String filePath = "src/main/resources/json.txt";
 //			writeToTxt(linesAux, filePath);
 			
-		} catch (Exception e/*IOException e*/) {
+		} catch (Exception e /*IOException e*/) {
 			e.printStackTrace();
 			e.toString();
 			System.out.println("Localización no encontrada");
