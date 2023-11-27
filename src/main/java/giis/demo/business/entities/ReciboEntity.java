@@ -26,5 +26,9 @@ public class ReciboEntity {
 	public void setType_recibo(String type_recibo) { this.type_recibo = type_recibo; }
 	public void setState(String state) { this.state = state; }
 	
+	public String toString() {
+		return owner_iban + " " + number + "  " + amount + "  " + value_date + "  " + charge_date 
+				+ "  " + type_recibo + "  " + state;
+	}
 	
 }
