@@ -25,6 +25,7 @@ public class Auditoria {
 	private String SQL_CARGAR_INSTALACIONES = "select code, name from instalaciones";
 	private String SQL_CARGAR_RESERVAS_DE_INSTALACION = "select id, fecha_inicio, fecha_fin from reservas where instalation_code = ?";
 	private String SQL_CARGAR_PARTICIPANTES_DE_RESERVA = "select dni from participante_reserva where reserva_id = ?";
+	private String SQL_CARGAR_LICENCIAS = "select facturation_date, validation_date from licencias";
 	
 	private Database db;
 	private RecibosModel recibo;
@@ -120,14 +121,37 @@ public class Auditoria {
 		contenido.newLineAtOffset(10, -20);
 		yPosicion -= 20;
 		contenido.setFont(fuenteTimesNewRomman, 12);
-		for(int i = 0; i < 7; i++) {
-			String str = "Pago de licencia nº"+(i+1);
+		
+		List<Object[]> licencias = db.executeQueryArray(SQL_CARGAR_LICENCIAS);
+		if(licencias.isEmpty()) {
+			comprobarFinPagina();
+			contenido.showText("No hay pagos de licencias");
+			contenido.newLineAtOffset(0, -20);
+			yPosicion -= 20;
+		}
+		for (Object[] licencia : licencias) {
+			
+			String str = "Fecha realizacion pago: ";
+			
+			if(licencia[0] == null) {
+				str += " pago no realizado";
+			}else {
+				str += licencia[0];
+			}
+			
+			
+			str += "     Fecha validacion pago: ";
+			if(licencia[1]== null) {
+				str += " pago no validado";
+			}else {
+				str += licencia[1];
+			}
+			
 			comprobarFinPagina();
 			contenido.showText(str);
 			contenido.newLineAtOffset(0, -20);
 			yPosicion -= 20;
 		}
-		
 	}
 	
 	
@@ -274,12 +298,42 @@ public class Auditoria {
         numFilas++;
         int numColumna = 0;
         
-        for(int i = 0; i < 7; i++) {
-        	
-        	fila = hoja.createRow(numFilas);
-        	celda = fila.createCell(numColumna);
-        	celda.setCellValue("Pago de licencia nº"+(i+1));
+        List<Object[]> licencias = db.executeQueryArray(SQL_CARGAR_LICENCIAS);
+		if(licencias.isEmpty()) {
+			fila = hoja.createRow(numFilas);
+			numFilas+=2;
+			celda = fila.createCell(0);
+	        celda.setCellValue("No hay pagos de licencias");
+		}
+		for (Object[] licencia : licencias) {
+			
+			numColumna = 0;
+			fila = hoja.createRow(numFilas);
         	numFilas++;
+			
+			String str = "Fecha realizacion pago: ";
+			
+			if(licencia[0] == null) {
+				str += " pago no realizado";
+			}else {
+				str += licencia[0];
+			}
+			
+			celda = fila.createCell(numColumna);
+        	celda.setCellValue(str);
+        	numColumna++;
+			
+			
+			str = "Fecha validacion pago: ";
+			if(licencia[1]== null) {
+				str += " pago no validado";
+			}else {
+				str += licencia[1];
+			}
+			
+			celda = fila.createCell(numColumna);
+        	celda.setCellValue(str);
+        	numColumna++;
 		}
         return numFilas;
 	}
