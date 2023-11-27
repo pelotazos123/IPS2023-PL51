@@ -17,6 +17,7 @@ public class ActasView {
 	private JFrame frame;
 	private JPanel contentPanel;
 	private JButton btnAñadirActa;
+	private JButton btnAprobarActa;
 	private JScrollPane spAsambleas;
 	private JTable tabAsambleas;
 	private JTextPane txtActa;
@@ -41,6 +42,7 @@ public class ActasView {
 		contentPanel.setLayout(null);
 		
 		contentPanel.add(getBtnAñadirActa());
+		contentPanel.add(getBtnAprobarActa());
 		contentPanel.add(getSpAsambleas());
 		contentPanel.add(getSpActa());
 	}
@@ -55,6 +57,15 @@ public class ActasView {
 			btnAñadirActa.setBounds(351, 528, 176, 60);
 		}
 		return btnAñadirActa;
+	}
+	
+	public JButton getBtnAprobarActa() {
+		if (btnAprobarActa == null) {
+			btnAprobarActa = new JButton("Aprobar acta");
+			btnAprobarActa.setBackground(new Color(255, 127, 80));
+			btnAprobarActa.setBounds(686, 528, 148, 46);
+		}
+		return btnAprobarActa;
 	}
 	
 	private JScrollPane getSpAsambleas() {
@@ -92,6 +103,4 @@ public class ActasView {
 		}
 		return txtActa;
 	}
-	
-	
 }

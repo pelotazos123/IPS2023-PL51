@@ -721,6 +721,8 @@ public class VentanaTramitarLicencia extends JFrame {
 	private JTextArea getTxPoliticaDeDatos() {
 		if (txPoliticaDeDatos == null) {
 			txPoliticaDeDatos = new JTextArea();
+			txPoliticaDeDatos.setLineWrap(true);
+			txPoliticaDeDatos.setWrapStyleWord(true);
 			txPoliticaDeDatos.setEditable(false);
 			txPoliticaDeDatos.setText(cargarPoliticaDeDatos());
 		}

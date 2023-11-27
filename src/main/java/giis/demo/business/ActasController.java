@@ -25,13 +25,16 @@ public class ActasController {
 	public void initController() {
 		getListaAsambleas();
 		
+		view.getBtnAprobarActa().addActionListener(
+				e -> SwingUtil.exceptionWrapper(() -> aprobarActa()));
+		
 		view.getBtnAñadirActa().addActionListener(
 				e -> SwingUtil.exceptionWrapper(() -> addActa()));
 	}
 
 	private void addActa() {
 		if(view.getTabAsambleas().getSelectedRow() == -1) {
-			JOptionPane.showMessageDialog(null, "Selecciona un acta.", "Error", JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(null, "Selecciona la asamblea a la que quieras añadir el acta.", "Error", JOptionPane.ERROR_MESSAGE);
 			return;
 		}
 		String type = view.getTabAsambleas().getValueAt(view.getTabAsambleas().getSelectedRow(), 0).toString();
@@ -44,6 +47,18 @@ public class ActasController {
 		model.addActa(acta, type, announcement);
 		getListaAsambleas();
 		JOptionPane.showMessageDialog(null, "Acta añadida correctamente.", "Correcto", JOptionPane.INFORMATION_MESSAGE);
+	}
+
+	private void aprobarActa() {
+		if(view.getTabAsambleas().getSelectedRow() == -1) {
+			JOptionPane.showMessageDialog(null, "Selecciona la asamblea de la que quieras aprobar el acta.", "Error", JOptionPane.ERROR_MESSAGE);
+			return;
+		}
+		String type = view.getTabAsambleas().getValueAt(view.getTabAsambleas().getSelectedRow(), 0).toString();
+		String announcement = view.getTabAsambleas().getValueAt(view.getTabAsambleas().getSelectedRow(), 1).toString();
+		model.aprobarActa(type, announcement);
+		getListaAsambleas();
+		JOptionPane.showMessageDialog(null, "Acta aprobada correctamente.", "Correcto", JOptionPane.INFORMATION_MESSAGE);
 	}
 
 	private void getListaAsambleas() {

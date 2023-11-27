@@ -7,9 +7,10 @@ import giis.demo.util.Database;
 public class Socio {
 	
 	private final static String SQL_CARGAR_SOCIO="select id,dni,name,surname,email,telf,cuota_type,iban,height,weight,birth_date,gender,directive from socios where id = ?" ;
+	private final static String SQL_OBTENER_ID="select id from socios where dni = ?";
 	private final static String SQL_MODIFICAR_SOCIO= "update socios set dni=?,name=?, surname=?, email=?, telf=?, gender=?, birth_date=? where id = ?";
-	private final static String SQL_INSERTAR_SOCIO = "insert into socios(id,dni,name,surname,email,telf,cuota_type,iban,height,weight,birth_date,gender,directive)"
-			+ "values(?,?,?,?,?,?,?,?,?,?,?,?,?)";
+	private final static String SQL_INSERTAR_SOCIO = "insert into socios(dni,name,surname,email,telf,cuota_type,iban,height,weight,birth_date,gender,directive)"
+			+ "values(?,?,?,?,?,?,?,?,?,?,?,?)";
 	
 	private Database db;
 	
@@ -33,9 +34,8 @@ public class Socio {
 		
 	}
 	
-	public Socio(Database db,int id,String dni, String nombre, String apellidos, String correo, int tel, String iban, double altura, double peso, Generos genero, LocalDate fecha) {
+	public Socio(Database db,String dni, String nombre, String apellidos, String correo, int tel, String iban, double altura, double peso, Generos genero, LocalDate fecha) {
 		this.db = db;
-		this.id = id;
 		this.dni = dni;
 		this.nombre = nombre;
 		this.apellidos = apellidos;
@@ -201,7 +201,8 @@ public class Socio {
 	}
 	
 	public void insertarSocio() {
-		db.executeUpdate(SQL_INSERTAR_SOCIO,id,dni,nombre,apellidos,correo,telefono,tipoCuota,numeroIban,altura,peso,fechaNacimiento,genero,esDirectivo);
+		db.executeUpdate(SQL_INSERTAR_SOCIO,dni,nombre,apellidos,correo,telefono,tipoCuota,numeroIban,altura,peso,fechaNacimiento,genero,esDirectivo);
+		this.id = (int) db.executeQueryArray(SQL_OBTENER_ID, dni).get(0)[0];
 		System.out.println("Socio creado:\n"+toString());
 	}
 	

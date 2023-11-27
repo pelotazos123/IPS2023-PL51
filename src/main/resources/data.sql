@@ -74,14 +74,6 @@ insert into test(id, fecha, tipo, peso, edad, sexo, tiempo, pulsaciones, distanc
 	(104, '2021-05-10','COOPER', null, null, 'HOMBRE', null, null, 3.2, '82.81'),
 	(104, '2023-05-10','COOPER', null, null, 'HOMBRE', null, null, 2.5, '67.17'),
 	(104, '2023-10-10','COOPER', null, null, 'HOMBRE', null, null, 2.2, '60.46');
-	
-insert into asambleas(type, date, hour_conv1, hour_conv2, orderOfDay, acta) values 
-	('Ordinaria', '2023-12-01', '8:00', '8:30', 'Eleccion de presidente', 'Sin acta'),
-	('Ordinaria', '2023-11-01', '8:00', '8:30', 'Gestion de gastos', 'Sin acta'),
-	('Extraordinaria', '2023-10-10', '10:00', '11:00', 'Problemas de horarios', 'Sin acta'),
-	('Ordinaria', '2023-12-10', '8:00', '8:30', 'Gestion de gastos', 'Sin acta'),
-	('Extraordinaria', '2023-12-10', '14:00', '16:00', 'Nuevos entrenadores', 'Sin acta'),
-	('Extraordinaria', '2022-06-14', '10:00', '11:00', 'Problemas de horarios', 'Sin acta');
 
 insert into cursillos(id, nombre, code_instalacion, fecha_inicio, fecha_fin, price, plazas) values
 	(1, "Tenis Iniciacion", 13413, "2023-12-01", "2024-05-31", 50, 8),
@@ -92,3 +84,16 @@ insert into entrenadores_cursillos (id, id_curso, dni) values
 
 --insert into inscritos(id_cursante, id_curso, fecha_eliminacion, estado) values 
 --	(101, 1, null, "INSCRITO");
+
+insert into asambleas(type, date, hour_conv1, hour_conv2, orderOfDay, acta, state) values 
+	('Ordinaria', '2023-12-01', '8:00', '8:30', 'Eleccion de presidente', 'Sin acta', 'No aprobada'),
+	('Ordinaria', '2023-11-01', '8:00', '8:30', 'Gestion de gastos', 'Sin acta', 'No aprobada'),
+	('Extraordinaria', '2023-10-10', '10:00', '11:00', 'Problemas de horarios', 'Sin acta', 'No aprobada'),
+	('Ordinaria', '2023-12-10', '8:00', '8:30', 'Gestion de gastos', 'Sin acta', 'No aprobada'),
+	('Extraordinaria', '2023-12-10', '14:00', '16:00', 'Nuevos entrenadores', 'Sin acta', 'No aprobada'),
+	('Extraordinaria', '2022-06-14', '10:00', '11:00', 'Problemas de horarios', 'Sin acta', 'No aprobada');
+	
+insert into articulos(id, name, price) values 
+	(100, 'equipacion', 80.0),
+	(100, 'chandal', 65.0),
+	(101, 'chaqueta', 40.0);

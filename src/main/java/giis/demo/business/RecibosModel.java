@@ -62,8 +62,7 @@ public class RecibosModel {
 	}
 	
 	public void generateRecibo(String iban, int number, double amount, String value_date, String charge_date, String type_recibo, String state) {
-		//if(!existsRecibo(iban, number,  amount, value_date, charge_date, type_recibo, state))
-			db.executeUpdate(SQL_GENERATE_RECIBOS, iban, number,  amount, value_date, charge_date, type_recibo, state);
+		db.executeUpdate(SQL_GENERATE_RECIBOS, iban, number,  amount, value_date, charge_date, type_recibo, state);
 	}
 	
 	public void updateCuotas(String id) {
