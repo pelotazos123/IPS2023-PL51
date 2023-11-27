@@ -125,6 +125,7 @@ public class VentanaPrincipal extends JFrame {
 	private JButton btInscripcionCompeticiones;
 	private JButton btnCrearCursillos;
 	private VentanaCrearCursillos vcc;
+	private JButton btGestionCursos;
 
 
 	/**
@@ -511,6 +512,7 @@ public class VentanaPrincipal extends JFrame {
 		pnBotonesDeportiva.add(getBtnReservas());
 		pnBotonesDeportiva.add(getBtInscripcionCompeticiones());
 		pnBotonesDeportiva.add(getBtTestsFisiologicos());
+		pnBotonesDeportiva.add(getBtGestionCursos());
 		
 		pnSelectorFechaSocio.add(getDcFechaAplicacion());
 		
@@ -533,6 +535,7 @@ public class VentanaPrincipal extends JFrame {
 		pnBotonesDeportivoDirectivo.add(getBtnReservas());
 		pnBotonesDeportivoDirectivo.add(getBtTestsFisiologicos());
 		pnBotonesDeportivoDirectivo.add(getBtInscripcionCompeticiones());
+		pnBotonesDeportivoDirectivo.add(getBtGestionCursos());
 		pnBotonesDeportivoDirectivo.add(getBtTienda());
 		
 		pnSeccionDirectivoAdministracion.add(getBtnAsambleas());
@@ -1037,4 +1040,22 @@ public class VentanaPrincipal extends JFrame {
 		}
 
 	}
+	
+	private JButton getBtGestionCursos() {
+		if (btGestionCursos == null) {
+			btGestionCursos = new JButton("Gestion cursos");
+			btGestionCursos.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					muestraVentanaGestionCursos();
+				}
+			});
+		}
+		return btGestionCursos;
+	}
+
+	protected void muestraVentanaGestionCursos() {
+		VentanaGestionCursos vgcs = new VentanaGestionCursos(this);
+		vgcs.setVisible(true);
+	}
+	
 }

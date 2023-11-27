@@ -90,10 +90,10 @@ public class ServiciosMeteorologicos {
 			}
 			rc.getReservas();
 			
-			String filePath = "src/main/resources/json.txt";
-			writeToTxt(linesAux, filePath);
+//			String filePath = "src/main/resources/json.txt";
+//			writeToTxt(linesAux, filePath);
 			
-		} catch (Exception e/*IOException e*/) {
+		} catch (Exception e /*IOException e*/) {
 			e.printStackTrace();
 			e.toString();
 			System.out.println("Localización no encontrada");

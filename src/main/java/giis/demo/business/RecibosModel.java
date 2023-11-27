@@ -69,10 +69,12 @@ public class RecibosModel {
 		db.executeUpdate(SQL_UPDATE_CUOTAS, id);
 	}
 	
-	public int getAmount(String id) {
-		return (int) db.executeQueryArray(SQL_GETAMOUNT, id).get(0)[0];
+	public double getAmount(String id) {
+		double amount = 0.0;
+		amount += Double.parseDouble(db.executeQueryArray(SQL_GETAMOUNT, id).get(0)[0].toString());
+		return amount;
 	}
-	
+
 	public int getLastNumber() {
 		if(getListaRecibos().isEmpty())
 			return 0;
@@ -81,5 +83,10 @@ public class RecibosModel {
 
 	public void claimRecibo(String number) {
 		db.executeUpdate(SQL_CLAIM_RECIBO, number);
+	}
+	
+	public void deleteRecibo(int number) {
+		String DELETERECIBO = "delete from recibos where number = ?";
+		db.executeUpdate(DELETERECIBO, number);
 	}
 }
