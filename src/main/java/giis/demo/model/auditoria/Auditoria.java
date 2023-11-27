@@ -92,6 +92,12 @@ public class Auditoria {
 		contenido.setFont(fuenteTimesNewRomman, 12);
 
 		List<ReciboEntity> recibos = recibo.getListaRecibos();
+		if(recibos.isEmpty()) {
+			comprobarFinPagina();
+			contenido.showText("No hay recibos");
+			contenido.newLineAtOffset(0, -20);
+			yPosicion -= 20;
+		}
 		for (ReciboEntity recibo : recibos) {
 			String str = "Cuenta: "+recibo.getOwner_iban()+"     Fecha de cargo: "+recibo.getCharge_date()
 			+ "     Cantidad: "+recibo.getAmount()+"€";
@@ -235,6 +241,13 @@ public class Auditoria {
         int numColumna = 0;
         
         List<ReciboEntity> recibos = recibo.getListaRecibos();
+        if(recibos.isEmpty()) {
+			
+			fila = hoja.createRow(numFila);
+			numFila+=2;
+			celda = fila.createCell(0);
+	        celda.setCellValue("No hay recibos");
+		}
 		for (ReciboEntity recibo : recibos) {
 			
 			numColumna = 0;

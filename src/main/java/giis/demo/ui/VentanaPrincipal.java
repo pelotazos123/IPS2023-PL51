@@ -259,10 +259,7 @@ public class VentanaPrincipal extends JFrame {
 	}
 	
 	private void irRenovarLicencia() {
-		if(tramitarLicencia.esDirectivo()) {
-			VentanaRenovarLicencia frame = new VentanaRenovarLicencia(tramitarLicencia);
-			frame.setVisible(true);
-		}else if(comprobarSocioConLicenciaPagada()) {
+		if(comprobarSocioConLicenciaPagada()) {
 			VentanaRenovarLicencia frame = new VentanaRenovarLicencia(tramitarLicencia);
 			frame.setVisible(true);
 		}
