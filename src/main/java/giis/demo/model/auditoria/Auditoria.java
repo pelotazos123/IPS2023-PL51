@@ -23,7 +23,7 @@ import giis.demo.util.Database;
 public class Auditoria {
 	
 	private String SQL_CARGAR_INSTALACIONES = "select code, name from instalaciones";
-	private String SQL_CARGAR_RESERVAS_DE_INSTALACION = "select id, fecha_inicio, cursillo_id from reservas where instalation_code = ?";
+	private String SQL_CARGAR_RESERVAS_DE_INSTALACION = "select id, fecha_inicio, cursillo_id, tipo from reservas where instalation_code = ? and tipo = 'curso' or tipo = 'reserva'";
 	private String SQL_CARGAR_PARTICIPANTES_DE_RESERVA = "select dni from participante_reserva where reserva_id = ?";
 	private String SQL_CARGAR_CURSO_DE_RESERVA = "select nombre from cursillos where id = ?";
 	private String SQL_CARGAR_LICENCIAS = "select facturation_date, validation_date from licencias";
