@@ -34,4 +34,9 @@ public class InstalacionController {
 		return instalaciones;
 	}
 	
+	public static Instalacion[] getModeloInstalacion(List<Instalacion> lista) {
+		Instalacion[] modeloInstalaciones = lista.toArray(new Instalacion[lista.size()]);
+		return modeloInstalaciones;
+	}
+	
 }
