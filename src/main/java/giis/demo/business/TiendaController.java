@@ -82,7 +82,7 @@ public class TiendaController {
 			}
 			double precio = precioTotal();
 			int number = recibos.getLastNumber() + 1;
-			recibos.generateRecibo(iban, number, precio, value_date, charge_date, "Domiciliado", "Pendiente");
+			recibos.generateRecibo(iban, number, precio, value_date, charge_date, "Compra", "Domiciliado", "Pendiente");
 			saveRecibos();
 			JOptionPane.showMessageDialog(null, "Compra realizada correctamente.", "Recibos", JOptionPane.INFORMATION_MESSAGE);
 		}
@@ -126,7 +126,7 @@ public class TiendaController {
 	}
 	
 	private void saveRecibos() {
-		String[] fields = {"owner_iban", "number", "amount", "value_date", "charge_date", "type_recibo", "state"};
+		String[] fields = {"owner_iban", "number", "amount", "value_date", "charge_date", "concept", "type_recibo", "state"};
 		String csv = Util.pojosToCsv(recibos.getListaRecibos(), fields);
 		
 		System.out.println(csv);

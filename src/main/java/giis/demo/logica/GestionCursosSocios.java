@@ -131,7 +131,7 @@ public class GestionCursosSocios {
 			for (int i = 0; i < months; i++) {
 				v_date = generaFechas(fechaInicio, i);
 				c_date = v_date.plusDays(14);
-				rm.generateRecibo(iban, number++, precio, v_date.toString(), c_date.toString(), "Domiciliado",
+				rm.generateRecibo(iban, number++, precio, v_date.toString(), c_date.toString(), "Curso", "Domiciliado",
 						"Pendiente");
 			}
 		} else {
@@ -139,7 +139,7 @@ public class GestionCursosSocios {
 			for (int i = 0; i < months; i++) {
 				v_date = generaFechas(fechaInicio, i);
 				c_date = v_date.plusDays(14);
-				rm.generateRecibo(iban, number++, precio, v_date.toString(), c_date.toString(), "Domiciliado",
+				rm.generateRecibo(iban, number++, precio, v_date.toString(), c_date.toString(), "Curso", "Domiciliado",
 						"Pendiente");
 			}
 		}

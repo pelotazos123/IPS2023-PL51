@@ -7,6 +7,7 @@ public class ReciboEntity {
 	private double amount;
 	private String value_date;
 	private String charge_date;
+	private String concept;
 	private String type_recibo;
 	private String state;
 	
@@ -15,6 +16,7 @@ public class ReciboEntity {
 	public double getAmount() { return amount; }
 	public String getValue_date() { return value_date; }
 	public String getCharge_date() { return charge_date; }
+	public String getConcept() { return concept; }
 	public String getType_recibo() { return type_recibo; }
 	public String getState() { return state; }
 	
@@ -23,11 +25,12 @@ public class ReciboEntity {
 	public void setAmount(double amount) { this.amount = amount; }
 	public void setValue_date(String value_date) { this.value_date = value_date; }
 	public void setCharge_date(String charge_date) { this.charge_date = charge_date; }
+	public void setConcept(String concept) { this.concept = concept; }
 	public void setType_recibo(String type_recibo) { this.type_recibo = type_recibo; }
 	public void setState(String state) { this.state = state; }
 	
 	public String toString() {
-		return owner_iban + " " + number + "  " + amount + "  " + value_date + "  " + charge_date 
+		return owner_iban + " " + number + "  " + amount + "  " + value_date + "  " + charge_date + "  " + concept
 				+ "  " + type_recibo + "  " + state;
 	}
 	

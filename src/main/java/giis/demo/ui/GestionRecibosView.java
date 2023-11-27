@@ -104,6 +104,7 @@ public class GestionRecibosView {
 		if (tabRecibos == null) {
 			tabRecibos = new JTable();
 			tabRecibos.setDefaultEditor(Object.class, null);
+			tabRecibos.getTableHeader().setReorderingAllowed(false);
 		}
 		return tabRecibos;
 	}
