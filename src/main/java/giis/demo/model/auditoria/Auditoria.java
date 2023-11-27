@@ -23,8 +23,9 @@ import giis.demo.util.Database;
 public class Auditoria {
 	
 	private String SQL_CARGAR_INSTALACIONES = "select code, name from instalaciones";
-	private String SQL_CARGAR_RESERVAS_DE_INSTALACION = "select id, fecha_inicio, fecha_fin from reservas where instalation_code = ?";
+	private String SQL_CARGAR_RESERVAS_DE_INSTALACION = "select id, fecha_inicio, cursillo_id from reservas where instalation_code = ?";
 	private String SQL_CARGAR_PARTICIPANTES_DE_RESERVA = "select dni from participante_reserva where reserva_id = ?";
+	private String SQL_CARGAR_CURSO_DE_RESERVA = "select nombre from cursillos where id = ?";
 	private String SQL_CARGAR_LICENCIAS = "select facturation_date, validation_date from licencias";
 	
 	private Database db;
@@ -187,7 +188,9 @@ public class Auditoria {
 				int idReserva = (int) reserva[0];
 				String fechaInicio = (String) reserva[1];
 				String[] fecha = fechaInicio.split(" ");
+				int cursilloId = (int) reserva[2];
 				
+				Object[] cursillo = null;
 				List<Object[]> participantes = db.executeQueryArray(SQL_CARGAR_PARTICIPANTES_DE_RESERVA,idReserva);
 				if(!participantes.isEmpty()) {
 					
@@ -209,13 +212,28 @@ public class Auditoria {
 					contenido.showText("El "+fecha[0]+" a las "+fecha[1]);
 					contenido.newLineAtOffset(0, -30);
 					yPosicion -= 30;
+				} else if (cursilloId != -1) {
+					cursillo = db.executeQueryArray(SQL_CARGAR_CURSO_DE_RESERVA, cursilloId).get(0);
+					comprobarFinPagina();
+					contenido.showText("Utilizada por:");
+					contenido.newLineAtOffset(10, -20);
+					yPosicion -= 20;
+
+					comprobarFinPagina();
+					contenido.showText((String) cursillo[0]);
+					contenido.newLineAtOffset(0, -20);
+					yPosicion -= 20;
+
+					contenido.newLineAtOffset(-10, 0);
+					comprobarFinPagina();
+					contenido.showText("El " + fecha[0] + " a las " + fecha[1]);
+					contenido.newLineAtOffset(0, -30);
+					yPosicion -= 30;
 				}
 			}
 			contenido.newLineAtOffset(0, -20);
 			yPosicion -= 20;
 		}
-		
-		
 	}
 	
 	
@@ -371,7 +389,9 @@ public class Auditoria {
 				int idReserva = (int) reserva[0];
 				String fechaInicio = (String) reserva[1];
 				String[] fecha = fechaInicio.split(" ");
+				int cursilloId = (int) reserva[2];
 				
+				Object[] cursillo = null;
 				List<Object[]> participantes = db.executeQueryArray(SQL_CARGAR_PARTICIPANTES_DE_RESERVA,idReserva);
 				if(!participantes.isEmpty()) {
 					
@@ -391,6 +411,24 @@ public class Auditoria {
 					}
 					
 					fila = hoja.createRow(numFilas);
+					numFilas+= 2;
+					celda = fila.createCell(0);
+			        celda.setCellValue("El "+fecha[0]+" a las "+fecha[1]);
+				}else if(cursilloId != -1) {
+					cursillo = db.executeQueryArray(SQL_CARGAR_CURSO_DE_RESERVA,cursilloId).get(0);
+					
+					fila = hoja.createRow(numFilas);
+					numFilas++;
+					numColumna = 0;
+					celda = fila.createCell(numColumna);
+					numColumna++;
+			        celda.setCellValue("Utilizada por:");
+			        
+			        celda = fila.createCell(numColumna);
+					numColumna++;
+			        celda.setCellValue((String) cursillo[0]);
+					
+			        fila = hoja.createRow(numFilas);
 					numFilas+= 2;
 					celda = fila.createCell(0);
 			        celda.setCellValue("El "+fecha[0]+" a las "+fecha[1]);
