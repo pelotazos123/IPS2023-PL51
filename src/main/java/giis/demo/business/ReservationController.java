@@ -107,7 +107,6 @@ public class ReservationController {
 			}
 		}
 		
-
 		System.out.println(getIdLastCurso());
 		
 		// Añade los entrenadores al curso
