@@ -97,7 +97,7 @@ public class RecibosController {
 				if(!model.getListaCuotasPendientes(socio.getId()).isEmpty()) {
 					double amount = model.getAmount(socio.getId());
 					
-					model.generateRecibo(socio.getIban(), model.getLastNumber()+1, amount, value_date, charge_date, "Domiciliado", "Pendiente");
+					model.generateRecibo(socio.getIban(), model.getLastNumber()+1, amount, value_date, charge_date, "Cuota", "Domiciliado", "Pendiente");
 						
 					model.updateCuotas(socio.getId());
 						
@@ -115,7 +115,7 @@ public class RecibosController {
 		}
 	}
 	private void saveRecibos() {
-		String[] fields = {"owner_iban", "number", "amount", "value_date", "charge_date", "type_recibo", "state"};
+		String[] fields = {"owner_iban", "number", "amount", "value_date", "charge_date", "concept", "type_recibo", "state"};
 		String csv = Util.pojosToCsv(model.getListaRecibos(), fields);
 
 		try (BufferedWriter writer = new BufferedWriter(new FileWriter("src/main/resources/files/recibos.csv"))) {

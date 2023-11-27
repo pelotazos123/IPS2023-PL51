@@ -44,9 +44,9 @@ public class GestionRecibosController {
 
 	private void getListaRecibosDevueltos() {
 		TableModel tmodel = SwingUtil.getTableModelFromPojos(model.getListaRecibosDevueltos(),
-				new String[] { "owner_iban", "number", "amount", "value_date", "charge_date", "type_recibo", "state" });
+				new String[] { "owner_iban", "number", "amount", "value_date", "charge_date", "concept", "type_recibo", "state" });
 		
-		((DefaultTableModel)tmodel).setColumnIdentifiers(new String[] { "IBAN", "Número", "Cantidad", "Fecha de valor", "Fecha de emision", "Tipo", "Estado" });
+		((DefaultTableModel)tmodel).setColumnIdentifiers(new String[] { "IBAN", "Número", "Cantidad", "Fecha de valor", "Fecha de emision", "Concepto", "Tipo", "Estado" });
 		view.getTabRecibos().setModel(tmodel);
 		view.getTabRecibos().getColumnModel().getColumn(0).setPreferredWidth(170);
 	}
@@ -72,7 +72,7 @@ public class GestionRecibosController {
 					String[] recibo = line.split(",");
 
 					model.generateRecibo(recibo[0], Integer.parseInt(recibo[1]), Double.parseDouble(recibo[2]), recibo[3],
-							recibo[4], recibo[5], recibo[6]);
+							recibo[4], recibo[5], recibo[6], recibo[7]);
 					getListaRecibosDevueltos();
 				}
 
@@ -96,10 +96,11 @@ public class GestionRecibosController {
 	private void claimRecibos() {
 		int[] seleccionados = view.getTabRecibos().getSelectedRows();
 		for (int i = 0; i < seleccionados.length; i++) {
-			if(view.getTabRecibos().getValueAt(seleccionados[i], 6).toString().equals("Devuelto")) {
+			if(view.getTabRecibos().getValueAt(seleccionados[i], 7).toString().equals("Devuelto")) {
 				model.claimRecibo(view.getTabRecibos().getValueAt(seleccionados[i], 1).toString());
 				
 				String iban = view.getTabRecibos().getValueAt(seleccionados[i], 0).toString();
+				String concept = view.getTabRecibos().getValueAt(seleccionados[i], 5).toString();
 				int number = model.getLastNumber()+1;
 				double amount = Double.parseDouble(view.getTabRecibos().getValueAt(seleccionados[i], 2).toString()) + Double.parseDouble(view.getTabRecibos().getValueAt(seleccionados[i], 2).toString()) * 0.15;
 				String value_date = view.getTabRecibos().getValueAt(seleccionados[i], 3).toString();
@@ -116,13 +117,13 @@ public class GestionRecibosController {
 				date.set(Calendar.DAY_OF_MONTH, 15);
 				String charge_date = new SimpleDateFormat("yyyy-MM-dd").format(date.getTime());
 				
-				model.generateRecibo(iban, number, amount, value_date, charge_date, "Reliquidado", "Pendiente");
+				model.generateRecibo(iban, number, amount, value_date, charge_date, concept, "Reliquidado", "Pendiente");
 			}
 		}
 	}
 	
 	private void saveRecibos() {
-		String[] fields = {"owner_iban", "number", "amount", "value_date", "charge_date", "type_recibo", "state"};
+		String[] fields = {"owner_iban", "number", "amount", "value_date", "charge_date", "concept", "type_recibo", "state"};
 		String csv = Util.pojosToCsv(model.getListaRecibos(), fields);
 
 		try (BufferedWriter writer = new BufferedWriter(new FileWriter("src/main/resources/files/recibos.csv"))) {
