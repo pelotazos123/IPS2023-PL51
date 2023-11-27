@@ -166,7 +166,6 @@ public class GestionCursosSocios {
 		int month = calendar.get(Calendar.MONTH) + 1;
 		int day = calendar.get(Calendar.DAY_OF_MONTH);
 		LocalDate date = LocalDate.of(year, month + 1, 1);
-//		LocalDate fechaInicio = LocalDate.of(year, month, day);
 
 		String GET_ENTRENADORES_CURSO = "select dni from entrenadores_cursillos where id_curso = ?";
 		String GET_ID_ENTRENADOR = "select id from socios where dni = ?";
