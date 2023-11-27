@@ -2,6 +2,7 @@ package giis.demo.model.competiciones.servicio;
 
 import java.io.File;
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
@@ -111,20 +112,11 @@ public class GestionarCompeticiones {
 		List<Object[]> competicionesIDs = db.executeQueryArray(SQL_OBTENER_COMPETICIONES_DE_SOCIO,idSocio);
 		
 		String fecha = (String) db.executeQueryArray(SQL_OBTENER_FECHA_COMPETICION,idCompeticion).get(0)[0];
-		String[] str = fecha.split("-");
-		int año = Integer.parseInt(str[0]);
-		int mes = Integer.parseInt(str[1]);
-		int dia = Integer.parseInt(str[2]);
-		LocalDate fechaCompeSolicitada = LocalDate.of(año, mes, dia);
-		
+		LocalDate fechaCompeSolicitada = LocalDate.parse(fecha);
 		
 		for (Object[] competicionId : competicionesIDs) {
 			fecha = (String) db.executeQueryArray(SQL_OBTENER_FECHA_COMPETICION,competicionId[0]).get(0)[0];
-			str = fecha.split("-");
-			año = Integer.parseInt(str[0]);
-			mes = Integer.parseInt(str[1]);
-			dia = Integer.parseInt(str[2]);
-			LocalDate fechaCompe = LocalDate.of(año, mes, dia);
+			LocalDate fechaCompe = LocalDate.parse(fecha);
 			if(fechaCompe.isEqual(fechaCompeSolicitada) && (int)competicionId[0] != idCompeticion) {
 				return false;
 			}
@@ -158,34 +150,119 @@ public class GestionarCompeticiones {
 		return false;
 	}
 	
-	public static void createAnulation(String hora_Inicio, Database db, Correo correo, int idCompeticion) {
-		String SQL_ANULAR = "UPDATE competiciones SET estado='CANCELADA' WHERE competition_date=? AND estado='ABIERTA'"; 
-		db.executeUpdate(SQL_ANULAR, hora_Inicio);
+	/**
+	 * Anula la competicion si cumple con las condiciones
+	 * @param day en el que hace mal tiempo
+	 * @param db 
+	 * @param idCompeticion
+	 */
+	public static void createAnulation(String day, Database db, int idCompeticion) {
+		System.out.println(day + "dia?");
+		if (!checkDates(day, db, idCompeticion)) return;
+			
 		
-		String cuerpo = "Lamentamos comunicarle que la siguiente competicion ha tenido que ser cancelada debido a las codiciones meteorológicas."
-				+ "\nCompeticion: %s"
-				+ "\nFecha: %s"
-				+ "\nDeporte: %s"		// TO DO formateo de correo
-				+ "\nSentimos las molestias."
-				+ "\nUn saludo, La Administración del club.";
+		if (!checkOnlyOneCall(db, idCompeticion, day)) return;
+		Competicion competi = getCompeticion(idCompeticion, db);
+		
+		String fecha = competi.getFecha().format(DateTimeFormatter.ofPattern("dd/MM/yyyy"));
+		String cuerpoHTML = getBodyMailCancelation(competi, fecha);
+		
+		System.out.println(cuerpoHTML);
 		
 		List<String> correosSocios = getCorreosFromInscritos(idCompeticion, db);
-		avisarAnulacion(correosSocios, idCompeticion, cuerpo);
+		avisarAnulacion(correosSocios, idCompeticion, cuerpoHTML);
+	}
+
+	/**
+	 * Comprueba que las fechas tienen sentido a la hora de hacer las cancelaciones
+	 * @param day
+	 * @param db
+	 * @param idCompeticion
+	 * @return
+	 */
+	private static boolean checkDates(String day, Database db, int idCompeticion) {
+		String SQL_GET_DATE_FROM_ID = "SELECT competition_date FROM competiciones WHERE id=?";
 		
+		String res = ((String)db.executeQueryArray(SQL_GET_DATE_FROM_ID, idCompeticion).get(0)[0]);
+	
+		LocalDate fechaCompe = LocalDate.parse(res);
+		LocalDate fechaCall = LocalDate.parse(day);
+		
+		// Solo se comprueba el tiempo con 4 dias de prevision como mucho
+		if (!fechaCall.equals(fechaCompe) || fechaCall.isBefore(LocalDate.now()) ||
+				fechaCall.isAfter(LocalDate.now().plusDays(4))) {
+			System.out.println("Dia de competicion inválido");
+			return false;
+		}
+		return true;
+	}
+
+	private static boolean checkOnlyOneCall(Database db, int idCompeticion, String dia) {
+		String SQL_ANULAR = "UPDATE competiciones SET estado='CANCELADA' WHERE estado='ABIERTA' AND id=?";
+		String SQL_GET_STATE = "SELECT estado FROM competiciones WHERE id=?";
+		String prevState = ((String)db.executeQueryArray(SQL_GET_STATE, idCompeticion).get(0)[0]);
+		
+		db.executeUpdate(SQL_ANULAR, idCompeticion); //Actualiza el estado de la competicion a ANULADA
+		
+		String postState = ((String)db.executeQueryArray(SQL_GET_STATE, idCompeticion).get(0)[0]);
+		
+		if (prevState.equals(postState)) { // Se comprueba si el estado previo y posterior de la competicion son iguales
+			System.out.println("llamada repetida"); // para no mandar correos repetidos debido a las multiples llamadas concurrentes
+			return false;
+		}
+		return true;
+	}
+
+	private static String getBodyMailCancelation(Competicion competi, String fecha) {
+		return " <meta charset=\"UTF-8\"><html>" +
+                "<body>" +
+                "<p style=\"font-size: 16px;\">Estimado socio,</p>" +
+                "<p style=\"font-weight: bold; color: red;\"><strong>¡Importante!</strong> La competición en la que iba a participar ha sido cancelada debido a las condiciones climatológicas.</p>" +
+                "<br />" + 
+                "<p>Detalles de la competición:</p>" +
+                "<ul>" +
+                "<li><strong>Nombre de la Competición:</strong> " + competi.getNombre() + "</li>" +
+                "<li><strong>Fecha:</strong> " + fecha + "</li>" +
+                "<li><strong>Lugar:</strong> " + competi.getLugar() + "</li>" +
+                "<li><strong>Deporte:</strong> " + competi.getDeporte() + "</li>" +
+                "</ul>" +
+                "<p>Le pedimos disculpas por cualquier inconveniente que esto pueda causar.</p>" +
+                "<p>Atentamente,</p>" +
+                "<p>El Club Deportivo</p>" +
+                "</body>" +
+                "</html>";
 	}
 	
 	private static void avisarAnulacion(List<String> correosSocios, int idCompeticion, String cuerpoCorreo) {
+		
+		System.out.println("Anulacion correcta");
 		 // Crear un pool de hilos
-        ExecutorService executorService = Executors.newFixedThreadPool(correosSocios.size());
+        ExecutorService executorService = null;
+		try {
+			executorService = Executors.newFixedThreadPool(correosSocios.size());
+			
+			// Crear instancias de Correo y ejecutarlas en hilos separados
+	        for (String correoSocio : correosSocios) {
+	        	System.out.println("Correo enviado");
+	            Correo correo = new Correo(correoSocio, "Cancelación de su competición", cuerpoCorreo, Correo.TIPO_TXT_MAIL_HTML);
+	            executorService.submit(correo);
+	        }
 
-        // Crear instancias de Correo y ejecutarlas en hilos separados
-        for (String correoSocio : correosSocios) {
-            Correo correo = new Correo(correoSocio, "Cancelación de su competición", cuerpoCorreo);
-            executorService.submit(correo);
-        }
+		} catch (Exception e) {
+			System.err.println("Error con algun hilo");
+		} finally {
+	        // Apagar el pool de hilos después de que todos los trabajadores hayan terminado
+			executorService.shutdown();
+		}
 
-        // Apagar el pool de hilos después de que todos los trabajadores hayan terminado
-        executorService.shutdown();
+	}
+	
+	private static Competicion getCompeticion(int idCompeticion, Database db) {
+		String SQL_CARGAR_COMPETICION_POR_ID = "SELECT name, competition_date, place, deporte FROM competiciones WHERE id=?";
+		Object[] competicion = db.executeQueryArray(SQL_CARGAR_COMPETICION_POR_ID, idCompeticion).get(0);
+		LocalDate fechaCompe = LocalDate.parse((String)competicion[1]);
+		
+		return new Competicion(idCompeticion, (String)competicion[0], fechaCompe, (String)competicion[2], getTipoDeporte((String)competicion[3]));
 	}
 
 	private static List<String> getCorreosFromInscritos(int idCompeticion, Database db) {
@@ -206,7 +283,7 @@ public class GestionarCompeticiones {
 		return correos;
 	}
 	
-	private TiposDeportes getTipoDeporte(String deporte) {
+	private static TiposDeportes getTipoDeporte(String deporte) {
 		TiposDeportes deporteFinal = null;
 		switch (deporte) {
 			case "FUTBOL":

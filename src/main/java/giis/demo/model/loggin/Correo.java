@@ -18,12 +18,16 @@ public class Correo implements Runnable{
 	private final static String PORT= "587";
 	private final static String CONTRASEÑA = "vguz ubjs oksa ucvc";
 	
+	public final static String TIPO_TXT_MAIL_PLANO = "plano";
+	public final static String TIPO_TXT_MAIL_HTML = "html";
+	
 	private Session sesion;
 	private Thread t;
 	
 	private String correoUsuario;
 	private String asunto;
 	private String texto;
+	private String typeTxt;
 	private boolean enviado;
 	
 	public Correo() {
@@ -40,11 +44,12 @@ public class Correo implements Runnable{
 		t = new Thread(this);
 	}
 	
-	public Correo(String correoUsuario, String asunto, String texto) {
+	public Correo(String correoUsuario, String asunto, String texto, String typeTxt) {
 		this();
 		this.correoUsuario = correoUsuario;
 		this.asunto = asunto;
 		this.texto = texto;
+		this.typeTxt = typeTxt;
 	}
 	
 	public boolean enviarCorreo(String correoUsuario, String asunto, String texto) {
@@ -57,12 +62,15 @@ public class Correo implements Runnable{
 		
 	}
 	
-	public void mandarCorreo(String correoUsuario, String asunto, String textoContraseña) throws MessagingException {
+	public void mandarCorreo(String correoUsuario, String asunto, String textoContraseña, String typeText) throws MessagingException {
 		MimeMessage mensaje = new MimeMessage(sesion);
 		mensaje.setFrom(new InternetAddress(CORREO));
 		mensaje.addRecipient(Message.RecipientType.TO, new InternetAddress(correoUsuario));
-		mensaje.setSubject(asunto);
-		mensaje.setText(textoContraseña);
+		mensaje.setSubject(asunto, "UTF-8");
+		if (typeText.equals(TIPO_TXT_MAIL_PLANO)) // Se manda el correo de con un cuerpo escrito en texto plano
+			mensaje.setText(textoContraseña);
+		else if (typeText.equals(TIPO_TXT_MAIL_HTML)) // Se manda el correo de con un cuerpo escrito en HTML y en utf-8
+			mensaje.setContent(textoContraseña, "text/html; charset=utf-8");
 		Transport t = sesion.getTransport("smtp");
 		t.connect(properties.getProperty("mail.smtp.host"), CORREO, CONTRASEÑA);
 		t.sendMessage(mensaje, mensaje.getAllRecipients());
@@ -72,7 +80,7 @@ public class Correo implements Runnable{
 	@Override
 	public void run() {
 		try {
-			mandarCorreo(correoUsuario, asunto, texto);
+			mandarCorreo(correoUsuario, asunto, texto, typeTxt);
 		} catch (MessagingException e) {
 			System.err.println("Ha ocurrido un error al enviar el correo");
 			e.printStackTrace();

@@ -15,7 +15,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import giis.demo.business.ReservationController;
 import giis.demo.model.competiciones.servicio.GestionarCompeticiones;
-import giis.demo.model.loggin.Correo;
 import giis.demo.ui.VentanaPrincipal;
 import giis.demo.util.Database;
 import giis.demo.util.DbUtil;
@@ -32,17 +31,17 @@ public class ServiciosMeteorologicos {
 	private static final String TIPO_RESERVA = "RESERVA";
 	private static final String TIPO_COMPETICION = "COMPETICION";
 	
+	private static final String LOCATION_RESERVAS = "Helsinki"; 
+	
 	private VentanaPrincipal vp;
 	private ReservationController rc;
 	private Properties prop;
 	private Database db;
-	private Correo correo;
 	
 	public ServiciosMeteorologicos(VentanaPrincipal vp, Database db) {
 		this.vp = vp;
 		this.db = db;
 		this.rc = new ReservationController(vp.getDb());
-		correo = new Correo();
 		prop = DbUtil.loadProperties(); 
 	}
 
@@ -75,7 +74,7 @@ public class ServiciosMeteorologicos {
 		ExecutorService executorService = Executors.newFixedThreadPool(instalaciones.size());
 		// Iterar sobre las instalaciones y asigna cada una a un hilo
 		for(Object[] instalacion: instalaciones) {
-			Runnable worker = new WeatherCheckerThread(instalacion, db, TIPO_RESERVA, "Helsinki");
+			Runnable worker = new WeatherCheckerThread(instalacion, db, TIPO_RESERVA, LOCATION_RESERVAS);
 			executorService.execute(worker);
 		}
 		// Apagar el pool de hilos después de que todos los trabajadores hayan terminado
@@ -104,7 +103,7 @@ public class ServiciosMeteorologicos {
 		}
 
 		private void checkWeather(String location, String tipo, String instalacion) {
-			String API = "https://api.tomorrow.io/v4/weather/forecast?location=" + location + "&apikey=cPGU3YHhCPJhZwzPc2Lly68r6dGs7BwL";
+			String API = "https://api.tomorrow.io/v4/weather/forecast?location=" + location + "&apikey=8RfHsl5zKwBjPPRndZRuyCbdDZsahX4C";
 			String deporte = null;
     		int id = 0;
 
@@ -114,10 +113,13 @@ public class ServiciosMeteorologicos {
 				System.out.println("Competiciones");
 			} else
 				System.out.println("Reservas");
-			
-			System.out.println(API);
 		
-			JsonNode jsonNode = getJsonConnection(API);
+			JsonNode jsonNode = getJsonConnection(API); // Parsea los datos en formato json devueltos por la API
+			
+			if (jsonNode == null) {
+				System.err.println("json sin respuesta");
+				return;
+			}
 			
 			for(int i = 1; i < 72; i++) {
 				WeatherDto dto = new WeatherDto();
@@ -147,7 +149,8 @@ public class ServiciosMeteorologicos {
 			int horaApertura = Integer.parseInt(prop.getProperty("club.horario.apertura"));
 			int horaCierre = Integer.parseInt(prop.getProperty("club.horario.cierre"));
 			int hour = weather.hora.getHour();
-			if(hour >= horaApertura && hour < horaCierre) {
+			
+			if(hour >= horaApertura && hour < horaCierre) { // Comprueba las anulaciones solo en las horas de apertura
 				System.out.println(day + "dia" + " deporte " + deporte);
 				if (deporte == null)
 					anulacionReservas(weather, day, instalacion);
@@ -181,10 +184,13 @@ public class ServiciosMeteorologicos {
 					snow = Double.parseDouble(prop.getProperty("weather.arco.snow"));
 					wind = Double.parseDouble(prop.getProperty("weather.arco.wind"));
 					break;
+				case "NATACION":
+					System.out.println("No se pueden anular las competiciones de natacion");
+					return;
 				default:
 					break;
 			}
-			checkAnulaciones(TIPO_COMPETICION, weather, null, day, rain, temp, snow, wind, id);
+			compareWeather(TIPO_COMPETICION, weather, null, day, rain, temp, snow, wind, id);
 		}
 
 		private void anulacionReservas(WeatherDto weather, LocalDateTime day, String instalacion) {
@@ -211,29 +217,39 @@ public class ServiciosMeteorologicos {
 					snow = Double.parseDouble(prop.getProperty("weather.futbol.snow"));
 					wind = 1000;
 					break;
+				case "Piscina":
+					System.out.println("No se pueden anular las reservas de la piscina");
+					return;
 				default:
 					break;
 			}	
-			checkAnulaciones(TIPO_RESERVA, weather, instalacion, day, rain, temp, snow, wind, -1);
+			compareWeather(TIPO_RESERVA, weather, instalacion, day, rain, temp, snow, wind, -1);
 		}
 		
-		private void checkAnulaciones(String tipoAnulacion, WeatherDto weather, String idInst, LocalDateTime day, 
+		/*
+		 * SI HAY CONDICIONES ADVERSAS if(HAY RESERVA Y NO ES ANULADA) BORRA DE RESERVAS
+		 * RESERVA PARA ANULAR SI NO HAY CONDICIONES ADVERSAS Y HAY RESERVA ANULADA
+		 * if(HAY RESERVA ANULADA) BORRA RESERVA
+		 */
+		private void compareWeather(String tipoAnulacion, WeatherDto weather, String idInst, LocalDateTime day, 
 									double rain, double temperature, double snow, double wind, int idCompeticion) {
 			
 			if(weather.rainAccumulationLwe >= rain || weather.temperatureApparent >= temperature
 					|| weather.snowAccumulationLwe >= snow || weather.windSpeed >= wind) {
+				
 				if (tipoAnulacion.equals(TIPO_COMPETICION)) {
-					DateTimeFormatter dtfComp = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-					String horaInicioComp = day.format(dtfComp);
-					GestionarCompeticiones.createAnulation(horaInicioComp, db, correo, idCompeticion);				
+					
+					String horaInicioComp = day.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+					GestionarCompeticiones.createAnulation(horaInicioComp, db, idCompeticion);
+					
 				} else if (tipoAnulacion.equals(TIPO_RESERVA)) {
-					DateTimeFormatter dtfReserva = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
-					String horaInicioReserva = day.format(dtfReserva);
+					
+					String horaInicioReserva = day.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"));
 					rc.anular(horaInicioReserva, idInst);
+					
 				}
 			} else {
-				DateTimeFormatter dtfReserva = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
-				String horaInicioReserva = day.format(dtfReserva);
+				String horaInicioReserva = day.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"));
 				if(rc.getReservasAnuladasHora(horaInicioReserva, idInst))
 					rc.borraReserva(idInst, horaInicioReserva);
 			}
@@ -267,27 +283,6 @@ public class ServiciosMeteorologicos {
 			return jsonNode;
 	    }
     }
-
-    
-//	public static void writeToTxt(String[] array, String filePath) {
-//        try (BufferedWriter writer = new BufferedWriter(new FileWriter(filePath))) {
-//            // Iterar sobre el array y escribir cada elemento en una línea del archivo
-//            for (String element : array) {
-//                writer.write(element);
-//                writer.newLine(); // Agregar un salto de línea después de cada elemento
-//            }
-//            System.out.println("Datos escritos en el archivo correctamente.");
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
-//    }
-	
-	/*
-	 * SI HAY CONDICIONES ADVERSAS if(HAY RESERVA Y NO ES ANULADA) BORRA DE RESERVAS
-	 * RESERVA PARA ANULAR SI NO HAY CONDICIONES ADVERSAS Y HAY RESERVA ANULADA
-	 * if(HAY RESERVA ANULADA) BORRA RESERVA
-	 */
-
 
 	class WeatherDto {
 		LocalDateTime hora;

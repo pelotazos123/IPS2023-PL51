@@ -168,7 +168,7 @@ public class AsambleasController {
 		}		
 		
 		for (String correo : correos) {
-            Thread thread = new Thread(new Correo(correo,"Asamblea convocada", asamblea));
+            Thread thread = new Thread(new Correo(correo,"Asamblea convocada", asamblea, Correo.TIPO_TXT_MAIL_PLANO));
             thread.start();
         }
 	}

@@ -496,6 +496,7 @@ public class VentanaPrincipal extends JFrame {
 			ServiciosMeteorologicos sm = new ServiciosMeteorologicos(this, db);
 			sm.checkTiempoParallelCompeticiones();
 			sm.checkTiempoParallelReservas();
+//			GestionarCompeticiones.createAnulation("2023-11-26", db, null, 8);
 			pnSeccionDirectivoAdministracion.add(getBtnCrearCursillos());
 			
 			getLbBienvenidoDirectivo().setText("Bienvenido al club "+tramitarLicencia.getDirectivo().getNombre());

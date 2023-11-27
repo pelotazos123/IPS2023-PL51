@@ -25,6 +25,14 @@ public class Competicion {
 		this.deporte = deporte;
 		this.estado = estado;
 	}
+	
+	public Competicion(int id, String nombre, LocalDate fecha, String lugar, TiposDeportes deporte) {
+		this.id = id;
+		this.nombre = nombre;
+		this.fecha = fecha;
+		this.lugar = lugar;
+		this.deporte = deporte;
+	}
 
 	public EstadoCompeticion getEstado() {
 		return estado;
