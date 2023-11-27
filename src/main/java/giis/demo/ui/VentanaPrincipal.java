@@ -122,6 +122,7 @@ public class VentanaPrincipal extends JFrame {
 	private JButton btInscripcionCompeticiones;
 	private JButton btnCrearCursillos;
 	private VentanaCrearCursillos vcc;
+	private JButton btGestionCursos;
 
 
 	/**
@@ -313,7 +314,7 @@ public class VentanaPrincipal extends JFrame {
 	}
 	private JButton getBtnActas() {
 		if (btnActas == null) {
-			btnActas = new JButton("Añadir actas");
+			btnActas = new JButton("Actas");
 			btnActas.addActionListener(new ActionListener() {
 				@Override
 				public void actionPerformed(ActionEvent e) {
@@ -500,6 +501,7 @@ public class VentanaPrincipal extends JFrame {
 			pnBotonesDeportivoDirectivo.add(getBtnReservas());
 			pnBotonesDeportivoDirectivo.add(getBtTestsFisiologicos());
 			pnBotonesDeportivoDirectivo.add(getBtInscripcionCompeticiones());
+			pnBotonesDeportivoDirectivo.add(getBtGestionCursos());
 			pnBotonesDeportivoDirectivo.add(getBtTienda());
 			pnSeccionDirectivoAdministracion.add(getBtnAsambleas());
 			pnSeccionDirectivoAdministracion.add(getBtnActas());
@@ -525,8 +527,8 @@ public class VentanaPrincipal extends JFrame {
 			
 			pnBotonesDeportiva.add(getBtnReservas());
 			pnBotonesDeportiva.add(getBtInscripcionCompeticiones());
-			pnBotonesDeportiva.add(getBtTestsFisiologicos());
-			
+			pnBotonesDeportiva.add(getBtGestionCursos());
+			pnSeccionSocioPersonal.add(getBtCambiarContraseña());
 			pnSelectorFechaSocio.add(getDcFechaAplicacion());
 			pnBotonesDeportiva.add(getBtTestsFisiologicos());
 			pnBotonesDeportiva.add(getBtTienda());
@@ -1021,4 +1023,22 @@ public class VentanaPrincipal extends JFrame {
 		}
 
 	}
+	
+	private JButton getBtGestionCursos() {
+		if (btGestionCursos == null) {
+			btGestionCursos = new JButton("Gestion cursos");
+			btGestionCursos.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					muestraVentanaGestionCursos();
+				}
+			});
+		}
+		return btGestionCursos;
+	}
+
+	protected void muestraVentanaGestionCursos() {
+		VentanaGestionCursos vgcs = new VentanaGestionCursos(this);
+		vgcs.setVisible(true);
+	}
+	
 }
