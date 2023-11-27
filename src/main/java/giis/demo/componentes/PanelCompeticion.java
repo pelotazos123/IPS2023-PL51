@@ -153,6 +153,8 @@ public class PanelCompeticion extends JPanel{
 	private JTextArea getTxCategorias() {
 		if (txCategorias == null) {
 			txCategorias = new JTextArea();
+			txCategorias.setLineWrap(true);
+			txCategorias.setWrapStyleWord(true);
 			txCategorias.setFont(new Font("Tahoma", Font.PLAIN, 15));
 			txCategorias.setEditable(false);
 		}

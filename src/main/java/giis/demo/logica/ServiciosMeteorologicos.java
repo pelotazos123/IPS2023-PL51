@@ -143,6 +143,7 @@ public class ServiciosMeteorologicos {
 			
 			if (tipo.equals(TIPO_RESERVA))
 				rc.getReservas();
+
 		}
 		
 		private void checkAnulaciones(WeatherDto weather, LocalDateTime day, String deporte, int id, String instalacion) {
