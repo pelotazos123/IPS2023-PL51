@@ -336,7 +336,7 @@ public class VentanaReservas extends JDialog {
 		for (Reserva reserva : reMan.getReservas()) {	
 			if (reserva.getFechaInicio().trim().equals(chosenDay)
 					&& modeloListaHoras.contains(reserva.getHoraInicio().trim())	// Se comprueba cada reserva, con cada dia, hora e instalacion seleccionada
-							&& reserva.getInstalacionId().trim().equals(((Instalacion)getCbInstalaciones().getSelectedItem()).getCode().toString())) {
+							&& reserva.getInstalationCode().trim().equals(((Instalacion)getCbInstalaciones().getSelectedItem()).getCode().toString())) {
 				System.out.println("Ya hay una reserva");
 				
 				int posInicio = modeloListaHoras.indexOf(reserva.getHoraInicio());

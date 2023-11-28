@@ -103,7 +103,7 @@ public class ServiciosMeteorologicos {
 		}
 
 		private void checkWeather(String location, String tipo, String instalacion) {
-			String API = "https://api.tomorrow.io/v4/weather/forecast?location=" + location + "&apikey=8RfHsl5zKwBjPPRndZRuyCbdDZsahX4C";
+			String API = "https://api.tomorrow.io/v4/weather/forecast?location=" + location + "&apikey=cPGU3YHhCPJhZwzPc2Lly68r6dGs7BwL";
 			String deporte = null;
     		int id = 0;
 

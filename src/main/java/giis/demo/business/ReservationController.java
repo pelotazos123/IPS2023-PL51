@@ -247,8 +247,21 @@ public class ReservationController {
 	}
 	
 	private void createAnulation(String hora_Inicio, String instalacionId) {
-		String SQL_ANULAR = "UPDATE reservas SET tipo='ANULADA' WHERE fecha_inicio=? AND instalation_code=? AND tipo!='ANULADA'";
-		db.executeUpdate(SQL_ANULAR, hora_Inicio, instalacionId);
+//		String SQL_ANULAR = "UPDATE reservas SET tipo='ANULADA' WHERE fecha_inicio=? AND instalation_code=? AND tipo!='ANULADA'";
+//		db.executeUpdate(SQL_ANULAR, hora_Inicio, instalacionId);
+		String GET_RESERVAS = "select tipo from reservas where fecha_inicio = ? and instalation_code = ?";
+		if(db.executeQueryArray(GET_RESERVAS, hora_Inicio, instalacionId).size() == 0){
+			String SQL_ANULAR = "insert into reservas(fecha_inicio, fecha_fin, instalation_code, tipo) "
+					+ "values (?,?,?,'ANULADA')";
+			LocalDateTime horaFin = LocalDateTime.parse(hora_Inicio, DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"));
+			horaFin.plusHours(1);
+			String horaFinReserva = horaFin.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"));
+			db.executeUpdate(SQL_ANULAR, hora_Inicio, horaFinReserva, instalacionId);
+		} else {
+			String SQL_ANULAR = "UPDATE reservas SET tipo='ANULADA' WHERE fecha_inicio=? "
+					+ "AND instalation_code=? AND tipo!='ANULADA'";
+			db.executeUpdate(SQL_ANULAR, hora_Inicio, instalacionId);
+		}
 	}
 
 	public boolean getReservasNoAnuladasHora(String fechaInicio, String idInst) {

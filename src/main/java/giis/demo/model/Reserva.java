@@ -4,17 +4,17 @@ public class Reserva {
 	
 	private int id;
 	private String fechaInicio;
-	private String instalacionId;
+	private String instalationCode;
 	private String horaInicio;
 	private String fechaFin;
 	private String horaFin;
 	private String tipo_curso;
 	
-	public Reserva(int id, String fechaInicio, String horaInicio, String fechaFin, String horaFin, String instalacionId, String tipo_curso) {
+	public Reserva(int id, String fechaInicio, String horaInicio, String fechaFin, String horaFin, String instalationCode, String tipo_curso) {
 		this.id = id;
 		this.fechaInicio = fechaInicio;
 		this.horaInicio = horaInicio;
-		this.instalacionId = instalacionId;
+		this.instalationCode = instalationCode;
 		this.fechaFin = fechaFin;
 		this.horaFin = horaFin;
 		this.tipo_curso = tipo_curso;
@@ -40,8 +40,8 @@ public class Reserva {
 		return id;
 	}
 
-	public String getInstalacionId() {
-		return instalacionId;
+	public String getInstalationCode() {
+		return instalationCode;
 	}
 	
 	public String getTipoCurso() {
@@ -50,7 +50,7 @@ public class Reserva {
 	
 	@Override
 	public String toString() {
-		return "Reserva: " + id + " - " + fechaInicio + " - " + horaInicio + " - " + instalacionId;
+		return "Reserva: " + id + " - " + fechaInicio + " - " + horaInicio + " - " + instalationCode;
 	}
 	
 }
