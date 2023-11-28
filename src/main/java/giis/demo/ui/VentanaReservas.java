@@ -352,13 +352,6 @@ public class VentanaReservas extends JDialog {
 					}
 				} 
 				
-				if(reserva.getTipoCurso().equals(ReservationController.TIPO_ANULADA)) {
-					while (posFinal != posInicio) {
-						modeloListaHoras.add(posFinal-1, ReservationController.METEOROLOGIA);
-						posFinal--;
-					}
-				} 
-				
 				while (fin != inicio) {
 					modeloListaHoras.removeElement(--fin+":00");
 				}	

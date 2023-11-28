@@ -103,7 +103,7 @@ public class ServiciosMeteorologicos {
 		}
 
 		private void checkWeather(String location, String tipo, String instalacion) {
-			String API = "https://api.tomorrow.io/v4/weather/forecast?location=" + location + "&apikey=cPGU3YHhCPJhZwzPc2Lly68r6dGs7BwL";
+			String API = "https://api.tomorrow.io/v4/weather/forecast?location=" + location + "&apikey=jWASFAyC9N6RWOt0fuqwYHopy21GEEvC";
 			String deporte = null;
     		int id = 0;
 
@@ -152,7 +152,7 @@ public class ServiciosMeteorologicos {
 			int hour = weather.hora.getHour();
 			
 			if(hour >= horaApertura && hour < horaCierre) { // Comprueba las anulaciones solo en las horas de apertura
-				System.out.println(day + "dia" + " deporte " + deporte);
+//				System.out.println(day + "dia" + " deporte " + deporte);
 				if (deporte == null)
 					anulacionReservas(weather, day, instalacion);
 				else 
@@ -186,7 +186,7 @@ public class ServiciosMeteorologicos {
 					wind = Double.parseDouble(prop.getProperty("weather.arco.wind"));
 					break;
 				case "NATACION":
-					System.out.println("No se pueden anular las competiciones de natacion");
+//					System.out.println("No se pueden anular las competiciones de natacion");
 					return;
 				default:
 					break;
@@ -199,7 +199,9 @@ public class ServiciosMeteorologicos {
 			double temp = 0;
 			double snow = 0;
 			double wind = 0;
-			switch (instalacion) {
+			String GET_CODE_INST = "select code from instalaciones where name = ?";
+			String instId = db.executeQueryArray(GET_CODE_INST, instalacion).get(0)[0].toString();
+			switch (instalacion) { 
 				case "Tiro con arco":
 					rain = Double.parseDouble(prop.getProperty("weather.arco.rain"));
 					temp = Double.parseDouble(prop.getProperty("weather.temperature"));
@@ -219,12 +221,12 @@ public class ServiciosMeteorologicos {
 					wind = 1000;
 					break;
 				case "Piscina":
-					System.out.println("No se pueden anular las reservas de la piscina");
+//					System.out.println("No se pueden anular las reservas de la piscina");
 					return;
 				default:
 					break;
 			}	
-			compareWeather(TIPO_RESERVA, weather, instalacion, day, rain, temp, snow, wind, -1);
+			compareWeather(TIPO_RESERVA, weather, instId, day, rain, temp, snow, wind, -1);
 		}
 		
 		/*

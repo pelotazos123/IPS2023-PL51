@@ -50,7 +50,7 @@ public class Reserva {
 
 	@Override
 	public String toString() {
-		return "Reserva: " + id + " - " + fechaInicio + " - " + horaInicio + " - " + instalationCode;
+		return "Reserva: " + id + " - " + fechaInicio + " - " + horaInicio + " - " + instalationCode + " - " + tipo_curso;
 	}
 	
 }
