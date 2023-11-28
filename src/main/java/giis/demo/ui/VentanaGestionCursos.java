@@ -39,6 +39,7 @@ public class VentanaGestionCursos extends JFrame {
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		setBounds(100, 100, 969, 599);
 		setLocationRelativeTo(null);
+		setResizable(false);
 
 		this.vp = vp;
 		this.gestionCursos = new GestionCursosSocios(this);
@@ -115,7 +116,7 @@ public class VentanaGestionCursos extends JFrame {
 	private JPanel getPnBoton() {
 		if (pnBoton == null) {
 			pnBoton = new JPanel();
-			pnBoton.setBounds(21, 498, 282, 51);
+			pnBoton.setBounds(228, 498, 282, 51);
 			pnBoton.setLayout(null);
 			pnBoton.add(getBtAccion());
 		}
@@ -131,7 +132,7 @@ public class VentanaGestionCursos extends JFrame {
 				}
 			});
 			btAccion.setEnabled(false);
-			btAccion.setBounds(10, 11, 151, 33);
+			btAccion.setBounds(76, 11, 151, 33);
 		}
 		return btAccion;
 	}

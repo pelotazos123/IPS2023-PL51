@@ -15,6 +15,7 @@ import javax.swing.JOptionPane;
 
 import giis.demo.model.Instalacion;
 import giis.demo.model.Reserva;
+import giis.demo.model.loggin.Correo;
 import giis.demo.util.Database;
 import giis.demo.util.Util;
 
@@ -258,11 +259,10 @@ public class ReservationController {
 		db.executeUpdate(SQL_CREAR_RESERVA, reservaInicio, reservaFin, instalacionId, tipoReserva, idCursillo);
 	}
 	
-	private void createAnulation(String hora_Inicio, String instalacionId) {
-//		String SQL_ANULAR = "UPDATE reservas SET tipo='ANULADA' WHERE fecha_inicio=? AND instalation_code=? AND tipo!='ANULADA'";
-//		db.executeUpdate(SQL_ANULAR, hora_Inicio, instalacionId);
-		String GET_RESERVAS = "select tipo from reservas where fecha_inicio = ? and instalation_code = ?";
-		if(db.executeQueryArray(GET_RESERVAS, hora_Inicio, instalacionId).size() == 0){
+	private void createAnulation(String hora_Inicio, String instalacionId) { 
+		Correo correo;
+		String GET_RESERVAS = "select id from reservas where fecha_inicio = ? and instalation_code = ?";	
+		if(db.executeQueryArray(GET_RESERVAS, hora_Inicio, instalacionId).isEmpty()){
 			String SQL_ANULAR = "insert into reservas(fecha_inicio, fecha_fin, instalation_code, tipo) "
 					+ "values (?,?,?,'ANULADA')";
 			LocalDateTime horaFin = LocalDateTime.parse(hora_Inicio, DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"));
@@ -270,8 +270,21 @@ public class ReservationController {
 			String horaFinReserva = horaFin.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"));
 			db.executeUpdate(SQL_ANULAR, hora_Inicio, horaFinReserva, instalacionId);
 		} else {
+			String reservaId = db.executeQueryArray(GET_RESERVAS, hora_Inicio, instalacionId).get(0)[0].toString();
+			String GET_PARTICIPANTES = "select dni from participante_reserva where reserva_id = ?";
+			List<Object[]> participantes = db.executeQueryArray(GET_PARTICIPANTES, reservaId);
+			String GET_CORREO = "select email from socios where dni = ?";
+			String texto = "Anulada su reserva en: " + instalacionId + " con fecha inicio: " + hora_Inicio;
+			for(Object[] participante: participantes) {
+				String email = db.executeQueryArray(GET_CORREO, participante[0].toString()).get(0)[0].toString();
+				correo = new Correo(email, "Reserva", texto, Correo.TIPO_TXT_MAIL_PLANO);
+				correo.enviarCorreo(email, "Reserva", texto);
+			}
+			String DELETEPARTICIPANTES = "delete from participante_reserva where reserva_id = ?";
+			db.executeUpdate(DELETEPARTICIPANTES, reservaId);
 			String SQL_ANULAR = "UPDATE reservas SET tipo='ANULADA' WHERE fecha_inicio=? "
 					+ "AND instalation_code=? AND tipo!='ANULADA'";
+			System.out.println("AQUÍ: ANULADA" );
 			db.executeUpdate(SQL_ANULAR, hora_Inicio, instalacionId);
 		}
 	}

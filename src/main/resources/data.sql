@@ -36,10 +36,12 @@ insert into licencias (owner_id, tutor_dni, tutor_name, tutor_surname, tutor_ema
 
 INSERT INTO reservas (id, fecha_inicio, fecha_fin, instalation_code, tipo, cursillo_id) VALUES 
 	(0, "2023-11-29 20:00", "2023-11-29 22:00", "13410", "RESERVA", -1),
-	(1, "2023-11-28 11:00", "2023-11-28 12:00", "13413", "ANULADA", -1);
+	(1, "2023-11-28 11:00", "2023-11-28 12:00", "13413", "ANULADA", -1),
+	(2, "2023-11-29 16:00", "2023-11-28 17:00", "13413", "RESERVA", -1);
 
 INSERT INTO participante_reserva (reserva_id, dni) VALUES
-	(0, "123456789A");
+	(0, "123456789A"),
+	(2, "123456789A");
 
 INSERT INTO instalaciones (code, name, min_reserva, max_reserva, min_curso, max_curso) VALUES
 	("13410", "Tiro con arco", 1, 1, 5, 12),

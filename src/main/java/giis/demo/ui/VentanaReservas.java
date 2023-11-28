@@ -313,9 +313,6 @@ public class VentanaReservas extends JDialog {
 			getTxtInicio().setText("__:__");										// se muestre pero no se permita reservar
 			getBtnSiguiente().setEnabled(false);
 			getTxtFin().setEnabled(false);
-		} else if (lista.getSelectedValue().equals(ReservationController.METEOROLOGIA)) {  										
-			getBtnSiguiente().setEnabled(false);
-			getTxtFin().setEnabled(false);
 		} else {
 			getTxtFin().setEnabled(true);
 			getBtnSiguiente().setEnabled(true);
@@ -351,13 +348,6 @@ public class VentanaReservas extends JDialog {
 				if (reserva.getTipoCurso().equals(ReservationController.TIPO_CURSO)) {	// Si hay una reserva para un curso, cambia el texto por 
 					while (posFinal != posInicio) {										// ocupado por un curso o similar
 						modeloListaHoras.add(posFinal-1, ReservationController.CURSO_OCUPADO);
-						posFinal--;
-					}
-				} 
-				
-				if(reserva.getTipoCurso().equals(ReservationController.TIPO_ANULADA)) {
-					while (posFinal != posInicio) {
-						modeloListaHoras.add(posFinal-1, ReservationController.METEOROLOGIA);
 						posFinal--;
 					}
 				} 
