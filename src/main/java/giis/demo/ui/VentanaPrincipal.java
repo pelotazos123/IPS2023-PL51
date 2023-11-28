@@ -545,14 +545,21 @@ public class VentanaPrincipal extends JFrame {
 		pnSeccionDirectivoAdministracion.add(getBtnListadoSocios());
 		pnSeccionDirectivoAdministracion.add(getBtnAñadirCompeticiones());
 		pnSeccionDirectivoAdministracion.add(getBtVerSolicitudes());
-		ServiciosMeteorologicos sm = new ServiciosMeteorologicos(this);
-		sm.checkTiempo();
-		pnSeccionDirectivoAdministracion.add(getBtnCrearCursillos());
+    pnSeccionDirectivoAdministracion.add(getBtnCrearCursillos());
+    
+		checkWeather(); // Llamada para comprobar el tiempo y cancelaciones
 		
 		getLbBienvenidoDirectivo().setText("Bienvenido al club "+tramitarLicencia.getDirectivo().getNombre());
 		
 		((CardLayout) pnPrincipal.getLayout()).show(pnPrincipal, "PrincipalDirectivo");
 		setMinimumSize(new Dimension(800, 517));
+    
+  }
+  
+	private void checkWeather() {
+		ServiciosMeteorologicos sm = new ServiciosMeteorologicos(this, db);
+		sm.checkTiempoParallelCompeticiones();
+		sm.checkTiempoParallelReservas();
 	}
 	
 	private JButton getBtnCrearCursillos() {

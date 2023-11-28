@@ -190,15 +190,28 @@ public class Util {
 	}
 	
 	/** 
+	 * Convierte fecha repesentada como un string iso a fecha y hora java (para conversion de entradas de tipo fecha)
+	 */
+	public static Date isoStringToDateHour(String isoDateString) {
+		try {
+			return new SimpleDateFormat("yyyy-MM-dd HH:mm").parse(isoDateString);
+		} catch (ParseException e) {
+			throw new ApplicationException("Formato ISO incorrecto para fecha: "+isoDateString);
+		}
+	}	
+	
+	/** 
 	 * Convierte fecha repesentada como un string iso a fecha java (para conversion de entradas de tipo fecha)
 	 */
 	public static Date isoStringToDate(String isoDateString) {
 		try {
-		return new SimpleDateFormat("yyyy-MM-dd HH:mm").parse(isoDateString);
+			return new SimpleDateFormat("yyyy-MM-dd").parse(isoDateString);
 		} catch (ParseException e) {
 			throw new ApplicationException("Formato ISO incorrecto para fecha: "+isoDateString);
 		}
 	}
+	
+	
 	/** 
 	 * Convierte fecha java a un string formato iso (para display o uso en sql) 
 	 */

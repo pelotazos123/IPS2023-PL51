@@ -21,11 +21,6 @@ import giis.demo.util.SwingUtil;
 
 public abstract class SociosController {
 	
-	private final static String SQL_CARGAR_TODOS_SOCIOS = "SELECT id, dni, name, surname, email, telf, cuota_type, iban, gender, birth_date, directive FROM socios ";
-	private final static String SQL_CARGAR_DNI_SOCIOS = "SELECT dni FROM socios";
-	
-	private final static String SQL_CARGAR_DNI_ENTRENADORES = "SELECT DISTINCT dni FROM socios, licencias WHERE socios.id=licencias.owner_id and licencias.licence_type='MONITOR' and licencias.deporte=?";
-	
 	private final static String WHERE = "WHERE";
 	
 	private final static int NAME = 2;
@@ -97,6 +92,7 @@ public abstract class SociosController {
 	}
 	
 	public static List<String> getDni(Database db) {
+		String SQL_CARGAR_DNI_SOCIOS = "SELECT dni FROM socios";
 		List<Object[]> result = db.executeQueryArray(SQL_CARGAR_DNI_SOCIOS);
 		List<String> dnis = new ArrayList<String>();
 		
@@ -121,6 +117,7 @@ public abstract class SociosController {
 	}
 	
 	private static List<String> getDniFromTrainers(Database db, Instalacion instalacion) {
+		String SQL_CARGAR_DNI_ENTRENADORES = "SELECT DISTINCT dni FROM socios, licencias WHERE socios.id=licencias.owner_id and licencias.licence_type='MONITOR' and licencias.deporte=?";
 		List<Object[]> result = db.executeQueryArray(SQL_CARGAR_DNI_ENTRENADORES, deportes.get(instalacion.getName()));
 		List<String> dnis = new ArrayList<String>();
 		
@@ -192,7 +189,8 @@ public abstract class SociosController {
 	}
   
 	private static String buildQuery(String filter) {
-		String query;
+		String SQL_CARGAR_TODOS_SOCIOS = "SELECT id, dni, name, surname, email, telf, cuota_type, iban, gender, birth_date, directive FROM socios ";
+		String query = "";
 		
 		if (!filter.isEmpty()) {
 			query = SQL_CARGAR_TODOS_SOCIOS + WHERE + filter;

@@ -57,7 +57,7 @@ public class VentanaInscripcionCompeticiones extends JFrame {
 		setBackground(Color.WHITE);
 		setTitle("Club Deportivo");
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-		setBounds(100, 100, 1149, 618);
+		setBounds(100, 100, 1193, 626);
 		pnPrincipal = new JPanel();
 		pnPrincipal.setBorder(new TitledBorder(null, "Competiciones", TitledBorder.LEADING, TitledBorder.TOP, null, null));
 		pnPrincipal.setBackground(Color.WHITE);
