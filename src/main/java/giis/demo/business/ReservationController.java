@@ -284,7 +284,7 @@ public class ReservationController {
 			db.executeUpdate(DELETEPARTICIPANTES, reservaId);
 			String SQL_ANULAR = "UPDATE reservas SET tipo='ANULADA' WHERE fecha_inicio=? "
 					+ "AND instalation_code=? AND tipo!='ANULADA'";
-			System.out.println("AQUÍ: ANULADA" );
+			System.out.println("ANULADA" );
 			db.executeUpdate(SQL_ANULAR, hora_Inicio, instalacionId);
 		}
 	}
