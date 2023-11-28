@@ -48,6 +48,7 @@ public class TramitarLicencia {
 	public void loggearSocio(String dniSocio) {
 		if(esDirectivo(dniSocio)) {
 			cargarDirectivo(dniSocio);
+			cargarSocio(dniSocio);
 			System.out.println(directivo.toString());
 		}else {
 			cargarSocio(dniSocio);
@@ -106,7 +107,7 @@ public class TramitarLicencia {
 		return tiposDisponibles.toArray(new TiposLicencia[tiposDisponibles.size()]);
 	}
 	
-	private void cargarSocio(String dniSocio) {
+	public void cargarSocio(String dniSocio) {
 		int id = (int) db.executeQueryArray(SQL_OBTENER_ID_SOCIO,dniSocio).get(0)[0];
 		socio = new Socio(db, id);
 		cargarLicenciasDelSocio();
@@ -123,6 +124,7 @@ public class TramitarLicencia {
 	}
 	
 	private void cargarLicenciasDelSocio() {
+		licenciasDelSocio = new ArrayList<Licencia>();
 		Licencia licencia = null;
 		for(int i = 0; i < TiposLicencia.values().length; i++) {
 			licencia = new Licencia(socio.getId(), db);
@@ -276,5 +278,9 @@ public class TramitarLicencia {
 			}
 		}
 		return false;
+	}
+	
+	public boolean comprobarDniInexistente(String dni) {
+		return db.executeQueryArray(SQL_OBTENER_ID_SOCIO,dni).isEmpty();
 	}
 }

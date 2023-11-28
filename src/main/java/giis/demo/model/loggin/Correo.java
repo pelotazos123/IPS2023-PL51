@@ -57,7 +57,7 @@ public class Correo implements Runnable{
 		this.asunto = asunto;
 		this.texto = texto;
 		enviado = true;
-		t.start();
+		t.run();
 		return enviado;
 		
 	}

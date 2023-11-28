@@ -5,6 +5,7 @@ import java.awt.CardLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
+import java.awt.Font;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -16,6 +17,7 @@ import java.util.Date;
 
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -126,6 +128,7 @@ public class VentanaTramitarLicencia extends JFrame {
 	private JComboBox<TiposDeportes> cbDeporte;
 	private JLabel lbTipoLicencia;
 	private JComboBox<TiposLicencia> cbTipoLicencia;
+	private JCheckBox chckbxTramitarNuevoSocio;
 
 
 	/**
@@ -152,23 +155,34 @@ public class VentanaTramitarLicencia extends JFrame {
 	private void cargarDatos() {
 		esDirectivo = tramitarLicencia.esDirectivo();
 		if(!esDirectivo) {
-			getTxNombreSocio().setText(tramitarLicencia.getSocio().getNombre());
-			getTxApellidosSocio().setText(tramitarLicencia.getSocio().getApellidos());
-			getCbGeneroSocio().setSelectedItem(tramitarLicencia.getSocio().getGenero());
-			getTxDniSocio().setText(tramitarLicencia.getSocio().getDni());
-			getTxTelfSocio().setText(""+tramitarLicencia.getSocio().getTelefono());
-			getTxCorreoSocio().setText(tramitarLicencia.getSocio().getCorreo());
-			
-			
-			Date fecha = Date.from(tramitarLicencia.getSocio().getFechaNacimiento().atStartOfDay().atZone(ZoneId.systemDefault()).toInstant());
-			getDcFechaNacimientoSocio().setDate(fecha);
-			comprobarEdad();
+			cargarDatosSocio();
 		}else {
+			getChckbxTramitarNuevoSocio().setVisible(true);
 			TiposLicencia[] licencias = tramitarLicencia.getLicenciasDisponibles(true);
 			cbTipoLicencia.setModel(new DefaultComboBoxModel<TiposLicencia>(licencias));
+			if(licencias.length == 0) {
+				getChckbxTramitarNuevoSocio().setSelected(true);
+				procesarCambio();
+				getChckbxTramitarNuevoSocio().setEnabled(false);
+			}else {
+				cargarDatosSocio();
+			}
 		}
 		TiposDeportes[] deportes = TiposDeportes.values();
 		getCbDeporte().setModel(new DefaultComboBoxModel<TiposDeportes>(deportes));
+	}
+	private void cargarDatosSocio() {
+		getTxNombreSocio().setText(tramitarLicencia.getSocio().getNombre());
+		getTxApellidosSocio().setText(tramitarLicencia.getSocio().getApellidos());
+		getCbGeneroSocio().setSelectedItem(tramitarLicencia.getSocio().getGenero());
+		getTxDniSocio().setText(tramitarLicencia.getSocio().getDni());
+		getTxTelfSocio().setText(""+tramitarLicencia.getSocio().getTelefono());
+		getTxCorreoSocio().setText(tramitarLicencia.getSocio().getCorreo());
+		
+		
+		Date fecha = Date.from(tramitarLicencia.getSocio().getFechaNacimiento().atStartOfDay().atZone(ZoneId.systemDefault()).toInstant());
+		getDcFechaNacimientoSocio().setDate(fecha);
+		comprobarEdad();
 	}
 	private JPanel getPnTramitarLicencia() {
 		if (pnTramitarLicencia == null) {
@@ -538,6 +552,10 @@ public class VentanaTramitarLicencia extends JFrame {
 				JOptionPane.showMessageDialog(this,"Debe rellenar los campos Nombre, Apellidos, Direccion de facturacion e Informacion de facturacion ",
 						"Datos no rellenados", JOptionPane.INFORMATION_MESSAGE);
 				return false;
+			}else if(getChckbxTramitarNuevoSocio().isSelected() && !tramitarLicencia.comprobarDniInexistente(getTxDniSocio().getText())) {
+				JOptionPane.showMessageDialog(this,"El dni introducido ya esta registrado",
+						"Tramitar Licencia", JOptionPane.INFORMATION_MESSAGE);
+				return false;
 			}else if(!tramitarLicencia.comprobarMayorEdad(diaSocio, mesSocio, añoSocio)) {
 				if(getTxNombreTutor().getText().isBlank() || getTxApellidosTutor().getText().isBlank()
 						|| getTxTelfTutor().getText().isBlank() || getTxCorreoTutor().getText().isBlank()
@@ -578,40 +596,59 @@ public class VentanaTramitarLicencia extends JFrame {
 		TiposDeportes deporte = (TiposDeportes) getCbDeporte().getSelectedItem();
 		
 		if(!tramitarLicencia.comprobarMayorEdad(diaSocio, mesSocio, añoSocio)) {
-			String dniTutor = getTxDniTutor().getText();
-			String nombreTutor = getTxNombreTutor().getText();
-			String apellidoTutor = getTxApellidosTutor().getText();
-			Generos generoTutor = (Generos) getCbGeneroTutor().getSelectedItem();
-			int telfTutor = Integer.parseInt(getTxTelfTutor().getText());
-			String correoTutor = getTxCorreoTutor().getText();
-			
-			LocalDate fechaNacimientoTutor = getDcFechaNacimientoTutor().getDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
-			
-			if(esDirectivo) {
-				tramitarLicencia.crearSocio(dniSocio, nombreSocio, apellidoSocio, correoSocio, telfSocio, generoSocio, fechaNacimiento);
-				if(!loggin.generarLoggin(dniSocio)) {
-					JOptionPane.showMessageDialog(this,"Error al enviar nueva contraseña a: "+loggin.getCorreoDeUsuario(dniSocio),
-							"Iniciar Sesion", JOptionPane.INFORMATION_MESSAGE);
-				}
-			}else {
-				tramitarLicencia.modificarDatosSocio(dniSocio,nombreSocio, apellidoSocio, generoSocio,telfSocio,correoSocio, fechaNacimiento);
-				tramitarLicencia.guardarDatosModificadosSocio();
-			}
-			tramitarLicencia.crearLicencia(nombreTutor, apellidoTutor,dniTutor,telfTutor,correoTutor, fechaNacimientoTutor, generoTutor, direccionFacturacion, infoFacturacion, licencia, deporte);
+			tramitarLicenciaMenor(dniSocio, nombreSocio, apellidoSocio, generoSocio, telfSocio, correoSocio,
+					fechaNacimiento, direccionFacturacion, infoFacturacion, licencia, deporte);
 		}else {
-			if(esDirectivo) {
-				tramitarLicencia.crearSocio(dniSocio, nombreSocio, apellidoSocio, correoSocio, telfSocio, generoSocio, fechaNacimiento);
-				if(!loggin.generarLoggin(dniSocio)) {
-					JOptionPane.showMessageDialog(this,"Error al enviar nueva contraseña a: "+loggin.getCorreoDeUsuario(dniSocio),
-							"Iniciar Sesion", JOptionPane.INFORMATION_MESSAGE);
-				}
-			}else {
-				tramitarLicencia.modificarDatosSocio(dniSocio,nombreSocio, apellidoSocio, generoSocio,telfSocio,correoSocio, fechaNacimiento);
-				tramitarLicencia.guardarDatosModificadosSocio();
-			}
-			tramitarLicencia.crearLicencia("noTutor", "noTutor", "noTutor",-1,"noTutor", null, null, direccionFacturacion, infoFacturacion, licencia, deporte);
+			tramitarLicenciaAdulto(dniSocio, nombreSocio, apellidoSocio, generoSocio, telfSocio, correoSocio,
+					fechaNacimiento, direccionFacturacion, infoFacturacion, licencia, deporte);
 		}
 		
+	}
+	private void tramitarLicenciaAdulto(String dniSocio, String nombreSocio, String apellidoSocio, Generos generoSocio,
+			int telfSocio, String correoSocio, LocalDate fechaNacimiento, String direccionFacturacion,
+			String infoFacturacion, TiposLicencia licencia, TiposDeportes deporte) {
+		
+		if(esDirectivo && getChckbxTramitarNuevoSocio().isSelected()) {
+				tramitarLicencia.crearSocio(dniSocio, nombreSocio, apellidoSocio, correoSocio, telfSocio, generoSocio, fechaNacimiento);
+				tramitarLicencia.crearLicencia("noTutor", "noTutor", "noTutor",-1,"noTutor", null, null, direccionFacturacion, infoFacturacion, licencia, deporte);
+				tramitarLicencia.cargarSocio(tramitarLicencia.getDirectivo().getDni());
+				if(!loggin.generarLoggin(dniSocio)) {
+					JOptionPane.showMessageDialog(this,"Error al enviar nueva contraseña a: "+loggin.getCorreoDeUsuario(dniSocio),
+							"Tramitar Licencia", JOptionPane.INFORMATION_MESSAGE);
+				}
+		}else {
+			tramitarLicencia.modificarDatosSocio(dniSocio,nombreSocio, apellidoSocio, generoSocio,telfSocio,correoSocio, fechaNacimiento);
+			tramitarLicencia.guardarDatosModificadosSocio();
+			tramitarLicencia.crearLicencia("noTutor", "noTutor", "noTutor",-1,"noTutor", null, null, direccionFacturacion, infoFacturacion, licencia, deporte);
+		}
+	}
+	
+	private void tramitarLicenciaMenor(String dniSocio, String nombreSocio, String apellidoSocio, Generos generoSocio,
+			int telfSocio, String correoSocio, LocalDate fechaNacimiento, String direccionFacturacion,
+			String infoFacturacion, TiposLicencia licencia, TiposDeportes deporte) {
+		
+		String dniTutor = getTxDniTutor().getText();
+		String nombreTutor = getTxNombreTutor().getText();
+		String apellidoTutor = getTxApellidosTutor().getText();
+		Generos generoTutor = (Generos) getCbGeneroTutor().getSelectedItem();
+		int telfTutor = Integer.parseInt(getTxTelfTutor().getText());
+		String correoTutor = getTxCorreoTutor().getText();
+		
+		LocalDate fechaNacimientoTutor = getDcFechaNacimientoTutor().getDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+		
+		if(esDirectivo && getChckbxTramitarNuevoSocio().isSelected()) {
+				tramitarLicencia.crearSocio(dniSocio, nombreSocio, apellidoSocio, correoSocio, telfSocio, generoSocio, fechaNacimiento);
+				tramitarLicencia.crearLicencia(nombreTutor, apellidoTutor,dniTutor,telfTutor,correoTutor, fechaNacimientoTutor, generoTutor, direccionFacturacion, infoFacturacion, licencia, deporte);
+				tramitarLicencia.cargarSocio(tramitarLicencia.getDirectivo().getDni());
+				if(!loggin.generarLoggin(dniSocio)) {
+					JOptionPane.showMessageDialog(this,"Error al enviar nueva contraseña a: "+loggin.getCorreoDeUsuario(dniSocio),
+							"Tramitar Licencia", JOptionPane.INFORMATION_MESSAGE);
+				}			
+		}else {
+			tramitarLicencia.modificarDatosSocio(dniSocio,nombreSocio, apellidoSocio, generoSocio,telfSocio,correoSocio, fechaNacimiento);
+			tramitarLicencia.guardarDatosModificadosSocio();
+			tramitarLicencia.crearLicencia(nombreTutor, apellidoTutor,dniTutor,telfTutor,correoTutor, fechaNacimientoTutor, generoTutor, direccionFacturacion, infoFacturacion, licencia, deporte);
+		}
 	}
 	
 	private JButton getBtCancelarLicencia() {
@@ -633,7 +670,9 @@ public class VentanaTramitarLicencia extends JFrame {
 			pnPoliticaDeDatos = new JPanel();
 			pnPoliticaDeDatos.setBackground(Color.WHITE);
 			FlowLayout flowLayout = (FlowLayout) pnPoliticaDeDatos.getLayout();
+			flowLayout.setHgap(20);
 			flowLayout.setAlignment(FlowLayout.RIGHT);
+			pnPoliticaDeDatos.add(getChckbxTramitarNuevoSocio());
 			pnPoliticaDeDatos.add(getBtPoliticaDeDatos());
 		}
 		return pnPoliticaDeDatos;
@@ -766,9 +805,19 @@ public class VentanaTramitarLicencia extends JFrame {
 		getTxCorreoTutor().setEnabled(option);
 		getTxDniTutor().setEnabled(option);
 		
-		//solo permitimos deportista si es menor de edad (siempre el valor opuesto de option)
-		TiposLicencia[] licencias = tramitarLicencia.getLicenciasDisponibles(!option);
-		cbTipoLicencia.setModel(new DefaultComboBoxModel<TiposLicencia>(licencias));
+		if (getChckbxTramitarNuevoSocio().isSelected()) {
+			TiposLicencia[] licencias = TiposLicencia.values();
+			if (option) {
+				licencias = new TiposLicencia[1];
+				licencias[0] = TiposLicencia.DEPORTISTA;
+			}
+			cbTipoLicencia.setModel(new DefaultComboBoxModel<TiposLicencia>(licencias));
+		} else {
+
+			// solo permitimos deportista si es menor de edad (siempre el valor opuesto de option)
+			TiposLicencia[] licencias = tramitarLicencia.getLicenciasDisponibles(!option);
+			cbTipoLicencia.setModel(new DefaultComboBoxModel<TiposLicencia>(licencias));
+		}
 	}	
 	
 	private boolean comprobarTutorMayorEdad() {
@@ -970,5 +1019,41 @@ public class VentanaTramitarLicencia extends JFrame {
 			cbTipoLicencia = new JComboBox<TiposLicencia>();
 		}
 		return cbTipoLicencia;
+	}
+	private JCheckBox getChckbxTramitarNuevoSocio() {
+		if (chckbxTramitarNuevoSocio == null) {
+			chckbxTramitarNuevoSocio = new JCheckBox("Tramitar nuevo socio");
+			chckbxTramitarNuevoSocio.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					procesarCambio();
+				}
+			});
+			chckbxTramitarNuevoSocio.setVisible(false);
+			chckbxTramitarNuevoSocio.setBackground(Color.WHITE);
+			chckbxTramitarNuevoSocio.setFont(new Font("Tahoma", Font.PLAIN, 12));
+		}
+		return chckbxTramitarNuevoSocio;
+	}
+	
+	private void procesarCambio() {
+		if(getChckbxTramitarNuevoSocio().isSelected()) {
+			TiposLicencia[] licencias = TiposLicencia.values();
+			cbTipoLicencia.setModel(new DefaultComboBoxModel<TiposLicencia>(licencias));
+			borrarDatosDirectivo();
+		}else {
+			TiposLicencia[] licencias = tramitarLicencia.getLicenciasDisponibles(true);
+			cbTipoLicencia.setModel(new DefaultComboBoxModel<TiposLicencia>(licencias));
+			cargarDatosSocio();	
+		}	
+	}
+	
+	private void borrarDatosDirectivo() {
+		getTxNombreSocio().setText("");
+		getTxApellidosSocio().setText("");
+		getCbGeneroSocio().setSelectedItem("");
+		getTxDniSocio().setText("");
+		getTxTelfSocio().setText("");
+		getTxCorreoSocio().setText("");
+		getDcFechaNacimientoSocio().setDate(null);
 	}
 }

@@ -48,8 +48,8 @@ public class VentanaMostrarSolicitudes extends JFrame {
 		setTitle("Club Deportivo");
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		setBackground(Color.WHITE);
-		setMinimumSize(new Dimension(800, 517));
-		setBounds(100, 100, 450, 300);
+		setMinimumSize(new Dimension(1250, 517));
+		setBounds(100, 100, 1250, 517);
 		pnPrincipal = new JPanel();
 		pnPrincipal.setBackground(Color.WHITE);
 		pnPrincipal.setBorder(new EmptyBorder(5, 5, 5, 5));

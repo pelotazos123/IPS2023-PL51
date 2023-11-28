@@ -181,7 +181,7 @@ public class VentanaVerDatos extends JFrame {
 	private void darseDeBaja() {
 		int respuesta = JOptionPane.showConfirmDialog(this, "¿Estás seguro que quieres darte de baja?");
 		if(respuesta == JOptionPane.YES_OPTION) {
-			politicaDeDatos.darseDeBaja(tramitarLicencia.getSocio());
+			politicaDeDatos.darseDeBaja(tramitarLicencia.getUsuario());
 			ventana.darseDeBaja();
 			dispose();
 		}
@@ -718,8 +718,13 @@ public class VentanaVerDatos extends JFrame {
 	}
 	
 	private void enviarSolicitud() {
-		((CardLayout) getContentPane().getLayout()).show(getContentPane(),"pnVerDatos");
-		politicaDeDatos.enviarSolicitudDeModificacionDeDatos(tramitarLicencia.getSocio(),getTxModificacionDatos().getText());
-		getTxModificacionDatos().setText("");
+		if(getTxModificacionDatos().getText().isBlank()) {
+			JOptionPane.showMessageDialog(this,"Debes introducir las modificaciones a solicitar",
+					"Solicitar modificaciones", JOptionPane.INFORMATION_MESSAGE);
+		}else {
+			((CardLayout) getContentPane().getLayout()).show(getContentPane(),"pnVerDatos");
+			politicaDeDatos.enviarSolicitudDeModificacionDeDatos(tramitarLicencia.getUsuario(),getTxModificacionDatos().getText());
+			getTxModificacionDatos().setText("");
+		}
 	}
 }
