@@ -313,6 +313,9 @@ public class VentanaReservas extends JDialog {
 			getTxtInicio().setText("__:__");										// se muestre pero no se permita reservar
 			getBtnSiguiente().setEnabled(false);
 			getTxtFin().setEnabled(false);
+		} else if (lista.getSelectedValue().equals(ReservationController.METEOROLOGIA)) {  										
+			getBtnSiguiente().setEnabled(false);
+			getTxtFin().setEnabled(false);
 		} else {
 			getTxtFin().setEnabled(true);
 			getBtnSiguiente().setEnabled(true);

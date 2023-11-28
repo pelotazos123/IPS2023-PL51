@@ -266,7 +266,7 @@ public class ReservationController {
 			String SQL_ANULAR = "insert into reservas(fecha_inicio, fecha_fin, instalation_code, tipo) "
 					+ "values (?,?,?,'ANULADA')";
 			LocalDateTime horaFin = LocalDateTime.parse(hora_Inicio, DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"));
-			horaFin.plusHours(1);
+			horaFin = horaFin.plusHours(1);
 			String horaFinReserva = horaFin.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"));
 			db.executeUpdate(SQL_ANULAR, hora_Inicio, horaFinReserva, instalacionId);
 		} else {

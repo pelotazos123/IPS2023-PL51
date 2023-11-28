@@ -199,6 +199,8 @@ public class ServiciosMeteorologicos {
 			double temp = 0;
 			double snow = 0;
 			double wind = 0;
+			String GET_CODE_INST = "select code from instalaciones where name = ?";
+			String instId = db.executeQueryArray(GET_CODE_INST, instalacion).get(0)[0].toString();
 			switch (instalacion) {
 				case "Tiro con arco":
 					rain = Double.parseDouble(prop.getProperty("weather.arco.rain"));
@@ -224,7 +226,7 @@ public class ServiciosMeteorologicos {
 				default:
 					break;
 			}	
-			compareWeather(TIPO_RESERVA, weather, instalacion, day, rain, temp, snow, wind, -1);
+			compareWeather(TIPO_RESERVA, weather, instId, day, rain, temp, snow, wind, -1);
 		}
 		
 		/*
