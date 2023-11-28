@@ -20,7 +20,7 @@ import giis.demo.util.Util;
 
 public class ReservationController {
 	
-	private Database db;
+	private Database db;	
 	
 	public final static int HORA_MAXIMA = 2;
 	public final static int HORA_MINIMA = 1;
@@ -73,7 +73,7 @@ public class ReservationController {
 	public boolean reservar(LocalDateTime diaInicio, String reservaInicio, String reservaFin, Instalacion instalacion, List<String> listaParticipantes) {
 		if (!checkParticipantsAvailability(diaInicio, instalacion, listaParticipantes))
 			return false;
-		createReservation(reservaInicio, reservaFin, instalacion.getCode(), TIPO_RESERVA);
+		createReservation(reservaInicio, reservaFin, instalacion.getCode(), TIPO_RESERVA, -1);
 		createQueryParticipants(listaParticipantes);
 		getReservas();
 		getParticipantes();
@@ -92,19 +92,26 @@ public class ReservationController {
 		
 		if (!getDisponibilidadDeCursos(instalacion, inicioCursoStr, finalCursoStr)) 
 			return false;
+
+		System.out.println(getIdLastCurso());
 		
 		// Se crea el curso
 		createCurso(nombreCurso, instalacion, coste, inicioCursoStr, finalCursoStr, numPlazas);
-		// Añade los entrenadores al curso
-		createQueryTrainers(entrenadores, nombreCurso);
+		int curso_id = getIdLastCurso();
 		
 		// Se reservan los dias que habrá en el rango entre la fecha de inicio y fecha final del curso
 		List<LocalDate> fechas = diaInicio.datesUntil(diaFin).toList();		
 		for (LocalDate fecha: fechas) {
 			if (dias.contains(fecha.getDayOfWeek())) { // Solo si coinciden con los dias de la semana seleccionados para el curso
-				createReservation(fecha.atTime(horaInicio).format(dtf), fecha.atTime(horaFin).format(dtf), instalacion.getCode(), TIPO_CURSO);
+				createReservation(fecha.atTime(horaInicio).format(dtf), fecha.atTime(horaFin).format(dtf), instalacion.getCode(), TIPO_CURSO, curso_id);
 			}
 		}
+		
+		System.out.println(getIdLastCurso());
+		
+		// Añade los entrenadores al curso
+		createQueryTrainers(entrenadores, nombreCurso);
+		
 		return true;
 	}
 
@@ -131,12 +138,13 @@ public class ReservationController {
 	}
 	
 	private boolean checkParticipantsAvailability(LocalDateTime dia, Instalacion instalacion, List<String> participantes) {
+		String SQL_CARGAR_FECHAS_RESERVA = "SELECT DISTINCT fecha_inicio FROM reservas, participante_reserva WHERE participante_reserva.dni=? and reservas.instalation_code=? and reservas.tipo=?";
+		
 		List<Object[]> queryRes = new ArrayList<>();
 		List<LocalDateTime> dates = new ArrayList<LocalDateTime>();
 		LocalDateTime reserva = null;
 		LocalDateTime yesterday = null;
 		LocalDateTime tomorrow = null;
-		String SQL_CARGAR_FECHAS_RESERVA = "SELECT DISTINCT fecha_inicio FROM reservas, participante_reserva WHERE participante_reserva.dni=? and reservas.instalation_code=? and reservas.tipo=?";
 				
 		for (String dni: participantes) {
 			queryRes = db.executeQueryArray(SQL_CARGAR_FECHAS_RESERVA, dni, instalacion.getCode(), "");
@@ -162,15 +170,19 @@ public class ReservationController {
 	}
 	
 	private void createQueryTrainers(List<String> listaEntrenadores, String nameCurso) {
-		String SQL_ID_CURSO = "SELECT seq FROM sqlite_sequence where name='cursillos'";
 		String SQL_AÑADIR_ENTRENADORES = "INSERT INTO entrenadores_cursillos (id_curso, dni) VALUES (?,?)";
 		
-		int id_curso = (int) db.executeQueryArray(SQL_ID_CURSO).get(0)[0];
+		int id_curso = getIdLastCurso();
 		
 		for (String dni: listaEntrenadores) {
 			System.out.println("id curso: " + id_curso + " - nombre curso: " + nameCurso + " - dni entrenador: " + dni);
 			db.executeUpdate(SQL_AÑADIR_ENTRENADORES, id_curso, dni);
 		}
+	}
+
+	private int getIdLastCurso() {
+		String SQL_ID_CURSO = "SELECT seq FROM sqlite_sequence where name='cursillos'";
+		return (int) db.executeQueryArray(SQL_ID_CURSO).get(0)[0];
 	}
 
 	private void createQueryParticipants(List<String> listaParticipantes) {
@@ -240,10 +252,10 @@ public class ReservationController {
 			System.out.println(id + " |hola| " + dni);
 		}
 	}
-	
-	private void createReservation(String reservaInicio, String reservaFin, String instalacionId, String tipoReserva) {
-		String SQL_CREAR_RESERVA = "INSERT INTO reservas(fecha_inicio, fecha_fin, instalation_code, tipo) VALUES (?, ?, ?, ?)";
-		db.executeUpdate(SQL_CREAR_RESERVA, reservaInicio, reservaFin, instalacionId, tipoReserva);
+
+	private void createReservation(String reservaInicio, String reservaFin, String instalacionId, String tipoReserva, int idCursillo) {
+		String SQL_CREAR_RESERVA = "INSERT INTO reservas(fecha_inicio, fecha_fin, instalation_code, tipo, cursillo_id) VALUES (?, ?, ?, ?, ?)";
+		db.executeUpdate(SQL_CREAR_RESERVA, reservaInicio, reservaFin, instalacionId, tipoReserva, idCursillo);
 	}
 	
 	private void createAnulation(String hora_Inicio, String instalacionId) {

@@ -47,7 +47,7 @@ public class Reserva {
 	public String getTipoCurso() {
 		return tipo_curso;
 	}
-	
+
 	@Override
 	public String toString() {
 		return "Reserva: " + id + " - " + fechaInicio + " - " + horaInicio + " - " + instalationCode;
