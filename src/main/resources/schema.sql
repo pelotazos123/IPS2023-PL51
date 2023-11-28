@@ -32,7 +32,7 @@ create table test(id int, fecha date, tipo varchar2(255), peso int, edad int, se
 create table competiciones (id integer PRIMARY KEY AUTOINCREMENT, name varchar2(255), competition_date date, place varchar2(255), categories varchar2(255), deporte varchar2(255), estado varchar2(255));
 create table recibos (owner_iban varchar2(255), number int, amount int, value_date date, charge_date date, concept varchar2(255), type_recibo varchar2(255), state varchar2(255));
 create table inscripcion_competiciones(competicion_id integer PRIMARY KEY, socio_id integer, foreign key(competicion_id) references competiciones(id), foreign key(socio_id) references socios(id));
-create table solicitudesModificacionDatos(id integer PRIMARY KEY AUTOINCREMENT, dni varchar2(255) NOT NULL UNIQUE, name varchar2(255), surname varchar2(255), modificacion varchar2(255));
+create table solicitudesModificacionDatos(id integer PRIMARY KEY AUTOINCREMENT, dni varchar2(255) NOT NULL, name varchar2(255), surname varchar2(255), modificacion varchar2(255), foreign key(dni) references socios(dni));
 create table asambleas (type varchar2(255), date varchar2(255), hour_conv1 varchar2(255), hour_conv2 varchar2(255), orderOfDay varchar2(255), acta varchar2(255), state varchar2(255));
 create table entrenados(entrenador_id int, entrenado_id);
 create table articulos(id int, name varchar2(255), price double);
