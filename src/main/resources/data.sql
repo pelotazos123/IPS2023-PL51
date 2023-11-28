@@ -13,7 +13,7 @@ insert into socios (id,dni,name,surname,email,telf,cuota_type,iban,height,weight
 	(102,'123456789C','Jose','Alonso','UO289549@uniovi.es',789453618,'SENIOR','ES6340491500088834566464','1.81',75,'1999-06-29','HOMBRE',false),
 	(103,'123456789D','Paula','Perez','pau@gmail.com',693528769,'SUB18','ES6000491515051234567692','1.83',78,'2007-01-16','MUJER',false),
 	(104,'123456789E','Cristian','Gonzalez','cristian@gmail.com',634895248,'VETERANO','ES6000491500063234560069','1.78',77,'1963-09-10','HOMBRE',false),
-	(105,'123456789J','Pedro','Fernandez','pedro@gmail.com',796231447,'VETERANO','ES6000436501851414507715','1.75',80,'1995-01-01','HOMBRE',false),
+	(105,'123456789J','Pedro','Fernandez','UO276220@uniovi.es',796231447,'VETERANO','ES6000436501851414507715','1.75',80,'1995-01-01','HOMBRE',false),
 	(106,'123456789K','Adrian','Garcia','adrian@gmail.com',649874539,'SUB18','ES6340491500088834566478','1.54',57,'2008-06-06','HOMBRE',false);
 
 insert into cuotas (owner_id, cuota_type, price, state) values
@@ -34,8 +34,8 @@ insert into licencias (owner_id, tutor_dni, tutor_name, tutor_surname, tutor_ema
 	(106,'123456789L','Pedro','Garcia','pedro@gmail.com',654873691,'1983-6-8','HOMBRE','pagado',30,'DEPORTISTA','Oviedo','Segundo A', "2023-11-21", "2023-11-21", 'FUTBOL');
 
 INSERT INTO reservas (id, fecha_inicio, fecha_fin, instalation_code, tipo, cursillo_id) VALUES 
-	(0, "2023-11-20 20:00", "2023-11-20 22:00", "13410", "reserva", -1),
-	(1, "2023-11-21 11:00", "2023-11-21 12:00", "13413", "ANULADA", -1);
+	(0, "2023-11-29 20:00", "2023-11-29 22:00", "13410", "RESERVA", -1),
+	(1, "2023-11-28 11:00", "2023-11-28 12:00", "13413", "ANULADA", -1);
 
 INSERT INTO participante_reserva (reserva_id, dni) VALUES
 	(0, "123456789A");
