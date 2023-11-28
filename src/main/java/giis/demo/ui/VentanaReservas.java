@@ -336,7 +336,7 @@ public class VentanaReservas extends JDialog {
 		for (Reserva reserva : reMan.getReservas()) {	
 			if (reserva.getFechaInicio().trim().equals(chosenDay)
 					&& modeloListaHoras.contains(reserva.getHoraInicio().trim())	// Se comprueba cada reserva, con cada dia, hora e instalacion seleccionada
-							&& reserva.getInstalacionId().trim().equals(((Instalacion)getCbInstalaciones().getSelectedItem()).getCode().toString())) {
+							&& reserva.getInstalationCode().trim().equals(((Instalacion)getCbInstalaciones().getSelectedItem()).getCode().toString())) {
 				System.out.println("Ya hay una reserva");
 				
 				int posInicio = modeloListaHoras.indexOf(reserva.getHoraInicio());
@@ -348,13 +348,6 @@ public class VentanaReservas extends JDialog {
 				if (reserva.getTipoCurso().equals(ReservationController.TIPO_CURSO)) {	// Si hay una reserva para un curso, cambia el texto por 
 					while (posFinal != posInicio) {										// ocupado por un curso o similar
 						modeloListaHoras.add(posFinal-1, ReservationController.CURSO_OCUPADO);
-						posFinal--;
-					}
-				} 
-				
-				if(reserva.getTipoCurso().equals(ReservationController.TIPO_ANULADA)) {
-					while (posFinal != posInicio) {
-						modeloListaHoras.add(posFinal-1, ReservationController.METEOROLOGIA);
 						posFinal--;
 					}
 				} 
@@ -378,7 +371,9 @@ public class VentanaReservas extends JDialog {
 					generaHoras();
 				}
 			});
-			cbInstalaciones.setModel(new DefaultComboBoxModel<Instalacion>(InstalacionController.getInstalaciones(db)));
+			List<Instalacion> instalaciones = InstalacionController.getInstalaciones(db);
+//			Instalacion[] modeloInstalaciones = InstalacionController.getInstalaciones(db).toArray(new Instalacion[lista.size()]);
+			cbInstalaciones.setModel(new DefaultComboBoxModel<Instalacion>(InstalacionController.getModeloInstalacion(instalaciones)));
 		}
 		return cbInstalaciones;
 	}

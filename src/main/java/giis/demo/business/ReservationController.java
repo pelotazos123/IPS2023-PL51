@@ -15,6 +15,7 @@ import javax.swing.JOptionPane;
 
 import giis.demo.model.Instalacion;
 import giis.demo.model.Reserva;
+import giis.demo.model.loggin.Correo;
 import giis.demo.util.Database;
 import giis.demo.util.Util;
 
@@ -37,8 +38,8 @@ public class ReservationController {
 	public final static String CURSO_OCUPADO = "RESERVADO PARA CURSO";
 	public final static String METEOROLOGIA = "ANULADO METEOROLOGÍA";
 	
-	public final static String TIPO_CURSO = "curso";
-	public final static String TIPO_RESERVA = "reserva";
+	public final static String TIPO_CURSO = "CURSO";
+	public final static String TIPO_RESERVA = "RESERVA";
 	public final static String TIPO_ANULADA = "ANULADA";
 	
 	// Mapeo de dias para trabajar con los dias en español de el ENUM DaysOfWeek
@@ -64,8 +65,8 @@ public class ReservationController {
 		this.db = db;
 	}
 	
-	public boolean anular(String hora_Inicio, String hora_fin , String instalacionId) {
-		createAnulation(hora_Inicio, hora_fin, instalacionId);
+	public boolean anular(String hora_Inicio, String instalacionId) {
+		createAnulation(hora_Inicio, instalacionId);
 //		getReservas();
 		return true;
 	}
@@ -128,7 +129,6 @@ public class ReservationController {
 	 */
 	private boolean getDisponibilidadDeCursos(Instalacion instalacion, String fechaInicio, String fechaFinal){
 		String SQL_CARGAR_CURSOS = "SELECT id FROM cursillos WHERE fecha_inicio <= ? and fecha_fin >= ? and code_instalacion = ?";
-		
 		List<Object[]> queryRes = db.executeQueryArray(SQL_CARGAR_CURSOS, fechaInicio, fechaFinal, instalacion.getCode());
 		
 		if (queryRes.size() != 0) {
@@ -150,7 +150,7 @@ public class ReservationController {
 		for (String dni: participantes) {
 			queryRes = db.executeQueryArray(SQL_CARGAR_FECHAS_RESERVA, dni, instalacion.getCode(), "");
 			for (Object[] objects : queryRes) {
-				reserva = Util.isoStringToDate((String) objects[0]).toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
+				reserva = Util.isoStringToDateHour((String) objects[0]).toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
 				dates.add(reserva);
 			}
 			
@@ -253,20 +253,44 @@ public class ReservationController {
 			System.out.println(id + " |hola| " + dni);
 		}
 	}
-	
-	String SQL_CREAR_RESERVA = "INSERT INTO reservas(fecha_inicio, fecha_fin, instalation_code, tipo, cursillo_id) VALUES (?, ?, ?, ?, ?)";
+
 	private void createReservation(String reservaInicio, String reservaFin, String instalacionId, String tipoReserva, int idCursillo) {
+		String SQL_CREAR_RESERVA = "INSERT INTO reservas(fecha_inicio, fecha_fin, instalation_code, tipo, cursillo_id) VALUES (?, ?, ?, ?, ?)";
 		db.executeUpdate(SQL_CREAR_RESERVA, reservaInicio, reservaFin, instalacionId, tipoReserva, idCursillo);
 	}
 	
-	private void createAnulation(String hora_Inicio, String hora_fin, String instalacionId) {
-		String SQL_ANULAR = "INSERT INTO reservas(fecha_inicio, fecha_fin, instalation_code, tipo) "
-				+ "VALUES (?, ?, ?, 'ANULADA')"; 
-		db.executeUpdate(SQL_ANULAR, hora_Inicio, hora_fin, instalacionId);
+	private void createAnulation(String hora_Inicio, String instalacionId) { 
+		Correo correo;
+		String GET_RESERVAS = "select id from reservas where fecha_inicio = ? and instalation_code = ?";	
+		if(db.executeQueryArray(GET_RESERVAS, hora_Inicio, instalacionId).isEmpty()){
+			String SQL_ANULAR = "insert into reservas(fecha_inicio, fecha_fin, instalation_code, tipo) "
+					+ "values (?,?,?,'ANULADA')";
+			LocalDateTime horaFin = LocalDateTime.parse(hora_Inicio, DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"));
+			horaFin = horaFin.plusHours(1);
+			String horaFinReserva = horaFin.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"));
+			db.executeUpdate(SQL_ANULAR, hora_Inicio, horaFinReserva, instalacionId);
+		} else {
+			String reservaId = db.executeQueryArray(GET_RESERVAS, hora_Inicio, instalacionId).get(0)[0].toString();
+			String GET_PARTICIPANTES = "select dni from participante_reserva where reserva_id = ?";
+			List<Object[]> participantes = db.executeQueryArray(GET_PARTICIPANTES, reservaId);
+			String GET_CORREO = "select email from socios where dni = ?";
+			String texto = "Anulada su reserva en: " + instalacionId + " con fecha inicio: " + hora_Inicio;
+			for(Object[] participante: participantes) {
+				String email = db.executeQueryArray(GET_CORREO, participante[0].toString()).get(0)[0].toString();
+				correo = new Correo(email, "Reserva", texto, Correo.TIPO_TXT_MAIL_PLANO);
+				correo.enviarCorreo(email, "Reserva", texto);
+			}
+			String DELETEPARTICIPANTES = "delete from participante_reserva where reserva_id = ?";
+			db.executeUpdate(DELETEPARTICIPANTES, reservaId);
+			String SQL_ANULAR = "UPDATE reservas SET tipo='ANULADA' WHERE fecha_inicio=? "
+					+ "AND instalation_code=? AND tipo!='ANULADA'";
+			System.out.println("ANULADA" );
+			db.executeUpdate(SQL_ANULAR, hora_Inicio, instalacionId);
+		}
 	}
 
 	public boolean getReservasNoAnuladasHora(String fechaInicio, String idInst) {
-		String SQL_CARGA_NO_ANULADAS = "select * from reservas where tipo == 'NORMAL' "
+		String SQL_CARGA_NO_ANULADAS = "select fecha_inicio from reservas where tipo == 'NORMAL' "
 				+ "and fecha_inicio = ? and instalation_code = ?";
 		return !db.executeQueryArray(SQL_CARGA_NO_ANULADAS, fechaInicio, idInst).isEmpty();
 	}
@@ -277,7 +301,7 @@ public class ReservationController {
 	}
 
 	public boolean getReservasAnuladasHora(String horaInicio, String idInst) {
-		String SQL_CARGA_ANULADAS = "select * from reservas where tipo == 'ANULADA' "
+		String SQL_CARGA_ANULADAS = "select fecha_inicio from reservas where tipo == 'ANULADA' "
 				+ "and fecha_inicio = ? and instalation_code = ?";
 		return !db.executeQueryArray(SQL_CARGA_ANULADAS, horaInicio, idInst).isEmpty();
 	}

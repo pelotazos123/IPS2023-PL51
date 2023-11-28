@@ -14,6 +14,7 @@ import giis.demo.model.Socio;
 import giis.demo.model.TiposCuotas;
 import giis.demo.model.TiposDeportes;
 import giis.demo.model.competiciones.Competicion;
+import giis.demo.model.competiciones.servicio.GestionarCompeticiones;
 
 public abstract class FileUtil {
 
@@ -95,6 +96,7 @@ public abstract class FileUtil {
 		String lugar = competicion[2];
 		String categorias = competicion[3];
 		String deporte = competicion[4];
+		String estado = competicion[5];
 		
 		TiposDeportes deporteCompeticion = null;
 		if(deporte.equals("FUTBOL")) {
@@ -124,6 +126,6 @@ public abstract class FileUtil {
 				listaCategorias.add(TiposCuotas.VETERANO);
 			}
 		}
-		return new Competicion(id, nombre, fechaCompe, lugar, listaCategorias, deporteCompeticion);
+		return new Competicion(id, nombre, fechaCompe, lugar, listaCategorias, deporteCompeticion, GestionarCompeticiones.getEstadoCompeticion(estado));
 	}
 }
