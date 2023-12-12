@@ -78,7 +78,8 @@ public class GestionCursosSocios {
 		calendar.setTime(fecha);
 		int year = calendar.get(Calendar.YEAR);
 		int month = calendar.get(Calendar.MONTH) + 1;
-		LocalDate date = LocalDate.of(year, month + 1, 1);
+		LocalDate date = LocalDate.of(year, month, 1);
+		date = date.plusMonths(1);
 		String FECHAFIN = "select fecha_fin from cursillos where id = ?";
 		LocalDate fechaFin = LocalDate
 				.parse(vgcs.getVp().getDb().executeQueryArray(FECHAFIN, idCurso).get(0)[0].toString());
@@ -165,7 +166,8 @@ public class GestionCursosSocios {
 		int year = calendar.get(Calendar.YEAR);
 		int month = calendar.get(Calendar.MONTH) + 1;
 		int day = calendar.get(Calendar.DAY_OF_MONTH);
-		LocalDate date = LocalDate.of(year, month + 1, 1);
+		LocalDate date = LocalDate.of(year, month, 1);
+		date = date.plusMonths(1);
 
 		String GET_ENTRENADORES_CURSO = "select dni from entrenadores_cursillos where id_curso = ?";
 		String GET_ID_ENTRENADOR = "select id from socios where dni = ?";
