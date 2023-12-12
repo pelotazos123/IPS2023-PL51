@@ -56,6 +56,7 @@ public class Correo implements Runnable{
 		this.correoUsuario = correoUsuario;
 		this.asunto = asunto;
 		this.texto = texto;
+		this.typeTxt = TIPO_TXT_MAIL_PLANO;
 		enviado = true;
 		t.run();
 		return enviado;
